@@ -1,0 +1,155 @@
+/* CSS for the Categories Section of the The Maste Jackets */
+:root {
+    --dark-brown: #3E2C1C;
+    --tan: #A06D33;
+    --gold: #D6AD60;
+    --beige: #F8F5F2;
+    --black: #1A1A1A;
+    --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.categories-section {
+    padding: 5rem 2rem;
+    background-color: var(--beige);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.section-header h2 {
+    font-size: 2.5rem;
+    color: var(--dark-brown);
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.section-header p {
+    color: var(--tan);
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 30px;
+}
+
+.category-card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    position: relative;
+}
+
+.category-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.category-img {
+    height: 400px;
+    overflow: hidden;
+    position: relative;
+}
+
+.category-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+.category-card:hover .category-img img {
+    transform: scale(1.05);
+}
+
+.category-content {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.category-content h3 {
+    color: var(--dark-brown);
+    margin-bottom: 0.5rem;
+    font-size: 1.3rem;
+}
+
+.category-content p {
+    color: var(--black);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.8;
+}
+
+.shop-now-btn {
+    display: inline-block;
+    background-color: var(--gold);
+    color: var(--dark-brown);
+    padding: 0.6rem 1.5rem;
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+    border: 2px solid var(--gold);
+}
+
+.shop-now-btn:hover {
+    background-color: transparent;
+    color: var(--tan);
+}
+
+.items-count {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: var(--tan);
+    color: white;
+    padding: 0.3rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .categories-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+    }
+    
+    .section-header h2 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .categories-section {
+        padding: 3rem 1rem;
+    }
+    
+    .categories-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .section-header h2 {
+        font-size: 1.8rem;
+    }
+}

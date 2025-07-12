@@ -1,0 +1,339 @@
+:root {
+    --dark-brown: #3E2C1C;
+    --tan: #A06D33;
+    --gold: #D6AD60;
+    --beige: #F8F5F2;
+    --black: #1A1A1A;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--beige);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+h1,
+h2 {
+    font-family: Georgia, 'Times New Roman', Times, serif !important;
+    font-weight: bold;
+}
+
+.hero {
+    background: url('https://res.cloudinary.com/dekf5dyng/image/upload/v1749721392/jackson_vpica7.jpg') no-repeat center center/cover;
+    background-attachment: fixed;
+    height: 80vh;
+    color: var(--beige);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(30, 20, 10, 0.6);
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 700px;
+}
+
+.hero-content h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+}
+
+.hero-btn {
+    background-color: var(--tan);
+    border: none;
+    color: white;
+}
+
+.hero-btn:hover {
+    background-color: var(--dark-brown);
+    color: var(--gold);
+}
+
+.section {
+    padding: 4rem 0;
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    color: var(--tan);
+    margin-bottom: 1rem;
+}
+
+/* double rj-hero banner */
+.rj-dual-hero {
+    display: flex;
+    min-height: 80vh;
+    width: 100%;
+    overflow: hidden;
+}
+
+.rj-hero-right {
+    flex: 1;
+    background-color: var(--tan);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.rj-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 500px;
+}
+
+.rj-hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+}
+
+.rj-hero-text {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.rj-hero-btn {
+    display: inline-block;
+    padding: 12px 30px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+.hero-btn, .rj-hero-btn {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+.rj-btn-light {
+    background-color: white;
+    color: var(--dark-brown);
+    border: 2px solid white;
+}
+
+.rj-btn-light:hover {
+    background-color: transparent;
+    color: white;
+}
+
+/* Ensure the image side has height on mobile */
+.rj-banner-2 {
+    background-image: url('https://res.cloudinary.com/dekf5dyng/image/upload/v1749721393/rj-banner_si9np8.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    min-height: 300px;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    .rj-hero-title {
+        font-size: 1.8rem;
+    }
+
+    .rj-hero-text {
+        font-size: 1rem;
+    }
+
+    .rj-hero-btn {
+        font-size: 0.9rem;
+        padding: 10px 20px;
+    }
+
+    .rj-banner-2 {
+        min-height: 250px;
+    }
+
+    .rj-hero-right {
+        padding: 2rem;
+        text-align: center;
+    }
+}
+
+@media (min-width: 769px) {
+    .rj-banner-2 {
+        min-height: 100%;
+    }
+}
+
+/* feauterd products */
+.bj-collection {
+    max-width: 1400px;
+    margin: 60px auto;
+    padding: 0 20px;
+}
+
+.bj-collection-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--beige);
+    padding-bottom: 15px;
+}
+
+.bj-collection-header span {
+    font-size: 2.3rem;
+    font-weight: bolder;
+    font-family: 'Times New Roman', Times, serif;
+    letter-spacing: 1px;
+}
+
+.bj-sort {
+    border: 1px solid var(--beige);
+    padding: 8px 15px;
+    font-size: 14px;
+}
+
+.bj-products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.bj-product {
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+}
+
+.bj-product:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.bj-product-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--gold);
+    color: white;
+    padding: 3px 8px;
+    font-size: 12px;
+    z-index: 2;
+}
+
+.bj-product-image {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.bj-product-image img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s;
+}
+
+.bj-product:hover .bj-product-image img {
+    transform: scale(1.03);
+}
+
+.bj-product:hover .bj-product-title {
+    color: var(--dark-brown);
+}
+
+.bj-product-title {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.bj-product-price {
+    display: flex;
+    gap: 10px;
+}
+
+.bj-product-price .original {
+    text-decoration: line-through;
+    color: #999;
+}
+
+.bj-product-price .sale {
+    color: var(--gold);
+    font-weight: bold;
+}
+
+
+@media (max-width: 768px) {
+    .bj-hero h1 {
+        font-size: 32px;
+    }
+
+    .bj-collection-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .bj-products {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+
+    .bj-footer-links {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .gallery-item {
+        min-width: 250px;
+        height: 350px;
+    }
+
+    .nav-arrow {
+        width: 35px;
+        height: 35px;
+    }
+
+    .nav-arrow.left {
+        left: -20px;
+    }
+
+    .nav-arrow.right {
+        right: -20px;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .rj-banner-2 {
+        min-height: 50vh;
+    }
+
+    .gallery-item {
+        min-width: 220px;
+        height: 300px;
+    }
+
+    .product-tag {
+        font-size: 0.8rem;
+        bottom: 15px;
+        right: 15px;
+    }
+}

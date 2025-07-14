@@ -13,13 +13,6 @@
             box-sizing: border-box;
         }
 
-        /* body {
-            background-color: var(--beige);
-            color: var(--dark-brown);
-            line-height: 1.7;
-        } */
-
-        /* === Typography === */
         .about-h{
             font-weight: 600;
             color: var(--dark-brown);

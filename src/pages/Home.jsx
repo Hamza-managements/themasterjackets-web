@@ -19,6 +19,7 @@ export default function Home() {
     {
       id: 1,
       name: 'Premium Headphones',
+      size: 'Large',
       price: 199.99,
       quantity: 1,
       image: 'https://example.com/headphones.jpg'
@@ -26,6 +27,7 @@ export default function Home() {
     {
       id: 2,
       name: 'Wireless Mouse',
+      size: 'Medium',
       price: 29.99,
       quantity: 2,
       image: 'https://example.com/mouse.jpg'

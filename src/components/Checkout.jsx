@@ -16,20 +16,137 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
 
   const modalContents = {
     returns: {
-      title: "Return Policy",
-      content: "You may return most new, unopened items within 30 days of delivery for a full refund. We'll also pay the return shipping costs if the return is a result of our error."
-    },
-    privacy: {
-      title: "Privacy Policy",
-      content: "We collect personal information to provide and improve our services. Your data is protected and never shared with third parties without your consent."
-    },
-    terms: {
-      title: "Terms of Service",
-      content: "By using our website, you agree to these terms. All content is protected by copyright laws. We reserve the right to refuse service to anyone."
+      title: "Master Jackets Return Promise",
+      content: (
+        <div className="policy-content">
+          <div className="policy-header">
+            <h4>30-Day Satisfaction Guarantee</h4>
+            <p>We stand behind every stitch. If your jacket doesn't meet expectations, we'll make it right.</p>
+          </div>
+
+          <div className="policy-highlights">
+            <div className="highlight-card">
+              <div className="icon">✓</div>
+              <h5>Easy Returns</h5>
+              <p>Unworn items with tags within 30 days</p>
+            </div>
+            <div className="highlight-card">
+              <div className="icon">!</div>
+              <h5>Quick Resolution</h5>
+              <p>Defects reported within 72 hours</p>
+            </div>
+          </div>
+
+          <h5 className="section-title">The Fine Print</h5>
+          <ul className="policy-list">
+            <li>Original packaging required for refunds</li>
+            <li>Custom jackets are final sale</li>
+            <li>Return shipping not included</li>
+          </ul>
+
+          <div className="policy-contact">
+            <p><strong>Need help?</strong> Email <a href="mailto:returns@masterjackets.com">returns@masterjackets.com</a></p>
+          </div>
+        </div>
+      )
     },
     shipping: {
-      title: "Shipping Policy",
-      content: "We process orders within 1-2 business days. Standard shipping takes 3-5 business days. Express options available at checkout."
+      title: "Global Shipping Excellence",
+      content: (
+        <div className="policy-content">
+          <div className="policy-badge">WORLDWIDE DELIVERY</div>
+
+          <h4>Our Shipping Promise</h4>
+          <p>Every Master Jacket deserves a grand entrance. We handle your order with white-glove care from warehouse to doorstep.</p>
+
+          <div className="timeline">
+            <div className="timeline-step">
+              <div className="step-number">1</div>
+              <h5>Processing</h5>
+              <p>1-2 business days</p>
+            </div>
+            <div className="timeline-step">
+              <div className="step-number">2</div>
+              <h5>Shipping</h5>
+              <p>3-5 business days (US/EU)</p>
+              <p>7-10 days (International)</p>
+            </div>
+          </div>
+
+          <h5 className="section-title">Important Notes</h5>
+          <ul className="policy-list">
+            <li>Signature required for orders over $500</li>
+            <li>Customs fees may apply for international orders</li>
+            <li>Real-time tracking provided</li>
+          </ul>
+        </div>
+      )
+    },
+    terms: {
+      title: "Our Agreement",
+      content: (
+        <div className="policy-content">
+          <h4>Purchasing Terms</h4>
+          <p>By ordering from Master Jackets, you agree to these fair terms:</p>
+
+          <div className="terms-grid">
+            <div className="term-card">
+              <h5>Product Ownership</h5>
+              <p>You own the jacket; we retain design rights</p>
+            </div>
+            <div className="term-card">
+              <h5>Payment</h5>
+              <p>Charged when order ships</p>
+            </div>
+            <div className="term-card">
+              <h5>Disputes</h5>
+              <p>Contact us before chargebacks</p>
+            </div>
+          </div>
+
+          <div className="legal-notes">
+            <h5>Key Limitations</h5>
+            <ul>
+              <li>Not responsible for misuse of products</li>
+              <li>May cancel suspicious orders</li>
+              <li>Prices subject to change</li>
+            </ul>
+          </div>
+        </div>
+      )
+    },
+    privacy: {
+      title: "Your Privacy Matters",
+      content: (
+        <div className="policy-content">
+          <div className="trust-badge">
+            <span>Data Protection Guaranteed</span>
+          </div>
+
+          <h4>We Value Your Trust</h4>
+          <p>Master Jackets collects only essential data to deliver exceptional service and nothing more.</p>
+
+          <div className="data-usage">
+            <h5>What We Collect</h5>
+            <ul>
+              <li>Order information for fulfillment</li>
+              <li>Contact details for service</li>
+              <li>Secure payment data (encrypted)</li>
+            </ul>
+
+            <h5>What We Never Do</h5>
+            <ul>
+              <li>Sell your information</li>
+              <li>Share data unnecessarily</li>
+              <li>Store payment details after processing</li>
+            </ul>
+          </div>
+
+          <div className="gdpr-notice">
+            <p>EU customers: We fully comply with GDPR regulations.</p>
+          </div>
+        </div>
+      )
     }
   };
 
@@ -170,11 +287,27 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
             <section className="form-section">
               <h2>Contact Information</h2>
               <div className="form-row">
+                  <div className="form-group">
+                  <label htmlFor="email">Email*</label>
+                  <input
+                    type="email"
+                    // placeholder='Email'
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className={errors.email ? 'error' : ''}
+                  />
+                  {errors.email && <span className="error-message">{errors.email}</span>}
+                </div>
+              </div>
+              <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="firstName">First Name*</label>
                   <input
                     type="text"
                     id="firstName"
+                    // placeholder='First Name*'
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleChange}
@@ -198,18 +331,6 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
 
               <div className="form-row">
                 <div className="form-group">
-                  <label htmlFor="email">Email*</label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className={errors.email ? 'error' : ''}
-                  />
-                  {errors.email && <span className="error-message">{errors.email}</span>}
-                </div>
-                <div className="form-group">
                   <label htmlFor="phone">Phone</label>
                   <input
                     type="tel"
@@ -221,7 +342,6 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                 </div>
               </div>
             </section>
-
             <section className="form-section">
               <h2>Shipping Address</h2>
               <div className="form-group">
@@ -349,6 +469,10 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                 </div>
               </div>
             </section>
+            <section className="form-section">
+              <h2>Shipping Method</h2>
+              <p>Enter your shipping address to view available shipping methods.</p>
+            </section>
 
             <section className="form-section">
               <h2>Payment Method</h2>
@@ -460,13 +584,13 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
             </div>
 
             <button type="submit" className="place-order-btn" disabled={isSubmitting}>
-              {isSubmitting ? 'Processing...' : `Place Order ($${totalPrice.toFixed(2)})`}
+              {isSubmitting ? 'Processing...' : `Place Order ($${(totalPrice * 1.1).toFixed(2)})`}
             </button>
           </form>
         </div>
 
         <div className="order-summary">
-          <h2>Order Summary</h2>
+          <h2>The Master Jackets</h2>
           <div className="summary-items">
             {cartItems.map((item) => (
               <div key={item.id} className="summary-item">
@@ -475,7 +599,7 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                 </div>
                 <div className="item-details">
                   <h4>{item.title}</h4>
-                  <p>Qty: {item.quantity}</p>
+                  <p>Size: {item.size}</p>
                 </div>
                 <div className="item-price">${(item.price * item.quantity).toFixed(2)}</div>
               </div>
@@ -521,7 +645,7 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
           </div>
         </div>
       )}
-    </div>    
+    </div>
   );
 };
 

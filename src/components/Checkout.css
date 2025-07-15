@@ -587,8 +587,7 @@ body {
     font-size: 1.1rem;
   }
 }
-
-
+ 
 /* Footer Styles */
 .simple-footer {
   margin-top: 30px;
@@ -599,7 +598,7 @@ body {
 
 .footer-links {
   display: flex;
-  flex-direction: row;
+  flex-direction: row !important;
   justify-content: center;
   flex-wrap: wrap;
   gap: 15px;

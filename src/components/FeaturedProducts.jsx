@@ -39,7 +39,8 @@ export default function FeaturedProducts() {
     return (
         <section className="bj-collection">
             <div className="bj-collection-header" data-aos="fade-up">
-                <center><h1><span>Featured Products</span></h1></center>
+            <h2><span>Featured Products</span></h2>
+            <div>
                 <select className="bj-sort" onChange={(e) => setSortOption(e.target.value)} value={sortOption}>
                     <option>Sort by</option>
                     <option>Best Selling</option>
@@ -47,6 +48,7 @@ export default function FeaturedProducts() {
                     <option>Price: High to Low</option>
                     <option>Newest</option>
                 </select>
+            </div>
             </div>
 
 

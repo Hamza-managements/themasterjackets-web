@@ -12,7 +12,6 @@ import StatsSection from '../components/StatsSection';
 import DualHeroSection from '../components/DualHeroSection';
 import CustomerGallery from '../components/CustomerGallery';
 import BlogSlider from '../components/BlogSlider';
-// import Checkout from '../components/Checkout'; // Uncomment if adding here
 
 export default function Home() {
   const cartItems = [

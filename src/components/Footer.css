@@ -44,7 +44,7 @@
 
        .footer-links {
            display: flex;
-           flex-direction: column;
+           flex-direction: column !important;
            list-style: none;
            padding: 0;
            gap: 0.5rem;
@@ -152,6 +152,7 @@
 
        .payment-methods {
            display: flex;
+           flex-direction: row !important;
            gap: 10px;
            justify-content: center;
            flex-wrap: wrap;

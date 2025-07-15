@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import './Checkout.css';
 import zipToStateMap from '../data/fullZipData';
 
 
 const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
+  const [focused, setFocused] = useState(false);
+  const [inputValue, setInputValue] = useState('');
   const [activeModal, setActiveModal] = useState(null);
 
   const openModal = (modalName) => {
@@ -283,29 +286,58 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
     <div className="checkout-container">
       <div className="checkout-grid">
         <div className="checkout-form">
+          <h1>The Master Jackets</h1>
           <form onSubmit={handleSubmit}>
             <section className="form-section">
-              <h2>Contact Information</h2>
+              <h2>Contact</h2>
               <div className="form-row">
-                  <div className="form-group">
-                  <label htmlFor="email">Email*</label>
+                <div className="form-group  floating">
                   <input
                     type="email"
-                    // placeholder='Email'
+                    placeholder=''
                     id="email"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
                     className={errors.email ? 'error' : ''}
-                  />
+                    required
+                  /><label htmlFor="email">Email*</label>
                   {errors.email && <span className="error-message">{errors.email}</span>}
                 </div>
               </div>
+
+            </section>
+
+            <section className="form-section">
+              <h2>Delivery</h2>
               <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="firstName">First Name*</label>
+                <div className="form-group  floating">
+                  <select
+                    placeholder=''
+                    id="country"
+                    name="country"
+                    value={formData.country}
+                    onChange={handleChange}
+                    className={`${errors.country ? 'error' : ''} ${highlightCountry ? 'highlight' : ''}`}
+                  >
+                    <option value="" disabled>Select Country</option>
+                    <option value="US">United States</option>
+                    <option value="CA">Canada</option>
+                    <option value="UK">United Kingdom</option>
+                    <option value="AU">Australia</option>
+                    <option value="DE">Germany</option>
+                    <option value="FR">France</option>
+                    <option value="JP">Japan</option>
+                    {/* Add more countries as needed */}
+                  </select>
+                  {errors.country && <span className="error-message">{errors.country}</span>}
+                </div>
+              </div>
+              <div className="form-row">
+                <div className="form-group  floating">
                   <input
                     type="text"
+                    placeholder=''
                     id="firstName"
                     // placeholder='First Name*'
                     name="firstName"
@@ -313,86 +345,88 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                     onChange={handleChange}
                     className={errors.firstName ? 'error' : ''}
                   />
+                  <label htmlFor="firstName">First Name*</label>
                   {errors.firstName && <span className="error-message">{errors.firstName}</span>}
                 </div>
-                <div className="form-group">
-                  <label htmlFor="lastName">Last Name*</label>
+                <div className="form-group  floating">
                   <input
                     type="text"
+                    placeholder=''
                     id="lastName"
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleChange}
                     className={errors.lastName ? 'error' : ''}
                   />
+                  <label htmlFor="lastName">Last Name*</label>
                   {errors.lastName && <span className="error-message">{errors.lastName}</span>}
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="phone">Phone</label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-            </section>
-            <section className="form-section">
-              <h2>Shipping Address</h2>
-              <div className="form-group">
-                <label htmlFor="address">Address*</label>
+              <div className="form-group  floating">
                 <input
                   type="text"
+                  placeholder=''
                   id="address"
                   name="address"
                   value={formData.address}
                   onChange={handleChange}
                   className={errors.address ? 'error' : ''}
                 />
+                <label htmlFor="address">Address*</label>
                 {errors.address && <span className="error-message">{errors.address}</span>}
               </div>
-
+              <div className="form-group  floating">
+                <input
+                  type="text"
+                  placeholder=''
+                  id="address2"
+                  name="address2"
+                  value={formData.address}
+                  onChange={handleChange}
+                  className={errors.address ? 'error' : ''}
+                />
+                <label htmlFor="address">Apartment, Suite, etc.(optional)</label>
+                {errors.address && <span className="error-message">{errors.address}</span>}
+              </div>
               <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="city">City*</label>
+                <div className="form-group  floating">
                   <input
                     type="text"
+                    placeholder=''
                     id="city"
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
                     className={errors.city ? 'error' : ''}
                   />
+                  <label htmlFor="city">City*</label>
                   {errors.city && <span className="error-message">{errors.city}</span>}
                 </div>
-                <div className="form-group">
-                  <label htmlFor="zipCode">Zip/Postal Code*</label>
+                <div className="form-group  floating">
                   <input
                     type="text"
+                    placeholder=''
                     id="zipCode"
                     name="zipCode"
                     value={formData.zipCode}
                     onChange={handleChange}
                     className={errors.zipCode ? 'error' : ''}
                   />
+                  <label htmlFor="zipCode">Zip/Postal Code*</label>
                   {errors.zipCode && <span className="error-message">{errors.zipCode}</span>}
                 </div>
-              </div>
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="state">State*</label>
+              
+                <div className="form-group  floating">
                   <select
+                    placeholder=''
                     id="state"
                     name="state"
                     value={formData.state}
                     onChange={handleChange}
                     className={`${errors.state ? 'error' : ''} ${highlightState ? 'highlight' : ''}`}
-                  ><option value="" disabled selected>Select State</option>
+                    >
+                    <option value="" disabled selected>Select State</option>
                     <option value="AL">Alabama</option>
                     <option value="AK">Alaska</option>
                     <option value="AZ">Arizona</option>
@@ -445,27 +479,18 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                   </select>
                   {errors.country && <span className="error-message">{errors.state}</span>}
                 </div>
-                <div className="form-group">
-                  <label htmlFor="country">Country*</label>
-                  <select
-                    id="country"
-                    name="country"
-                    value={formData.country}
+                  </div>
+              <div className="form-row">
+                <div className="form-group  floating">
+                  <input
+                    type="tel"
+                    placeholder=''
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
                     onChange={handleChange}
-                    className={`${errors.country ? 'error' : ''} ${highlightCountry ? 'highlight' : ''}`}
-                  >
-
-                    <option value="" disabled>Select Country</option>
-                    <option value="US">United States</option>
-                    <option value="CA">Canada</option>
-                    <option value="UK">United Kingdom</option>
-                    <option value="AU">Australia</option>
-                    <option value="DE">Germany</option>
-                    <option value="FR">France</option>
-                    <option value="JP">Japan</option>
-                    {/* Add more countries as needed */}
-                  </select>
-                  {errors.country && <span className="error-message">{errors.country}</span>}
+                  />
+                  <label htmlFor="phone">Phone</label>
                 </div>
               </div>
             </section>
@@ -485,11 +510,10 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                     checked={formData.paymentMethod === 'credit-card'}
                     onChange={handleChange}
                   />
-                  <span>Credit Card</span>
+                  <span className='black-span'>Credit Card</span>
                   <div className="payment-icons">
                     <span className="icon visa">Visa</span>
                     <span className="icon mastercard">MasterCard</span>
-                    <span className="icon amex">Amex</span>
                   </div>
                 </label>
 
@@ -501,7 +525,7 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                     checked={formData.paymentMethod === 'paypal'}
                     onChange={handleChange}
                   />
-                  <span>PayPal</span>
+                  <span className='black-span'>PayPal</span>
                   <div className="payment-icons">
                     <span className="icon paypal">PayPal</span>
                   </div>
@@ -510,58 +534,59 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
 
               {formData.paymentMethod === 'credit-card' && (
                 <div className="credit-card-form">
-                  <div className="form-group">
-                    <label htmlFor="cardNumber">Card Number*</label>
+                  <div className="form-group floating">
                     <input
                       type="text"
                       id="cardNumber"
                       name="cardNumber"
                       value={formData.cardNumber}
                       onChange={handleChange}
-                      placeholder="1234 5678 9012 3456"
+                      placeholder=""
                       className={errors.cardNumber ? 'error' : ''}
                     />
+                    <label htmlFor="cardNumber">Card Number* e.g 1234 5678 9012 3456</label>
                     {errors.cardNumber && <span className="error-message">{errors.cardNumber}</span>}
                   </div>
 
-                  <div className="form-group">
-                    <label htmlFor="cardName">Name on Card*</label>
+                  <div className="form-group  floating">
                     <input
                       type="text"
+                      placeholder=''
                       id="cardName"
                       name="cardName"
                       value={formData.cardName}
                       onChange={handleChange}
                       className={errors.cardName ? 'error' : ''}
                     />
+                    <label htmlFor="cardName">Name on Card*</label>
                     {errors.cardName && <span className="error-message">{errors.cardName}</span>}
                   </div>
 
                   <div className="form-row">
-                    <div className="form-group">
-                      <label htmlFor="expiryDate">Expiry Date*</label>
+                    <div className="form-group  floating">
                       <input
                         type="text"
                         id="expiryDate"
                         name="expiryDate"
                         value={formData.expiryDate}
                         onChange={handleChange}
-                        placeholder="MM/YY"
+                        placeholder=""
                         className={errors.expiryDate ? 'error' : ''}
                       />
+                      <label htmlFor="expiryDate">Expiry Date* MM/YY</label>
                       {errors.expiryDate && <span className="error-message">{errors.expiryDate}</span>}
                     </div>
-                    <div className="form-group">
-                      <label htmlFor="cvv">CVV*</label>
+                    <div className="form-group  floating">
                       <input
                         type="text"
                         id="cvv"
                         name="cvv"
                         value={formData.cvv}
                         onChange={handleChange}
-                        placeholder="123"
+                        placeholder=""
                         className={errors.cvv ? 'error' : ''}
                       />
+                      <label htmlFor="cvv">CVV* e.g 123</label>
                       {errors.cvv && <span className="error-message">{errors.cvv}</span>}
                     </div>
                   </div>
@@ -578,7 +603,9 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                   onChange={handleChange}
                   className={errors.termsAccepted ? 'error' : ''}
                 />
-                <span>I agree to the <a href="/terms">Terms and Conditions</a> and <a href="/privacy">Privacy Policy</a>*</span>
+                <span className="black-span">
+                  I agree to the{' '}<Link to="/terms-and-conditions" className="styled-link">Terms and Conditions</Link>{' '}
+                  and{' '}<Link to="/privacy-policy" className="styled-link">Privacy Policy</Link>*</span>
               </label>
               {errors.termsAccepted && <span className="error-message">{errors.termsAccepted}</span>}
             </div>
@@ -590,7 +617,7 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
         </div>
 
         <div className="order-summary">
-          <h2>The Master Jackets</h2>
+          {/* <h2>The Master Jackets</h2> */}
           <div className="summary-items">
             {cartItems.map((item) => (
               <div key={item.id} className="summary-item">
@@ -607,20 +634,54 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
           </div>
 
           <div className="summary-totals">
+            <div className="coupon-section">
+              <div className="coupon-input-container">
+                <div className="floating-input">
+                  <input
+                    type="text"
+                    id="coupon-input"
+                    className="coupon-field"
+                    value={inputValue}
+                    onChange={(e) => {
+                      setInputValue(e.target.value);
+                      setFocused(!!e.target.value); // Float label if input has text
+                    }}
+                    onFocus={() => setFocused(true)}
+                    onBlur={(e) => {
+                      if (!e.target.value) setFocused(false);
+                    }}
+                    placeholder=" " // to trigger :placeholder-shown
+                  />
+                  <label htmlFor="coupon-input" className={`coupon-placeholder ${focused ? 'focused' : ''}`}>
+                    Enter coupon code
+                  </label>
+                </div>
+                <button className="apply-coupon">Apply</button>
+              </div>
+              <div className="coupon-message"></div>
+            </div>
+
             <div className="total-row">
-              <span>Subtotal</span>
-              <span>${totalPrice.toFixed(2)}</span>
+              <span className='sans' >Subtotal</span>
+              <span className='sans'>${totalPrice.toFixed(2)}</span>
             </div>
             <div className="total-row">
-              <span>Shipping</span>
-              <span>Free</span>
+              <span className='sans'>Shipping</span>
+              <span className='sans'>Free</span>
             </div>
             <div className="total-row">
-              <span>Tax</span>
-              <span>${(totalPrice * 0.1).toFixed(2)}</span>
+              <span className='sans'>Tax</span>
+              <span className='sans'>${(totalPrice * 0.1).toFixed(2)}</span>
             </div>
+
+            {/* Discount Row - Only shows when a coupon is applied */}
+            <div className="total-row discount-row">
+              <span >Discount</span>
+              <span >-$0.00</span>
+            </div>
+
             <div className="total-row grand-total">
-              <span>Total</span>
+              <span className='sans'>Total</span>
               <span>${(totalPrice * 1.1).toFixed(2)}</span>
             </div>
           </div>

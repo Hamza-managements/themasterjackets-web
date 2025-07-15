@@ -31,6 +31,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import AboutPage from './components/About';
 import CheckoutPage from './pages/CheckoutPage';
+import ReturnPolicy from './pages/Return-exchange';
+import ContactForm from './pages/Contact';
 
 function App() {
   return (
@@ -39,7 +41,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
-        {/* <Route path="/products" element={<ProductsPage />} /> */}
+        <Route path="/return-exchange" element={<ReturnPolicy />} />
+        <Route path="/contact-us" element={<ContactForm />} />
       </Routes>
     </Router>
   );

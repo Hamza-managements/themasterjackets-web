@@ -16,7 +16,6 @@ export default function AboutPage() {
     <>
       <Header />
       <CartSidebar />
-
       <div className="about-hero">
         <div className="about-container">
           <h1 className='about-h'>Our Story</h1>

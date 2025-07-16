@@ -43,13 +43,14 @@ body {
 }
 
 .form-section {
-  padding: 1rem;
+  padding: 0;
   border-bottom: 1px solid #cac9c9;
 }
 
 .form-section h2 {
   font-family: Arial, Helvetica, sans-serif !important;
   font-size: 1.3rem;
+  padding-top: 0.55rem;
   margin-bottom: 1rem;
   color: #000000;
   font-weight: 600;
@@ -127,12 +128,11 @@ body {
 }
 
 /* Payment Methods */
-.payment-methods {
+.f-payment-methods {
   margin: 1rem 0 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  width: 100%;
   box-sizing: border-box;
 }
 
@@ -384,14 +384,10 @@ body {
 .summary-totals {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 2px;
   padding: 1rem;
   border-radius: 8px;
   background: #f8f8f8;
-}
-
-.coupon-section {
-  margin-bottom: 1rem;
 }
 
 .coupon-input-container {
@@ -450,6 +446,11 @@ body {
   background: #2d5f8b;
 }
 
+.apply-coupon:disabled {
+  background: #d8e3f0;
+  color: #747474;
+  cursor: not-allowed;
+}
 .total-row {
   display: flex;
   justify-content: space-between;
@@ -474,8 +475,8 @@ body {
 }
 
 .coupon-message {
+  display: none;
   font-size: 0.85rem;
-  margin-top: 0.5rem;
   min-height: 1.2rem;
   color: #427fb6;
 }

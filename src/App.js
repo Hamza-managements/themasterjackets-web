@@ -24,30 +24,91 @@
 
 // export default App;
 
-
-
-
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './components/auth/AuthProvider';
+import PrivateRoute from './components/auth/PrivateRoute';
 import Home from './pages/Home';
 import AboutPage from './components/About';
 import CheckoutPage from './pages/CheckoutPage';
 import ReturnPolicy from './pages/Return-exchange';
 import ContactForm from './pages/Contact';
+import Login from './components/auth/Login';
+import SignUp from './components/auth/SignUp';
+import UserDashboard from './pages/UserDashboard';
+import AuthLayout from './layouts/AuthLayout';
+import MainLayout from './layouts/MainLayout';
+// import NotFound from './pages/NotFound'; // Uncomment when ready
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/checkout" element={<CheckoutPage />} />
-        <Route path="/return-exchange" element={<ReturnPolicy />} />
-        <Route path="/contact-us" element={<ContactForm />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          {/* Public routes with main layout */}
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/return-exchange" element={<ReturnPolicy />} />
+            <Route path="/contact-us" element={<ContactForm />} />
+          </Route>
+
+          {/* Auth routes with auth layout */}
+          <Route element={<AuthLayout />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
+          </Route>
+
+          {/* Protected routes with main layout */}
+          <Route element={<MainLayout />}>
+            <Route 
+              path="/checkout" 
+              element={
+                <PrivateRoute>
+                  <CheckoutPage />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/dashboard" 
+              element={
+                <PrivateRoute>
+                  <UserDashboard />
+                </PrivateRoute>
+              } 
+            />
+          </Route>
+
+          {/* Error handling - uncomment when ready */}
+          {/* <Route path="/404" element={<NotFound />} /> */}
+          {/* <Route path="*" element={<Navigate to="/404" replace />} /> */}
+        </Routes>
+      </AuthProvider>
     </Router>
   );
 }
 
 export default App;
+// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+// import Home from './pages/Home';
+// import AboutPage from './components/About';
+// import CheckoutPage from './pages/CheckoutPage';
+// import ReturnPolicy from './pages/Return-exchange';
+// import ContactForm from './pages/Contact';
+
+// function App() {
+//   return (
+//     <Router>
+//       <Routes>
+//         <Route path="/" element={<Home />} />
+//         <Route path="/about" element={<AboutPage />} />
+//         <Route path="/checkout" element={<CheckoutPage />} />
+//         <Route path="/return-exchange" element={<ReturnPolicy />} />
+//         <Route path="/contact-us" element={<ContactForm />} />
+//       </Routes>
+//     </Router>
+//   );
+// }
+
+// export default App;
 
 

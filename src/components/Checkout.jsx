@@ -291,7 +291,7 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
             <section className="form-section">
               <h2>Contact</h2>
               <div className="form-row">
-                <div className="form-group  floating">
+                <div className="form-group floating">
                   <input
                     type="email"
                     placeholder=''
@@ -305,7 +305,6 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                   {errors.email && <span className="error-message">{errors.email}</span>}
                 </div>
               </div>
-
             </section>
 
             <section className="form-section">
@@ -501,7 +500,7 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
 
             <section className="form-section">
               <h2>Payment Method</h2>
-              <div className="payment-methods">
+              <div className="f-payment-methods">
                 <label className="payment-method">
                   <input
                     type="radio"
@@ -610,7 +609,8 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
               {errors.termsAccepted && <span className="error-message">{errors.termsAccepted}</span>}
             </div>
 
-            <button type="submit" className="place-order-btn" disabled={isSubmitting}>
+                                                            {/* disabled={isSubmitting} */}
+            <button type="submit" className="place-order-btn" disabled >
               {isSubmitting ? 'Processing...' : `Place Order ($${(totalPrice * 1.1).toFixed(2)})`}
             </button>
           </form>
@@ -656,7 +656,7 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                     Enter coupon code
                   </label>
                 </div>
-                <button className="apply-coupon">Apply</button>
+                <button className="apply-coupon" disabled>Apply</button>
               </div>
               <div className="coupon-message"></div>
             </div>

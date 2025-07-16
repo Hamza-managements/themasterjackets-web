@@ -1,8 +1,17 @@
-import { Link } from 'react-router-dom';
-import './Header.css'; 
+import './Header.css';
+import React, { useContext } from 'react';
 import { openCart } from './Cart';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from './auth/AuthProvider';
+import { useAuth } from './auth/UseAuth';
 
 export default function Header() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
   return (
     <>
       <header className="fs-header-container">
@@ -180,13 +189,53 @@ export default function Header() {
             </nav>
 
             <div className="fs-header-actions">
+              {/* Search Bar */}
               <div className="fs-search-bar">
                 <i className="fas fa-search"></i>
                 <input type="text" placeholder="Search..." />
               </div>
-              <Link to="#"><i className="far fa-user"></i></Link>
-              <Link to="#"><i className="far fa-heart"></i></Link>
-              <Link onClick={() => openCart()}>
+
+              {/* User Dropdown */}
+              <div className="fs-nav-item">
+                <Link to="#" className="fs-main-link">
+                  <i className="far fa-user"></i>
+                </Link>
+
+                {/* Dropdown Menu */}
+                <div className="fs-dropdown-menu">
+                  {user ? (
+                    <>
+                      <Link to="/dashboard" className="fs-dropdown-link">
+                        <i className="fas fa-user-circle"></i> My Account
+                      </Link>
+                      <Link to="/orders" className="fs-dropdown-link">
+                        <i className="fas fa-box-open"></i> My Orders
+                      </Link>
+                      <Link to="/wishlist" className="fs-dropdown-link">
+                        <i className="fas fa-heart"></i> Wishlist
+                      </Link>
+                      <button
+                        onClick={handleLogout}
+                        className="fs-dropdown-link logout-btn"
+                      >
+                        <i className="fas fa-sign-out-alt"></i> Logout
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link to="/login" className="fs-dropdown-link">
+                        <i className="fas fa-sign-in-alt"></i> Login
+                      </Link>
+                      <Link to="/signup" className="fs-dropdown-link">
+                        <i className="fas fa-user-plus"></i> Sign Up
+                      </Link>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Cart */}
+              <Link onClick={() => openCart()} className="fs-cart-link">
                 <i className="fas fa-shopping-bag"></i>
                 <span className="fs-cart-count">0</span>
               </Link>

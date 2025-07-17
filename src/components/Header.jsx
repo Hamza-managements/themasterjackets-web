@@ -1,5 +1,5 @@
 import './Header.css';
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { openCart } from './Cart';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from './auth/AuthProvider';
@@ -12,6 +12,38 @@ export default function Header() {
     logout();
     navigate('/');
   };
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeSubmenu, setActiveSubmenu] = useState(null);
+  const navRef = useRef();
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(prev => !prev);
+  };
+
+  const handleMainLinkClick = (index, hasSubmenu, e) => {
+    if (window.innerWidth <= 992 && hasSubmenu) {
+      e.preventDefault();
+      setActiveSubmenu(prev => (prev === index ? null : index));
+    }
+  };
+
+  const handleDocumentClick = (e) => {
+    if (
+      navRef.current &&
+      !navRef.current.contains(e.target) &&
+      !e.target.closest('.fs-mobile-menu-btn')
+    ) {
+      setIsMobileMenuOpen(false);
+      setActiveSubmenu(null);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('click', handleDocumentClick);
+    return () => document.removeEventListener('click', handleDocumentClick);
+  }, []);
+  {console.log('Mobile open?', isMobileMenuOpen)}
+
   return (
     <>
       <header className="fs-header-container">
@@ -26,20 +58,20 @@ export default function Header() {
           </div>
 
           <div className="fs-main-header">
-            <button className="fs-mobile-menu-btn">
-              <i className="fas fa-bars"></i>
+            <button className="fs-mobile-menu-btn" onClick={toggleMobileMenu}>
+              <i className={`fas ${isMobileMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
             </button>
-
-            <Link to="/" className="fs-logo">TMJ</Link>
-
+            <Link to="/" ><img className="fs-logo" src='https://res.cloudinary.com/dekf5dyng/image/upload/v1752742536/official_tmj_logo_jygsft.png'></img></Link>
             <nav className="fs-nav-container">
-              <div className="fs-nav-links">
+              <nav ref={navRef} className={`fs-nav-links ${isMobileMenuOpen ? 'fs-mobile-active' : ''}`}>
                 <div className="fs-nav-item">
                   <Link to="#" className="fs-main-link">Best Seller</Link>
                 </div>
 
                 <div className="fs-nav-item">
-                  <Link to="/men" className="fs-main-link">
+                  <Link to="/men"
+                    className="fs-main-link"
+                    onClick={(e) => handleMainLinkClick(0, true, e)}>
                     Men <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i>
                   </Link>
                   {/* Mega menu for Men */}
@@ -68,7 +100,7 @@ export default function Header() {
                     </div>
                   </div>
                   {/* Mobile submenu (optional support) */}
-                  <div className="fs-mobile-submenu">
+                  <div className={`fs-mobile-submenu ${activeSubmenu === 0 ? 'fs-active' : ''}`}>
                     <div className="fs-dropdown-title">Categories</div>
                     <Link to="#">Dresses</Link>
                     <Link to="#">Tops & Tees</Link>
@@ -84,7 +116,7 @@ export default function Header() {
                 </div>
 
                 <div className="fs-nav-item">
-                  <Link to="/women" className="fs-main-link">
+                  <Link to="/women" className="fs-main-link" onClick={(e) => handleMainLinkClick(1, true, e)} >
                     Women <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i>
                   </Link>
                   <div className="fs-mega-menu fs-dropdown-menu">
@@ -104,7 +136,7 @@ export default function Header() {
                       <Link to="#">Cognac</Link>
                     </div>
                   </div>
-                  <div className="fs-mobile-submenu">
+                  <div className={`fs-mobile-submenu ${activeSubmenu === 1 ? 'fs-active' : ''}`}>
                     <div className="fs-dropdown-title">Categories</div>
                     <Link to="/product">Biker Leather Jackets</Link>
                     <Link to="#">Bomber Leather Jackets</Link>
@@ -185,7 +217,7 @@ export default function Header() {
                     <Link to="/return-exchange">Return & Exchange</Link>
                   </div>
                 </div>
-              </div>
+              </nav>
             </nav>
 
             <div className="fs-header-actions">
@@ -202,7 +234,7 @@ export default function Header() {
                 </Link>
 
                 {/* Dropdown Menu */}
-                <div className="fs-dropdown-menu">
+                <div className="fs-dropdown-menu-user">
                   {user ? (
                     <>
                       <Link to="/dashboard" className="fs-dropdown-link">
@@ -223,10 +255,10 @@ export default function Header() {
                     </>
                   ) : (
                     <>
-                      <Link to="/login" className="fs-dropdown-link">
+                      <Link to="/login" className="fs-dropdown-link-user">
                         <i className="fas fa-sign-in-alt"></i> Login
                       </Link>
-                      <Link to="/signup" className="fs-dropdown-link">
+                      <Link to="/signup" className="fs-dropdown-link-user">
                         <i className="fas fa-user-plus"></i> Sign Up
                       </Link>
                     </>

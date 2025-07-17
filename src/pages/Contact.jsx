@@ -54,8 +54,6 @@ const ContactForm = () => {
 
   return (
     <>
-    <Header />
-    <CartSidebar />
     <div className="container-2">
       <div className="form-header">
         <h1>Contact Us</h1>
@@ -207,8 +205,6 @@ const ContactForm = () => {
         </div>
       </div>
     </div>
-          <Footer />
-    
     </>
   );
 };

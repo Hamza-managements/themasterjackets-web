@@ -1,8 +1,15 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../components/auth/AuthProvider';
 
+import './UserDashboard.css';
+
 const UserDashboard = () => {
+  useEffect(() => {
+          AOS.init();
+        }, []);
   const { user } = useContext(AuthContext);
 
   // Sample order data - replace with real data from your API
@@ -106,7 +113,7 @@ const UserDashboard = () => {
         </div>
 
         {/* Quick Links */}
-        <div className="dashboard-card quick-links">
+        {/* <div className="dashboard-card quick-links">
           <h2>Quick Actions</h2>
           <div className="links-grid">
             <Link to="/wishlist" className="quick-link">
@@ -126,7 +133,7 @@ const UserDashboard = () => {
               <span>Account Settings</span>
             </Link>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

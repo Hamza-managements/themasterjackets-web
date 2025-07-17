@@ -14,8 +14,6 @@ export default function AboutPage() {
 
   return (
     <>
-      <Header />
-      <CartSidebar />
       <div className="about-hero">
         <div className="about-container">
           <h1 className='about-h'>Our Story</h1>
@@ -132,9 +130,6 @@ export default function AboutPage() {
           ))}
         </div>
       </section>
-
-      {/* Footer */}
-      <Footer />
     </>
   );
 }

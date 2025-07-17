@@ -56,13 +56,8 @@
 }
 
 .fs-logo {
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--dark-brown);
-    font-family: 'Nickson', serif;
-    text-decoration: none;
-    position: relative;
-    z-index: 1001;
+    width: 180px;
+    height: auto;
 }
 
 
@@ -125,14 +120,28 @@
     transition: all 0.3s ease;
     z-index: 100;
 }
+.fs-dropdown-menu-user {
+    position: absolute;
+    top: 100%;
+    right: 100%;
+    background: rgb(248, 247, 247);
+    width: 220px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    padding: 15px 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 100;
+}
 
-.fs-nav-item:hover .fs-dropdown-menu {
+.fs-nav-item:hover .fs-dropdown-menu , .fs-nav-item:hover .fs-dropdown-menu-user {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
 }
 
-.fs-dropdown-menu a {
+.fs-dropdown-menu a , .fs-dropdown-menu-user a {
     display: block;
     padding: 8px 20px;
     color: var(--black);
@@ -141,9 +150,8 @@
     transition: all 0.2s ease;
 }
 
-.fs-dropdown-menu a:hover {
+.fs-dropdown-menu a:hover , .fs-dropdown-menu-user a:hover {
     color: var(--tan);
-    background: rgba(232, 62, 140, 0.05);
     padding-left: 25px;
 }
 
@@ -393,7 +401,7 @@
 
     .fs-logo {
         order: 1;
-        font-size: 24px;
+        width: 200px;
     }
 
     .fs-mobile-menu-btn {

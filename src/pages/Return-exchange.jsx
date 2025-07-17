@@ -9,8 +9,6 @@ import { Link } from 'react-router-dom';
 const ReturnPolicy = () => {
   return (
     <>
-      <Header />
-      <CartSidebar />
       <div className="return-policy-page">
         <div className="policy-header">
           <div className="container">
@@ -122,8 +120,6 @@ const ReturnPolicy = () => {
           </section>
         </div>
       </div>
-      <Footer />
-
     </>
   );
 };

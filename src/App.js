@@ -1,6 +1,5 @@
 // import logo from './logo.svg';
 // import './App.css';
-
 // function App() {
 //   return (
 //     <div className="App">
@@ -21,7 +20,6 @@
 //     </div>
 //   );
 // }
-
 // export default App;
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
@@ -71,9 +69,9 @@ function App() {
             <Route 
               path="/dashboard" 
               element={
-                <PrivateRoute>
+                // <PrivateRoute>
                   <UserDashboard />
-                </PrivateRoute>
+                /* </PrivateRoute> */
               } 
             />
           </Route>
@@ -88,27 +86,5 @@ function App() {
 }
 
 export default App;
-// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-// import Home from './pages/Home';
-// import AboutPage from './components/About';
-// import CheckoutPage from './pages/CheckoutPage';
-// import ReturnPolicy from './pages/Return-exchange';
-// import ContactForm from './pages/Contact';
-
-// function App() {
-//   return (
-//     <Router>
-//       <Routes>
-//         <Route path="/" element={<Home />} />
-//         <Route path="/about" element={<AboutPage />} />
-//         <Route path="/checkout" element={<CheckoutPage />} />
-//         <Route path="/return-exchange" element={<ReturnPolicy />} />
-//         <Route path="/contact-us" element={<ContactForm />} />
-//       </Routes>
-//     </Router>
-//   );
-// }
-
-// export default App;
 
 

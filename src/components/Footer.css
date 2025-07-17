@@ -42,28 +42,27 @@
        }
 
 
-       .footer-links {
+       .footer-links-main {
            display: flex;
            flex-direction: column !important;
            list-style: none;
            padding: 0;
            gap: 0.5rem;
-           /* optional spacing between links */
        }
 
 
-       .footer-links li {
+       .footer-links-main li {
            margin-bottom: 0.8rem;
        }
 
-       .footer-links a {
+       .footer-links-main a {
            color: var(--beige);
            text-decoration: none;
            transition: all 0.3s ease;
            font-size: 0.95rem;
        }
 
-       .footer-links a:hover {
+       .footer-links-main a:hover {
            color: var(--gold);
            text-decoration: none;
            padding-left: 5px;

@@ -47,8 +47,6 @@ export default function Home() {
 
   return (
     <>
-      <Header />
-      <CartSidebar />
       <main>
         <Hero />
         <CategoriesSection />
@@ -59,7 +57,6 @@ export default function Home() {
         <BlogSlider />
 
       </main>
-      <Footer />
     </>
   );
 }

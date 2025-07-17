@@ -597,16 +597,16 @@ body {
   text-align: center;
 }
 
-.footer-links {
+.footer-links-checkout {
   display: flex;
-  flex-direction: row !important;
+  flex-direction: row;
   justify-content: center;
   flex-wrap: wrap;
   gap: 15px;
   margin-bottom: 15px;
 }
 
-.footer-links button {
+.footer-links-checkout button {
   background: none;
   border: none;
   color: #427fb6;
@@ -615,7 +615,7 @@ body {
   padding: 5px;
 }
 
-.footer-links button:hover {
+.footer-links-checkout button:hover {
   text-decoration: underline;
 }
 
@@ -666,7 +666,7 @@ body {
 }
 
 @media (max-width: 600px) {
-  .footer-links {
+  .footer-links-checkout {
     flex-direction: column;
     gap: 10px;
   }

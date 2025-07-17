@@ -63,9 +63,10 @@ export default function Footer() {
             </div>
           </div>
 
+
             <div className="col-lg-3 col-md-6 footer-col">
               <h5 className="footer-heading">Shop</h5>
-              <ul className="footer-links">
+              <ul className="footer-links-main">
                 <li><Link to="/product">Biker Jacket</Link></li>
                 <li><Link to="/product">New Arrivals</Link></li>
                 <li><Link to="/product">Best Sellers</Link></li>
@@ -76,7 +77,7 @@ export default function Footer() {
             {/* Column 2 */}
             <div className="col-lg-3 col-md-6 footer-col">
               <h5 className="footer-heading">Information</h5>
-              <ul className="footer-links">
+              <ul className="footer-links-main">
                 <li><Link to="/about">About Us</Link></li>
                 <li><Link to="/contact-us">Contact Us</Link></li>
                 <li><Link to="/return-exchange">Return & Policy</Link></li>

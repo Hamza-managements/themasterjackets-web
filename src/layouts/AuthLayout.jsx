@@ -28,7 +28,7 @@ const AuthLayout = () => {
               <img 
                 src="https://res.cloudinary.com/dekf5dyng/image/upload/v1752664923/TMJ_LOGO_02_tkbsuw.jpg"
                 alt="Master Jackets"
-                style={{ height: '180px' }}
+                style={{ height: '180px', width : '180px'}}
               />
             </Link>
           </div>

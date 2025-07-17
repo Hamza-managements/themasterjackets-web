@@ -688,7 +688,7 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
         </div>
       </div>
       <footer className="simple-footer">
-        <div className="footer-links">
+        <div className="footer-links-checkout">
           <button onClick={() => openModal('returns')}>Return Policy</button>
           <button onClick={() => openModal('privacy')}>Privacy Policy</button>
           <button onClick={() => openModal('terms')}>Terms of Service</button>

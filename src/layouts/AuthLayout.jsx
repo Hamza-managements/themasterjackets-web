@@ -1,49 +1,28 @@
 import { Outlet, Link } from 'react-router-dom';
+import './AuthLayout.css';
 
 const AuthLayout = () => {
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      backgroundColor: '#f5f5f5'
-    }}>
-      <div style={{
-        flex: 1,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '20px'
-      }}>
-        <div style={{
-          width: '100%',
-          maxWidth: '450px',
-          background: 'white',
-          borderRadius: '8px',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-          padding: '40px'
-        }}>
-          <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+    <div className="auth-page">
+      <div className="auth-container">
+        <div className="auth-box">
+          <div className="logo-wrap">
             <Link to="/">
-              <img 
-                src="https://res.cloudinary.com/dekf5dyng/image/upload/v1752664923/TMJ_LOGO_02_tkbsuw.jpg"
+              <img
+                src="https://res.cloudinary.com/dekf5dyng/image/upload/v1752742536/official_tmj_logo_jygsft.png"
                 alt="Master Jackets"
-                style={{ height: '180px', width : '180px'}}
+                className="logo-img"
               />
             </Link>
           </div>
 
-          <Outlet /> {/* ✅ Correct: Only use Outlet here */}
+          <Outlet />
         </div>
       </div>
 
-      <footer style={{
-        textAlign: 'center',
-        padding: '20px',
-        color: '#666',
-        fontSize: '14px'
-      }}>
-        © {new Date().getFullYear()} Master Jackets. All rights reserved.adsadadasd
+      <footer className="auth-footer">
+        © {new Date().getFullYear()}{' '}
+        <span className="footer-brand">The Master Jackets</span>. All rights reserved.
       </footer>
     </div>
   );

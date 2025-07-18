@@ -51,28 +51,29 @@ function App() {
           </Route>
 
           {/* Auth routes with auth layout */}
-          <Route element={<AuthLayout />}>
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
+          <Route path="auth" element={<AuthLayout />}>
+            <Route path="login" element={<Login />} />
+            <Route path="signup" element={<SignUp />} />
           </Route>
+
 
           {/* Protected routes with main layout */}
           <Route element={<MainLayout />}>
-            <Route 
-              path="/checkout" 
+            <Route
+              path="/checkout"
               element={
                 <PrivateRoute>
                   <CheckoutPage />
                 </PrivateRoute>
-              } 
+              }
             />
-            <Route 
-              path="/dashboard" 
+            <Route
+              path="/dashboard"
               element={
                 // <PrivateRoute>
-                  <UserDashboard />
+                <UserDashboard />
                 /* </PrivateRoute> */
-              } 
+              }
             />
           </Route>
 

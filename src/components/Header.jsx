@@ -255,10 +255,10 @@ export default function Header() {
                     </>
                   ) : (
                     <>
-                      <Link to="/login" className="fs-dropdown-link-user">
+                      <Link to="/auth/login" className="fs-dropdown-link-user">
                         <i className="fas fa-sign-in-alt"></i> Login
                       </Link>
-                      <Link to="/signup" className="fs-dropdown-link-user">
+                      <Link to="/auth/signup" className="fs-dropdown-link-user">
                         <i className="fas fa-user-plus"></i> Sign Up
                       </Link>
                     </>

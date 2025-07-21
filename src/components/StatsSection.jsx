@@ -8,19 +8,19 @@ export default function StatsSection() {
       icon: 'fa-users',
       title: '120,000+ Customers',
       description: 'Trusted by loyal fashion-forward customers worldwide.',
-      delay: 0
+      delay: 500
     },
     {
       icon: 'fa-box',
       title: '150,000+ Orders',
       description: 'Delivered with premium care and quality assurance.',
-      delay: 200
+      delay: 600
     },
     {
       icon: 'fa-star',
       title: '6,500+ 5-Star Reviews',
       description: 'Loved by real users for craftsmanship and durability.',
-      delay: 400
+      delay: 900
     }
   ];
 

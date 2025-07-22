@@ -1,7 +1,4 @@
 import React, { useEffect } from 'react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import CartSidebar from '../components/Cart';
 import Hero from '../components/Hero';
 import CategoriesSection from '../components/CategoriesSection';
 import productsData from '../data/products.json';
@@ -55,7 +52,6 @@ export default function Home() {
         <DualHeroSection />
         <CustomerGallery />
         <BlogSlider />
-
       </main>
     </>
   );

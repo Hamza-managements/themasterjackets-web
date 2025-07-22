@@ -60,13 +60,22 @@ h2 {
     margin-bottom: 1rem;
 }
 
-.hero-btn {
-    background-color: var(--tan);
-    border: none;
-    color: white;
+.hero-btnn {
+  display: inline-block;
+  background-color: var(--tan);
+  border: none;
+  color: white;
+  text-decoration: none;
+  padding: 12px 26px;
+  border-radius: 3px;
+  font-size: 16px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: background-color 0.3s ease;
 }
 
-.hero-btn:hover {
+.hero-btnn:hover {
     background-color: var(--dark-brown);
     color: var(--gold);
 }
@@ -146,7 +155,7 @@ h2 {
 
 /* Ensure the image side has height on mobile */
 .rj-banner-2 {
-    background-image: url('https://res.cloudinary.com/dekf5dyng/image/upload/v1749721393/rj-banner_si9np8.jpg');
+    background-image: url('https://res.cloudinary.com/dekf5dyng/image/upload/v1753168538/Leather-Being-Made_ihpcbd.jpg');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;

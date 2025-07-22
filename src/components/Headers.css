@@ -1,4 +1,7 @@
 /* Base Styles */
+body {
+  margin: 0;
+}
 .fs-header-container {
   position: sticky;
   top: 0;

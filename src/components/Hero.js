@@ -9,7 +9,7 @@ export default function Hero() {
       <div className="hero-content" data-aos="fade-up">
         <h1>Nothing Lasts Like Leather</h1>
         <p className="lead">Timeless comfort, rugged elegance. Designed to last a lifetime.</p>
-        <Link to="/products" className="btn btn-gold btn-lg mt-3 hero-btn">
+        <Link to="/products" className="hero-btnn">
           View Collection
         </Link>
       </div>

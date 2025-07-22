@@ -18,7 +18,7 @@
 .auth-header h1 {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: #A06D33;
   margin-bottom: 0.5rem;
 }
 
@@ -50,13 +50,12 @@
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
 
 .form-group label {
@@ -76,7 +75,8 @@
 
 .form-group input:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: #A06D33
+;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
@@ -133,7 +133,8 @@
 .remember-me input {
   width: 1rem;
   height: 1rem;
-  accent-color: #3b82f6;
+  accent-color: #A06D33
+;
 }
 
 .remember-me label {
@@ -143,7 +144,8 @@
 }
 
 .forgot-password {
-  color: #3b82f6;
+  color: #A06D33
+;
   text-decoration: none;
   font-weight: 500;
 }
@@ -205,7 +207,8 @@
 }
 
 .auth-footer a {
-  color: #3b82f6;
+  color: #A06D33
+;
   text-decoration: none;
   font-weight: 500;
 }
@@ -214,64 +217,7 @@
   text-decoration: underline;
 }
 
-/* Social Login */
-.social-login {
-  margin-top: 1.5rem;
-}
 
-.social-login p {
-  position: relative;
-  margin: 1.5rem 0;
-  text-align: center;
-  color: #9ca3af;
-  font-size: 0.875rem;
-}
-
-.social-login p::before,
-.social-login p::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  width: 30%;
-  height: 1px;
-  background-color: #e5e7eb;
-}
-
-.social-login p::before {
-  left: 0;
-}
-
-.social-login p::after {
-  right: 0;
-}
-
-.social-icons {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-}
-
-.social-button {
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 50%;
-  border: 1px solid #e5e7eb;
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.social-button:hover {
-  background-color: #f9fafb;
-}
-
-.social-icon {
-  width: 1.25rem;
-  height: 1.25rem;
-}
 
 /* Responsive Design */
 @media (max-width: 480px) {

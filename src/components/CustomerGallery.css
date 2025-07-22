@@ -1,4 +1,3 @@
-/* Customer Gallery Styles */
 .customer-gallery-section {
     padding: 0 2rem;
     padding-top: 4rem;
@@ -118,10 +117,10 @@
     background-color: #333;
 }
 
-/* Responsive Styles */
 @media (max-width: 992px) {
     .customer-gallery-item {
-        min-width: calc(50% - 20px);
+        min-width: 250px;
+        height: 350px;
     }
 }
 
@@ -136,3 +135,4 @@
         height: 30px;
     }
 }
+

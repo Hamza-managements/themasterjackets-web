@@ -213,7 +213,7 @@ body {
 
 .success-icon {
   font-size: 60px;
-  color: var(--success-color);
+  color: darkgreen;
   margin-bottom: 20px;
 }
 

@@ -56,8 +56,11 @@ h2 {
 }
 
 .hero-content h1 {
-    font-size: 3.5rem;
+    font-size: 3.1rem;
+    font-weight: 700;
     margin-bottom: 1rem;
+    line-height: 1.2;
+    
 }
 
 .hero-btnn {
@@ -68,7 +71,7 @@ h2 {
   text-decoration: none;
   padding: 12px 26px;
   border-radius: 3px;
-  font-size: 16px;
+  font-size: 1.1rem;
   cursor: pointer;
   letter-spacing: 0.5px;
   font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;

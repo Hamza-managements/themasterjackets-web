@@ -22,7 +22,7 @@ const AuthLayout = () => {
 
       <footer className="auth-footer">
         © {new Date().getFullYear()}{' '}
-        <span className="footer-brand">The Master Jackets</span>. All rights reserved.
+        <Link to="/" className="footer-brand">The Master Jackets</Link>. All rights reserved.
       </footer>
     </div>
   );

@@ -33,8 +33,10 @@ import ContactForm from './pages/Contact';
 import Login from './components/auth/Login';
 import SignUp from './components/auth/SignUp';
 import UserDashboard from './pages/UserDashboard';
+import AdminDashboard from './pages/AdminDashboard';
 import AuthLayout from './layouts/AuthLayout';
 import MainLayout from './layouts/MainLayout';
+
 // import NotFound from './pages/NotFound'; // Uncomment when ready
 
 function App() {
@@ -72,7 +74,16 @@ function App() {
               element={
                 // <PrivateRoute>
                 <UserDashboard />
+                
                 /* </PrivateRoute> */
+              }
+            />
+            <Route
+              path="/admin-dashboard"
+              element={
+                // <PrivateRoute>
+                  <AdminDashboard />
+                // </PrivateRoute>
               }
             />
           </Route>

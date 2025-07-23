@@ -1,0 +1,494 @@
+import React, { useState, useEffect } from 'react';
+import "./AdminDashboard.css"; // Assuming you have a CSS file for styles
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import {
+    Chart as ChartJS, CategoryScale,
+    LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement
+} from 'chart.js';
+import { Bar, Line, Pie } from 'react-chartjs-2';
+import { FiHome, FiUsers, FiSettings, FiPieChart, FiShoppingCart, FiCalendar, FiMail, FiBell, FiMenu, FiX, FiSun, FiMoon } from 'react-icons/fi';
+import useDarkMode from '../components/DarkMode';
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement);
+
+const AdminDashboard = () => {
+    const [sidebarOpen, setSidebarOpen] = useState(true);
+    // const [darkMode, setDarkMode] = useDarkMode();
+    const [mobileView, setMobileView] = useState(false);
+    const [activeMenu, setActiveMenu] = useState('dashboard');
+    const [notificationsOpen, setNotificationsOpen] = useState(false);
+    const [profileOpen, setProfileOpen] = useState(false);
+
+    const [darkMode, setDarkMode] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('darkMode');
+            if (saved !== null) return JSON.parse(saved);
+            return window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+        return false;
+    });
+    // Check screen size on load and resize
+    useEffect(() => {
+        AOS.init();
+        const handleResize = () => {
+            setMobileView(window.innerWidth < 768);
+            if (window.innerWidth < 768) {
+                setSidebarOpen(false);
+            } else {
+                setSidebarOpen(true);
+            }
+        };
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    // Toggle dark mode
+    // useEffect(() => {
+    //     if (darkMode) {
+    //         console.log('Dark mode enabled');
+    //         document.documentElement.classList.add('dark');
+    //     } else {
+    //         document.documentElement.classList.remove('dark');
+    //     }
+    // }, [darkMode]);
+    useEffect(() => {
+        const html = document.documentElement;
+        if (darkMode) {
+            html.classList.add('dark');
+            localStorage.setItem('darkMode', 'true');
+        } else {
+            html.classList.remove('dark');
+            localStorage.setItem('darkMode', 'false');
+        }
+    }, [darkMode]);
+
+    // Sample data for charts
+    const salesData = {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [
+            {
+                label: 'Sales 2023',
+                data: [65, 59, 80, 81, 56, 55],
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    const userGrowthData = {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [
+            {
+                label: 'New Users',
+                data: [12, 19, 3, 5, 2, 3],
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    const revenueSourcesData = {
+        labels: ['Products', 'Services', 'Subscriptions'],
+        datasets: [
+            {
+                data: [300, 50, 100],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 206, 86, 0.7)',
+                ],
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    // Sample recent orders
+    const recentOrders = [
+        { id: 1, customer: 'John Doe', product: 'Premium Plan', amount: '$99.00', status: 'Completed' },
+        { id: 2, customer: 'Jane Smith', product: 'Basic Plan', amount: '$29.00', status: 'Pending' },
+        { id: 3, customer: 'Robert Johnson', product: 'Add-on Service', amount: '$49.00', status: 'Completed' },
+        { id: 4, customer: 'Emily Davis', product: 'Premium Plan', amount: '$99.00', status: 'Failed' },
+        { id: 5, customer: 'Michael Brown', product: 'Custom Package', amount: '$199.00', status: 'Processing' },
+    ];
+
+    // Stats cards data
+    const stats = [
+        { title: 'Total Revenue', value: '$12,345', change: '+12%', icon: <FiPieChart /> },
+        { title: 'New Users', value: '1,234', change: '+7%', icon: <FiUsers /> },
+        { title: 'Pending Orders', value: '56', change: '-3%', icon: <FiShoppingCart /> },
+        { title: 'Support Tickets', value: '23', change: '+5%', icon: <FiMail /> },
+    ];
+
+    return (
+        <div className={`flex h-screen bg-gray-100 ${darkMode ? 'dark bg-gray-800' : ''}`}>
+            {/* Sidebar */}
+            <div
+                className={`${sidebarOpen ? 'w-64' : 'w-20'} ${darkMode ? 'dark bg-gray-800' : 'bg-white transition-all duration-300'} shadow-md fixed md:relative z-10`}
+            >
+                <div className={`p-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700 ${darkMode ? 'dark bg-gray-800' : ''}`}>
+                    {sidebarOpen ? (
+                        <h1 className="text-xl font-bold text-gray-800 dark:text-white">AdminPanel</h1>
+                    ) : (
+                        <h1 className="text-xl font-bold text-gray-800 dark:text-white">AP</h1>
+                    )}
+                    <button
+                        onClick={() => setSidebarOpen(!sidebarOpen)}
+                        className={`p-1 rounded-lg ${darkMode ? 'dark hover:bg-gray-700 text-white' : 'hover:bg-gray-100'}`}
+                    >
+                        {sidebarOpen ? <FiX size={20} /> : <FiMenu size={20} />}
+                    </button>
+                </div>
+
+                <nav className="mt-6">
+                    <NavItem
+                        icon={<FiHome />}
+                        text="Dashboard"
+                        active={activeMenu === 'dashboard'}
+                        expanded={sidebarOpen}
+                        onClick={() => setActiveMenu('dashboard')}
+                    />
+                    <NavItem
+                        icon={<FiUsers />}
+                        text="Users"
+                        active={activeMenu === 'users'}
+                        expanded={sidebarOpen}
+                        onClick={() => setActiveMenu('users')}
+                    />
+                    <NavItem
+                        icon={<FiShoppingCart />}
+                        text="Products"
+                        active={activeMenu === 'products'}
+                        expanded={sidebarOpen}
+                        onClick={() => setActiveMenu('products')}
+                    />
+                    <NavItem
+                        icon={<FiCalendar />}
+                        text="Calendar"
+                        active={activeMenu === 'calendar'}
+                        expanded={sidebarOpen}
+                        onClick={() => setActiveMenu('calendar')}
+                    />
+                    <NavItem
+                        icon={<FiMail />}
+                        text="Messages"
+                        active={activeMenu === 'messages'}
+                        expanded={sidebarOpen}
+                        onClick={() => setActiveMenu('messages')}
+                    />
+                    <NavItem
+                        icon={<FiSettings />}
+                        text="Settings"
+                        active={activeMenu === 'settings'}
+                        expanded={sidebarOpen}
+                        onClick={() => setActiveMenu('settings')}
+                    />
+                </nav>
+            </div>
+
+            {/* Main Content */}
+            <div className="flex-1 overflow-auto">
+                {/* Header */}
+                <header className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} shadow-sm p-4 flex justify-between items-center sticky top-0 z-10`}>
+                    <div className="flex items-center">
+                        {mobileView && (
+                            <button
+                                onClick={() => setSidebarOpen(!sidebarOpen)}
+                                className="p-2 mr-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+                            >
+                                <FiMenu size={20} />
+                            </button>
+                        )}
+                        <h2 className="text-xl font-semibold text-gray-800 dark:text-white capitalize">
+                            {activeMenu}
+                        </h2>
+                    </div>
+
+                    <div className="flex items-center space-x-4">
+                        <button
+                            onClick={() => setDarkMode(!darkMode)}
+                            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300"
+                            aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+                        >
+                            {darkMode ? (
+                                <FiSun size={20} className="text-yellow-400" />
+                            ) : (
+                                <FiMoon size={20} className="text-gray-600 dark:text-gray-300" />
+                            )}
+                        </button>
+
+                        <div className="relative">
+                            <button
+                                onClick={() => {
+                                    setNotificationsOpen(!notificationsOpen);
+                                    setProfileOpen(false);
+                                }}
+                                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 relative"
+                            >
+                                <FiBell size={20} />
+                                <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+                            </button>
+
+                            {notificationsOpen && (
+                                <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-2 z-20">
+                                    <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+                                        <h3 className="font-medium text-gray-800 dark:text-white">Notifications</h3>
+                                    </div>
+                                    <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                                        {[1, 2, 3].map((item) => (
+                                            <div key={item} className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                                <p className="text-sm text-gray-600 dark:text-gray-300">
+                                                    New order received #{1000 + item}
+                                                </p>
+                                                <p className="text-xs text-gray-500 mt-1">2 hours ago</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="px-4 py-2 text-center text-sm text-blue-600 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                        View all notifications
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="relative">
+                            <button
+                                onClick={() => {
+                                    setProfileOpen(!profileOpen);
+                                    setNotificationsOpen(false);
+                                }}
+                                className="flex items-center space-x-2 focus:outline-none"
+                            >
+                                <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                                    JD
+                                </div>
+                                {sidebarOpen && (
+                                    <span className="text-gray-700 dark:text-white">John Doe</span>
+                                )}
+                            </button>
+
+                            {profileOpen && (
+                                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-1 z-20">
+                                    <a
+                                        href="#"
+                                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                    >
+                                        Your Profile
+                                    </a>
+                                    <a
+                                        href="#"
+                                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                    >
+                                        Settings
+                                    </a>
+                                    <a
+                                        href="#"
+                                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                    >
+                                        Sign out
+                                    </a>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </header>
+
+                {/* Dashboard Content */}
+                <main className={`p-4 ${darkMode ? 'dark bg-gray-800' : 'bg-white'}`}>
+                    {activeMenu === 'dashboard' && (
+                        <>
+                            {/* Stats Cards */}
+                            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 ${darkMode ? 'dark bg-gray-800' : 'bg-white'}`}>
+                                {stats.map((stat, index) => (
+                                    <StatCard
+                                        key={index}
+                                        title={stat.title}
+                                        value={stat.value}
+                                        change={stat.change}
+                                        icon={stat.icon}
+                                        darkMode={darkMode}
+                                    />
+                                ))}
+                            </div>
+
+                            {/* Charts */}
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                                <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm lg:col-span-2">
+                                    <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-4">
+                                        Sales Overview
+                                    </h3>
+                                    <Line data={salesData} />
+                                </div>
+
+                                <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                                    <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-4">
+                                        Revenue Sources
+                                    </h3>
+                                    <Pie data={revenueSourcesData} />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-6 mb-6">
+                                <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                                    <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-4">
+                                        User Growth
+                                    </h3>
+                                    <Bar data={userGrowthData} />
+                                </div>
+                            </div>
+
+                            {/* Recent Orders */}
+                            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm overflow-x-auto">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-lg font-medium text-gray-800 dark:text-white">
+                                        Recent Orders
+                                    </h3>
+                                    <button className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                                        View All
+                                    </button>
+                                </div>
+                                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                    <thead className="bg-gray-50 dark:bg-gray-700">
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                Order ID
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                Customer
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                Product
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                Amount
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                Status
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                        {recentOrders.map((order) => (
+                                            <tr key={order.id}>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                                                    #{order.id}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                                                    {order.customer}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                                                    {order.product}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                                                    {order.amount}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <span
+                                                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${order.status === 'Completed'
+                                                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                                            : order.status === 'Pending'
+                                                                ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                                                                : order.status === 'Processing'
+                                                                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                                                                    : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                                                            }`}
+                                                    >
+                                                        {order.status}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </>
+                    )}
+
+                    {activeMenu === 'users' && (
+                        <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
+                            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Users Management</h2>
+                            <p className="text-gray-600 dark:text-gray-300">Users content goes here...</p>
+                        </div>
+                    )}
+
+                    {activeMenu === 'products' && (
+                        <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
+                            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Products Management</h2>
+                            <p className="text-gray-600 dark:text-gray-300">Products content goes here...</p>
+                        </div>
+                    )}
+
+                    {activeMenu === 'calendar' && (
+                        <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
+                            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Calendar </h2>
+                            <p className="text-gray-600 dark:text-gray-300">Calendar content goes here...</p>
+                        </div>
+                    )}
+                    
+                    {activeMenu === 'messages' && (
+                        <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
+                            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Messages </h2>
+                            <p className="text-gray-600 dark:text-gray-300">Messages content goes here...</p>
+                        </div>
+                    )}
+                    
+                    {activeMenu === 'settings' && (
+                        <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
+                            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Settings</h2>
+                            <p className="text-gray-600 dark:text-gray-300">Settings content goes here...</p>
+                        </div>
+                    )}
+                </main>
+            </div>
+        </div>
+    );
+};
+
+// NavItem Component
+const NavItem = ({ icon, text, active, expanded, onClick }) => {
+    return (
+        <div
+            onClick={onClick}
+            className={`flex items-center px-4 py-3 cursor-pointer ${active
+                ? 'bg-blue-50 text-blue-600 dark:bg-gray-700 dark:text-blue-400'
+                : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700'
+                }`}
+        >
+            <span className="text-lg">{icon}</span>
+            {expanded && <span className="ml-3">{text}</span>}
+        </div>
+    );
+};
+
+// StatCard Component
+const StatCard = ({ title, value, change, icon , darkMode }) => {
+    const isPositive = change.startsWith('+');
+
+    return (
+        <div className={`p-4 rounded-lg shadow-sm transition-colors duration-300 ${darkMode ? 'dark bg-gray-700' : 'bg-white'}`}>
+            <div className="flex justify-between">
+                <div>
+                    <p className={`text-sm font-medium text-gray-500 ${darkMode ? 'dark bg-gray-700' : 'bg-white'}`}>{title}</p>
+                    <p className={`text-2xl font-semibold text-gray-800 mt-1 ${darkMode ? 'text-white' : 'bg-white'}`}>{value}</p>
+                </div>
+                <div className="h-10 w-10 rounded-full bg-blue-50 dark:bg-gray-700 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                    {icon}
+                </div>
+            </div>
+            <div className="mt-4">
+                <span
+                    className={`inline-flex items-center text-sm font-medium ${isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                        }`}
+                >
+                    {change}
+                </span>
+                <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">vs last month</span>
+            </div>
+        </div>
+    );
+};
+
+export default AdminDashboard;

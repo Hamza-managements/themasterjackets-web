@@ -109,11 +109,11 @@ const AdminDashboard = () => {
 
     // Sample recent orders
     const recentOrders = [
-        { id: 1, customer: 'John Doe', product: 'Premium Plan', amount: '$99.00', status: 'Completed' },
-        { id: 2, customer: 'Jane Smith', product: 'Basic Plan', amount: '$29.00', status: 'Pending' },
-        { id: 3, customer: 'Robert Johnson', product: 'Add-on Service', amount: '$49.00', status: 'Completed' },
-        { id: 4, customer: 'Emily Davis', product: 'Premium Plan', amount: '$99.00', status: 'Failed' },
-        { id: 5, customer: 'Michael Brown', product: 'Custom Package', amount: '$199.00', status: 'Processing' },
+        { id: 1, customer: 'John Doe', product: 'Austin Leather Jacket', amount: '$99.00', status: 'Completed' },
+        { id: 2, customer: 'Jane Smith', product: 'David Brown Leather Jacket', amount: '$29.00', status: 'Pending' },
+        { id: 3, customer: 'Robert Johnson', product: 'Bristol Black Leather Jacket', amount: '$49.00', status: 'Completed' },
+        { id: 4, customer: 'Emily Davis', product: 'Cafe Racer Leather Jacket', amount: '$99.00', status: 'Failed' },
+        { id: 5, customer: 'Michael Brown', product: 'Negan Leather Jacket', amount: '$199.00', status: 'Processing' },
     ];
 
     // Stats cards data

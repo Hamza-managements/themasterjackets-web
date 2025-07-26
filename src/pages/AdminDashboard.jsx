@@ -7,8 +7,9 @@ import {
     LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement
 } from 'chart.js';
 import { Bar, Line, Pie } from 'react-chartjs-2';
-import { FiHome, FiUsers, FiSettings, FiPieChart, FiShoppingCart, FiCalendar, FiMail, FiBell, FiMenu, FiX, FiSun, FiMoon } from 'react-icons/fi';
+import { FiHome, FiUsers, FiSettings, FiPieChart, FiShoppingCart, FiCalendar, FiMail, FiBell, FiMenu, FiX, FiSun, FiMoon, FiRefreshCw } from 'react-icons/fi';
 import useDarkMode from '../components/DarkMode';
+import { RiRefund2Fill } from "react-icons/ri";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement);
 
 const AdminDashboard = () => {
@@ -117,10 +118,10 @@ const AdminDashboard = () => {
 
     // Stats cards data
     const stats = [
-        { title: 'Total Revenue', value: '$12,345', change: '+12%', icon: <FiPieChart /> },
-        { title: 'New Users', value: '1,234', change: '+7%', icon: <FiUsers /> },
-        { title: 'Pending Orders', value: '56', change: '-3%', icon: <FiShoppingCart /> },
-        { title: 'Support Tickets', value: '23', change: '+5%', icon: <FiMail /> },
+        { title: 'Sales', value: '$12,345', change: '+12%', icon: <FiPieChart /> },
+        { title: 'Open Orders', value: '126', change: '+7%', icon: <FiShoppingCart /> },
+        { title: 'Buyer Messages', value: '4', change: '+5%', icon: <FiMail /> },
+        { title: 'Returns and Refunds', value: '2', change: '-3%', icon: <RiRefund2Fill /> },
     ];
 
     return (
@@ -150,6 +151,13 @@ const AdminDashboard = () => {
                         active={activeMenu === 'dashboard'}
                         expanded={sidebarOpen}
                         onClick={() => setActiveMenu('dashboard')}
+                    />
+                    <NavItem
+                        icon={<FiShoppingCart />}
+                        text="Orders"
+                        active={activeMenu === 'orders'}
+                        expanded={sidebarOpen}
+                        onClick={() => setActiveMenu('orders')}
                     />
                     <NavItem
                         icon={<FiUsers />}
@@ -226,14 +234,14 @@ const AdminDashboard = () => {
                                     setNotificationsOpen(!notificationsOpen);
                                     setProfileOpen(false);
                                 }}
-                                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 relative"
+                                className={`p-2 rounded-lg ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} relative`}
                             >
                                 <FiBell size={20} />
                                 <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
                             </button>
 
                             {notificationsOpen && (
-                                <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-2 z-20">
+                                <div className={`absolute right-0 mt-2 w-72 rounded-lg shadow-lg py-2 z-20 ${darkMode ? 'bg-gray-800 ' : 'bg-white'}`} >
                                     <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
                                         <h3 className="font-medium text-gray-800 dark:text-white">Notifications</h3>
                                     </div>
@@ -266,27 +274,27 @@ const AdminDashboard = () => {
                                     JD
                                 </div>
                                 {sidebarOpen && (
-                                    <span className="text-gray-700 dark:text-white">John Doe</span>
+                                    <span className={`${darkMode ? 'text-white' : 'text-gray-700'}`}>John Doe</span>
                                 )}
                             </button>
 
                             {profileOpen && (
-                                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-1 z-20">
+                                <div className={`absolute right-0 mt-2 w-48 ${darkMode ? 'dark bg-gray-900' : 'bg-white'} rounded-lg shadow-lg py-1 z-20`}>
                                     <a
                                         href="#"
-                                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                        className={`block px-4 py-2 text-sm ${darkMode ? 'text-gray-300 hover:bg-gray-700' : ' text-gray-700 hover:bg-gray-100'}`}
                                     >
                                         Your Profile
                                     </a>
                                     <a
                                         href="#"
-                                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                        className={`block px-4 py-2 text-sm ${darkMode ? 'text-gray-300 hover:bg-gray-700' : ' text-gray-700 hover:bg-gray-100'}`}
                                     >
                                         Settings
                                     </a>
                                     <a
                                         href="#"
-                                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                        className={`block px-4 py-2 text-sm ${darkMode ? 'text-gray-300 hover:bg-gray-700' : ' text-gray-700 hover:bg-gray-100'}`}
                                     >
                                         Sign out
                                     </a>
@@ -314,6 +322,74 @@ const AdminDashboard = () => {
                                 ))}
                             </div>
 
+                            {/* Recent Orders */}
+                            <div className={`${darkMode ? 'dark bg-gray-900 text-white' : 'bg-white'} p-4 rounded-lg shadow mb-6 overflow-x-auto`}>
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-lg font-medium">
+                                        Recent Orders
+                                    </h3>
+                                    <button className="text-sm text-blue-500 hover:underline">
+                                        View All
+                                    </button>
+                                </div>
+
+                                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
+                                    <thead className={darkMode ? 'bg-gray-800' : 'bg-gray-50'}>
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
+                                                Order ID
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
+                                                Customer
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
+                                                Product
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
+                                                Amount
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
+                                                Status
+                                            </th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody className={`${darkMode ? 'bg-gray-900 divide-gray-700' : 'bg-white divide-gray-200'} divide-y`}>
+                                        {recentOrders.map((order) => (
+                                            <tr key={order.id}>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">
+                                                    #{order.id}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                                                    {order.customer}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">
+                                                    {order.product}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">
+                                                    {order.amount}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <span
+                                                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${order.status === 'Completed'
+                                                                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                                                : order.status === 'Pending'
+                                                                    ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                                                                    : order.status === 'Processing'
+                                                                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                                                                        : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                                                            }`}
+                                                    >
+                                                        {order.status}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+
                             {/* Charts */}
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                                 <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm lg:col-span-2">
@@ -340,70 +416,6 @@ const AdminDashboard = () => {
                                 </div>
                             </div>
 
-                            {/* Recent Orders */}
-                            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm overflow-x-auto">
-                                <div className="flex justify-between items-center mb-4">
-                                    <h3 className="text-lg font-medium text-gray-800 dark:text-white">
-                                        Recent Orders
-                                    </h3>
-                                    <button className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
-                                        View All
-                                    </button>
-                                </div>
-                                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                    <thead className="bg-gray-50 dark:bg-gray-700">
-                                        <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                Order ID
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                Customer
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                Product
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                Amount
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                Status
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                        {recentOrders.map((order) => (
-                                            <tr key={order.id}>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                                                    #{order.id}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                                                    {order.customer}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                                                    {order.product}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                                                    {order.amount}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span
-                                                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${order.status === 'Completed'
-                                                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                                            : order.status === 'Pending'
-                                                                ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                                                                : order.status === 'Processing'
-                                                                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                                                                    : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                                                            }`}
-                                                    >
-                                                        {order.status}
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
                         </>
                     )}
 
@@ -411,6 +423,12 @@ const AdminDashboard = () => {
                         <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
                             <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Users Management</h2>
                             <p className="text-gray-600 dark:text-gray-300">Users content goes here...</p>
+                        </div>
+                    )}
+                    {activeMenu === 'orders' && (
+                        <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
+                            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Orders Management</h2>
+                            <p className="text-gray-600 dark:text-gray-300">Orders content goes here...</p>
                         </div>
                     )}
 
@@ -427,14 +445,14 @@ const AdminDashboard = () => {
                             <p className="text-gray-600 dark:text-gray-300">Calendar content goes here...</p>
                         </div>
                     )}
-                    
+
                     {activeMenu === 'messages' && (
                         <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
                             <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Messages </h2>
                             <p className="text-gray-600 dark:text-gray-300">Messages content goes here...</p>
                         </div>
                     )}
-                    
+
                     {activeMenu === 'settings' && (
                         <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
                             <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Settings</h2>
@@ -464,7 +482,7 @@ const NavItem = ({ icon, text, active, expanded, onClick }) => {
 };
 
 // StatCard Component
-const StatCard = ({ title, value, change, icon , darkMode }) => {
+const StatCard = ({ title, value, change, icon, darkMode }) => {
     const isPositive = change.startsWith('+');
 
     return (
@@ -474,7 +492,7 @@ const StatCard = ({ title, value, change, icon , darkMode }) => {
                     <p className={`text-sm font-medium text-gray-500 ${darkMode ? 'dark bg-gray-700' : 'bg-white'}`}>{title}</p>
                     <p className={`text-2xl font-semibold text-gray-800 mt-1 ${darkMode ? 'text-white' : 'bg-white'}`}>{value}</p>
                 </div>
-                <div className="h-10 w-10 rounded-full bg-blue-50 dark:bg-gray-700 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                <div className="h-5 w-9 rounded-full bg-blue-50 dark:bg-gray-700 flex items-center justify-center text-blue-600 dark:text-blue-400">
                     {icon}
                 </div>
             </div>

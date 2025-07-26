@@ -21,7 +21,6 @@
 //   );
 // }
 // export default App;
-
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './components/auth/AuthProvider';
 import PrivateRoute from './components/auth/PrivateRoute';
@@ -36,6 +35,7 @@ import UserDashboard from './pages/UserDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import AuthLayout from './layouts/AuthLayout';
 import MainLayout from './layouts/MainLayout';
+import Api from './pages/Api';
 
 // import NotFound from './pages/NotFound'; // Uncomment when ready
 
@@ -60,7 +60,6 @@ function App() {
 
 
           {/* Protected routes with main layout */}
-          <Route element={<MainLayout />}>
             <Route
               path="/checkout"
               element={
@@ -69,6 +68,7 @@ function App() {
                 </PrivateRoute>
               }
             />
+                  <Route element={<MainLayout />}>
             <Route
               path="/dashboard"
               element={
@@ -78,6 +78,7 @@ function App() {
                 /* </PrivateRoute> */
               }
             />
+              </Route>
             <Route
               path="/admin-dashboard"
               element={
@@ -86,7 +87,15 @@ function App() {
                 // </PrivateRoute>
               }
             />
-          </Route>
+            <Route
+              path="/api-testing"
+              element={
+                // <PrivateRoute>
+                  <Api />
+                // </PrivateRoute>
+              }
+            />
+
 
           {/* Error handling - uncomment when ready */}
           {/* <Route path="/404" element={<NotFound />} /> */}

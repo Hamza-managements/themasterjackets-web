@@ -35,7 +35,7 @@ import UserDashboard from './pages/UserDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import AuthLayout from './layouts/AuthLayout';
 import MainLayout from './layouts/MainLayout';
-import Api from './pages/Api';
+import SignupForm from './pages/Api';
 
 // import NotFound from './pages/NotFound'; // Uncomment when ready
 
@@ -91,7 +91,7 @@ function App() {
               path="/api-testing"
               element={
                 // <PrivateRoute>
-                  <Api />
+                  <SignupForm />
                 // </PrivateRoute>
               }
             />

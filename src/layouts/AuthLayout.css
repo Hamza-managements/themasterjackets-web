@@ -18,10 +18,13 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   padding: 10px;
   box-sizing: border-box;
+  text-align: left;
+
 }
 
 .logo-wrap {
-  text-align: center;
+  display: flex;
+  justify-content: center;
 }
 
 .logo-img {

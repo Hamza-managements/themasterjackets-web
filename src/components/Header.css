@@ -141,7 +141,7 @@
     transform: translateY(0);
 }
 
-.fs-dropdown-menu a , .fs-dropdown-menu-user a {
+.fs-dropdown-menu a , .fs-dropdown-menu-user a , .fs-dropdown-link {
     display: block;
     padding: 8px 20px;
     color: var(--black);
@@ -150,10 +150,11 @@
     transition: all 0.2s ease;
 }
 
-.fs-dropdown-menu a:hover , .fs-dropdown-menu-user a:hover {
+.fs-dropdown-menu a:hover , .fs-dropdown-menu-user a:hover , .fs-dropdown-link:hover {
     color: var(--tan);
     padding-left: 25px;
 }
+
 
 .fs-dropdown-divider {
     height: 1px;

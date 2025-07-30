@@ -5,42 +5,28 @@ import { useNavigate } from 'react-router-dom';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+   const [user, setUser] = useState(null);
+    useEffect(() => {
+      const userName = localStorage.getItem('userName');
+      const userEmail = localStorage.getItem('userEmail');
+  
+      setUser({ userName, userEmail });
+    }, []);
+
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check for existing session on app load
-    const storedUser = localStorage.getItem('ecommerce_user');
+    const storedUser = JSON.parse(localStorage.getItem('user'));
     if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-        localStorage.removeItem('ecommerce_user');
-      }
+      setUser(storedUser);
     }
     setLoading(false);
   }, []);
 
-  const login = async (email, password) => {
-    try {
-      // Replace with your actual API call
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-
-      if (!response.ok) throw new Error('Login failed');
-
-      const userData = await response.json();
-      setUser(userData);
-      localStorage.setItem('ecommerce_user', JSON.stringify(userData));
-      return { success: true };
-    } catch (error) {
-      return { success: false, message: error.message };
-    }
+  const login = (userData) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const signup = async (userData) => {
@@ -67,9 +53,14 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('ecommerce_user');
-    navigate('/login');
+    localStorage.removeItem('user');
+    navigate('/auth/login');
   };
+  // const logout = () => {
+  //   setUser(null);
+  // localStorage.removeItem('userName');
+  // localStorage.removeItem('userEmail');
+  // };
 
   return (
     <AuthContext.Provider value={{ user, loading, login, signup, logout }}>

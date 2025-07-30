@@ -5,19 +5,21 @@ import './Signup.css';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    userName: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    contactNo: "",
+    role: "customer",
   });
 
   const [errors, setErrors] = useState({
-    firstName: '',
-    lastName: '',
+    userName: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    contactNo: "",
+    role: "customer",
   });
 
   const [passwordStrength, setPasswordStrength] = useState({
@@ -28,6 +30,8 @@ const Signup = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [message, setMessage] = useState("");
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,8 +52,7 @@ const Signup = () => {
     let error = '';
     
     switch (fieldName) {
-      case 'firstName':
-      case 'lastName':
+      case 'userName':
         if (!value.trim()) error = 'This field is required';
         else if (value.length < 2) error = 'Too short';
         break;
@@ -59,6 +62,11 @@ const Signup = () => {
         break;
       case 'confirmPassword':
         if (value !== formData.password) error = 'Passwords do not match';
+        break;
+      case 'contactNo':
+        if (!/^\d{10}$/.test(value)) {
+          error = 'contact number must be 10 digits';
+        }
         break;
       default:
         break;
@@ -113,7 +121,7 @@ const Signup = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Validate all fields
@@ -127,9 +135,39 @@ const Signup = () => {
 
     if (!hasErrors && !hasEmptyFields) {
       // Form is valid, proceed with submission
-      console.log('Form submitted:', formData);
-      setFormSubmitted(true);
-      // Here you would typically call an API
+      setMessage("Registering...");
+      try {
+        const response = await fetch(
+          "https://themasterjacketsbackend-production.up.railway.app/api/user/register",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          }
+        );
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          setFormData({
+            userName: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            contactNo: "",
+          });
+        console.log("Registration successful:", data);
+        console.log('Form submitted:', formData);
+        setFormSubmitted(true);
+      } else {
+        setMessage(`Error: ${data.message || "Registration failed."}`);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setMessage("Something went wrong. Please try again.");
+    }
     }
   };
 
@@ -141,9 +179,10 @@ const Signup = () => {
     return (
       <div className="signup-success">
         <div className="success-icon">✓</div>
-        <h2>Account Created Successfully!</h2>
+        <h2>{message}</h2>
         <p>Welcome to TMJ, {formData.firstName}!</p>
         <p>We've sent a confirmation email to {formData.email}.</p>
+        <Link to="/auth/login">Go to Login</Link>
       </div>
     );
   }
@@ -158,20 +197,20 @@ const Signup = () => {
 
         <form onSubmit={handleSubmit} noValidate>
           <div className="form-row">
-            <div className={`form-group ${errors.firstName ? 'has-error' : ''}`}>
-              <label htmlFor="firstName">First Name *</label>
+            <div className={`form-group ${errors.userName ? 'has-error' : ''}`}>
+              <label htmlFor="userName">User Name *</label>
               <input
                 type="text"
-                id="firstName"
-                name="firstName"
-                value={formData.firstName}
+                id="userName"
+                name="userName"
+                value={formData.userName}
                 onChange={handleChange}
-                onBlur={(e) => validateField('firstName', e.target.value)}
-                className={formData.firstName ? 'has-value' : ''}
+                onBlur={(e) => validateField('userName', e.target.value)}
+                className={formData.userName ? 'has-value' : ''}
               />
-              {errors.firstName && <span className="error-message">{errors.firstName}</span>}
+              {errors.userName && <span className="error-message">{errors.userName}</span>}
             </div>
-
+{/* 
             <div className={`form-group ${errors.lastName ? 'has-error' : ''}`}>
               <label htmlFor="lastName">Last Name *</label>
               <input
@@ -184,7 +223,7 @@ const Signup = () => {
                 className={formData.lastName ? 'has-value' : ''}
               />
               {errors.lastName && <span className="error-message">{errors.lastName}</span>}
-            </div>
+            </div> */}
           </div>
 
           <div className={`form-group ${errors.email ? 'has-error' : ''}`}>
@@ -253,6 +292,20 @@ const Signup = () => {
               className={formData.confirmPassword ? 'has-value' : ''}
             />
             {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
+          </div>
+
+          <div className={`form-group ${errors.contactNo ? 'has-error' : ''}`}>
+            <label htmlFor="contactNo">Contact Number (Optional)</label>
+            <input
+              type="number"
+              id="contactNo"
+              name="contactNo"
+              value={formData.contactNo}
+              onChange={handleChange}
+              onBlur={(e) => validateField('contactNo', e.target.value)}
+              className={formData.contactNo ? 'has-value' : ''}
+            />
+            {errors.contactNo && <span className="error-message">{errors.contactNo}</span>}
           </div>
 
           <div className="form-actions">

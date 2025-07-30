@@ -3,15 +3,10 @@ import React, { useContext, useState, useEffect, useRef } from 'react';
 import { openCart } from './Cart';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from './auth/AuthProvider';
-import { useAuth } from './auth/UseAuth';
 
 export default function Header() {
-  const { user, logout } = useAuth();
+  const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSubmenu, setActiveSubmenu] = useState(null);
   const navRef = useRef();
@@ -247,8 +242,8 @@ export default function Header() {
                         <i className="fas fa-heart"></i> Wishlist
                       </Link>
                       <button
-                        onClick={handleLogout}
-                        className="fs-dropdown-link logout-btn"
+                        onClick={logout}
+                        className="fs-dropdown-link"
                       >
                         <i className="fas fa-sign-out-alt"></i> Logout
                       </button>

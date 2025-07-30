@@ -1,19 +1,19 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from './UseAuth';
+// import { useAuth } from './UseAuth';
 import './Login.css'; 
+import { AuthContext } from './AuthProvider';
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    userEmail: '',
+    userPassword: '',
     rememberMe: false
   });
-
+  const { login } = useContext(AuthContext);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -32,40 +32,82 @@ const Login = () => {
   const validate = () => {
     const newErrors = {};
     
-    if (!formData.email) {
-      newErrors.email = 'Email is required';
-    } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email';
+    if (!formData.userEmail) {
+      newErrors.userEmail = 'Email is required';
+    } else if (!/^\S+@\S+\.\S+$/.test(formData.userEmail)) {
+      newErrors.userEmail = 'Please enter a valid email';
     }
     
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
+    if (!formData.userPassword) {
+      newErrors.userPassword = 'Password is required';
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validate()) return;
-    
-    setIsSubmitting(true);
-    
-    try {
-      const result = await login(formData.email, formData.password);
-      
-      if (result.success) {
-        navigate('/dashboard');
-      } else {
-        setErrors({ form: result.message });
-      }
-    } catch (error) {
-      setErrors({ form: 'An unexpected error occurred. Please try again.' });
-    } finally {
-      setIsSubmitting(false);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!validate()) return;
+
+  setIsSubmitting(true);
+
+  try {
+    console.log('Form Data:', formData);
+    const res = await fetch('https://themasterjacketsbackend-production.up.railway.app/api/user/login', {
+      method: 'POST',     
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userEmail: formData.userEmail,
+        userPassword: formData.userPassword,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.data.token) {
+      console.log('Login successful:', data , data.data.token);
+        const userObj = {
+        token: data.data.token,
+        userName: data.data.user.userName,
+        userEmail: data.data.user.email,
+      };
+      login(userObj);
+      navigate('/dashboard');
+    } else {
+      setErrors({ form: data.message || 'Invalid credentials' });
     }
-  };
+  } catch (error) {
+    console.error('Login error:', error);
+    setErrors({ form: 'An unexpected error occurred. Please try again.' });
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!validate()) return;
+    
+  //   setIsSubmitting(true);
+    
+  //   try {
+  //     const result = await login(formData.email, formData.password);
+      
+  //     if (result.success) {
+  //       navigate('/dashboard');
+  //     } else {
+  //       setErrors({ form: result.message });
+  //     }
+  //   } catch (error) {
+  //     setErrors({ form: 'An unexpected error occurred. Please try again.' });
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
 
   return (
       <div className="auth-container">
@@ -85,29 +127,29 @@ const Login = () => {
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label htmlFor="email">Email Address *</label>
+            <label htmlFor="userEmail">Email Address *</label>
             <input
-              id="email"
-              name="email"
+              id="userEmail"
+              name="userEmail"
               type="email"
-              value={formData.email}
+              value={formData.userEmail}
               onChange={handleChange}
-              className={errors.email ? 'error' : ''}
+              className={errors.userEmail ? 'error' : ''}
               placeholder="Enter your email"
             />
-            {errors.email && <span className="error-message">{errors.email}</span>}
+            {errors.userEmail && <span className="error-message">{errors.userEmail}</span>}
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Password *</label>
+            <label htmlFor="userPassword">Password *</label>
             <div className="password-input-container">
               <input
-                id="password"
-                name="password"
+                id="userPassword"
+                name="userPassword"
                 type={showPassword ? 'text' : 'password'}
-                value={formData.password}
+                value={formData.userPassword}
                 onChange={handleChange}
-                className={errors.password ? 'error' : ''}
+                className={errors.userPassword ? 'error' : ''}
                 placeholder="Enter your password"
               />
               <button 
@@ -131,7 +173,7 @@ const Login = () => {
                 </svg>
               </button>
             </div>
-            {errors.password && <span className="error-message">{errors.password}</span>}
+            {errors.userPassword && <span className="error-message">{errors.userPassword}</span>}
           </div>
 
           <div className="form-options">

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { Link } from 'react-router-dom';
@@ -38,7 +38,7 @@ const UserDashboard = () => {
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
-        <h1>Welcome back, {user?.firstName || 'Customer'}!</h1>
+        <h1>Welcome back, {user?.userName || 'Customer'}!</h1>
         <p>Here's what's happening with your account</p>
       </div>
 
@@ -50,17 +50,17 @@ const UserDashboard = () => {
             <div className="detail-item">
               <span className="detail-label">Name:</span>
               <span className="detail-value">
-                {user?.firstName} {user?.lastName}
+                {user?.userName}
               </span>
             </div>
             <div className="detail-item">
               <span className="detail-label">Email:</span>
-              <span className="detail-value">{user?.email}</span>
+              <span className="detail-value">{user?.userEmail}</span>
             </div>
-            <div className="detail-item">
+            {/* <div className="detail-item">
               <span className="detail-label">Member Since:</span>
               <span className="detail-value">May 2023</span>
-            </div>
+            </div> */}
           </div>
           <Link to="/account/settings" className="edit-btn">
             Edit Profile

@@ -227,6 +227,12 @@ body {
   color: var(--text-color);
 }
 
+.signup-success a{
+  color: var(--primary-dark);
+  text-decoration: none;
+  font-weight: 500;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 600px) {
   .signup-card {

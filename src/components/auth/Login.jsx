@@ -71,6 +71,8 @@ const handleSubmit = async (e) => {
       console.log('Login successful:', data , data.data.token);
         const userObj = {
         token: data.data.token,
+        uid: data.data.user._id,
+        contactNo : data.data.user.contactNo,
         userName: data.data.user.userName,
         userEmail: data.data.user.email,
       };

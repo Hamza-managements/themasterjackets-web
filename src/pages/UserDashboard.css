@@ -65,8 +65,8 @@
 
 .edit-btn {
   display: inline-block;
-  background: #f0f0f0;
-  color: #333;
+  background: #362525;
+  color: #ffffff;
   padding: 0.5rem 1rem;
   border-radius: 4px;
   text-decoration: none;
@@ -76,6 +76,7 @@
 
 .edit-btn:hover {
   background: #e0e0e0;
+  color: #000;
 }
 
 /* Order History Styles */

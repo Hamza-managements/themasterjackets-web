@@ -36,7 +36,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import AuthLayout from './layouts/AuthLayout';
 import MainLayout from './layouts/MainLayout';
 import SignupForm from './pages/Api';
-
+// import AccountSettings from './components/AccountsSettings';
 // import NotFound from './pages/NotFound'; // Uncomment when ready
 
 function App() {
@@ -74,11 +74,18 @@ function App() {
               element={
                 // <PrivateRoute>
                 <UserDashboard />
-                
                 /* </PrivateRoute> */
               }
             />
               </Route>
+            {/* <Route
+              path="/account/settings"
+              element={
+                <PrivateRoute>
+              <AccountSettings />
+               </PrivateRoute> 
+              }
+            /> */}
             <Route
               path="/admin-dashboard"
               element={

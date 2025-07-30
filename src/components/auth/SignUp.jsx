@@ -30,8 +30,9 @@ const Signup = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
-  
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,7 +51,7 @@ const Signup = () => {
 
   const validateField = (fieldName, value) => {
     let error = '';
-    
+
     switch (fieldName) {
       case 'userName':
         if (!value.trim()) error = 'This field is required';
@@ -83,8 +84,8 @@ const Signup = () => {
     setErrors(prev => ({
       ...prev,
       password: '',
-      confirmPassword: formData.confirmPassword ? 
-        (formData.confirmPassword === password ? '' : 'Passwords do not match') 
+      confirmPassword: formData.confirmPassword ?
+        (formData.confirmPassword === password ? '' : 'Passwords do not match')
         : ''
     }));
 
@@ -123,7 +124,7 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validate all fields
     Object.keys(formData).forEach(field => {
       validateField(field, formData[field]);
@@ -136,6 +137,7 @@ const Signup = () => {
     if (!hasErrors && !hasEmptyFields) {
       // Form is valid, proceed with submission
       setMessage("Registering...");
+      setIsSubmitting(true);
       try {
         const response = await fetch(
           "https://themasterjacketsbackend-production.up.railway.app/api/user/register",
@@ -147,9 +149,9 @@ const Signup = () => {
             body: JSON.stringify(formData),
           }
         );
-        
+
         const data = await response.json();
-        
+
         if (response.ok) {
           setFormData({
             userName: "",
@@ -158,16 +160,19 @@ const Signup = () => {
             confirmPassword: "",
             contactNo: "",
           });
-        console.log("Registration successful:", data);
-        console.log('Form submitted:', formData);
+          console.log("Registration successful:", data);
+          console.log('Form submitted:', formData);
+
+        } else {
+          setMessage(`Error: ${data.message || "Registration failed."}`);
+        }
+      } catch (error) {
+        setMessage("Something went wrong. Please try again.");
+      } finally {
+        setMessage(" registered successfully!");
+        setIsSubmitting(false);
         setFormSubmitted(true);
-      } else {
-        setMessage(`Error: ${data.message || "Registration failed."}`);
       }
-    } catch (error) {
-      console.error("Error:", error);
-      setMessage("Something went wrong. Please try again.");
-    }
     }
   };
 
@@ -179,10 +184,8 @@ const Signup = () => {
     return (
       <div className="signup-success">
         <div className="success-icon">✓</div>
-        <h2>{message}</h2>
-        <p>Welcome to TMJ, {formData.firstName}!</p>
-        <p>We've sent a confirmation email to {formData.email}.</p>
-        <Link to="/auth/login">Go to Login</Link>
+        <h2>This {formData.userName}{message}</h2>
+        <p>Click To <Link to="/auth/login">Go to Login</Link>.</p>
       </div>
     );
   }
@@ -194,7 +197,6 @@ const Signup = () => {
           <h1>Create Your Account</h1>
           <p>Join TMJ to start shopping today</p>
         </div>
-
         <form onSubmit={handleSubmit} noValidate>
           <div className="form-row">
             <div className={`form-group ${errors.userName ? 'has-error' : ''}`}>
@@ -210,7 +212,7 @@ const Signup = () => {
               />
               {errors.userName && <span className="error-message">{errors.userName}</span>}
             </div>
-{/* 
+            {/* 
             <div className={`form-group ${errors.lastName ? 'has-error' : ''}`}>
               <label htmlFor="lastName">Last Name *</label>
               <input
@@ -263,8 +265,8 @@ const Signup = () => {
             </div>
             <div className="password-strength">
               <div className="strength-meter">
-                <div 
-                  className="strength-bar" 
+                <div
+                  className="strength-bar"
                   style={{
                     width: `${(passwordStrength.score / 4) * 100}%`,
                     backgroundColor: passwordStrength.color
@@ -309,8 +311,14 @@ const Signup = () => {
           </div>
 
           <div className="form-actions">
-            <button type="submit" className="signup-button">
-              Create Account
+            <button type="submit" className="signup-button" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <span className="spinner" /> {message}
+                </>
+              ) : (
+                'Create Account'
+              )}
             </button>
           </div>
 

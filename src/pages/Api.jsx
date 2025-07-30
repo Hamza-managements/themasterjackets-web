@@ -23,8 +23,19 @@ const SignupForm = () => {
   //       }
   //     );
 
-  // user list by role admin or customer API: fetch(
+  //  or if by role 
+  
+  // user list by role *admin or customer* API: fetch(
   //       "https://themasterjacketsbackend-production.up.railway.app/api/user/fetch-all/68762589a469c496106e01d4?role=admin",{
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           "authorization": `Bearer ${localStorage.getItem('token')}`,
+  //         },
+  //       }
+  //     );
+
+  //  Get user by ID API: const response = await fetch(
+  //       "https://themasterjacketsbackend-production.up.railway.app/api/user/fetchById/68762589a469c496106e01d4?uid=68762589a469c496106e01d4",{
   //         headers: {
   //           "Content-Type": "application/json",
   //           "authorization": `Bearer ${localStorage.getItem('token')}`,
@@ -59,7 +70,7 @@ const SignupForm = () => {
   //     );
 
   // Delete user API: fetch(
-  //       "https://themasterjacketsbackend-production.up.railway.app/api/user/delete/68762589a469c496106e01d4?uid=688872b4a2bef30fb9614517",{
+  //       "https://themasterjacketsbackend-production.up.railway.app/api/user/delete/68762589a469c496106e01d4?uid=6889d269a2bef30fb96146a0",{
   //        method: "DELETE",
   //        headers: {
   //           "Content-Type": "application/json",

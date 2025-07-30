@@ -3,7 +3,7 @@
   --primary-color:  #ee8a32; /*#4361ee;*/
   --primary-dark:#A06D33;  /* #3a56d4;*/
   --error-color: #ff4444;
-  --success-color: #00C851;
+  --success-color: #03993f;
   --warning-color: #ffbb33;
   --text-color: #333;
   --light-gray: #f5f5f5;
@@ -220,6 +220,7 @@ body {
 .signup-success h2 {
   color: var(--success-color);
   margin-bottom: 15px;
+  font-size: 18px;
 }
 
 .signup-success p {

@@ -5,65 +5,48 @@ import { useNavigate } from 'react-router-dom';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-   const [user, setUser] = useState(null);
-    useEffect(() => {
-      const userName = localStorage.getItem('userName');
-      const userEmail = localStorage.getItem('userEmail');
-  
-      setUser({ userName, userEmail });
-    }, []);
-
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const isTokenExpired = (token) => {
+    if (!token) return true;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.exp * 1000 < Date.now();
+    } catch (err) {
+      console.error("Invalid token format:", err);
+      return true;
+    }
+  };
+
+  const login = (userData, token) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('token', userData.token);
+  };
+
+  const logout = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    setUser(null);
+    navigate('/');
+  };
+
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('user'));
-    if (storedUser) {
+    const storedToken = localStorage.getItem('token');
+
+    if (storedUser && storedToken && !isTokenExpired(storedToken)) {
       setUser(storedUser);
+    } else {
+      logout();
     }
     setLoading(false);
   }, []);
 
-  const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
-  };
-
-  const signup = async (userData) => {
-    try {
-      const response = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData)
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Signup failed');
-      }
-
-      const newUser = await response.json();
-      setUser(newUser);
-      localStorage.setItem('ecommerce_user', JSON.stringify(newUser));
-      return { success: true };
-    } catch (error) {
-      return { success: false, message: error.message };
-    }
-  };
-
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
-    navigate('/auth/login');
-  };
-  // const logout = () => {
-  //   setUser(null);
-  // localStorage.removeItem('userName');
-  // localStorage.removeItem('userEmail');
-  // };
-
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {!loading && children}
     </AuthContext.Provider>
   );

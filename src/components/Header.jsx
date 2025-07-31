@@ -10,7 +10,6 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSubmenu, setActiveSubmenu] = useState(null);
   const navRef = useRef();
-
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(prev => !prev);
   };
@@ -37,7 +36,7 @@ export default function Header() {
     document.addEventListener('click', handleDocumentClick);
     return () => document.removeEventListener('click', handleDocumentClick);
   }, []);
-  {console.log('Mobile open?', isMobileMenuOpen)}
+  // {console.log('Mobile open?', isMobileMenuOpen)}
 
   return (
     <>

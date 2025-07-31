@@ -53,7 +53,6 @@ const handleSubmit = async (e) => {
   setIsSubmitting(true);
 
   try {
-    console.log('Form Data:', formData);
     const res = await fetch('https://themasterjacketsbackend-production.up.railway.app/api/user/login', {
       method: 'POST',     
       headers: {
@@ -64,11 +63,12 @@ const handleSubmit = async (e) => {
         userPassword: formData.userPassword,
       }),
     });
-
+    
     const data = await res.json();
-
+    
     if (res.ok && data.data.token) {
-      console.log('Login successful:', data , data.data.token);
+      // console.log('Form Data:', formData);
+      // console.log('Login successful:', data , data.data.token);
         const userObj = {
         token: data.data.token,
         uid: data.data.user._id,
@@ -82,35 +82,11 @@ const handleSubmit = async (e) => {
       setErrors({ form: data.message || 'Invalid credentials' });
     }
   } catch (error) {
-    console.error('Login error:', error);
     setErrors({ form: 'An unexpected error occurred. Please try again.' });
   } finally {
     setIsSubmitting(false);
   }
 };
-
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   if (!validate()) return;
-    
-  //   setIsSubmitting(true);
-    
-  //   try {
-  //     const result = await login(formData.email, formData.password);
-      
-  //     if (result.success) {
-  //       navigate('/dashboard');
-  //     } else {
-  //       setErrors({ form: result.message });
-  //     }
-  //   } catch (error) {
-  //     setErrors({ form: 'An unexpected error occurred. Please try again.' });
-  //   } finally {
-  //     setIsSubmitting(false);
-  //   }
-  // };
-
   return (
       <div className="auth-container">
         <div className="auth-header">

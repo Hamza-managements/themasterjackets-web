@@ -1,19 +1,22 @@
-import React, { useState } from "react";
+import React, { useState ,useContext } from "react";
+import { AuthContext } from "../components/auth/AuthProvider";
+
 
 const SignupForm = () => {
-  const user = async(e) => {
+    const { user } = useContext(AuthContext);
+  const ApiTesting = async(e) => {
    const response = await fetch(
         "https://themasterjacketsbackend-production.up.railway.app/api/user/fetch-all/68762589a469c496106e01d4",{
           headers: {
             "Content-Type": "application/json",
-            "authorization": `Bearer ${localStorage.getItem('token')}`,
+            "authorization": `Bearer ${user.token}`,
           },
         }
       );
     const data = await response.json();
     console.log(data);  
   };
-  user();
+  ApiTesting();
   // user list API: fetch(
   //       "https://themasterjacketsbackend-production.up.railway.app/api/user/fetch-all/68762589a469c496106e01d4",{
   //         headers: {

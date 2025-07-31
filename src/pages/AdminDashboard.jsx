@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import "./AdminDashboard.css"; // Assuming you have a CSS file for styles
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -10,11 +10,13 @@ import { Bar, Line, Pie } from 'react-chartjs-2';
 import { FiHome, FiUsers, FiSettings, FiPieChart, FiShoppingCart, FiCalendar, FiMail, FiBell, FiMenu, FiX, FiSun, FiMoon, FiRefreshCw } from 'react-icons/fi';
 import useDarkMode from '../components/DarkMode';
 import { RiRefund2Fill } from "react-icons/ri";
+import { AuthContext } from '../components/auth/AuthProvider';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement);
 
 const AdminDashboard = () => {
-    const [sidebarOpen, setSidebarOpen] = useState(true);
     // const [darkMode, setDarkMode] = useDarkMode();
+    const { user, logout } = useContext(AuthContext);
+    const [sidebarOpen, setSidebarOpen] = useState(true);
     const [mobileView, setMobileView] = useState(false);
     const [activeMenu, setActiveMenu] = useState('dashboard');
     const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -54,6 +56,7 @@ const AdminDashboard = () => {
     //         document.documentElement.classList.remove('dark');
     //     }
     // }, [darkMode]);
+
     useEffect(() => {
         const html = document.documentElement;
         if (darkMode) {
@@ -271,33 +274,35 @@ const AdminDashboard = () => {
                                 className="flex items-center space-x-2 focus:outline-none"
                             >
                                 <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
-                                    JD
+                                    {user && user.userName ? user.userName.charAt(0).toUpperCase() : 'A'}
                                 </div>
                                 {sidebarOpen && (
-                                    <span className={`${darkMode ? 'text-white' : 'text-gray-700'}`}>John Doe</span>
+                                    <span className={`${darkMode ? 'text-white' : 'text-gray-700'}`}>{user.userName}</span>
                                 )}
                             </button>
 
                             {profileOpen && (
-                                <div className={`absolute right-0 mt-2 w-48 ${darkMode ? 'dark bg-gray-900' : 'bg-white'} rounded-lg shadow-lg py-1 z-20`}>
-                                    <a
+                                <div className={`absolute right-0 mt-2 w-32 ${darkMode ? 'dark bg-gray-900' : 'bg-white'} rounded-lg shadow-lg py-1 z-20`}>
+                                    {/* <button
+                                        
                                         href="#"
                                         className={`block px-4 py-2 text-sm ${darkMode ? 'text-gray-300 hover:bg-gray-700' : ' text-gray-700 hover:bg-gray-100'}`}
                                     >
                                         Your Profile
-                                    </a>
-                                    <a
+                                    </button> */}
+                                    <button
                                         href="#"
                                         className={`block px-4 py-2 text-sm ${darkMode ? 'text-gray-300 hover:bg-gray-700' : ' text-gray-700 hover:bg-gray-100'}`}
                                     >
                                         Settings
-                                    </a>
-                                    <a
+                                    </button>
+                                    <button
                                         href="#"
+                                        onClick={logout}
                                         className={`block px-4 py-2 text-sm ${darkMode ? 'text-gray-300 hover:bg-gray-700' : ' text-gray-700 hover:bg-gray-100'}`}
                                     >
                                         Sign out
-                                    </a>
+                                    </button>
                                 </div>
                             )}
                         </div>
@@ -372,12 +377,12 @@ const AdminDashboard = () => {
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <span
                                                         className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${order.status === 'Completed'
-                                                                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                                                : order.status === 'Pending'
-                                                                    ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                                                                    : order.status === 'Processing'
-                                                                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                                                                        : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                                                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                                            : order.status === 'Pending'
+                                                                ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                                                                : order.status === 'Processing'
+                                                                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                                                                    : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
                                                             }`}
                                                     >
                                                         {order.status}

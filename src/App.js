@@ -72,9 +72,9 @@ function App() {
             <Route
               path="/dashboard"
               element={
-                // <PrivateRoute>
+                <PrivateRoute>
                 <UserDashboard />
-                /* </PrivateRoute> */
+                </PrivateRoute> 
               }
             />
               </Route>
@@ -89,17 +89,15 @@ function App() {
             <Route
               path="/admin-dashboard"
               element={
-                // <PrivateRoute>
+                <PrivateRoute>
                   <AdminDashboard />
-                // </PrivateRoute>
+               </PrivateRoute>
               }
             />
             <Route
               path="/api-testing"
-              element={
-                // <PrivateRoute>
-                  <SignupForm />
-                // </PrivateRoute>
+              element={                
+                  <SignupForm />             
               }
             />
 

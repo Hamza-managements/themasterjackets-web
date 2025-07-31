@@ -1,4 +1,14 @@
 /* User Dashboard Styles */
+:root {
+    --dark-brown: #3E2C1C;
+    --tan: #A06D33;
+    --gold: #D6AD60;
+    --beige: #F8F5F2;
+    --black: #1A1A1A;
+    --bj-light: #F8F5F2;
+    --bj-dark: #663f12;
+}
+
 .dashboard-container {
   max-width: 1200px;
   margin: 2rem auto;
@@ -157,7 +167,7 @@
 .view-order-btn {
   display: inline-block;
   margin-top: 0.8rem;
-  color: #0070f3;
+  color: var(--tan);
   font-size: 0.9rem;
   text-decoration: none;
 }
@@ -189,7 +199,7 @@
   display: block;
   text-align: center;
   margin-top: 1.5rem;
-  color: #666;
+  color: #663f12;
   text-decoration: none;
 }
 

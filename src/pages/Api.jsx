@@ -1,39 +1,39 @@
-import React, { useState ,useContext } from "react";
+import React, { useState, useContext } from "react";
 import { AuthContext } from "../components/auth/AuthProvider";
 import { Navigate } from "react-router-dom";
 
 
 const SignupForm = () => {
   const { user } = useContext(AuthContext);
-  if(user){
+  if (user) {
     Navigate('/dashboard');
   }
-  const ApiTesting = async(e) => {
-   const response = await fetch( 
-        "https://themasterjacketsbackend-production.up.railway.app/api/user/fetch-all/68762589a469c496106e01d4",{
-          headers: {
-            "Content-Type": "application/json",
-            "authorization": `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
-      );
+  const ApiTesting = async (e) => {
+    const response = await fetch(
+      "https://themasterjacketsbackend-production.up.railway.app/api/user/fetch-all/68762589a469c496106e01d4", {
+      headers: {
+        "Content-Type": "application/json",
+        "authorization": `Bearer ${localStorage.getItem('token')}`,
+      },
+    }
+    );
     const data = await response.json();
-    console.log(data);  
+    console.log(data);
   };
 
   const handleDelete = async (e) => {
     e.preventDefault();
-    const response = await fetch( 
-        "https://themasterjacketsbackend-production.up.railway.app/api/user/delete/68762589a469c496106e01d4?uid=688c9b86a2bef30fb961481b",{
-         method: "DELETE",
-         headers: {
-            "Content-Type": "application/json",
-            "authorization": `Bearer ${localStorage.getItem('token')}`,
-          },
-      }
+    const response = await fetch(
+      "https://themasterjacketsbackend-production.up.railway.app/api/user/delete/68762589a469c496106e01d4?uid=688dc448b6b95b629076d836", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "authorization": `Bearer ${localStorage.getItem('token')}`,
+      },
+    }
     );
     const data = await response.json();
-    console.log(data);  
+    console.log(data);
   };
   // user list API: fetch( 
   //       "https://themasterjacketsbackend-production.up.railway.app/api/user/fetch-all/68762589a469c496106e01d4",{
@@ -45,7 +45,7 @@ const SignupForm = () => {
   //     );
 
   //  or if by role 
-  
+
   // user list by role *admin or customer* API: fetch(
   //       "https://themasterjacketsbackend-production.up.railway.app/api/user/fetch-all/68762589a469c496106e01d4?role=admin",{
   //         headers: {
@@ -132,12 +132,12 @@ const SignupForm = () => {
       //   }
       // );
       const response = await fetch(
-        "https://themasterjacketsbackend-production.up.railway.app/api/user/fetch-all/68762589a469c496106e01d4",{
-          headers: {
-            "Content-Type": "application/json",
-             authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
+        "https://themasterjacketsbackend-production.up.railway.app/api/user/fetch-all/68762589a469c496106e01d4", {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      }
       );
 
       const data = await response.json();
@@ -206,12 +206,33 @@ const SignupForm = () => {
           <option value="admin">Admin</option>
         </select>
         <br />
-        <button type="submit">Sign Up</button>
-        <button onClick={handleDelete}>delete</button>
-        <button onClick={ApiTesting}>Fetch Users</button>
+        <button style={{
+          padding: "0.75rem 1.5rem", borderRadius: "6px",
+          fontSize: "1rem",
+          fontWeight: "500",
+          cursor: "pointer",
+          transition: "all 0.2s ease",
+          border: "none",
+        }} type="submit">Sign Up</button>
+        <button style={{
+          padding: "0.75rem 1.5rem", borderRadius: "6px",
+          fontSize: "1rem",
+          fontWeight: "500",
+          cursor: "pointer",
+          transition: "all 0.2s ease",
+          border: "none",
+        }} onClick={handleDelete}>delete</button>
+        <button style={{
+          padding: "0.75rem 1.5rem", borderRadius: "6px",
+          fontSize: "1rem",
+          fontWeight: "500",
+          cursor: "pointer",
+          transition: "all 0.2s ease",
+          border: "none",
+        }} onClick={ApiTesting}>Fetch Users</button>
       </form>
       <p>{message}</p>
-    </div>
+    </div >
   );
 };
 

@@ -92,14 +92,14 @@ const NotFound = () => {
           <div className="error-number">4</div>
         </div>
         
-        <h1>Page Not Found</h1>
+        <h1 className='not-found-h1'>Page Not Found</h1>
         <p className="error-message">
           The page <code>{location.pathname}</code> doesn't exist or has been moved.
         </p>
         
         <div className="action-section">
           <button 
-            className="primary-button" 
+            className="primary-button button" 
             onClick={() => {
               stopCountdown();
               navigate('/');
@@ -109,7 +109,7 @@ const NotFound = () => {
           </button>
           
           <button 
-            className="secondary-button" 
+            className="secondary-button button" 
             onClick={() => {
               stopCountdown();
               window.history.back();
@@ -144,7 +144,7 @@ const NotFound = () => {
             <ul>
               {suggestedPages.map((page, index) => (
                 <li key={index}>
-                  <button onClick={() => {
+                  <button className='button' onClick={() => {
                     stopCountdown();
                     navigate(page.path);
                   }}>
@@ -160,7 +160,7 @@ const NotFound = () => {
           <div className="countdown">
             <p>You'll be automatically redirected to the homepage in {countdown} seconds.</p>
             <button 
-              className="text-button"
+              className="text-button button"
               onClick={stopCountdown}
             >
               Cancel redirect

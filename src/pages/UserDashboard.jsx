@@ -83,15 +83,15 @@ const UserDashboard = () => {
   };
 
   return (
-    <div className="dashboard-container">
-      <div className="dashboard-header">
+    <div className="user-dashboard-container">
+      <div className="user-dashboard-header">
         <h1>Welcome back, {user?.userName || 'Customer'}!</h1>
         <p>Here's what's happening with your account</p>
       </div>
 
-      <div className="dashboard-grid">
+      <div className="user-dashboard-grid">
         {/* Account Summary */}
-        <div className="dashboard-card account-summary">
+        <div className="user-dashboard-card account-summary">
           <h2>Account Summary</h2>
           <div className="account-details">
             <div className="detail-item">
@@ -165,7 +165,7 @@ const UserDashboard = () => {
         </div>
 
         {/* Order History */}
-        <div className="dashboard-card order-history">
+        <div className="user-dashboard-card order-history">
           <h2>Recent Orders</h2>
           {orders.length > 0 ? (
             <div className="orders-list">
@@ -210,7 +210,7 @@ const UserDashboard = () => {
         </div>
 
         {/* Quick Links */}
-        <div className="dashboard-card quick-links">
+        <div className="user-dashboard-card quick-links">
           <h2>Quick Actions</h2>
           <div className="links-grid">
             <Link to="/wishlist" className="quick-link">

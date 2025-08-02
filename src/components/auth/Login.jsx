@@ -171,9 +171,9 @@ const Login = () => {
             />
             <label htmlFor="rememberMe" className='label-login'>Remember me</label>
           </div>
-          <Link to="/forgot-password" className="forgot-password">
+          {/* <Link to="/forgot-password" className="forgot-password">
             Forgot password?
-          </Link>
+          </Link> */}
         </div>
 
         <button type="submit" className="auth-button" disabled={isSubmitting}>

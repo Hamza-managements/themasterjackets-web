@@ -11,6 +11,7 @@ import { FiHome, FiUsers, FiSettings, FiPieChart, FiShoppingCart, FiCalendar, Fi
 import useDarkMode from '../components/DarkMode';
 import { RiRefund2Fill } from "react-icons/ri";
 import { AuthContext } from '../components/auth/AuthProvider';
+import { useNavigate } from 'react-router-dom';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement);
 
 const AdminDashboard = () => {
@@ -21,6 +22,7 @@ const AdminDashboard = () => {
     const [activeMenu, setActiveMenu] = useState('dashboard');
     const [notificationsOpen, setNotificationsOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
+    const navigate = useNavigate();
 
     const [darkMode, setDarkMode] = useState(() => {
         if (typeof window !== 'undefined') {
@@ -33,6 +35,7 @@ const AdminDashboard = () => {
     // Check screen size on load and resize
     useEffect(() => {
         AOS.init();
+        handleRole();
         const handleResize = () => {
             setMobileView(window.innerWidth < 768);
             if (window.innerWidth < 768) {
@@ -127,6 +130,42 @@ const AdminDashboard = () => {
         { title: 'Returns and Refunds', value: '2', change: '-3%', icon: <RiRefund2Fill /> },
     ];
 
+    const handleRole = async (e) => {
+        const response = await fetch(
+            "https://themasterjacketsbackend-production.up.railway.app/api/user/fetch-all/68762589a469c496106e01d4?role=admin", {
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${localStorage.getItem('token')}`,
+            },
+        }
+        );
+        const data = await response.json();
+        let userEmail = "No user found";
+        try {
+            const stored = localStorage.getItem("user");
+            const user = stored ? JSON.parse(stored) : null;
+            if (user?.userEmail) {
+                userEmail = user.userEmail;
+            }
+        } catch (err) {
+            console.warn("Failed to parse stored user:", err);
+        }
+        console.log("User Email:", userEmail);
+
+        if (!Array.isArray(data?.data)) {
+            console.error("Expected data.data to be an array of users", data);
+        } else {
+            const comparisons = data.data.map(u => ({
+                adminEmail: u.email,
+                isCurrentUser: u.email === userEmail,
+            }));
+            const isAdmin = comparisons.some(c => c.isCurrentUser);
+            console.log("Is current user an admin?", isAdmin);
+            if (!isAdmin) {
+                navigate('/');
+            }
+        }
+    };
     return (
         <div className={`flex h-screen bg-gray-100 ${darkMode ? 'dark bg-gray-800' : ''}`}>
             {/* Sidebar */}

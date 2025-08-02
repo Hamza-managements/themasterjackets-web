@@ -1,13 +1,16 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect, use } from "react";
 import { AuthContext } from "../components/auth/AuthProvider";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 const SignupForm = () => {
   const { user } = useContext(AuthContext);
-  if (user) {
-    Navigate('/dashboard');
-  }
+  // const navigate = useNavigate();
+  //  useEffect(() => {
+  //   if (user) {
+  //     navigate("/dashboard");
+  //   }
+  // }, [user, navigate]);
   const ApiTesting = async (e) => {
     const response = await fetch(
       "https://themasterjacketsbackend-production.up.railway.app/api/user/fetch-all/68762589a469c496106e01d4", {
@@ -24,7 +27,7 @@ const SignupForm = () => {
   const handleDelete = async (e) => {
     e.preventDefault();
     const response = await fetch(
-      "https://themasterjacketsbackend-production.up.railway.app/api/user/delete/68762589a469c496106e01d4?uid=688dc448b6b95b629076d836", {
+      "https://themasterjacketsbackend-production.up.railway.app/api/user/delete/68762589a469c496106e01d4?uid=688dd87cb6b95b629076d85e", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -34,6 +37,49 @@ const SignupForm = () => {
     );
     const data = await response.json();
     console.log(data);
+  };
+
+  const handleRole = async (e) => {
+    e.preventDefault();
+    const response = await fetch(
+      "https://themasterjacketsbackend-production.up.railway.app/api/user/fetch-all/68762589a469c496106e01d4?role=admin", {
+      headers: {
+        "Content-Type": "application/json",
+        "authorization": `Bearer ${localStorage.getItem('token')}`,
+      },
+    }
+    );
+    const data = await response.json();
+    // console.log(data.data);
+    // Safely get the current user's email
+    let userEmail = "No user found";
+    try {
+      const stored = localStorage.getItem("user");
+      const user = stored ? JSON.parse(stored) : null;
+      if (user?.userEmail) {
+        userEmail = user.userEmail;
+      }
+    } catch (err) {
+      console.warn("Failed to parse stored user:", err);
+    }
+    console.log("User Email:", userEmail);
+
+    // Validate admin list and compare
+    if (!Array.isArray(data?.data)) {
+      console.error("Expected data.data to be an array of users", data);
+    } else {
+      const comparisons = data.data.map(u => ({
+        adminEmail: u.email,
+        isCurrentUser: u.email === userEmail,
+      }));
+
+      // console.log("Admins comparison:", comparisons);
+
+      // If you just want to know if current user is in that list:
+      const isAdmin = comparisons.some(c => c.isCurrentUser);
+      console.log("Is current user an admin?", isAdmin);
+    }
+
   };
   // user list API: fetch( 
   //       "https://themasterjacketsbackend-production.up.railway.app/api/user/fetch-all/68762589a469c496106e01d4",{
@@ -45,7 +91,6 @@ const SignupForm = () => {
   //     );
 
   //  or if by role 
-
   // user list by role *admin or customer* API: fetch(
   //       "https://themasterjacketsbackend-production.up.railway.app/api/user/fetch-all/68762589a469c496106e01d4?role=admin",{
   //         headers: {
@@ -230,6 +275,14 @@ const SignupForm = () => {
           transition: "all 0.2s ease",
           border: "none",
         }} onClick={ApiTesting}>Fetch Users</button>
+        <button style={{
+          padding: "0.75rem 1.5rem", borderRadius: "6px",
+          fontSize: "1rem",
+          fontWeight: "500",
+          cursor: "pointer",
+          transition: "all 0.2s ease",
+          border: "none",
+        }} onClick={handleRole}>Fetch Admins</button>
       </form>
       <p>{message}</p>
     </div >

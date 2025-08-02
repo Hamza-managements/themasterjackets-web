@@ -121,7 +121,7 @@ const Login = () => {
             className={errors.userEmail ? 'error' : ''}
             placeholder="Enter your email"
           />
-          {errors.userEmail && <span className="error-message">{errors.userEmail}</span>}
+          {errors.userEmail && <span className="error-message-login">{errors.userEmail}</span>}
         </div>
 
         <div className="form-group">
@@ -157,10 +157,10 @@ const Login = () => {
               </svg>
             </button>
           </div>
-          {errors.userPassword && <span className="error-message">{errors.userPassword}</span>}
+          {errors.userPassword && <span className="error-message-login">{errors.userPassword}</span>}
         </div>
 
-        <div className="form-options">
+        {/* <div className="form-options">
           <div className="remember-me">
             <input
               id="rememberMe"
@@ -171,10 +171,10 @@ const Login = () => {
             />
             <label htmlFor="rememberMe" className='label-login'>Remember me</label>
           </div>
-          {/* <Link to="/forgot-password" className="forgot-password">
+          <Link to="/forgot-password" className="forgot-password">
             Forgot password?
-          </Link> */}
-        </div>
+          </Link>
+        </div> */}
 
         <button type="submit" className="auth-button" disabled={isSubmitting}>
           {isSubmitting ? (

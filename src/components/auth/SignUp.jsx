@@ -184,7 +184,6 @@ const Signup = () => {
     setMessage("Registering...");
     setIsSubmitting(true);
     setFormSubmitted(false);
-    console.log("running handleSubmit");
 
     const snapshot = { ...formData };
 
@@ -281,7 +280,15 @@ const Signup = () => {
           <h1>Create Your Account</h1>
           <p>Join TMJ to start shopping today</p>
         </div>
-        <form onSubmit={handleSubmit} noValidate>
+        {message && (
+        <div className="auth-error">
+          <svg className="auth-error-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+          </svg>
+          <p>{message}</p>
+        </div>
+      )}
+        <form onSubmit={handleSubmit}>
           <div className="form-row">
             <div className={`form-group ${errors.userName ? 'has-error' : ''}`}>
               <label htmlFor="userName">User Name *</label>
@@ -406,7 +413,7 @@ const Signup = () => {
                 'Create Account'
               )}
             </button>
-            {message && (
+            {/* {message && (
             <div
               className="feedback"
               role="alert"
@@ -422,7 +429,7 @@ const Signup = () => {
             >
               {message}
             </div>
-             )} 
+             )}  */}
           </div>
 
           <div className="signup-footer">

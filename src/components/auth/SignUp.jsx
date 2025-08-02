@@ -1,9 +1,17 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from './UseAuth';
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import './Signup.css';
+import { AuthContext } from './AuthProvider';
 
 const Signup = () => {
+  const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
+  useEffect(() => {
+    if(user){
+     navigate('/dashboard');
+    }
+  }, [user, navigate]);
   const [formData, setFormData] = useState({
     userName: '',
     email: '',
@@ -33,66 +41,46 @@ const Signup = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
 
-    // Validate field on change
-    if (name === 'password') {
-      validatePassword(value);
-    } else {
-      validateField(name, value);
-    }
+    setFormData(prev => {
+      const newFormData = { ...prev, [name]: value };
+
+      // Validate field using the *new* form state
+      if (name === "password") {
+        validatePassword(newFormData.password, newFormData);
+      } else if (name === "confirmPassword") {
+        validateField("confirmPassword", newFormData.confirmPassword, newFormData);
+      } else {
+        validateField(name, value, newFormData);
+      }
+
+      return newFormData;
+    });
   };
 
-  const validateField = (fieldName, value) => {
-    let error = '';
+  // returns an object with password-related errors and also updates strength
+  const validatePassword = (password, formSnapshot) => {
+    let passwordError = "";
+    let confirmPasswordError = "";
 
-    switch (fieldName) {
-      case 'userName':
-        if (!value.trim()) error = 'This field is required';
-        else if (value.length < 2) error = 'Too short';
-        break;
-      case 'email':
-        if (!value.trim()) error = 'Email is required';
-        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) error = 'Invalid email format';
-        break;
-      case 'confirmPassword':
-        if (value !== formData.password) error = 'Passwords do not match';
-        break;
-      case 'contactNo':
-        if (!/^\d{10}$/.test(value)) {
-          error = 'contact number must be 10 digits';
-        }
-        break;
-      default:
-        break;
+    if (!password || password.length === 0) {
+      passwordError = "Password is required";
+    } else if (password.length < 8) {
+      passwordError = "Password too short";
     }
 
-    setErrors(prev => ({
-      ...prev,
-      [fieldName]: error
-    }));
-  };
+    if (formSnapshot.confirmPassword) {
+      if (formSnapshot.confirmPassword !== password) {
+        confirmPasswordError = "Passwords do not match";
+      }
+    }
 
-  const validatePassword = (password) => {
-    // Reset errors
-    setErrors(prev => ({
-      ...prev,
-      password: '',
-      confirmPassword: formData.confirmPassword ?
-        (formData.confirmPassword === password ? '' : 'Passwords do not match')
-        : ''
-    }));
-
-    // Calculate strength
+    // strength calculation (same as before)
     let score = 0;
-    let message = 'Very weak';
-    let color = '#ff4444';
+    let message = "Very weak";
+    let color = "#ff4444";
 
     if (password.length >= 8) score += 1;
     if (/[A-Z]/.test(password)) score += 1;
@@ -100,82 +88,178 @@ const Signup = () => {
     if (/[^A-Za-z0-9]/.test(password)) score += 1;
 
     if (password.length === 0) {
-      message = '';
+      message = "";
+      color = "";
     } else if (score === 0) {
-      message = 'Very weak';
-      color = '#ff4444';
+      message = "Very weak";
+      color = "#ff4444";
     } else if (score <= 2) {
-      message = 'Weak';
-      color = '#ffbb33';
+      message = "Weak";
+      color = "#ffbb33";
     } else if (score === 3) {
-      message = 'Good';
-      color = '#5cb85c';
+      message = "Good";
+      color = "#5cb85c";
     } else {
-      message = 'Strong';
-      color = '#00C851';
+      message = "Strong";
+      color = "#00C851";
     }
 
     setPasswordStrength({
       score,
       message,
-      color
+      color,
     });
+
+    return {
+      password: passwordError,
+      confirmPassword: confirmPasswordError,
+    };
   };
+  // returns error string for a non-password field
+  const validateField = (fieldName, value, formSnapshot) => {
+    let error = "";
+
+    switch (fieldName) {
+      case "userName":
+        if (!value.trim()) error = "This field is required";
+        else if (value.trim().length < 2) error = "Too short";
+        break;
+      case "email":
+        if (!value.trim()) error = "Email is required";
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) error = "Invalid email format";
+        break;
+      case "contactNo":
+        if (value) {
+          const digits = value.replace(/\D/g, "");
+          if (!/^\d{10}$/.test(digits)) {
+            error = "Contact number must be 10 digits";
+          }
+        }
+        break;
+      default:
+        break;
+    }
+
+    return error;
+  };
+
+
+
+  const validateAll = (formSnapshot) => {
+    const newErrors = {};
+
+    // Validate userName, email, contactNo, confirmPassword via generic validator
+    ["userName", "email", "contactNo", "confirmPassword"].forEach((field) => {
+      if (field === "confirmPassword") {
+        // handled in password validator too, but keep consistent
+        newErrors[field] = validateField(field, formSnapshot[field], formSnapshot);
+      } else if (field !== "contactNo") {
+        newErrors[field] = validateField(field, formSnapshot[field], formSnapshot);
+      } else {
+        newErrors[field] = validateField(field, formSnapshot[field], formSnapshot);
+      }
+    });
+
+    // Password-specific (includes confirmPassword cross-check)
+    const pwdErrors = validatePassword(formSnapshot.password, formSnapshot);
+    newErrors.password = pwdErrors.password;
+    // prefer password validator's confirmPassword error if any
+    newErrors.confirmPassword = pwdErrors.confirmPassword || newErrors.confirmPassword;
+
+    // Trim whitespace for required fields
+    if (!formSnapshot.userName || !formSnapshot.userName.trim()) newErrors.userName = newErrors.userName || "This field is required";
+    if (!formSnapshot.email || !formSnapshot.email.trim()) newErrors.email = newErrors.email || "Email is required";
+
+    setErrors(prev => ({ ...prev, ...newErrors }));
+
+    // Return whether form is clean
+    const hasErrors = Object.values(newErrors).some(err => err);
+    return !hasErrors;
+  };
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage("Registering...");
+    setIsSubmitting(true);
+    setFormSubmitted(false);
+    console.log("running handleSubmit");
 
-    // Validate all fields
-    Object.keys(formData).forEach(field => {
-      validateField(field, formData[field]);
-    });
+    const snapshot = { ...formData };
 
-    // Check if any errors exist
-    const hasErrors = Object.values(errors).some(error => error !== '');
-    const hasEmptyFields = Object.values(formData).some(value => value === '');
+    // Validate everything
+    const isValid = validateAll(snapshot);
+    if (!isValid) {
+      setMessage("Please fix the errors before submitting.");
+      setIsSubmitting(false);
+      return;
+    }
 
-    if (!hasErrors && !hasEmptyFields) {
-      // Form is valid, proceed with submission
-      setMessage("Registering...");
-      setIsSubmitting(true);
-      try {
-        const response = await fetch(
-          "https://themasterjacketsbackend-production.up.railway.app/api/user/register",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData),
-          }
-        );
+    // Build payload (contactNo optional)
+    const payload = {
+      userName: snapshot.userName.trim(),
+      email: snapshot.email.trim(),
+      password: snapshot.password,
+      role: snapshot.role,
+      ...(snapshot.contactNo && { contactNo: snapshot.contactNo }),
+    };
 
-        const data = await response.json();
-
-        if (response.ok) {
-          setFormData({
-            userName: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
-            contactNo: "",
-          });
-          console.log("Registration successful:", data);
-          console.log('Form submitted:', formData);
-
-        } else {
-          setMessage(`Error: ${data.message || "Registration failed."}`);
+    try {
+      const response = await fetch(
+        "https://themasterjacketsbackend-production.up.railway.app/api/user/register",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
         }
-      } catch (error) {
-        setMessage("Something went wrong. Please try again.");
-      } finally {
-        setMessage(" registered successfully!");
-        setIsSubmitting(false);
+      );
+
+      const data = await response.json();
+      if (response.ok) {
+        console.log("Registration successful:", data);
+        setFormData({
+          userName: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+          contactNo: "",
+          role: snapshot.role,
+        });
+        setMessage("Registered successfully!");
         setFormSubmitted(true);
+        return;
       }
+      console.error('Registration failed:', data, data.message);
+      setMessage(data.message || 'Registration failed.');
+      setIsSubmitting(false);
+      // Reset form state if needed
+      setFormData({
+        userName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        contactNo: "",
+        role: snapshot.role,
+      });
+      setErrors({
+        userName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        contactNo: "",
+        role: snapshot.role,
+      });
+      setPasswordStrength({
+        score: 0,
+        message: 'Very weak',
+        color: '#ff4444'
+      });
+    } catch (error) {
+      console.error('Registration error:', error);
+      // setMessage('Something went wrong. Please try again.');
     }
   };
-
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -210,7 +294,7 @@ const Signup = () => {
                 onBlur={(e) => validateField('userName', e.target.value)}
                 className={formData.userName ? 'has-value' : ''}
               />
-              {errors.userName && <span className="error-message">{errors.userName}</span>}
+              {errors.userName && <span className="error-messages">{errors.userName}</span>}
             </div>
             {/* 
             <div className={`form-group ${errors.lastName ? 'has-error' : ''}`}>
@@ -239,7 +323,7 @@ const Signup = () => {
               onBlur={(e) => validateField('email', e.target.value)}
               className={formData.email ? 'has-value' : ''}
             />
-            {errors.email && <span className="error-message">{errors.email}</span>}
+            {errors.email && <span className="error-messages">{errors.email}</span>}
           </div>
 
           <div className={`form-group ${errors.password ? 'has-error' : ''}`}>
@@ -279,7 +363,7 @@ const Signup = () => {
                 </span>
               )}
             </div>
-            {errors.password && <span className="error-message">{errors.password}</span>}
+            {errors.password && <span className="error-messages">{errors.password}</span>}
           </div>
 
           <div className={`form-group ${errors.confirmPassword ? 'has-error' : ''}`}>
@@ -293,13 +377,13 @@ const Signup = () => {
               onBlur={(e) => validateField('confirmPassword', e.target.value)}
               className={formData.confirmPassword ? 'has-value' : ''}
             />
-            {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
+            {errors.confirmPassword && <span className="error-messages">{errors.confirmPassword}</span>}
           </div>
 
           <div className={`form-group ${errors.contactNo ? 'has-error' : ''}`}>
             <label htmlFor="contactNo">Contact Number (Optional)</label>
             <input
-              type="number"
+              type="text"
               id="contactNo"
               name="contactNo"
               value={formData.contactNo}
@@ -307,19 +391,38 @@ const Signup = () => {
               onBlur={(e) => validateField('contactNo', e.target.value)}
               className={formData.contactNo ? 'has-value' : ''}
             />
-            {errors.contactNo && <span className="error-message">{errors.contactNo}</span>}
+            {errors.contactNo && <span className="error-messages">{errors.contactNo}</span>}
           </div>
 
           <div className="form-actions">
             <button type="submit" className="signup-button" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
-                  <span className="spinner" /> {message}
+                  <svg className="auth-spinner" viewBox="0 0 50 50">
+                    <circle cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
+                  </svg>
                 </>
               ) : (
                 'Create Account'
               )}
             </button>
+            {message && (
+            <div
+              className="feedback"
+              role="alert"
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginBottom: '0.5rem',
+                padding: '0.75rem',
+                borderRadius: '6px',
+                backgroundColor: '#fdecea',
+                color: '#b71c1c',
+              }}
+            >
+              {message}
+            </div>
+             )} 
           </div>
 
           <div className="signup-footer">

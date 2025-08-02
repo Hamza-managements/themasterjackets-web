@@ -10,7 +10,7 @@ const UserDashboard = () => {
           AOS.init();
         }, []);
   const { user } = useContext(AuthContext);
-
+  const { uid, userName, contactNo, token , userEmail } = user;
   const orders = [
     {
       id: 'ORD-12345',
@@ -32,10 +32,6 @@ const UserDashboard = () => {
       ]
     }
   ];
-
-  const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-  const { uid, userName, contactNo, token , userEmail } = storedUser;
-
   const [showEditForm, setShowEditForm] = useState(false);
   const [editData, setEditData] = useState({
     userName: userName || '',
@@ -69,7 +65,7 @@ const UserDashboard = () => {
 
       if (response.ok) {
         // Update localStorage with new values
-        const updatedUser = { ...storedUser, ...editData };
+        const updatedUser = { ...user, ...editData };
         localStorage.setItem('user', JSON.stringify(updatedUser));
         setMessage('Profile updated successfully!');
       } else {

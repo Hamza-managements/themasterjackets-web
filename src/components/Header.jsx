@@ -242,7 +242,7 @@ export default function Header() {
                       </Link>
                       <button
                         onClick={logout}
-                        className="fs-dropdown-link"
+                        className="fs-dropdown-link logout-header"
                       >
                         <i className="fas fa-sign-out-alt"></i> Logout
                       </button>

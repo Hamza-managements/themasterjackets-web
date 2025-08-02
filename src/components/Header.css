@@ -144,7 +144,7 @@
 .fs-dropdown-menu a , .fs-dropdown-menu-user a , .fs-dropdown-link {
     display: block;
     padding: 8px 20px;
-    color: var(--black);
+    color: var(--dark-brown);
     text-decoration: none;
     font-size: 14px;
     transition: all 0.2s ease;
@@ -154,7 +154,6 @@
     color: var(--tan);
     padding-left: 25px;
 }
-
 
 .fs-dropdown-divider {
     height: 1px;

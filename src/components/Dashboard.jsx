@@ -4,7 +4,7 @@ import 'aos/dist/aos.css';
 import './Dasboard.css';
 import { AuthContext } from './auth/AuthProvider';
 
-const Testing = () => {
+const Dasboard = () => {
   useEffect(() => {
     AOS.init({
       duration: 800,
@@ -37,7 +37,7 @@ const Testing = () => {
     {
       id: 'ORD-78123',
       date: '2023-07-10',
-      status: 'Processing',
+      status: 'In-Process',
       items: 1,
       total: 49.99,
       tracking: 'SH-123456789'
@@ -46,6 +46,8 @@ const Testing = () => {
 
   const [stats, setStats] = useState({
     totalOrders: 12,
+    checkedOutOrders: 2,
+    wishlistOrders: 3,
     completedOrders: 8,
     pendingOrders: 2,
     cancelledOrders: 2,
@@ -55,15 +57,50 @@ const Testing = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [editMode, setEditMode] = useState(false);
   const [profileData, setProfileData] = useState({
-    name: userName,
-    email: userEmail,
-    phone: contactNo,
-    address: '123 Main St, New York, NY 10001'
-  });
-
-  const handleProfileUpdate = (e) => {
+  userName: user?.userName || '',
+  userEmail: user?.userEmail || '',
+  contactNo: user?.contactNo || '',
+  address: '123 Main St, Springfield, USA',
+});;
+  const handleProfileUpdate = async (e) => {
     e.preventDefault();
-    // Here you would typically make an API call to update the profile
+    try {
+    const res = await fetch(
+        "https://themasterjacketsbackend-production.up.railway.app/api/user/update/68762589a469c496106e01d4",{
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "authorization": `Bearer ${localStorage.getItem('token')}`,
+          },
+       body: JSON.stringify(
+         {
+           uid,
+           userName,
+           contactNo,
+         }),
+        }
+      );
+      const data = await res.json();
+      console.log('Profile updated:', data);
+
+      // if (res.ok && data.data.token) {
+      //   // console.log('Form Data:', formData);
+      //   // console.log('Login successful:', data , data.data.token);
+      //   const userObj = {
+      //     token: data.data.token,
+      //     uid: data.data.user._id,
+      //     contactNo: data.data.user.contactNo,
+      //     userName: data.data.user.userName,
+      //     userEmail: data.data.user.email,
+      //   };
+      //   login(userObj);
+      // } else {
+      //   setErrors({ form: data.message || 'Invalid credentials' });
+      // }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      // setErrors({ form: 'An unexpected error occurred. Please try again.' });
+    }
     setEditMode(false);
   };
 
@@ -96,10 +133,10 @@ const Testing = () => {
                 <span>{stats.totalOrders}</span>
                 <small>Total Orders</small>
               </div>
-              <div>
+              {/* <div>
                 <span>${stats.totalSpent.toFixed(2)}</span>
                 <small>Total Spent</small>
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -157,22 +194,22 @@ const Testing = () => {
                     <i className="fas fa-check-circle" style={{ color: '#4caf50' }}></i>
                   </div>
                   <div className="stat-info">
-                    <h3>{stats.completedOrders}</h3>
-                    <p>Completed</p>
+                    <h3>{stats.checkedOutOrders}</h3>
+                    <p>Your Checkout</p>
                   </div>
                 </div>
 
                 <div className="stat-card">
                   <div className="stat-icon" style={{ background: '#fff8e1' }}>
-                    <i className="fas fa-clock" style={{ color: '#ffc107' }}></i>
+                    <i className="fas fa-heart" style={{ color: '#000000ff' }}></i>
                   </div>
                   <div className="stat-info">
-                    <h3>{stats.pendingOrders}</h3>
-                    <p>Pending</p>
+                    <h3>{stats.wishlistOrders}</h3>
+                    <p>Wishlist</p>
                   </div>
                 </div>
 
-                <div className="stat-card">
+                {/* <div className="stat-card">
                   <div className="stat-icon" style={{ background: '#ffebee' }}>
                     <i className="fas fa-times-circle" style={{ color: '#f44336' }}></i>
                   </div>
@@ -180,7 +217,7 @@ const Testing = () => {
                     <h3>{stats.cancelledOrders}</h3>
                     <p>Cancelled</p>
                   </div>
-                </div>
+                </div> */}
               </div>
 
               <div className="recent-orders">
@@ -265,11 +302,11 @@ const Testing = () => {
               <div className="profile-header">
                 <h2>My Profile</h2>
                 {!editMode ? (
-                  <button className="edit-btn" onClick={() => setEditMode(true)}>
+                  <button className="edit-btn-dashboard" onClick={() => setEditMode(true)}>
                     <i className="fas fa-edit"></i> Edit Profile
                   </button>
                 ) : (
-                  <button className="cancel-btn" onClick={() => setEditMode(false)}>
+                  <button className="cancel-btn-dashboard" onClick={() => setEditMode(false)}>
                     Cancel
                   </button>
                 )}
@@ -279,15 +316,15 @@ const Testing = () => {
                 <div className="profile-info">
                   <div className="info-row">
                     <span>Full Name</span>
-                    <p>{profileData.name}</p>
+                    <p>{profileData.userName}</p>
                   </div>
                   <div className="info-row">
                     <span>Email Address</span>
-                    <p>{profileData.email}</p>
+                    <p>{profileData.userEmail}</p>
                   </div>
                   <div className="info-row">
                     <span>Phone Number</span>
-                    <p>{profileData.phone || 'Not provided'}</p>
+                    <p>{profileData.contactNo || 'Not provided'}</p>
                   </div>
                   <div className="info-row">
                     <span>Default Address</span>
@@ -300,8 +337,8 @@ const Testing = () => {
                     <label>Full Name</label>
                     <input
                       type="text"
-                      name="name"
-                      value={profileData.name}
+                      name="userName"
+                      value={profileData.userName}
                       onChange={handleInputChange}
                       required
                     />
@@ -311,7 +348,7 @@ const Testing = () => {
                     <input
                       type="email"
                       name="email"
-                      value={profileData.email}
+                      value={profileData.userEmail}
                       onChange={handleInputChange}
                       required
                       disabled
@@ -321,8 +358,8 @@ const Testing = () => {
                     <label>Phone Number</label>
                     <input
                       type="tel"
-                      name="phone"
-                      value={profileData.phone}
+                      name="contactNo"
+                      value={profileData.contactNo}
                       onChange={handleInputChange}
                     />
                   </div>
@@ -335,7 +372,7 @@ const Testing = () => {
                       rows="3"
                     />
                   </div>
-                  <button type="submit" className="save-btn">
+                  <button type="submit" className="save-btn-dashboard">
                     Save Changes
                   </button>
                 </form>
@@ -353,18 +390,18 @@ const Testing = () => {
                     <span className="badge">Default</span>
                   </div>
                   <div className="address-details">
-                    <p>{profileData.name}</p>
+                    <p>{profileData.userName}</p>
                     <p>{profileData.address}</p>
-                    <p>Phone: {profileData.phone || 'Not provided'}</p>
+                    <p>Phone: {profileData.contactNo || 'Not provided'}</p>
                   </div>
-                  <div className="address-actions">
+                  {/* <div className="address-actions">
                     <button className="btn-outline">
                       <i className="fas fa-edit"></i> Edit
                     </button>
                     <button className="btn-outline">
                       <i className="fas fa-trash"></i> Delete
                     </button>
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="address-card add-new">
@@ -422,4 +459,4 @@ const Testing = () => {
   );
 };
 
-export default Testing;
+export default Dasboard;

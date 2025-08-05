@@ -260,4 +260,8 @@ body {
     flex-direction: column;
     gap: 0;
   }
+
+.toggle-password{
+  width: 30px;
+}
 }

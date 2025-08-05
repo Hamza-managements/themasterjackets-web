@@ -170,23 +170,23 @@ const AdminDashboard = () => {
         <div className={`flex h-screen bg-gray-100 ${darkMode ? 'dark bg-gray-800' : ''}`}>
             {/* Sidebar */}
             <div
-                className={`${sidebarOpen ? 'w-64' : 'w-20'} ${darkMode ? 'dark bg-gray-800' : 'bg-white transition-all duration-300'} shadow-md fixed md:relative z-10`}
+                className={`${sidebarOpen ? 'w-48' : 'w-20'} ${darkMode ? 'dark bg-gray-800' : 'bg-white'} transition-all duration-300 shadow-md fixed md:relative z-10`}
             >
-                <div className={`p-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700 ${darkMode ? 'dark bg-gray-800' : ''}`}>
+                <div className={`p-4 flex justify-between items-center border-b border-gray-200 ${darkMode ? 'dark bg-gray-800' : ''}`}>
                     {sidebarOpen ? (
-                        <h1 className="text-xl font-bold text-gray-800 dark:text-white">AdminPanel</h1>
+                        <h1 className="text-xl font-bold text-gray-800 dark:text-white" onClick={() => setSidebarOpen(!sidebarOpen)}>AdminPanel</h1>
                     ) : (
-                        <h1 className="text-xl font-bold text-gray-800 dark:text-white">AP</h1>
-                    )}
-                    <button
+                        <button
                         onClick={() => setSidebarOpen(!sidebarOpen)}
                         className={`p-1 rounded-lg ${darkMode ? 'dark hover:bg-gray-700 text-white' : 'hover:bg-gray-100'}`}
                     >
                         {sidebarOpen ? <FiX size={20} /> : <FiMenu size={20} />}
                     </button>
+                    )}
+                    
                 </div>
 
-                <nav className="mt-6">
+                <nav className={`mt-6 ${sidebarOpen ? '' : 'd-none'}`}>
                     <NavItem
                         icon={<FiHome />}
                         text="Dashboard"
@@ -247,7 +247,7 @@ const AdminDashboard = () => {
                         {mobileView && (
                             <button
                                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                                className="p-2 mr-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+                                className={`${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}p-2 mr-2 rounded-lg `}
                             >
                                 <FiMenu size={20} />
                             </button>
@@ -297,7 +297,8 @@ const AdminDashboard = () => {
                                             </div>
                                         ))}
                                     </div>
-                                    <div className="px-4 py-2 text-center text-sm text-blue-600 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                    <div className="px-4 py-2 text-center text-sm text-blue-600 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                                    onClick={() => setActiveMenu('orders')}>
                                         View all notifications
                                     </div>
                                 </div>
@@ -332,6 +333,7 @@ const AdminDashboard = () => {
                                     <button
                                         href="#"
                                         className={`block px-4 py-2 text-sm ${darkMode ? 'text-gray-300 hover:bg-gray-700' : ' text-gray-700 hover:bg-gray-100'}`}
+                                         onClick={() => setActiveMenu('settings')}
                                     >
                                         Settings
                                     </button>
@@ -372,7 +374,8 @@ const AdminDashboard = () => {
                                     <h3 className="text-lg font-medium">
                                         Recent Orders
                                     </h3>
-                                    <button className="text-sm text-blue-500 hover:underline">
+                                    <button className="text-sm text-blue-500 hover:underline"
+                                    onClick={() => setActiveMenu('orders')}>
                                         View All
                                     </button>
                                 </div>

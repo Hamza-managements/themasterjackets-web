@@ -107,10 +107,6 @@
            transform: translateY(-3px);
        }
 
-       .newsletter-form {
-           margin-top: 1.5rem;
-       }
-
        .newsletter-input {
            background: rgba(248, 245, 242, 0.1);
            border: 1px solid var(--tan);

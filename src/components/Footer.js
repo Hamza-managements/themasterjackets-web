@@ -95,21 +95,21 @@ export default function Footer() {
             <p><i className="fas fa-phone"></i> (888) 555-1234</p>
             <p><i className="fas fa-envelope"></i> info@themasterjackets.com</p>
 
-            <h5 className="footer-heading mt-4">Newsletter</h5>
+            <h5 className="footer-heading mt-3">Newsletter</h5>
 
             {!loading && !success && (
               <div className="newsletter-form">
                 <p>Join our newsletter to get exclusive updates & offers.</p>
                 <input
                   type="email"
-                  className="newsletter-input form-control mb-2"
+                  className="newsletter-input form-control mt-3 mb-3"
                   placeholder="Your email address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
                 <button
                   type="button"
-                  className="newsletter-btn btn btn-dark w-100"
+                  className="newsletter-btn w-100"
                   onClick={submitNewsletter}
                 >
                   Subscribe

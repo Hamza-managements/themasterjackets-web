@@ -31,14 +31,13 @@ import ReturnPolicy from './pages/Return-exchange';
 import ContactForm from './pages/Contact';
 import Login from './components/auth/Login';
 import SignUp from './components/auth/SignUp';
-import UserDashboard from './pages/UserDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import AuthLayout from './layouts/AuthLayout';
 import MainLayout from './layouts/MainLayout';
 import SignupForm from './pages/Api';
 // import AccountSettings from './components/AccountsSettings';
 import NotFound from './pages/Notfound';
-import Testing from './components/Dashboardss'; // Assuming this is the correct path for the testing component
+import Dashboard from './components/Dashboard'; // Assuming this is the correct path for the testing component
 
 function App() {
   return (
@@ -74,7 +73,7 @@ function App() {
               path="/dashboard"
               element={
                 <PrivateRoute>
-                  <UserDashboard />
+                  <Dashboard />
                 </PrivateRoute>
               }
             />
@@ -99,12 +98,6 @@ function App() {
             path="/api-testing"
             element={
               <SignupForm />
-            }
-          />
-          <Route
-            path="/testing-dashboard"
-            element={
-              <Testing />
             }
           />
           {/* Error handling - uncomment when ready */}

@@ -95,7 +95,7 @@
   position: relative;
 }
 
-.password-toggle {
+.password-toggle-login {
   position: absolute;
   right: 0.75rem;
   top: 50%;
@@ -107,7 +107,7 @@
   color: #6b7280;
 }
 
-.password-toggle:hover {
+.password-toggle-login:hover {
   color: #4b5563;
 }
 
@@ -231,4 +231,7 @@
   .auth-header h1 {
     font-size: 1.5rem;
   }
+  .password-toggle-login {
+  width: 30px;
+}
 }

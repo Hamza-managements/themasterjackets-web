@@ -120,6 +120,7 @@
     transition: all 0.3s ease;
     z-index: 100;
 }
+
 .fs-dropdown-menu-user {
     position: absolute;
     top: 100%;
@@ -135,13 +136,16 @@
     z-index: 100;
 }
 
-.fs-nav-item:hover .fs-dropdown-menu , .fs-nav-item:hover .fs-dropdown-menu-user {
+.fs-nav-item:hover .fs-dropdown-menu,
+.fs-nav-item:hover .fs-dropdown-menu-user {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
 }
 
-.fs-dropdown-menu a , .fs-dropdown-menu-user a , .fs-dropdown-link {
+.fs-dropdown-menu a,
+.fs-dropdown-menu-user a,
+.fs-dropdown-link {
     display: block;
     padding: 8px 20px;
     color: var(--dark-brown);
@@ -150,7 +154,9 @@
     transition: all 0.2s ease;
 }
 
-.fs-dropdown-menu a:hover , .fs-dropdown-menu-user a:hover , .fs-dropdown-link:hover {
+.fs-dropdown-menu a:hover,
+.fs-dropdown-menu-user a:hover,
+.fs-dropdown-link:hover {
     color: var(--tan);
     padding-left: 25px;
 }
@@ -277,8 +283,21 @@
     display: none;
 }
 
+
 /* Mobile Styles */
 @media (max-width: 992px) {
+
+    .mobile-header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .fs-header-actions {
+        display: none;
+    }
+
     .fs-main-header {
         padding: 15px 20px;
     }
@@ -371,17 +390,17 @@
     }
 
     /* Show mobile elements only on mobile */
-    @media (max-width: 992px) {
-        .fs-mobile-submenu {
-            display: block;
-            /* Show on mobile */
-        }
 
-        .fs-mobile-arrow {
-            display: inline-block;
-            /* Show on mobile */
-        }
+    .fs-mobile-submenu {
+        display: block;
+        /* Show on mobile */
     }
+
+    .fs-mobile-arrow {
+        display: inline-block;
+        /* Show on mobile */
+    }
+
 
     /* Ensure header actions stay visible */
     .fs-header-actions {
@@ -424,9 +443,9 @@
         width: 100%;
     }
 
-    .fs-nav-links.fs-mobile-active {
+    /* .fs-nav-links.fs-mobile-active {
         padding-top: 120px;
-    }
+    } */
 
     .fs-announcement-bar {
         padding: 2px 0;

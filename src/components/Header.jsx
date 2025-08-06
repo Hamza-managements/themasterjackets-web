@@ -52,12 +52,17 @@ export default function Header() {
           </div>
 
           <div className="fs-main-header">
-            <button className="fs-mobile-menu-btn" onClick={toggleMobileMenu}>
-              <i className={`fas ${isMobileMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
-            </button>
+            <div className={`${isMobileMenuOpen ? '' : 'mobile-header-content'}`}>
             <Link to="/" ><img className="fs-logo" src='https://res.cloudinary.com/dekf5dyng/image/upload/v1752742536/official_tmj_logo_jygsft.png'></img></Link>
+            <button className="fs-mobile-menu-btn" onClick={toggleMobileMenu}>
+              <i className={`fas ${isMobileMenuOpen ? '' : 'fa-bars'}`}></i>
+            </button>
+            </div>
             <nav className="fs-nav-container">
               <nav ref={navRef} className={`fs-nav-links ${isMobileMenuOpen ? 'fs-mobile-active' : ''}`}>
+                 <button className="fs-mobile-menu-btn" onClick={toggleMobileMenu}>
+              <i className={`fas ${isMobileMenuOpen ? 'fa-times' : ''}`}></i>
+            </button>
                 <div className="fs-nav-item">
                   <Link to="#" className="fs-main-link">Best Seller</Link>
                 </div>

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 // import { useAuth } from './UseAuth';
 import './Login.css';
 import { AuthContext } from './AuthProvider';
+import Swal from 'sweetalert2';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -15,13 +16,7 @@ const Login = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-
   const { user } = useContext(AuthContext);
-  useEffect(() => {
-    if (user) {
-      navigate('/dashboard');
-    }
-  }, [user, navigate]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -83,7 +78,16 @@ const Login = () => {
           userEmail: data.data.user.email,
         };
         login(userObj);
-        navigate('/dashboard');
+        Swal.fire({
+          title: 'Login Successful!',
+          text: 'Redirecting to dashboard...',
+          icon: 'success',
+          timer: 3000,
+          showConfirmButton: false,
+          willClose: () => {
+            navigate('/dashboard');
+          }
+        });
       } else {
         setErrors({ form: data.message || 'Invalid credentials' });
       }
@@ -93,6 +97,13 @@ const Login = () => {
       setIsSubmitting(false);
     }
   };
+  useEffect(() => {
+    if (user) {
+     setTimeout(() => {
+       navigate('/dashboard');
+     }, 3500);
+    }
+  }, [user, navigate]);
   return (
     <div className="auth-container">
       <div className="auth-header">

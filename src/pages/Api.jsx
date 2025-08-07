@@ -210,7 +210,7 @@ const SignupForm = () => {
   return (
     <div style={{ maxWidth: "400px", margin: "auto" }}>
       <h2>Signup Form</h2>
-      <form onSubmit={handleSubmit}>
+      <form className="signup-form-group" onSubmit={handleSubmit}>
         <input
           type="text"
           name="userName"

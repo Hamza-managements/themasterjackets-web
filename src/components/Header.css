@@ -286,17 +286,12 @@
 
 /* Mobile Styles */
 @media (max-width: 992px) {
-
     .mobile-header-content {
         display: flex;
         justify-content: space-between;
         align-items: center;
         width: 100%;
-    }
-
-    .fs-header-actions {
-        display: none;
-    }
+    }    
 
     .fs-main-header {
         padding: 15px 20px;
@@ -321,6 +316,11 @@
         display: flex;
         transform: translateX(0);
         opacity: 1;
+    }
+
+    .fs-dropdown-menu-user{
+        right: 0;
+        left: auto;
     }
 
     .fs-mobile-menu-btn {

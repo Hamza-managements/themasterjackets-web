@@ -3,13 +3,13 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import './Dashboard.css';
 import { AuthContext } from './auth/AuthProvider';
-import { 
-  FaBars, 
-  FaTimes, 
-  FaTachometerAlt, 
-  FaShoppingBag, 
-  FaUser, 
-  FaMapMarkerAlt, 
+import {
+  FaBars,
+  FaTimes,
+  FaTachometerAlt,
+  FaShoppingBag,
+  FaUser,
+  FaMapMarkerAlt,
   FaLock,
   FaBell,
   FaSearch,
@@ -21,9 +21,9 @@ import {
   FaTruck,
   FaClock,
   FaCreditCard,
-  FaChartLine,
   FaQuestionCircle,
-  FaHeart
+  FaHeart,
+  FaSyncAlt
 } from 'react-icons/fa';
 import { MdPayment, MdSecurity } from 'react-icons/md';
 import { BsGraphUp, BsShieldLock } from 'react-icons/bs';
@@ -35,7 +35,7 @@ const Dashboard = () => {
   const [editMode, setEditMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
-  
+
   const { user, logout } = useContext(AuthContext);
   const { uid, userName, contactNo, token, userEmail } = user;
 
@@ -46,7 +46,7 @@ const Dashboard = () => {
       easing: 'ease-in-out',
       once: true
     });
-    
+
     const handleResize = () => {
       setIsMobileView(window.innerWidth <= 1024);
       if (window.innerWidth > 1024) {
@@ -59,45 +59,45 @@ const Dashboard = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-   const [notifications, setNotifications] = useState([
-  {
-    id: 1,
-    type: 'order',
-    message: 'Your order #ORD-78945 has been shipped',
-    time: '2 hours ago',
-    read: false
-  },
-  {
-    id: 2,
-    type: 'promotion',
-    message: 'Special 20% discount on all jackets this weekend',
-    time: '1 day ago',
-    read: false
-  },
-  {
-    id: 3,
-    type: 'account',
-    message: 'Your profile information was updated successfully',
-    time: '3 days ago',
-    read: true
-  },
-  {
-    id: 4,
-    type: 'order',
-    message: 'Your order #ORD-78123 is being processed',
-    time: '5 days ago',
-    read: true
-  },
-  {
-    id: 5,
-    type: 'system',
-    message: 'New security feature available: Two-factor authentication',
-    time: '1 week ago',
-    read: true
-  }
-]);
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      type: 'order',
+      message: 'Your order #ORD-78945 has been shipped',
+      time: '2 hours ago',
+      read: false
+    },
+    {
+      id: 2,
+      type: 'promotion',
+      message: 'Special 20% discount on all jackets this weekend',
+      time: '1 day ago',
+      read: false
+    },
+    {
+      id: 3,
+      type: 'account',
+      message: 'Your profile information was updated successfully',
+      time: '3 days ago',
+      read: true
+    },
+    {
+      id: 4,
+      type: 'order',
+      message: 'Your order #ORD-78123 is being processed',
+      time: '5 days ago',
+      read: true
+    },
+    {
+      id: 5,
+      type: 'system',
+      message: 'New security feature available: Two-factor authentication',
+      time: '1 week ago',
+      read: true
+    }
+  ]);
 
-const [showNotifications, setShowNotifications] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const [orders, setOrders] = useState([
     {
@@ -137,6 +137,29 @@ const [showNotifications, setShowNotifications] = useState(false);
     }
   ]);
 
+  const [returns, setReturns] = useState([
+    {
+      id: 'RET-12345',
+      date: '2023-07-15',
+      status: 'Pending',
+      items: [
+        { name: 'Leather Jacket', quantity: 1, price: 99.99 }
+      ],
+      reason: 'Size too large',
+      refundAmount: 99.99
+    },
+    {
+      id: 'RET-12346',
+      date: '2023-07-20',
+      status: 'Approved',
+      items: [
+        { name: 'Denim Jeans', quantity: 1, price: 25.00 }
+      ],
+      reason: 'Defective item',
+      refundAmount: 25.00
+    }
+  ]);
+
   const [stats, setStats] = useState({
     totalOrders: 12,
     checkedOutOrders: 2,
@@ -161,28 +184,8 @@ const [showNotifications, setShowNotifications] = useState(false);
     }
   });
 
-  const [addresses, setAddresses] = useState([
-    {
-      id: 1,
-      type: 'Home',
-      street: '123 Main St',
-      city: 'Springfield',
-      state: 'IL',
-      zip: '62704',
-      country: 'USA',
-      isDefault: true
-    },
-    {
-      id: 2,
-      type: 'Work',
-      street: '456 Corporate Blvd',
-      city: 'Springfield',
-      state: 'IL',
-      zip: '62704',
-      country: 'USA',
-      isDefault: false
-    }
-  ]);
+  const addressesFromStorage = localStorage.getItem('addresses');
+  const [addresses, setAddresses] = useState(addressesFromStorage ? JSON.parse(addressesFromStorage) : []);
 
   const [newAddress, setNewAddress] = useState({
     type: '',
@@ -222,19 +225,19 @@ const [showNotifications, setShowNotifications] = useState(false);
     try {
       const res = await fetch(
         "https://themasterjacketsbackend-production.up.railway.app/api/user/update/68762589a469c496106e01d4", {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "authorization": `Bearer ${localStorage.getItem('token')}`,
-          },
-          body: JSON.stringify({
-            uid,
-            userName: profileData.userName,
-            contactNo: profileData.contactNo,
-          }),
-        }
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "authorization": `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({
+          uid,
+          userName: profileData.userName,
+          contactNo: profileData.contactNo,
+        }),
+      }
       );
-      
+
       const data = await res.json();
       if (res.ok) {
         // Update local user data
@@ -270,14 +273,14 @@ const [showNotifications, setShowNotifications] = useState(false);
   const handleAddAddress = (e) => {
     e.preventDefault();
     const newId = addresses.length > 0 ? Math.max(...addresses.map(a => a.id)) + 1 : 1;
-    
     // If setting as default, remove default from others
-    const updatedAddresses = newAddress.isDefault 
+    const updatedAddresses = newAddress.isDefault
       ? addresses.map(addr => ({ ...addr, isDefault: false }))
       : [...addresses];
-    
+
     updatedAddresses.push({ ...newAddress, id: newId });
     setAddresses(updatedAddresses);
+    localStorage.setItem('addresses', JSON.stringify(updatedAddresses));
     setShowAddressForm(false);
     setNewAddress({
       type: '',
@@ -304,14 +307,15 @@ const [showNotifications, setShowNotifications] = useState(false);
       alert('You must have at least one address');
       return;
     }
-    
+
     const addressToDelete = addresses.find(a => a.id === id);
     if (addressToDelete.isDefault) {
       alert('Please set another address as default before deleting this one');
       return;
     }
-    
+
     setAddresses(addresses.filter(a => a.id !== id));
+    localStorage.setItem('addresses', JSON.stringify(addresses.filter(a => a.id !== id)));
   };
 
   // Toggle two-factor authentication
@@ -329,12 +333,17 @@ const [showNotifications, setShowNotifications] = useState(false);
   };
 
   // Filter orders based on search query
-  const filteredOrders = orders.filter(order => 
+  const filteredOrders = orders.filter(order =>
     order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
     order.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
     order.tracking.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const filteredReturns = returns.filter(ret =>
+    ret.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    ret.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    ret.reason.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   return (
     <div className="dashboard-container">
       {/* Top Navigation Bar */}
@@ -347,17 +356,17 @@ const [showNotifications, setShowNotifications] = useState(false);
           )}
           <div className="search-bar">
             <FaSearch className="search-icon" />
-            <input 
-              type="text" 
-              placeholder="Search orders, settings..." 
+            <input
+              type="text"
+              placeholder="Search orders, settings..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
         </div>
-        
+
         <div className="topbar-right">
-          <button 
+          <button
             className="notification-btn"
             onClick={() => setShowNotifications(!showNotifications)}
           >
@@ -366,9 +375,9 @@ const [showNotifications, setShowNotifications] = useState(false);
               <span className="notification-badge">{notifications.length}</span>
             )}
           </button>
-          
-          <div 
-            className="user-menu"
+
+          <div
+            className={`user-menu ${showUserMenu ? 'active' : ''}`}
             onClick={() => setShowUserMenu(!showUserMenu)}
           >
             <div className="user-avatar">
@@ -376,7 +385,7 @@ const [showNotifications, setShowNotifications] = useState(false);
             </div>
             <span>{userName}</span>
             <FaChevronDown className={`dropdown-icon ${showUserMenu ? 'open' : ''}`} />
-            
+
             {showUserMenu && (
               <div className="dropdown-menu">
                 <div className="dropdown-header">
@@ -403,7 +412,7 @@ const [showNotifications, setShowNotifications] = useState(false);
             )}
           </div>
         </div>
-        
+
         {showNotifications && (
           <div className="notifications-panel">
             <div className="notifications-header">
@@ -436,7 +445,7 @@ const [showNotifications, setShowNotifications] = useState(false);
 
       <div className="dashboard-grid">
         {/* Left Sidebar */}
-        <aside 
+        <aside
           className={`dashboard-sidebar ${isMobileView ? (isMobileMenuOpen ? 'mobile-open' : 'mobile-closed') : ''}`}
         >
           <div className="user-profile-card">
@@ -458,49 +467,57 @@ const [showNotifications, setShowNotifications] = useState(false);
           </div>
 
           <nav className="dashboard-nav">
-            <button 
+            <button
               className={activeTab === 'overview' ? 'active' : ''}
               onClick={() => handleNavClick('overview')}
             >
-              <FaTachometerAlt className="nav-icon" /> 
+              <FaTachometerAlt className="nav-icon" />
               <span>Dashboard</span>
             </button>
-            <button 
+            <button
               className={activeTab === 'orders' ? 'active' : ''}
               onClick={() => handleNavClick('orders')}
             >
-              <FaShoppingBag className="nav-icon" /> 
+              <FaShoppingBag className="nav-icon" />
               <span>My Orders</span>
               {orders.length > 0 && <span className="nav-badge">{orders.length}</span>}
             </button>
-            <button 
+            <button
+              className={activeTab === 'returns' ? 'active' : ''}
+              onClick={() => handleNavClick('returns')}
+            >
+              <FaSyncAlt className="nav-icon" />
+              <span>My Returns</span>
+              <span className="nav-badge">{returns.length}</span>
+            </button>
+            <button
               className={activeTab === 'profile' ? 'active' : ''}
               onClick={() => handleNavClick('profile')}
             >
-              <FaUser className="nav-icon" /> 
+              <FaUser className="nav-icon" />
               <span>Profile</span>
             </button>
-            <button 
+            <button
               className={activeTab === 'addresses' ? 'active' : ''}
               onClick={() => handleNavClick('addresses')}
             >
-              <FaMapMarkerAlt className="nav-icon" /> 
+              <FaMapMarkerAlt className="nav-icon" />
               <span>Addresses</span>
             </button>
-            <button 
+            <button
               className={activeTab === 'security' ? 'active' : ''}
               onClick={() => handleNavClick('security')}
             >
-              <FaLock className="nav-icon" /> 
+              <FaLock className="nav-icon" />
               <span>Security</span>
             </button>
             {isMobileView && (
-            <button className="mobile-menu-toggle" onClick={toggleMobileMenu}>
-              <FaTimes />
-            </button>
-          )}
+              <button className="mobile-menu-toggle" onClick={toggleMobileMenu}>
+                <FaTimes />
+              </button>
+            )}
           </nav>
-          
+
           <div className="sidebar-footer">
             <div className="help-card">
               <FaQuestionCircle />
@@ -521,7 +538,7 @@ const [showNotifications, setShowNotifications] = useState(false);
                 <h1>Dashboard Overview</h1>
                 <p>Welcome back, {userName}! Here's what's happening with your account.</p>
               </div>
-              
+
               <div className="stats-grid">
                 <div className="stat-card primary">
                   <div className="stat-icon">
@@ -571,14 +588,14 @@ const [showNotifications, setShowNotifications] = useState(false);
               <div className="content-section">
                 <div className="section-header">
                   <h2>Recent Orders</h2>
-                  <button 
+                  <button
                     className="btn-text"
                     onClick={() => handleNavClick('orders')}
                   >
                     View All Orders
                   </button>
                 </div>
-                
+
                 <div className="orders-table">
                   <div className="table-responsive">
                     <table>
@@ -629,15 +646,19 @@ const [showNotifications, setShowNotifications] = useState(false);
                     <FaShoppingBag />
                     <span>Start Shopping</span>
                   </button>
-                  <button className="action-card">
+                  <button className="action-card" onClick={() => handleNavClick('profile')}>
                     <FaUser />
                     <span>Update Profile</span>
                   </button>
-                  <button className="action-card">
+                  <button className="action-card" onClick={() => handleNavClick('returns')}>
+                    <FaSyncAlt />
+                    <span>My Returns</span>
+                  </button>
+                  {/* <button className="action-card">
                     <MdPayment />
                     <span>Payment Methods</span>
-                  </button>
-                  <button className="action-card">
+                  </button> */}
+                  <button className="action-card" onClick={() => handleNavClick('security')}>
                     <BsShieldLock />
                     <span>Security Settings</span>
                   </button>
@@ -653,13 +674,13 @@ const [showNotifications, setShowNotifications] = useState(false);
                 <h1>My Orders</h1>
                 <p>View and manage your recent and past orders</p>
               </div>
-              
+
               <div className="orders-filter">
                 <div className="search-box">
                   <FaSearch />
-                  <input 
-                    type="text" 
-                    placeholder="Search by order ID, status..." 
+                  <input
+                    type="text"
+                    placeholder="Search by order ID, status..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
@@ -679,15 +700,15 @@ const [showNotifications, setShowNotifications] = useState(false);
                   </select>
                 </div>
               </div>
-              
+
               <div className="orders-list">
                 {filteredOrders.length > 0 ? (
                   filteredOrders.map((order) => (
                     <div className="order-card" key={order.id}>
                       <div className="order-header">
                         <div>
-                          <span className="order-id">Order #{order.id}</span>
-                          <small>Placed on {formatDate(order.date)}</small>
+                          <span className="order-id">Order #{order.id} </span>
+                          <small>  Placed on {formatDate(order.date)}</small>
                         </div>
                         <div className="order-status">
                           <span className={`status-badge ${order.status.toLowerCase()}`}>
@@ -698,7 +719,7 @@ const [showNotifications, setShowNotifications] = useState(false);
                           </span>
                         </div>
                       </div>
-                      
+
                       <div className="order-items">
                         {order.items.map((item, index) => (
                           <div key={index} className="order-item">
@@ -713,7 +734,7 @@ const [showNotifications, setShowNotifications] = useState(false);
                           </div>
                         ))}
                       </div>
-                      
+
                       <div className="order-footer">
                         <div className="order-total">
                           <span>Total:</span>
@@ -742,6 +763,102 @@ const [showNotifications, setShowNotifications] = useState(false);
             </div>
           )}
 
+          {/* returns Tab */}
+          {activeTab === 'returns' && (
+            <div data-aos="fade-up">
+              <div className="content-header">
+                <h1>My Returns</h1>
+                <p>View and manage your recent and past returns</p>
+              </div>
+
+              <div className="orders-filter">
+                <div className="search-box">
+                  <FaSearch />
+                  <input
+                    type="text"
+                    placeholder="Search by return ID, status..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                <div className="filter-options">
+                  <select>
+                    <option>All Returns</option>
+                    <option>Approved</option>
+                    <option>In-Process</option>
+                    <option>Cancelled</option>
+                  </select>
+                  <select>
+                    <option>Sort by: Newest</option>
+                    <option>Sort by: Oldest</option>
+                    <option>Sort by: Price (High to Low)</option>
+                    <option>Sort by: Price (Low to High)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="orders-list">
+                {filteredReturns.length > 0 ? (
+                  filteredReturns.map((ret) => (
+                    <div className="order-card" key={ret.id}>
+                      <div className="order-header">
+                        <div>
+                          <span className="order-id">Return #{ret.id} </span>
+                          <small> Placed on {formatDate(ret.date)}</small>
+                        </div>
+                        <div className="order-status">
+                          <span className={`status-badge ${ret.status.toLowerCase()}`}>
+                            {ret.status}
+                          </span>
+                          <span className="return-reason">
+                            Return reason : <span>{ret.reason}</span>
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="order-items">
+                        {ret.items.map((item, index) => (
+                          <div key={index} className="order-item">
+                            <div className="item-image">
+                              {/* Placeholder for product image */}
+                              <div className="image-placeholder"></div>
+                            </div>
+                            <div className="item-details">
+                              <h4>{item.name}</h4>
+                              <p>Qty: {item.quantity} × ${item.price.toFixed(2)}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="order-footer">
+                        <div className="order-total">
+                          <span>Total:</span>
+                          <strong>${ret.refundAmount.toFixed(2)}</strong>
+                        </div>
+                        <div className="order-actions">
+                          <button className="btn-outline">
+                            <FaTruck /> Track Return
+                          </button>
+                          <button className="btn-primary">
+                            View Details
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="empty-state">
+                    <FaShoppingBag />
+                    <h3>No Returns found</h3>
+                    <p>Your search didn't match any Returns. Try different keywords.</p>
+                    <button className="btn-primary">Continue Shopping</button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Profile Tab */}
           {activeTab === 'profile' && (
             <div data-aos="fade-up">
@@ -749,7 +866,7 @@ const [showNotifications, setShowNotifications] = useState(false);
                 <h1>My Profile</h1>
                 <p>Manage your personal information and account settings</p>
               </div>
-              
+
               <div className="profile-section">
                 <div className="profile-header">
                   <div className="profile-avatar">
@@ -767,7 +884,7 @@ const [showNotifications, setShowNotifications] = useState(false);
                   </div>
                   <div className="profile-actions">
                     {!editMode ? (
-                      <button 
+                      <button
                         className="btn-primary"
                         onClick={() => setEditMode(true)}
                       >
@@ -775,13 +892,13 @@ const [showNotifications, setShowNotifications] = useState(false);
                       </button>
                     ) : (
                       <div className="edit-actions">
-                        <button 
+                        <button
                           className="btn-outline"
                           onClick={() => setEditMode(false)}
                         >
                           Cancel
                         </button>
-                        <button 
+                        <button
                           className="btn-primary"
                           onClick={handleProfileUpdate}
                         >
@@ -791,7 +908,7 @@ const [showNotifications, setShowNotifications] = useState(false);
                     )}
                   </div>
                 </div>
-                
+
                 {!editMode ? (
                   <div className="profile-details">
                     <div className="detail-row">
@@ -838,7 +955,7 @@ const [showNotifications, setShowNotifications] = useState(false);
                         />
                       </div>
                     </div>
-                    
+
                     <div className="form-row">
                       <div className="form-group">
                         <label>Phone Number</label>
@@ -851,7 +968,7 @@ const [showNotifications, setShowNotifications] = useState(false);
                         />
                       </div>
                     </div>
-                    
+
                     <div className="form-group">
                       <label>Address</label>
                       <div className="address-fields">
@@ -907,11 +1024,11 @@ const [showNotifications, setShowNotifications] = useState(false);
                 <h1>My Addresses</h1>
                 <p>Manage your shipping addresses for faster checkout</p>
               </div>
-              
+
               <div className="addresses-grid">
                 {addresses.map(address => (
-                  <div 
-                    key={address.id} 
+                  <div
+                    key={address.id}
                     className={`address-card ${address.isDefault ? 'default' : ''}`}
                   >
                     <div className="address-header">
@@ -927,7 +1044,7 @@ const [showNotifications, setShowNotifications] = useState(false);
                     </div>
                     <div className="address-actions">
                       {!address.isDefault && (
-                        <button 
+                        <button
                           className="btn-text"
                           onClick={() => setDefaultAddress(address.id)}
                         >
@@ -938,8 +1055,8 @@ const [showNotifications, setShowNotifications] = useState(false);
                         <button className="icon-btn" title="Edit">
                           <FaEdit />
                         </button>
-                        <button 
-                          className="icon-btn" 
+                        <button
+                          className="icon-btn"
                           title="Delete"
                           onClick={() => deleteAddress(address.id)}
                         >
@@ -949,7 +1066,7 @@ const [showNotifications, setShowNotifications] = useState(false);
                     </div>
                   </div>
                 ))}
-                
+
                 {showAddressForm ? (
                   <div className="address-card add-form">
                     <form onSubmit={handleAddAddress}>
@@ -967,7 +1084,7 @@ const [showNotifications, setShowNotifications] = useState(false);
                           <option value="Other">Other</option>
                         </select>
                       </div>
-                      
+
                       <div className="form-group">
                         <label>Street Address</label>
                         <input
@@ -978,7 +1095,7 @@ const [showNotifications, setShowNotifications] = useState(false);
                           required
                         />
                       </div>
-                      
+
                       <div className="form-row">
                         <div className="form-group">
                           <label>City</label>
@@ -1001,7 +1118,7 @@ const [showNotifications, setShowNotifications] = useState(false);
                           />
                         </div>
                       </div>
-                      
+
                       <div className="form-row">
                         <div className="form-group">
                           <label>ZIP/Postal Code</label>
@@ -1024,7 +1141,7 @@ const [showNotifications, setShowNotifications] = useState(false);
                           />
                         </div>
                       </div>
-                      
+
                       <div className="form-checkbox">
                         <input
                           type="checkbox"
@@ -1038,9 +1155,9 @@ const [showNotifications, setShowNotifications] = useState(false);
                         />
                         <label htmlFor="defaultAddress">Set as default address</label>
                       </div>
-                      
+
                       <div className="form-actions">
-                        <button 
+                        <button
                           type="button"
                           className="btn-outline"
                           onClick={() => setShowAddressForm(false)}
@@ -1054,7 +1171,7 @@ const [showNotifications, setShowNotifications] = useState(false);
                     </form>
                   </div>
                 ) : (
-                  <div 
+                  <div
                     className="address-card add-new"
                     onClick={() => setShowAddressForm(true)}
                   >
@@ -1075,7 +1192,7 @@ const [showNotifications, setShowNotifications] = useState(false);
                 <h1>Account Security</h1>
                 <p>Manage your account security settings and preferences</p>
               </div>
-              
+
               <div className="security-settings">
                 <div className="security-card">
                   <div className="security-header">
@@ -1089,8 +1206,10 @@ const [showNotifications, setShowNotifications] = useState(false);
                   </div>
                   <button className="btn-outline">Change Password</button>
                 </div>
-                
-                <div className="security-card">
+              </div>
+
+
+              {/* <div className="security-card">
                   <div className="security-header">
                     <div className="security-icon">
                       <BsShieldLock />
@@ -1107,14 +1226,14 @@ const [showNotifications, setShowNotifications] = useState(false);
                       </div>
                     </div>
                   </div>
-                  <button 
+                  <button
                     className={`btn-${securitySettings.twoFactorEnabled ? 'outline' : 'primary'}`}
                     onClick={toggleTwoFactor}
                   >
                     {securitySettings.twoFactorEnabled ? 'Disable' : 'Enable'} 2FA
                   </button>
                 </div>
-                
+
                 <div className="security-card">
                   <div className="security-header">
                     <div className="security-icon">
@@ -1127,7 +1246,7 @@ const [showNotifications, setShowNotifications] = useState(false);
                   </div>
                   <button className="btn-outline">Manage Questions</button>
                 </div>
-                
+
                 <div className="security-card">
                   <div className="security-header">
                     <div className="security-icon">
@@ -1140,8 +1259,8 @@ const [showNotifications, setShowNotifications] = useState(false);
                   </div>
                   <button className="btn-outline">View Activity</button>
                 </div>
-                
-                {/* <div className="security-card">
+
+                <div className="security-card">
                   <div className="security-header">
                     <div className="security-icon">
                       <MdPayment />
@@ -1152,9 +1271,9 @@ const [showNotifications, setShowNotifications] = useState(false);
                     </div>
                   </div>
                   <button className="btn-outline">Manage Devices</button>
-                </div> */}
+                </div>
               </div>
-              
+
               <div className="security-advanced">
                 <h3>Advanced Security</h3>
                 <div className="advanced-options">
@@ -1165,7 +1284,7 @@ const [showNotifications, setShowNotifications] = useState(false);
                     </div>
                     <button className="btn-outline">Logout Everywhere</button>
                   </div>
-                  
+
                   <div className="option-row">
                     <div>
                       <h4>Deactivate Account</h4>
@@ -1173,7 +1292,7 @@ const [showNotifications, setShowNotifications] = useState(false);
                     </div>
                     <button className="btn-outline danger">Deactivate</button>
                   </div>
-                  
+
                   <div className="option-row">
                     <div>
                       <h4>Delete Account</h4>
@@ -1182,7 +1301,7 @@ const [showNotifications, setShowNotifications] = useState(false);
                     <button className="btn-outline danger">Delete Account</button>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           )}
         </main>

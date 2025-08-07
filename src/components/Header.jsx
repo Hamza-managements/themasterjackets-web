@@ -219,7 +219,7 @@ export default function Header() {
               </nav>
             </nav>
 
-            <div className="fs-header-actions">
+            <div className={`${isMobileMenuOpen ? 'd-none' : 'fs-header-actions '}`}>
               {/* Search Bar */}
               <div className="fs-search-bar">
                 <i className="fas fa-search"></i>

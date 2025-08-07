@@ -53,34 +53,34 @@
   gap: 1rem;
 }
 
-.form-group {
+.login-form-group {
   display: flex;
   flex-direction: column;
 }
 
-.form-group label {
+.login-form-group label {
   font-size: 0.875rem;
   font-weight: 500;
   color: #374151;
 }
 
-.form-group input {
+.login-form-group input {
   width: 100%;
   padding: 0.875rem 1rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid #bbbcbc;
   border-radius: 8px;
   font-size: 0.95rem;
   transition: all 0.2s ease;
 }
 
-.form-group input:focus {
+.login-form-group input:focus {
   outline: none;
   border-color: #A06D33
 ;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
-.form-group input.error {
+.login-form-group input.error {
   border-color: #ef4444;
 }
 
@@ -108,7 +108,7 @@
 }
 
 .password-toggle-login:hover {
-  color: #4b5563;
+  color: rgb(50, 50, 51);
 }
 
 .password-toggle-icon {
@@ -155,7 +155,7 @@
 }
 
 /* Auth Button */
-.auth-button {
+.login-auth-button {
   width: 100%;
   padding: 0.875rem 1rem;
   background-color: #1a1a1a;
@@ -172,11 +172,11 @@
   gap: 0.75rem;
 }
 
-.auth-button:hover {
-  background-color: #2a2a2a;
+.login-auth-button:hover {
+  background-color: #434242;
 }
 
-.auth-button:disabled {
+.login-auth-button:disabled {
   background-color: #797979;
   color: #fbfbfb;
   cursor: not-allowed;

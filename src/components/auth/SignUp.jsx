@@ -290,7 +290,7 @@ const Signup = () => {
       )}
         <form onSubmit={handleSubmit}>
           <div className="form-row">
-            <div className={`form-group ${errors.userName ? 'has-error' : ''}`}>
+            <div className={`signup-form-group ${errors.userName ? 'has-error' : ''}`}>
               <label htmlFor="userName">User Name *</label>
               <input
                 type="text"
@@ -319,7 +319,7 @@ const Signup = () => {
             </div> */}
           </div>
 
-          <div className={`form-group ${errors.email ? 'has-error' : ''}`}>
+          <div className={`signup-form-group ${errors.email ? 'has-error' : ''}`}>
             <label htmlFor="email">Email Address *</label>
             <input
               type="email"
@@ -333,7 +333,7 @@ const Signup = () => {
             {errors.email && <span className="error-messages">{errors.email}</span>}
           </div>
 
-          <div className={`form-group ${errors.password ? 'has-error' : ''}`}>
+          <div className={`signup-form-group ${errors.password ? 'has-error' : ''}`}>
             <label htmlFor="password">Password *</label>
             <div className="password-input-wrapper">
               <input
@@ -373,7 +373,7 @@ const Signup = () => {
             {errors.password && <span className="error-messages">{errors.password}</span>}
           </div>
 
-          <div className={`form-group ${errors.confirmPassword ? 'has-error' : ''}`}>
+          <div className={`signup-form-group ${errors.confirmPassword ? 'has-error' : ''}`}>
             <label htmlFor="confirmPassword">Confirm Password *</label>
             <input
               type={showPassword ? "text" : "password"}
@@ -387,7 +387,7 @@ const Signup = () => {
             {errors.confirmPassword && <span className="error-messages">{errors.confirmPassword}</span>}
           </div>
 
-          <div className={`form-group ${errors.contactNo ? 'has-error' : ''}`}>
+          <div className={`signup-form-group ${errors.contactNo ? 'has-error' : ''}`}>
             <label htmlFor="contactNo">Contact Number (Optional)</label>
             <input
               type="text"
@@ -402,7 +402,7 @@ const Signup = () => {
           </div>
 
           <div className="form-actions">
-            <button type="submit" className="signup-button" disabled={isSubmitting}>
+            <button type="submit" className="signup-submit-button" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
                   <svg className="auth-spinner" viewBox="0 0 50 50">

@@ -21,7 +21,7 @@ export default function CategoriesSection() {
   return (
     <section className="categories-section" data-aos="fade-up" data-aos-duration="500">
       <div className="container">
-        <div className="section-header text-center mb-4">
+        <div className="categories-section-header text-center mb-4">
           <h2>Shop by Categories</h2>
           <p>Discover our carefully curated collections for every taste and occasion</p>
         </div>

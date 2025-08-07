@@ -67,13 +67,13 @@ body {
   gap: 20px;
 }
 
-.form-group {
+.signup-form-group {
   margin-bottom: 20px;
   position: relative;
   flex: 1;
 }
 
-.form-group label {
+.signup-form-group label {
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
@@ -81,7 +81,7 @@ body {
   color: var(--text-color);
 }
 
-.form-group input {
+.signup-form-group input {
   width: 100%;
   padding: 12px 15px;
   border: 1px solid var(--medium-gray);
@@ -90,13 +90,13 @@ body {
   transition: var(--transition);
 }
 
-.form-group input:focus {
+.signup-form-group input:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
 }
 
-.form-group input.has-value {
+.signup-form-group input.has-value {
   border-color: #ccc;
 }
 
@@ -142,11 +142,11 @@ body {
 }
 
 /* Error States */
-.form-group.has-error input {
+.signup-form-group.has-error input {
   border-color: var(--error-color);
 }
 
-.form-group.has-error input:focus {
+.signup-form-group.has-error input:focus {
   box-shadow: 0 0 0 2px rgba(255, 68, 68, 0.2);
 }
 
@@ -158,14 +158,14 @@ body {
 }
 
 /* Button Styles */
-.signup-button {
+.signup-submit-button {
   display: inline-flex;
   justify-content: center;
   align-items: center;
   width: 100%;
   padding: 14px;
   background-color: var(--primary-color);
-  color: rgb(68, 68, 68);
+  color: rgb(214, 214, 214);
   border: none;
   border-radius: var(--border-radius);
   font-size: 16px;
@@ -175,12 +175,12 @@ body {
   margin-top: 10px;
 }
 
-.signup-button:hover {
-  background-color: var(--primary-dark);
+.signup-submit-button:hover {
+  background-color: var(--text-color);
   color: white;
 }
 
-.signup-button:disabled {
+.signup-submit-button:disabled {
   background-color: var(--medium-gray);
   cursor: not-allowed;
 }

@@ -110,7 +110,7 @@ const Login = () => {
       )}
 
       <form onSubmit={handleSubmit} className="auth-form">
-        <div className="form-group">
+        <div className="login-form-group">
           <label htmlFor="userEmail">Email Address *</label>
           <input
             id="userEmail"
@@ -124,7 +124,7 @@ const Login = () => {
           {errors.userEmail && <span className="error-message-login">{errors.userEmail}</span>}
         </div>
 
-        <div className="form-group">
+        <div className="login-form-group">
           <label htmlFor="userPassword">Password *</label>
           <div className="password-input-container">
             <input
@@ -176,7 +176,7 @@ const Login = () => {
           </Link>
         </div> */}
 
-        <button type="submit" className="auth-button" disabled={isSubmitting}>
+        <button type="submit" className="login-auth-button" disabled={isSubmitting}>
           {isSubmitting ? (
             <>
               <svg className="auth-spinner" viewBox="0 0 50 50">

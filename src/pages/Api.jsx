@@ -27,7 +27,7 @@ const SignupForm = () => {
   const handleDelete = async (e) => {
     e.preventDefault();
     const response = await fetch(
-      "https://themasterjacketsbackend-production.up.railway.app/api/user/delete/68762589a469c496106e01d4?uid=688dd8f3b6b95b629076d866", {
+      "https://themasterjacketsbackend-production.up.railway.app/api/user/delete/68762589a469c496106e01d4?uid=68949081e05362d951e7b066", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -37,6 +37,7 @@ const SignupForm = () => {
     );
     const data = await response.json();
     console.log(data);
+    ApiTesting();
   };
 
   const handleRole = async (e) => {

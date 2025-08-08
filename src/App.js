@@ -37,19 +37,19 @@ import MainLayout from './layouts/MainLayout';
 import SignupForm from './pages/Api';
 // import AccountSettings from './components/AccountsSettings';
 import NotFound from './pages/Notfound';
-import Dashboard from './components/Dashboard'; // Assuming this is the correct path for the testing component
-
+import Dashboard from './components/Dashboard';
+import ForgotPassword from './pages/ForgotPassword';
 function App() {
   return (
     <Router>
       <AuthProvider>
         <Routes>
-          {/* Public routes with main layout */}
           <Route element={<MainLayout />}>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/return-exchange" element={<ReturnPolicy />} />
             <Route path="/contact-us" element={<ContactForm />} />
+            <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           </Route>
 
           {/* Auth routes with auth layout */}
@@ -58,50 +58,19 @@ function App() {
             <Route path="signup" element={<SignUp />} />
           </Route>
 
-
-          {/* Protected routes with main layout */}
-          <Route
-            path="/checkout"
-            element={
-              <PrivateRoute>
-                <CheckoutPage />
-              </PrivateRoute>
-            }
-          />
-          <Route element={<MainLayout />}>
-            <Route
-              path="/dashboard"
-              element={
-                <PrivateRoute>
-                  <Dashboard />
-                </PrivateRoute>
-              }
-            />
-          </Route>
-          {/* <Route
-              path="/account/settings"
-              element={
-                <PrivateRoute>
-              <AccountSettings />
-               </PrivateRoute> 
-              }
-            /> */}
-          <Route
-            path="/admin-dashboard"
-            element={
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/checkout" element={
+            // <PrivateRoute>
+              <CheckoutPage />
+            // </PrivateRoute>
+          }/>
+          <Route path="/admin-dashboard" element={
               <PrivateRoute>
                 <AdminDashboard />
               </PrivateRoute>
-            }
-          />
-          <Route
-            path="/api-testing"
-            element={
-              <SignupForm />
-            }
-          />
-          {/* Error handling - uncomment when ready */}
-          {/* <Route path="*" element={<Navigate to="/404" replace />} /> */}
+            }/>
+          {/* <Route path="/account/settings" element={<PrivateRoute> <AccountSettings /> </PrivateRoute> } /> */}
+          <Route path="/api-testing" element={<SignupForm />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>

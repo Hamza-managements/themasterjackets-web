@@ -80,7 +80,7 @@ export default function ForgotPassword() {
   // Auto-redirect if already submitted
   useEffect(() => {
     if (isSubmitted) {
-      const timer = setTimeout(() => navigate('/login'), 5000);
+      const timer = setTimeout(() => navigate('/auth/login'), 5000);
       return () => clearTimeout(timer);
     }
   }, [isSubmitted, navigate]);
@@ -97,7 +97,7 @@ export default function ForgotPassword() {
         {/* Back button */}
         <button 
           className="back-button"
-          onClick={() => navigate('/login')}
+          onClick={() => navigate('/auth/login')}
           aria-label="Back to login"
         >
           <FiArrowLeft size={20} />

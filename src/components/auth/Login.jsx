@@ -171,7 +171,7 @@ const Login = () => {
           {errors.userPassword && <span className="error-message-login">{errors.userPassword}</span>}
         </div>
 
-        {/* <div className="form-options">
+        <div className="form-options">
           <div className="remember-me">
             <input
               id="rememberMe"
@@ -185,7 +185,7 @@ const Login = () => {
           <Link to="/forgot-password" className="forgot-password">
             Forgot password?
           </Link>
-        </div> */}
+        </div>
 
         <button type="submit" className="login-auth-button" disabled={isSubmitting}>
           {isSubmitting ? (

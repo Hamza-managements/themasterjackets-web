@@ -50,6 +50,7 @@ function App() {
             <Route path="/return-exchange" element={<ReturnPolicy />} />
             <Route path="/contact-us" element={<ContactForm />} />
             <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+            <Route path="/admin-dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>}/>
           </Route>
 
           {/* Auth routes with auth layout */}
@@ -64,11 +65,7 @@ function App() {
               <CheckoutPage />
             // </PrivateRoute>
           }/>
-          <Route path="/admin-dashboard" element={
-              <PrivateRoute>
-                <AdminDashboard />
-              </PrivateRoute>
-            }/>
+          
           {/* <Route path="/account/settings" element={<PrivateRoute> <AccountSettings /> </PrivateRoute> } /> */}
           <Route path="/api-testing" element={<SignupForm />} />
           <Route path="*" element={<NotFound />} />

@@ -1,12 +1,11 @@
 import './Header.css';
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { openCart } from './Cart';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { AuthContext } from './auth/AuthProvider';
 
 export default function Header() {
   const { user, logout } = useContext(AuthContext);
-  const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSubmenu, setActiveSubmenu] = useState(null);
   const navRef = useRef();

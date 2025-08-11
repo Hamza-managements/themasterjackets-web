@@ -45,14 +45,14 @@
   margin-bottom: 1rem;
 }
 
-.error-message {
+.error-message-not {
   font-size: 1.1rem;
   color: #6c757d;
   margin-bottom: 2rem;
 }
 
-.error-message code {
-  background: #f1f1f1;
+.error-message-not code {
+  background: #ebcfcf;
   padding: 0.2rem 0.4rem;
   border-radius: 4px;
   font-family: monospace;
@@ -209,10 +209,10 @@
   }
 }
 
-.text-button {
+.text-button-cancel {
   background: none;
   border: none;
-  color: #3E2C1C;;
+  color: #20170e;;
   padding: 0;
   margin-top: 0.5rem;
   text-decoration: underline;
@@ -220,6 +220,6 @@
   font-size: 0.9rem;
 }
 
-.text-button:hover {
+.text-button-cancel:hover {
   color: #A06D33;
 }

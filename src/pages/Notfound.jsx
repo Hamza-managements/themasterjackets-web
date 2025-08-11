@@ -94,9 +94,27 @@ const NotFound = () => {
         </div>
 
         <h1 className='not-found-h1'>Page Not Found</h1>
-        <p className="error-message">
+        <p className="error-message-not">
           The page <code>{location.pathname}</code> doesn't exist or has been moved.
         </p>
+
+        {suggestedPages.length > 0 && (
+          <div className="suggestions">
+            <h3>Were you looking for one of these?</h3>
+            <ul>
+              {suggestedPages.map((page, index) => (
+                <li key={index}>
+                  <button className='button' onClick={() => {
+                    stopCountdown();
+                    navigate(page.path);
+                  }}>
+                    {page.name}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <div className="action-section">
           <button
@@ -119,24 +137,6 @@ const NotFound = () => {
             Go Back
           </button>
         </div>
-
-        {suggestedPages.length > 0 && (
-          <div className="suggestions">
-            <h3>Were you looking for one of these?</h3>
-            <ul>
-              {suggestedPages.map((page, index) => (
-                <li key={index}>
-                  <button className='button' onClick={() => {
-                    stopCountdown();
-                    navigate(page.path);
-                  }}>
-                    {page.name}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
 
         <div className="search-section">
           <p>Or try searching for what you need:</p>
@@ -162,7 +162,7 @@ const NotFound = () => {
           <div className="countdown">
             <p>You'll be automatically redirected to the homepage in {countdown} seconds.</p>
             <button
-              className="text-button button"
+              className="text-button-cancel"
               onClick={stopCountdown}
             >
               Cancel redirect

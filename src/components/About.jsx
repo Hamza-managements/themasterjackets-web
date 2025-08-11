@@ -16,7 +16,7 @@ export default function AboutPage() {
     <>
       <div className="about-hero">
         <div className="about-container">
-          <h1 className='about-h'>Our Story</h1>
+          <h1 className='about-h1'>Our Story</h1>
           <p className='about-p'>
             Founded in 2020, we've been crafting exceptional experiences with passion and dedication, rooted in our
             love for quality and tradition.

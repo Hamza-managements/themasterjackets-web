@@ -20,11 +20,10 @@ export default function ResetPassword() {
         token: ''
     });
 
-    // Extract token from URL on mount
     useEffect(() => {
         const urlToken = searchParams.get('token');
         if (!urlToken) {
-            //   Swal.fire('Error', 'Invalid password reset link', 'error').then(() => navigate('/'));
+              Swal.fire('Error', 'Invalid password reset link', 'error').then(() => navigate('/'));
         }
         setToken(urlToken);
     }, [searchParams, navigate]);
@@ -201,7 +200,7 @@ export default function ResetPassword() {
                         )}
                     </div>
 
-                    <button type="submit" className="submit-button" disabled={isLoading}>
+                    <button type="submit" className="reset-password-submit-button" disabled={isLoading}>
                         {isLoading ? (
                             <div className="spinner"></div>
                         ) : (

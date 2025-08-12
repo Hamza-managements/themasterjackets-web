@@ -158,7 +158,7 @@ export default function ForgotPassword() {
 
               <button 
                 type="submit" 
-                className="submit-button"
+                className="forgot-password-submit-button"
                 disabled={isLoading}
               >
                 {isLoading ? (

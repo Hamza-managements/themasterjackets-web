@@ -23,7 +23,7 @@ export default function ResetPassword() {
     useEffect(() => {
         const urlToken = searchParams.get('token');
         if (!urlToken) {
-              Swal.fire('Error', 'Invalid password reset link', 'error').then(() => navigate('/'));
+            //   Swal.fire('Error', 'Invalid password reset link', 'error').then(() => navigate('/'));
         }
         setToken(urlToken);
     }, [searchParams, navigate]);

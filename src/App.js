@@ -39,6 +39,7 @@ import SignupForm from './pages/Api';
 import NotFound from './pages/Notfound';
 import Dashboard from './components/Dashboard';
 import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 function App() {
   return (
     <Router>
@@ -60,6 +61,8 @@ function App() {
           </Route>
 
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          {/* Redirects */}
           <Route path="/checkout" element={
             // <PrivateRoute>
               <CheckoutPage />

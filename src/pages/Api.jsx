@@ -1,293 +1,270 @@
-import React, { useState, useContext, useEffect, use } from "react";
+import React, { useState, useContext } from "react";
 import { AuthContext } from "../components/auth/AuthProvider";
-import { useNavigate } from "react-router-dom";
 
-
-const SignupForm = () => {
+const APITestingPage = () => {
   const { user } = useContext(AuthContext);
-  // const navigate = useNavigate();
-  //  useEffect(() => {
-  //   if (user) {
-  //     navigate("/dashboard");
-  //   }
-  // }, [user, navigate]);
-  const ApiTesting = async (e) => {
-    const response = await fetch(
-      "https://themasterjacketsbackend-production.up.railway.app/api/user/fetch-all/68762589a469c496106e01d4", {
-      headers: {
-        "Content-Type": "application/json",
-        "authorization": `Bearer ${localStorage.getItem('token')}`,
-      },
-    }
-    );
-    const data = await response.json();
-    console.log(data);
-  };
+  const [apiResults, setApiResults] = useState({});
+  const [loading, setLoading] = useState(false);
 
-  const handleDelete = async (e) => {
-    e.preventDefault();
-    const response = await fetch(
-      "https://themasterjacketsbackend-production.up.railway.app/api/user/delete/68762589a469c496106e01d4?uid=68949081e05362d951e7b066", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "authorization": `Bearer ${localStorage.getItem('token')}`,
-      },
-    }
-    );
-    const data = await response.json();
-    console.log(data);
-    ApiTesting();
-  };
-
-  const handleRole = async (e) => {
-    e.preventDefault();
-    const response = await fetch(
-      "https://themasterjacketsbackend-production.up.railway.app/api/user/fetch-all/68762589a469c496106e01d4?role=admin", {
-      headers: {
-        "Content-Type": "application/json",
-        "authorization": `Bearer ${localStorage.getItem('token')}`,
-      },
-    }
-    );
-    const data = await response.json();
-    // console.log(data.data);
-    // Safely get the current user's email
-    let userEmail = "No user found";
+  // Generic API call function
+  const callAPI = async (endpoint, method = "GET", body = null) => {
+    setLoading(true);
     try {
-      const stored = localStorage.getItem("user");
-      const user = stored ? JSON.parse(stored) : null;
-      if (user?.userEmail) {
-        userEmail = user.userEmail;
-      }
-    } catch (err) {
-      console.warn("Failed to parse stored user:", err);
-    }
-    console.log("User Email:", userEmail);
-
-    // Validate admin list and compare
-    if (!Array.isArray(data?.data)) {
-      console.error("Expected data.data to be an array of users", data);
-    } else {
-      const comparisons = data.data.map(u => ({
-        adminEmail: u.email,
-        isCurrentUser: u.email === userEmail,
-      }));
-
-      // console.log("Admins comparison:", comparisons);
-
-      // If you just want to know if current user is in that list:
-      const isAdmin = comparisons.some(c => c.isCurrentUser);
-      console.log("Is current user an admin?", isAdmin);
-    }
-
-  };
-  // user list API: fetch( 
-  //       "https://themasterjacketsbackend-production.up.railway.app/api/user/fetch-all/68762589a469c496106e01d4",{
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           "authorization": `Bearer ${localStorage.getItem('token')}`,
-  //         },
-  //       }
-  //     );
-
-  //  or if by role 
-  // user list by role *admin or customer* API: fetch(
-  //       "https://themasterjacketsbackend-production.up.railway.app/api/user/fetch-all/68762589a469c496106e01d4?role=admin",{
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           "authorization": `Bearer ${localStorage.getItem('token')}`,
-  //         },
-  //       }
-  //     );
-
-  //  Get user by ID API: const response = await fetch(
-  //       "https://themasterjacketsbackend-production.up.railway.app/api/user/fetchById/68762589a469c496106e01d4?uid=68762589a469c496106e01d4",{
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           "authorization": `Bearer ${localStorage.getItem('token')}`,
-  //         },
-  //       }
-  //     );
-
-  // user status change API: fetch(
-  //       "https://themasterjacketsbackend-production.up.railway.app/api/user/change-activation-status/68762589a469c496106e01d4?uid=688872b4a2bef30fb9614517",{
-  //         method: "PUT",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           "authorization": `Bearer ${localStorage.getItem('token')}`,
-  //         },
-  //       }
-  //     );
-
-  // update user API: fetch(
-  //       "https://themasterjacketsbackend-production.up.railway.app/api/user/update/68762589a469c496106e01d4",{
-  //         method: "PUT",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           "authorization": `Bearer ${localStorage.getItem('token')}`,
-  //         },
-  //      body: JSON.stringify(
-  //        {
-  //          uid: "688872b4a2bef30fb9614517",
-  //          userName: "Hamza S",
-  //          contactNo: "03001234567",
-  //        }),
-  //       }
-  //     );
-
-  // Delete user API: fetch( 
-  //       "https://themasterjacketsbackend-production.up.railway.app/api/user/delete/68762589a469c496106e01d4?uid=688c7a5aa2bef30fb9614768",{
-  //        method: "DELETE",
-  //        headers: {
-  //           "Content-Type": "application/json",
-  //           "authorization": `Bearer ${localStorage.getItem('token')}`,
-  //         },
-  //     }
-  //   );
-  const [formData, setFormData] = useState({
-    userName: "",
-    email: "",
-    password: "",
-    contactNo: "",
-    role: "customer",
-  });
-
-  const [message, setMessage] = useState("");
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMessage("Registering...");
-
-    try {
-      // const response = await fetch(
-      //   "https://themasterjacketsbackend-production.up.railway.app/api/user/register",
-      //   {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify(formData),
-      //   }
-      // );
-      const response = await fetch(
-        "https://themasterjacketsbackend-production.up.railway.app/api/user/fetch-all/68762589a469c496106e01d4", {
+      const options = {
+        method,
         headers: {
           "Content-Type": "application/json",
-          authorization: `Bearer ${localStorage.getItem('token')}`,
+          "authorization": `Bearer ${localStorage.getItem('token')}`,
         },
+      };
+
+      if (body) {
+        options.body = JSON.stringify(body);
       }
+
+      const response = await fetch(
+        `https://themasterjacketsbackend-production.up.railway.app/api/user/${endpoint}`,
+        options
+      );
+
+      const data = await response.json();
+      setApiResults(prev => ({
+        ...prev,
+        [endpoint]: {
+          success: response.ok,
+          data: data,
+          status: response.status,
+          timestamp: new Date().toLocaleTimeString()
+        }
+      }));
+    } catch (error) {
+      setApiResults(prev => ({
+        ...prev,
+        [endpoint]: {
+          success: false,
+          error: error.message,
+          timestamp: new Date().toLocaleTimeString()
+        }
+      }));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Specific API functions
+  const fetchAllUsers = () => callAPI("fetch-all/68762589a469c496106e01d4");
+
+  const fetchAdmins = () => callAPI("fetch-all/68762589a469c496106e01d4?role=admin");
+
+  const fetchUserById = () => {
+    const id = prompt("Enter User ID to fetch:", "564564564564564564");
+    if (!id) return;
+    callAPI(`fetchById/68762589a469c496106e01d4?uid=${id}`, "GET");
+  };
+
+  const changeUserStatus = () => {
+    const id = prompt("Enter User ID to fetch:", "564564564564564564");
+    if (!id) return;
+    callAPI(`change-activation-status/68762589a469c496106e01d4?uid=${id}`, "PUT");
+  };
+
+  const updateUser = () => {
+    const uid = prompt("Enter User ID", "564564564564564564");
+    const userName = prompt("Enter UserName", "John Doe");
+    const contactNo = prompt("Enter Contact number", "5555555555");
+    if (!uid) return;
+    callAPI(
+      "update/68762589a469c496106e01d4",
+      "PUT",
+      {
+        uid,
+        userName,
+        contactNo
+      }
+    );
+
+  };
+  const deleteUser = () => {
+    const id = prompt("Enter User ID to fetch:", "564564564564564564");
+    if (!id) return;
+    callAPI(
+      `delete/68762589a469c496106e01d4?uid=${id}`,
+      "DELETE"
+    );
+  }
+
+  // User Check
+  const checkAdminStatus = async () => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      const currentUser = storedUser ? JSON.parse(storedUser) : null;
+      const userEmail = currentUser?.userEmail || "No user found";
+
+      const response = await fetch(
+        "https://themasterjacketsbackend-production.up.railway.app/api/user/fetch-all/68762589a469c496106e01d4?role=admin",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "authorization": `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
       );
 
       const data = await response.json();
 
-      if (response.ok) {
-        setMessage("User registered successfully!");
-        setFormData({
-          userName: "",
-          email: "",
-          password: "",
-          contactNo: "",
-          role: "customer",
-        });
-        console.log("Registration successful:", data);
-      } else {
-        setMessage(`Error: ${data.message || "Registration failed."}`);
+      if (Array.isArray(data?.data)) {
+        const isAdmin = data.data.some(admin => admin.email === userEmail);
+        setApiResults(prev => ({
+          ...prev,
+          adminCheck: {
+            success: true,
+            data: {
+              userEmail,
+              isAdmin,
+              adminCount: data.data.length
+            },
+            timestamp: new Date().toLocaleTimeString()
+          }
+        }));
       }
     } catch (error) {
-      console.error("Error:", error);
-      setMessage("Something went wrong. Please try again.");
+      setApiResults(prev => ({
+        ...prev,
+        adminCheck: {
+          success: false,
+          error: error.message,
+          timestamp: new Date().toLocaleTimeString()
+        }
+      }));
     }
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "auto" }}>
-      <h2>Signup Form</h2>
-      <form className="signup-form-group" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="userName"
-          placeholder="Username"
-          value={formData.userName}
-          onChange={handleChange}
-          required
+    <div style={{ maxWidth: "800px", margin: "auto", padding: "20px" }}>
+      <h1>API Testing Dashboard</h1>
+      <p>Welcome, {user?.userName || "Admin"}</p>
+
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+        gap: "15px",
+        margin: "20px 0"
+      }}>
+        <APITestButton
+          label="Fetch All Users"
+          onClick={fetchAllUsers}
+          loading={loading}
         />
-        <br />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
+        <APITestButton
+          label="Fetch Admins"
+          onClick={fetchAdmins}
+          loading={loading}
         />
-        <br />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
+        <APITestButton
+          label="Fetch User By ID"
+          onClick={fetchUserById}
+          loading={loading}
         />
-        <br />
-        <input
-          type="text"
-          name="contactNo"
-          placeholder="Contact Number"
-          value={formData.contactNo}
-          onChange={handleChange}
-          required
+        <APITestButton
+          label="Change User Status"
+          onClick={changeUserStatus}
+          loading={loading}
         />
-        <br />
-        <select name="role" value={formData.role} onChange={handleChange}>
-          <option value="customer">Customer</option>
-          <option value="admin">Admin</option>
-        </select>
-        <br />
-        <button style={{
-          padding: "0.75rem 1.5rem", borderRadius: "6px",
-          fontSize: "1rem",
-          fontWeight: "500",
-          cursor: "pointer",
-          transition: "all 0.2s ease",
-          border: "none",
-        }} type="submit">Sign Up</button>
-        <button style={{
-          padding: "0.75rem 1.5rem", borderRadius: "6px",
-          fontSize: "1rem",
-          fontWeight: "500",
-          cursor: "pointer",
-          transition: "all 0.2s ease",
-          border: "none",
-        }} onClick={handleDelete}>delete</button>
-        <button style={{
-          padding: "0.75rem 1.5rem", borderRadius: "6px",
-          fontSize: "1rem",
-          fontWeight: "500",
-          cursor: "pointer",
-          transition: "all 0.2s ease",
-          border: "none",
-        }} onClick={ApiTesting}>Fetch Users</button>
-        <button style={{
-          padding: "0.75rem 1.5rem", borderRadius: "6px",
-          fontSize: "1rem",
-          fontWeight: "500",
-          cursor: "pointer",
-          transition: "all 0.2s ease",
-          border: "none",
-        }} onClick={handleRole}>Fetch Admins</button>
-      </form>
-      <p>{message}</p>
-    </div >
+        <APITestButton
+          label="Update User"
+          onClick={updateUser}
+          loading={loading}
+        />
+        <APITestButton
+          label="Delete User"
+          onClick={deleteUser}
+          loading={loading}
+        />
+        <APITestButton
+          label="Check Admin Status"
+          onClick={checkAdminStatus}
+          loading={loading}
+        />
+      </div>
+
+      <div style={{ marginTop: "30px" }}>
+        <h2>API Results</h2>
+        {Object.entries(apiResults).map(([endpoint, result]) => (
+          <APIResultBox
+            key={endpoint}
+            endpoint={endpoint}
+            result={result}
+          />
+        ))}
+      </div>
+    </div>
   );
 };
 
-export default SignupForm;
+// Reusable button component
+const APITestButton = ({ label, onClick, loading }) => (
+  <button
+    onClick={onClick}
+    disabled={loading}
+    style={{
+      padding: "12px 15px",
+      borderRadius: "6px",
+      background: "#A06D33",
+      color: "white",
+      border: "none",
+      cursor: "pointer",
+      fontSize: "14px",
+      fontWeight: "500",
+      transition: "all 0.2s",
+      opacity: loading ? 0.7 : 1,
+      pointerEvents: loading ? "none" : "auto"
+    }}
+  >
+    {loading ? "Processing..." : label}
+  </button>
+);
+
+// Reusable result display component
+const APIResultBox = ({ endpoint, result }) => (
+  <div style={{
+    marginBottom: "20px",
+    padding: "15px",
+    border: `1px solid ${result.success ? "#4CAF50" : "#F44336"}`,
+    borderRadius: "6px",
+    background: "#F8F5F2"
+  }}>
+    <div style={{
+      display: "flex",
+      justifyContent: "space-between",
+      marginBottom: "10px"
+    }}>
+      <h3 style={{ margin: 0 }}>{endpoint}</h3>
+      <span style={{
+        color: result.success ? "#4CAF50" : "#F44336",
+        fontWeight: "bold"
+      }}>
+        {result.success ? "SUCCESS" : "ERROR"}
+      </span>
+    </div>
+    <p style={{ margin: "5px 0", color: "#666" }}>
+      <strong>Time:</strong> {result.timestamp}
+    </p>
+    {result.status && (
+      <p style={{ margin: "5px 0", color: "#666" }}>
+        <strong>Status:</strong> {result.status}
+      </p>
+    )}
+    <pre style={{
+      background: "white",
+      padding: "10px",
+      borderRadius: "4px",
+      overflowX: "auto",
+      maxHeight: "300px",
+      border: "1px solid #ddd"
+    }}>
+      {JSON.stringify(result.data || result.error, null, 2)}
+    </pre>
+  </div>
+);
+
+export default APITestingPage;

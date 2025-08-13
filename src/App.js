@@ -34,7 +34,7 @@ import SignUp from './components/auth/SignUp';
 import AdminDashboard from './pages/AdminDashboard';
 import AuthLayout from './layouts/AuthLayout';
 import MainLayout from './layouts/MainLayout';
-import SignupForm from './pages/Api';
+import APITestingPage from './pages/Api';
 // import AccountSettings from './components/AccountsSettings';
 import NotFound from './pages/Notfound';
 import Dashboard from './components/Dashboard';
@@ -70,7 +70,7 @@ function App() {
           }/>
           
           {/* <Route path="/account/settings" element={<PrivateRoute> <AccountSettings /> </PrivateRoute> } /> */}
-          <Route path="/api-testing" element={<SignupForm />} />
+          <Route path="/api-testing" element={<APITestingPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>

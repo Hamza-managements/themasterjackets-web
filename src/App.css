@@ -348,12 +348,12 @@ textarea {
     border-left: 4px solid #2e7d32;
 }
 
-.error {
+/* .error {
     background: #ffebee;
     color: #c62828;
     display: block;
     border-left: 4px solid #c62828;
-}
+} */
 
 /* Contact Info */
 .contact-info {

@@ -266,8 +266,8 @@ const Signup = () => {
   if (formSubmitted) {
     return (
       <div className="signup-success">
-        <div className="success-icon">✓</div>
-        <h2>This {formData.userName}{message}</h2>
+        <div className="signup-success-icon">✓</div>
+        <h2 className='signup-success-h2'>This {formData.userName}{message}</h2>
         <p>Click To <Link to="/auth/login">Go to Login</Link>.</p>
       </div>
     );

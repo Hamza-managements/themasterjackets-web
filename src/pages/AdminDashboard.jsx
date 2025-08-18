@@ -8,10 +8,9 @@ import {
 } from 'chart.js';
 import { Bar, Line, Pie } from 'react-chartjs-2';
 import { FiHome, FiUsers, FiSettings, FiPieChart, FiShoppingCart, FiCalendar, FiMail, FiBell, FiMenu, FiX, FiSun, FiMoon, FiRefreshCw } from 'react-icons/fi';
-import useDarkMode from '../components/DarkMode';
 import { RiRefund2Fill } from "react-icons/ri";
 import { AuthContext } from '../components/auth/AuthProvider';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement);
 
 const AdminDashboard = () => {
@@ -469,7 +468,7 @@ const AdminDashboard = () => {
                     {activeMenu === 'users' && (
                         <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
                             <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Users Management</h2>
-                            <p className="text-gray-600 dark:text-gray-300">Users content goes here...</p>
+                            <Link to="/api-testing" className="text-gray-600 dark:text-gray-300">Click to see users...</Link>
                         </div>
                     )}
                     {activeMenu === 'orders' && (
@@ -483,6 +482,7 @@ const AdminDashboard = () => {
                         <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
                             <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Products Management</h2>
                             <p className="text-gray-600 dark:text-gray-300">Products content goes here...</p>
+                            <Link to="/api-categories" className="text-gray-600 dark:text-gray-300">Click to see Categories Table...</Link>
                         </div>
                     )}
 

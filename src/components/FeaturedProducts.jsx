@@ -37,7 +37,7 @@ export default function FeaturedProducts() {
     }, [sortOption, products]);
 
     return (
-        <section className="bj-collection">
+        <div className="bj-collection">
             <div className="bj-collection-header" data-aos="fade-up">
             <h2><span>Featured Products</span></h2>
             <div>
@@ -75,6 +75,6 @@ export default function FeaturedProducts() {
                 ))}
             </div>
 
-        </section>
+        </div>
     );
 }

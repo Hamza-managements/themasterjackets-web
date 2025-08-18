@@ -17,7 +17,9 @@
 }
 
 .categories-section {
-    padding: 5rem 2rem;
+    padding-top: 3rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
     background-color: var(--beige);
 }
 
@@ -28,7 +30,6 @@
 
 .categories-section-header {
     text-align: center;
-    margin-bottom: 3rem;
 }
 
 .categories-section-header h2 {

@@ -40,6 +40,8 @@ import NotFound from './pages/Notfound';
 import Dashboard from './components/Dashboard';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import CategoryListPage from './pages/CategoriesAdminAPI';
+import CategoryPage from './components/CategoryPage';
 function App() {
   return (
     <Router>
@@ -52,6 +54,7 @@ function App() {
             <Route path="/contact-us" element={<ContactForm />} />
             <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
             <Route path="/admin-dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>}/>
+            <Route path="/categories" element={<CategoryPage />} />
           </Route>
 
           {/* Auth routes with auth layout */}
@@ -60,17 +63,17 @@ function App() {
             <Route path="signup" element={<SignUp />} />
           </Route>
 
+        {/* Dynamic products route */}
+        <Route path="/products/:subcategoryId" element={<ProductListingPage />} />
+
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          {/* Redirects */}
-          <Route path="/checkout" element={
-            // <PrivateRoute>
-              <CheckoutPage />
-            // </PrivateRoute>
-          }/>
-          
+          {/* <Route path="/checkout" element={ <PrivateRoute> <CheckoutPage /> </PrivateRoute>}/>  */}
+
+          {/* admin routes */}
           {/* <Route path="/account/settings" element={<PrivateRoute> <AccountSettings /> </PrivateRoute> } /> */}
           <Route path="/api-testing" element={<APITestingPage />} />
+          <Route path="/api-categories" element={<CategoryListPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>

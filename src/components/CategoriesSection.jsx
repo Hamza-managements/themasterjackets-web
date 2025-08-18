@@ -19,7 +19,7 @@ const categories = [
 
 export default function CategoriesSection() {
   return (
-    <section className="categories-section" data-aos="fade-up" data-aos-duration="500">
+    <div className="categories-section" data-aos="fade-up" data-aos-duration="500">
       <div className="container">
         <div className="categories-section-header text-center mb-4">
           <h2>Shop by Categories</h2>
@@ -41,6 +41,6 @@ export default function CategoriesSection() {
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 }

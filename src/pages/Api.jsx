@@ -93,6 +93,11 @@ const APITestingPage = () => {
     );
   }
 
+   const allCategory = () => {
+    callAPI(`change-activation-status/68762589a469c496106e01d4`, "PUT");
+  };
+
+
   // User Check
   const checkAdminStatus = async () => {
     try {

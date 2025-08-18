@@ -1,0 +1,53 @@
+.men-banner {
+  background: url("/assets/images/Men-Banner.jpg") center/cover no-repeat;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.men-header-content h1 {
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+.custom-hr {
+  margin: 2rem auto;
+  width: 80%;
+  border-top: 2px solid #ccc;
+}
+
+.banner-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 3rem 0;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.banner-image {
+  flex: 1;
+  min-height: 400px;
+  background-size: cover;
+  background-position: center;
+}
+
+.banner-text {
+  flex: 1;
+  padding: 2rem;
+}
+
+.banner-btn {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.6rem 1.5rem;
+  background-color: #000;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background 0.3s ease;
+}
+
+.banner-btn:hover {
+  background-color: #444;
+}

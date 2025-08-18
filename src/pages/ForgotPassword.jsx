@@ -38,7 +38,7 @@ export default function ForgotPassword() {
     }
 
     try {
-      const res = await fetch('https://your-backend.com/api/user/forgot-password', {
+      const res = await fetch('https://themasterjacketsbackend-production.up.railway.app/api/user/verify-email', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -171,18 +171,18 @@ export default function ForgotPassword() {
           </>
         ) : (
           <motion.div
-            className="success-message"
+            className="forgot-success-message"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 100 }}
           >
-            <FiCheckCircle size={60} className="success-icon" />
+            <FiCheckCircle size={60} className="forgot-success-icon" />
             <h2>Check Your Email</h2>
             <p>
               We've sent a password reset link to <strong>{email}</strong>.
               Please check your inbox and follow the instructions.
             </p>
-            <p className="redirect-message">
+            <p className="forgot-redirect-message">
               You'll be redirected to login page in 5 seconds...
             </p>
           </motion.div>

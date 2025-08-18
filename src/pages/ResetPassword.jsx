@@ -9,13 +9,13 @@ export default function ResetPassword() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const [token, setToken] = useState('');
-    const [password, setPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [passwordStrength, setPasswordStrength] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({
-        password: '',
+        newPassword: '',
         confirmPassword: '',
         token: ''
     });
@@ -23,36 +23,36 @@ export default function ResetPassword() {
     useEffect(() => {
         const urlToken = searchParams.get('token');
         if (!urlToken) {
-            //   Swal.fire('Error', 'Invalid password reset link', 'error').then(() => navigate('/'));
+              Swal.fire('Error', 'Invalid password reset link', 'error').then(() => navigate('/'));
         }
         setToken(urlToken);
     }, [searchParams, navigate]);
 
     // Password strength calculation
     useEffect(() => {
-        if (password) {
-            setPasswordStrength(zxcvbn(password).score);
+        if (newPassword) {
+            setPasswordStrength(zxcvbn(newPassword).score);
         } else {
             setPasswordStrength(0);
         }
-    }, [password]);
+    }, [newPassword]);
 
     const validateForm = () => {
         const newErrors = {};
         let isValid = true;
 
-        if (!password) {
-            newErrors.password = 'Password is required';
+        if (!newPassword) {
+            newErrors.newPassword = 'Password is required';
             isValid = false;
-        } else if (password.length < 8) {
-            newErrors.password = 'Password must be at least 8 characters';
+        } else if (newPassword.length < 8) {
+            newErrors.newPassword = 'Password must be at least 8 characters';
             isValid = false;
         } else if (passwordStrength < 2) {
-            newErrors.password = 'Password is too weak';
+            newErrors.newPassword = 'Password is too weak';
             isValid = false;
         }
 
-        if (password !== confirmPassword) {
+        if (newPassword !== confirmPassword) {
             newErrors.confirmPassword = 'Passwords do not match';
             isValid = false;
         }
@@ -68,13 +68,12 @@ export default function ResetPassword() {
         setIsLoading(true);
 
         try {
-            const response = await fetch('https://your-api.com/auth/reset-password', {
-                method: 'POST',
+            const response = await fetch('https://themasterjacketsbackend-production.up.railway.app/api/user/update-password', {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ password })
+                body: JSON.stringify({ token, newPassword })
             });
 
             const data = await response.json();
@@ -117,7 +116,7 @@ export default function ResetPassword() {
 
                 <form onSubmit={handleSubmit}>
                     {/* Password Field */}
-                    <div className={`input-group ${errors.password ? 'has-error' : ''}`}>
+                    <div className={`input-group ${errors.newPassword ? 'has-error' : ''}`}>
                         <div className="input-wrapper">
                             <div className="input-icon">
                                 <FiLock />
@@ -125,10 +124,10 @@ export default function ResetPassword() {
                             <input
                                 type={showPassword ? "text" : "password"}
                                 placeholder="New Password"
-                                value={password}
+                                value={newPassword}
                                 onChange={(e) => {
-                                    setPassword(e.target.value);
-                                    if (errors.password) setErrors({ ...errors, password: '' });
+                                    setNewPassword(e.target.value);
+                                    if (errors.newPassword) setErrors({ ...errors, newPassword: '' });
                                 }}
                             />
                             <button
@@ -140,12 +139,12 @@ export default function ResetPassword() {
                             </button>
                         </div>
                         {errors.password && (
-                            <div className="error-message">{errors.password}</div>
+                            <div className="error-message">{errors.newPassword}</div>
                         )}
                     </div>
 
                     {/* Password Strength Meter */}
-                    {password && (
+                    {newPassword && (
                         <div className="password-strength">
                             <div className="strength-bars">
                                 {[1, 2, 3, 4].map((i) => (
@@ -164,16 +163,16 @@ export default function ResetPassword() {
 
                     {/* Password Requirements */}
                     <div className="password-requirements">
-                        <p className={password.length >= 8 ? 'valid' : ''}>
+                        <p className={newPassword.length >= 8 ? 'valid' : ''}>
                             <FiCheck /> At least 8 characters
                         </p>
-                        <p className={/[A-Z]/.test(password) ? 'valid' : ''}>
+                        <p className={/[A-Z]/.test(newPassword) ? 'valid' : ''}>
                             <FiCheck /> At least one uppercase letter
                         </p>
-                        <p className={/[0-9]/.test(password) ? 'valid' : ''}>
+                        <p className={/[0-9]/.test(newPassword) ? 'valid' : ''}>
                             <FiCheck /> At least one number
                         </p>
-                        <p className={/[^A-Za-z0-9]/.test(password) ? 'valid' : ''}>
+                        <p className={/[^A-Za-z0-9]/.test(newPassword) ? 'valid' : ''}>
                             <FiCheck /> At least one special character
                         </p>
                     </div>

@@ -1,386 +1,689 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Table, Modal, Form, Badge, Spinner, Alert } from 'react-bootstrap';
+import { Button, Table, Modal, Form, Spinner, Alert, Card, Badge, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
+import Swal from 'sweetalert2';
+import { FaEdit, FaTrash, FaPlus, FaFolder, FaFolderOpen, FaSearch, FaSort, FaFilter } from 'react-icons/fa';
+import './CategoriesAdminAPI.css';
+
+const api = axios.create({
+  baseURL: 'https://themasterjacketsbackend-production.up.railway.app',
+});
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 const CategoryListPage = () => {
-    // State management
-    const [categories, setCategories] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [showModal, setShowModal] = useState(false);
-    const [modalMode, setModalMode] = useState('add'); // 'add' or 'edit'
-    const [currentCategory, setCurrentCategory] = useState(null);
-    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-    const [showSubcategoryModal, setShowSubcategoryModal] = useState(false);
-    const [parentCategoryId, setParentCategoryId] = useState(null);
+  // State
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMode, setModalMode] = useState('add');
+  const [currentCategory, setCurrentCategory] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showSubcategoryModal, setShowSubcategoryModal] = useState(false);
+  const [parentCategoryId, setParentCategoryId] = useState(null);
+  const [showEditSubcategoryModal, setShowEditSubcategoryModal] = useState(false);
+  const [subcategoryToEdit, setSubcategoryToEdit] = useState(null);
+  const [parentCategoryForEdit, setParentCategoryForEdit] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [expandedCategories, setExpandedCategories] = useState(new Set());
 
-    // Form state
-    const [formData, setFormData] = useState({
-        name: '',
-        description: '',
-        isActive: true
+  // Form state
+  const [formData, setFormData] = useState({
+    mainCategoryName: '',
+    subCategories: [{ categoryName: '' }],
+  });
+
+  // Clear messages after 5 seconds
+  useEffect(() => {
+    if (error || success) {
+      const timer = setTimeout(() => {
+        setError(null);
+        setSuccess(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, success]);
+
+  // Fetch categories
+  const getAllCategories = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await api.get('/api/category/fetch-all/68762589a469c496106e01d4');
+      setCategories(res.data.data);
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || err.message || 'Failed to fetch categories';
+      setError(errorMsg);
+      showToast('error', errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAllCategories();
+  }, []);
+
+  // Toast notification
+  const showToast = (icon, message) => {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+      }
+    });
+    
+    Toast.fire({
+      icon: icon,
+      title: message
+    });
+  };
+
+  // Toggle category expansion
+  const toggleCategoryExpansion = (categoryId) => {
+    const newExpanded = new Set(expandedCategories);
+    if (newExpanded.has(categoryId)) {
+      newExpanded.delete(categoryId);
+    } else {
+      newExpanded.add(categoryId);
+    }
+    setExpandedCategories(newExpanded);
+  };
+
+  // Reset form
+  const resetForm = () => {
+    setFormData({
+      mainCategoryName: '',
+      subCategories: [{ categoryName: '' }],
+    });
+  };
+
+  // Input change (mainCategoryName only)
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Subcategory input change
+  const handleSubCategoryChange = (index, value) => {
+    setFormData((prev) => {
+      const updated = [...prev.subCategories];
+      updated[index].categoryName = value;
+      return { ...prev, subCategories: updated };
+    });
+  };
+
+  const addSubCategoryField = () => {
+    if (
+      formData.subCategories.length === 0 ||
+      formData.subCategories[formData.subCategories.length - 1].categoryName.trim() !== ''
+    ) {
+      setFormData((prev) => ({
+        ...prev,
+        subCategories: [...prev.subCategories, { categoryName: '' }],
+      }));
+    } else {
+      showToast('warning', 'Please fill the previous subcategory before adding a new one.');
+    }
+  };
+
+  const removeSubCategoryField = (index) => {
+    if (formData.subCategories.length > 1) {
+      setFormData((prev) => {
+        const updated = [...prev.subCategories];
+        updated.splice(index, 1);
+        return { ...prev, subCategories: updated };
+      });
+    }
+  };
+
+  // Open modals
+  const openAddModal = () => {
+    setModalMode('add');
+    resetForm();
+    setShowModal(true);
+  };
+
+  const openEditModal = (category) => {
+    setModalMode('edit');
+    setCurrentCategory(category);
+    setFormData({
+      mainCategoryName: category.mainCategoryName,
+      subCategories: category.subCategories || [],
+    });
+    setShowModal(true);
+  };
+
+  const openAddSubcategoryModal = (categoryId) => {
+    setParentCategoryId(categoryId);
+    setFormData({ subCategories: [{ categoryName: '' }] });
+    setShowSubcategoryModal(true);
+  };
+
+  const openEditSubcategoryModal = (category, subcategory) => {
+    setParentCategoryForEdit(category);
+    setSubcategoryToEdit(subcategory);
+    setFormData({
+      subCategories: [{ categoryName: subcategory.categoryName }],
+    });
+    setShowEditSubcategoryModal(true);
+  };
+
+  // API calls
+  const addCategory = async () => {
+    try {
+      setLoading(true);
+      await api.post('/api/category/add/68762589a469c496106e01d4', formData);
+      showToast('success', 'Category added successfully!');
+      setShowModal(false);
+      getAllCategories();
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || err.message || 'Failed to add category';
+      setError(errorMsg);
+      showToast('error', errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateCategory = async () => {
+    try {
+      setLoading(true);
+      await api.put(`/api/category/update/main-category/68762589a469c496106e01d4`, {
+        categoryId: currentCategory._id,
+        updateMainCategoryName: formData.mainCategoryName,
+      });
+      showToast('success', 'Category updated successfully!');
+      setShowModal(false);
+      getAllCategories();
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || err.message || 'Failed to update category';
+      setError(errorMsg);
+      showToast('error', errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateSingleSubcategory = async () => {
+    try {
+      setLoading(true);
+      await api.put(`/api/category/add/sub-category/68762589a469c496106e01d4`, {
+        categoryId: parentCategoryForEdit._id,
+        subCategories: [{categoryName:formData.subCategories[0].categoryName}]
+      });
+      showToast('success', 'Subcategory updated successfully!');
+      setShowEditSubcategoryModal(false);
+      getAllCategories();
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || err.message || 'Failed to update subcategory';
+      setError(errorMsg);
+      showToast('error', errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteCategory = async () => {
+    try {
+      setLoading(true);
+      await api.delete(
+        `/api/category/delete/main-category/68762589a469c496106e01d4?mainCategoryId=${currentCategory._id}`
+      );
+      showToast('success', 'Category deleted successfully!');
+      setShowDeleteConfirm(false);
+      getAllCategories();
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || err.message || 'Failed to delete category';
+      setError(errorMsg);
+      showToast('error', errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addSubCategory = async () => {
+    try {
+      setLoading(true);
+      await api.put(`/api/category/add/sub-category/68762589a469c496106e01d4`, {
+        categoryId: parentCategoryId,
+        subCategories: formData.subCategories,
+      });
+      showToast('success', 'Subcategory added successfully!');
+      setShowSubcategoryModal(false);
+      getAllCategories();
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || err.message || 'Failed to add subcategory';
+      setError(errorMsg);
+      showToast('error', errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteSubCategory = async (categoryId, subcategoryId, subcategoryName) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: `You are about to delete "${subcategoryName}". This action cannot be undone.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      background: '#1a1a1a',
+      color: '#fff'
     });
 
-    axios.defaults.baseURL = "https://themasterjacketsbackend-production.up.railway.app";
-
-    // Attach token automatically to every request
-    axios.interceptors.request.use((config) => {
-        const token = localStorage.getItem("token"); // safely grab token
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    });
-
-    // Fetch all categories
-    const getAllCategories = async () => {
-        try {
-            setLoading(true);
-            const response = await axios.get("/api/category/fetch-all/68762589a469c496106e01d4");
-            setCategories(response.data.data);
-        } catch (err) {
-            setError(err.response?.data?.message || err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-
-    useEffect(() => {
+    if (result.isConfirmed) {
+      try {
+        setLoading(true);
+        await api.delete(
+          `/api/category/delete/sub-category/68762589a469c496106e01d4?mainCategoryId=${categoryId}&subCategoryId=${subcategoryId}`
+        );
+        showToast('success', 'Subcategory deleted successfully!');
         getAllCategories();
-    }, []);
+      } catch (err) {
+        const errorMsg = err.response?.data?.message || err.message || 'Failed to delete subcategory';
+        setError(errorMsg);
+        showToast('error', errorMsg);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
-    // Handle form input changes
-    const handleInputChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value
-        }));
-    };
+  // Filter categories based on search term
+  const filteredCategories = categories.filter(category => 
+    category.mainCategoryName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    category.subCategories?.some(sub => 
+      sub.categoryName.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
 
-    // Reset form
-    const resetForm = () => {
-        setFormData({
-            name: '',
-            description: '',
-            isActive: true
-        });
-    };
+  // Submit form
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (modalMode === 'add') {
+        await addCategory();
+      } else {
+        await updateCategory();
+      }
+    } catch (err) {
+      // Error handling is done in the individual functions
+    }
+  };
 
-    // Open modal for adding a new category
-    const openAddModal = () => {
-        setModalMode('add');
-        resetForm();
-        setShowModal(true);
-    };
-
-    // Open modal for editing a category
-    const openEditModal = (category) => {
-        setModalMode('edit');
-        setCurrentCategory(category);
-        setFormData({
-            name: category.name,
-            description: category.description,
-            isActive: category.isActive
-        });
-        setShowModal(true);
-    };
-
-    // Open modal for adding a subcategory
-    const openAddSubcategoryModal = (categoryId) => {
-        setParentCategoryId(categoryId);
-        resetForm();
-        setShowSubcategoryModal(true);
-    };
-
-    // Handle category form submission
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            if (modalMode === 'add') {
-                await addCategory();
-            } else {
-                await updateCategory();
-            }
-            setShowModal(false);
-            getAllCategories();
-        } catch (err) {
-            setError(err.message);
-        }
-    };
-
-    // Add new category
-    const addCategory = async () => {
-        await axios.post('/api/categories', formData);
-    };
-
-    // Update existing category
-    const updateCategory = async () => {
-        await axios.put(`/api/categories/${currentCategory._id}`, formData);
-    };
-
-    // Delete category
-    const deleteCategory = async () => {
-        try {
-            await axios.delete(`/api/categories/${currentCategory._id}`);
-            setShowDeleteConfirm(false);
-            getAllCategories();
-        } catch (err) {
-            setError(err.message);
-        }
-    };
-
-    // Add subcategory
-    const addSubCategory = async () => {
-        try {
-            await axios.post(`/api/categories/${parentCategoryId}/subcategories`, formData);
-            setShowSubcategoryModal(false);
-            getAllCategories();
-        } catch (err) {
-            setError(err.message);
-        }
-    };
-
-    // Delete subcategory
-    const deleteSubCategory = async (categoryId, subcategoryId) => {
-        try {
-            await axios.delete(`/api/categories/${categoryId}/subcategories/${subcategoryId}`);
-            getAllCategories();
-        } catch (err) {
-            setError(err.message);
-        }
-    };
-
-    // Toggle category status
-    const toggleCategoryStatus = async (categoryId, currentStatus) => {
-        try {
-            await axios.patch(`/api/categories/${categoryId}/status`, {
-                isActive: !currentStatus
-            });
-            getAllCategories();
-        } catch (err) {
-            setError(err.message);
-        }
-    };
-
-    if (loading) return <Spinner animation="border" />;
-    if (error) return <Alert variant="danger">{error}</Alert>;
-
-    return (
-        <div className="container mt-4">
-            <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2>Category Management</h2>
-                <Button variant="primary" onClick={openAddModal}>
-                    Add Category
+  return (
+    <div className="cm-fixed-container">
+      <div className="cm-fixed-header">
+        <Row className="justify-content-center">
+          <Col lg={10}>
+            <Card className="glass-card">
+              <Card.Header className="card-header-custom d-flex justify-content-between align-items-center">
+                <div className='cm-fixed-title-section'>
+                  <h4 className="mb-0"><FaFolder className="me-2" />Category Manager</h4>
+                  <p className="mb-0">Manage your product categories and subcategories</p>
+                </div>
+                <Button variant="primary" className="btn-add" onClick={openAddModal}>
+                  <FaPlus className="me-2" />Add Category
                 </Button>
-            </div>
+              </Card.Header>
+              <Card.Body>
+                {error && <Alert variant="danger" className="alert-custom">{error}</Alert>}
+                {success && <Alert variant="success" className="alert-custom">{success}</Alert>}
 
-            {/* Categories Table */}
-            <Table striped bordered hover responsive>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        {/* <th>Description</th> */}
-                        {/* <th>Status</th> */}
-                        <th>Subcategories</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {categories.map((category) => (
-                        <React.Fragment key={category._id}>
-                            <tr>
-                                <td>{category.mainCategoryName}</td>
-                                {/* <td>{category.description}</td> */}
-                                {/* <td>
-                                    <Badge pill bg={category.isActive ? 'success' : 'secondary'}>
-                                        {category.isActive ? 'Active' : 'Inactive'}
-                                    </Badge>
-                                </td> */}
-                                <td>
-                                    {category.subCategories?.length || 0}
-                                </td>
-                                <td>
-                                    <Button
-                                        variant="outline-primary"
-                                        size="sm"
-                                        className="me-2"
-                                        onClick={() => openEditModal(category)}
-                                    >
-                                        Edit
-                                    </Button>
-                                    <Button
-                                        variant="outline-success"
-                                        size="sm"
-                                        className="me-2"
-                                        onClick={() => openAddSubcategoryModal(category._id)}
-                                    >
-                                        Add Subcategory
-                                    </Button>
-                                    <Button
-                                        variant="outline-danger"
-                                        size="sm"
-                                        onClick={() => {
-                                            setCurrentCategory(category);
-                                            setShowDeleteConfirm(true);
-                                        }}
-                                    >
-                                        Delete
-                                    </Button>
-                                    {/* <Button
-                                        variant="link"
-                                        size="sm"
-                                        onClick={() => toggleCategoryStatus(category._id, category.isActive)}
-                                    >
-                                        {category.isActive ? 'Deactivate' : 'Activate'}
-                                    </Button> */}
-                                </td>
-                            </tr>
+                {/* Search and Filter Bar */}
+                <div className="search-filter-bar mb-4">
+                  <div className="search-box">
+                    <FaSearch className="search-icon" />
+                    <input
+                      type="text"
+                      placeholder="Search categories..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="search-input"
+                    />
+                  </div>
+                  {/* <div className="filter-section">
+                    <button className="btn-filter">
+                      <FaFilter className="me-2" /> Filter
+                    </button>
+                    <button className="btn-sort">
+                      <FaSort className="me-2" /> Sort
+                    </button>
+                  </div> */}
+                </div>
 
-                            {/* Subcategories */}
-                            {category.subCategories?.map((subcategory) => (
-                                <tr key={subcategory._id} className="bg-light">
-                                    <td className="ps-5">↳ {subcategory.categoryName}</td>
-                                    {/* <td>{subcategory.description}</td> */}
-                                    {/* <td>
-                                        <Badge pill bg={subcategory.isActive ? 'success' : 'secondary'}>
-                                            {subcategory.isActive ? 'Active' : 'Inactive'}
-                                        </Badge>
-                                    </td> */}
-                                    <td></td>
-                                    <td>
-                                        <Button
-                                            variant="outline-danger"
-                                            size="sm"
-                                            onClick={() => deleteSubCategory(category._id, subcategory._id)}
-                                        >
-                                            Delete
-                                        </Button>
-                                    </td>
-                                </tr>
+                {loading ? (
+                  <div className="text-center py-5">
+                    <div className="loading-spinner"></div>
+                    <p className="mt-3">Loading categories...</p>
+                  </div>
+                ) : filteredCategories.length === 0 ? (
+                  <div className="py-5 empty-state-found">
+                    <div className="empty-icon-found">
+                      <FaFolderOpen />
+                    </div>
+                    <h5 className='mb-2'>No categories found</h5>
+                    <p className="text-muted mb-2">Get started by adding your first category.</p>
+                    <button onClick={openAddModal} className="btn-add-no-found">
+                      Add Category
+                    </button>
+                  </div>
+                ) : (
+                  <div className="categories-container">
+                    {filteredCategories.map((category) => (
+                      <div key={category._id} className="category-card">
+                        <div className="category-header">
+                          <div 
+                            className="category-title"
+                            onClick={() => toggleCategoryExpansion(category._id)}
+                          >
+                            <div className="d-flex align-items-center">
+                              {expandedCategories.has(category._id) ? <FaFolderOpen className="me-2" /> : <FaFolder className="me-2" />}
+                              <h5 className="mb-0">{category.mainCategoryName}</h5>
+                            </div>
+                            <Badge bg="primary" className='p-2 me-2' pill>
+                              {category.subCategories?.length || 0} subcategories
+                            </Badge>
+                          </div>
+                          <div className="category-actions">
+                            <Button
+                              variant="outline-primary"
+                              size="sm"
+                              className="me-2 p-3"
+                              onClick={() => openEditModal(category)}
+                            >
+                              <FaEdit className="me-1" />Edit
+                            </Button>
+                            <Button
+                              variant="outline-success"
+                              size="sm"
+                              className="me-2"
+                              onClick={() => openAddSubcategoryModal(category._id)}
+                            >
+                              <FaPlus className="me-1" />Add Subcategory
+                            </Button>
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              onClick={() => {
+                                setCurrentCategory(category);
+                                setShowDeleteConfirm(true);
+                              }}
+                            >
+                              <FaTrash className="me-1" />Delete
+                            </Button>
+                          </div>
+                        </div>
+
+                        {/* Subcategories */}
+                        {expandedCategories.has(category._id) && category.subCategories?.length > 0 && (
+                          <div className="subcategories-list">
+                            {category.subCategories.map((sub, index) => (
+                              <div key={sub._id || `${category._id}-${index}`} className="subcategory-item">
+                                <div className="subcategory-info">
+                                  <span className="subcategory-name">{sub.categoryName}</span>
+                                </div>
+                                <div className="subcategory-actions">
+                                  <Button
+                                    variant="outline-primary"
+                                    size="sm"
+                                    className="me-2"
+                                    onClick={() => openEditSubcategoryModal(category, sub)}
+                                  >
+                                    <FaEdit className="me-1" />Edit
+                                  </Button>
+                                  <Button
+                                    variant="outline-danger"
+                                    size="sm"
+                                    onClick={() => deleteSubCategory(category._id, sub._id, sub.categoryName)}
+                                  >
+                                    <FaTrash className="me-1" />Delete
+                                  </Button>
+                                </div>
+                              </div>
                             ))}
-                        </React.Fragment>
+                          </div>
+                        )}
+                      </div>
                     ))}
-                </tbody>
-            </Table>
+                  </div>
+                )}
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
 
-            {/* Category Add/Edit Modal */}
-            <Modal show={showModal} onHide={() => setShowModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>{modalMode === 'add' ? 'Add New Category' : 'Edit Category'}</Modal.Title>
-                </Modal.Header>
-                <Form onSubmit={handleSubmit}>
-                    <Modal.Body>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Name</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Description</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                rows={3}
-                                name="description"
-                                value={formData.description}
-                                onChange={handleInputChange}
-                            />
-                        </Form.Group>
-                        <Form.Check
-                            type="switch"
-                            id="isActive"
-                            name="isActive"
-                            label="Active"
-                            checked={formData.isActive}
-                            onChange={handleInputChange}
-                        />
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={() => setShowModal(false)}>
-                            Cancel
-                        </Button>
-                        <Button variant="primary" type="submit">
-                            {modalMode === 'add' ? 'Add Category' : 'Update Category'}
-                        </Button>
-                    </Modal.Footer>
-                </Form>
-            </Modal>
+        {/* Add/Edit Category Modal */}
+        <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" centered className="custom-modal">
+          <Modal.Header closeButton className="modal-header-custom">
+            <Modal.Title>
+              {modalMode === 'add' ? 'Add New Category' : 'Edit Category'}
+            </Modal.Title>
+          </Modal.Header>
+          <Form onSubmit={handleSubmit}>
+            <Modal.Body>
+              <Form.Group className="mb-4">
+                <Form.Label>Category Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="mainCategoryName"
+                  value={formData.mainCategoryName}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="Enter category name"
+                  className="form-control-custom"
+                />
+              </Form.Group>
 
-            {/* Subcategory Add Modal */}
-            <Modal show={showSubcategoryModal} onHide={() => setShowSubcategoryModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Add Subcategory</Modal.Title>
-                </Modal.Header>
-                <Form onSubmit={(e) => {
-                    e.preventDefault();
-                    addSubCategory();
-                }}>
-                    <Modal.Body>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Name</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Description</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                rows={3}
-                                name="description"
-                                value={formData.description}
-                                onChange={handleInputChange}
-                            />
-                        </Form.Group>
-                        <Form.Check
-                            type="switch"
-                            id="isActive"
-                            name="isActive"
-                            label="Active"
-                            checked={formData.isActive}
-                            onChange={handleInputChange}
-                        />
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={() => setShowSubcategoryModal(false)}>
-                            Cancel
-                        </Button>
-                        <Button variant="primary" type="submit">
-                            Add Subcategory
-                        </Button>
-                    </Modal.Footer>
-                </Form>
-            </Modal>
-
-            {/* Delete Confirmation Modal */}
-            <Modal show={showDeleteConfirm} onHide={() => setShowDeleteConfirm(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Confirm Delete</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    Are you sure you want to delete the category "{currentCategory?.name}"? This action cannot be undone.
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowDeleteConfirm(false)}>
-                        Cancel
+              {/* Only allow adding subcategories on add mode */}
+              {modalMode !== 'edit' && (
+                <>
+                  <div className="d-flex justify-content-between align-items-center mb-3">
+                    <Form.Label className="mb-0">Subcategories</Form.Label>
+                    <Button variant="outline-primary" size="sm" onClick={addSubCategoryField} className="btn-add-sub">
+                      <FaPlus className="me-1" />Add Another
                     </Button>
-                    <Button variant="danger" onClick={deleteCategory}>
-                        Delete
+                  </div>
+                  {formData.subCategories?.map((sub, i) => (
+                    <div key={i} className="d-flex align-items-center mb-3">
+                      <Form.Control
+                        type="text"
+                        placeholder={`Subcategory ${i + 1}`}
+                        value={sub.categoryName}
+                        onChange={(e) => handleSubCategoryChange(i, e.target.value)}
+                        required
+                        className="form-control-custom me-2"
+                      />
+                      {formData.subCategories.length > 1 && (
+                        <Button
+                          variant="outline-danger"
+                          size="sm"
+                          onClick={() => removeSubCategoryField(i)}
+                          className="btn-remove"
+                        >
+                          &times;
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </>
+              )}
+            </Modal.Body>
+            <Modal.Footer className="modal-footer-custom">
+              <Button variant="outline-secondary" onClick={() => setShowModal(false)}>
+                Cancel
+              </Button>
+              <Button variant="primary" type="submit" disabled={loading} className="btn-save">
+                {loading ? (
+                  <>
+                    <Spinner animation="border" size="sm" className="me-2" />
+                    {modalMode === 'add' ? 'Adding...' : 'Updating...'}
+                  </>
+                ) : (
+                  <>
+                    {modalMode === 'add' ? 'Add Category' : 'Update Category'}
+                  </>
+                )}
+              </Button>
+            </Modal.Footer>
+          </Form>
+        </Modal>
+
+        {/* Add Subcategory Modal */}
+        <Modal show={showSubcategoryModal} onHide={() => setShowSubcategoryModal(false)} centered className="custom-modal">
+          <Modal.Header closeButton className="modal-header-custom">
+            <Modal.Title>Add Subcategory</Modal.Title>
+          </Modal.Header>
+          <Form
+            onSubmit={(e) => {
+              e.preventDefault();
+              addSubCategory();
+            }}
+          >
+            <Modal.Body>
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <Form.Label className="mb-0">Subcategories</Form.Label>
+                <Button variant="outline-primary" size="sm" onClick={addSubCategoryField} className="btn-add-sub">
+                  <FaPlus className="me-1" />Add Another
+                </Button>
+              </div>
+              {formData.subCategories?.map((sub, i) => (
+                <div key={i} className="d-flex align-items-center mb-3">
+                  <Form.Control
+                    type="text"
+                    placeholder={`Subcategory ${i + 1}`}
+                    value={sub.categoryName}
+                    onChange={(e) => handleSubCategoryChange(i, e.target.value)}
+                    required
+                    className="form-control-custom me-2"
+                  />
+                  {formData.subCategories.length > 1 && (
+                    <Button
+                      variant="outline-danger"
+                      size="sm"
+                      onClick={() => removeSubCategoryField(i)}
+                      className="btn-remove"
+                    >
+                      &times;
                     </Button>
-                </Modal.Footer>
-            </Modal>
-        </div>
-    );
+                  )}
+                </div>
+              ))}
+            </Modal.Body>
+            <Modal.Footer className="modal-footer-custom">
+              <Button variant="outline-secondary" onClick={() => setShowSubcategoryModal(false)}>
+                Cancel
+              </Button>
+              <Button variant="primary" type="submit" disabled={loading} className="btn-save">
+                {loading ? (
+                  <>
+                    <Spinner animation="border" size="sm" className="me-2" />
+                    Adding...
+                  </>
+                ) : (
+                  'Add Subcategory'
+                )}
+              </Button>
+            </Modal.Footer>
+          </Form>
+        </Modal>
+
+        {/* Edit Subcategory Modal */}
+        <Modal show={showEditSubcategoryModal} onHide={() => setShowEditSubcategoryModal(false)} centered className="custom-modal">
+          <Modal.Header closeButton className="modal-header-custom">
+            <Modal.Title>Edit Subcategory</Modal.Title>
+          </Modal.Header>
+          <Form
+            onSubmit={(e) => {
+              e.preventDefault();
+              updateSingleSubcategory();
+            }}
+          >
+            <Modal.Body>
+              <Form.Group className="mb-3">
+                <Form.Label>Subcategory Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={formData.subCategories[0]?.categoryName || ''}
+                  onChange={(e) => handleSubCategoryChange(0, e.target.value)}
+                  required
+                  placeholder="Enter subcategory name"
+                  className="form-control-custom"
+                />
+              </Form.Group>
+            </Modal.Body>
+            <Modal.Footer className="modal-footer-custom">
+              <Button variant="outline-secondary" onClick={() => setShowEditSubcategoryModal(false)}>
+                Cancel
+              </Button>
+              <Button variant="primary" type="submit" disabled={loading} className="btn-save">
+                {loading ? (
+                  <>
+                    <Spinner animation="border" size="sm" className="me-2" />
+                    Updating...
+                  </>
+                ) : (
+                  'Update'
+                )}
+              </Button>
+            </Modal.Footer>
+          </Form>
+        </Modal>
+
+        {/* Delete Confirmation Modal */}
+        <Modal show={showDeleteConfirm} onHide={() => setShowDeleteConfirm(false)} centered className="custom-modal">
+          <Modal.Header closeButton className="modal-header-custom">
+            <Modal.Title>Confirm Delete</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="delete-confirmation">
+              <div className="delete-icon">
+                <FaTrash />
+              </div>
+              <h5>Delete Category</h5>
+              <p>Are you sure you want to delete the category <strong>"{currentCategory?.mainCategoryName}"</strong>? This will also delete all its subcategories. This action cannot be undone.</p>
+            </div>
+          </Modal.Body>
+          <Modal.Footer className="modal-footer-custom">
+            <Button variant="outline-secondary" onClick={() => setShowDeleteConfirm(false)}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={deleteCategory} disabled={loading} className="btn-delete-confirm">
+              {loading ? (
+                <>
+                  <Spinner animation="border" size="sm" className="me-2" />
+                  Deleting...
+                </>
+              ) : (
+                <>
+                  <FaTrash className="me-1" />Delete
+                </>
+              )}
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
+    </div>
+  );
 };
 
 export default CategoryListPage;

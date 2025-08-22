@@ -54,7 +54,7 @@ function App() {
             <Route path="/contact-us" element={<ContactForm />} />
             <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
             <Route path="/admin-dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>}/>
-            <Route path="/categories" element={<CategoryPage />} />
+            <Route path="/category/:categoryId" element={<CategoryPage />} />
           </Route>
 
           {/* Auth routes with auth layout */}
@@ -64,7 +64,7 @@ function App() {
           </Route>
 
         {/* Dynamic products route */}
-        <Route path="/products/:subcategoryId" element={<ProductListingPage />} />
+          {/* <Route path="/products/:subcategoryId" element={<ProductListingPage />} /> */}
 
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />

@@ -3,15 +3,51 @@ import React, { useContext, useState, useEffect, useRef } from 'react';
 import { openCart } from './Cart';
 import { Link } from 'react-router-dom';
 import { AuthContext } from './auth/AuthProvider';
+import axios from 'axios';
+
 
 export default function Header() {
   const { user, logout } = useContext(AuthContext);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSubmenu, setActiveSubmenu] = useState(null);
+  const [categories, setCategories] = useState([]);
   const navRef = useRef();
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(prev => !prev);
   };
+
+  useEffect(() => {
+    const api = axios.create({
+      baseURL: "https://themasterjacketsbackend-production.up.railway.app",
+    });
+
+    api.interceptors.request.use((config) => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    });
+
+    const getAllCategories = async () => {
+      try {
+        const res = await api.get(
+          "/api/category/fetch-all/68762589a469c496106e01d4"
+        );
+        // console.log("Raw API response:", res.data.data);
+        setCategories(res.data.data);
+      } catch (err) {
+        console.error("Failed to fetch categories:", err);
+      }
+    };
+
+    getAllCategories();
+  }, []);
+
+  // useEffect(() => {
+  //   console.log("Categories in state after update:", categories);
+  // }, [categories]);
+
 
   const handleMainLinkClick = (index, hasSubmenu, e) => {
     if (window.innerWidth <= 992 && hasSubmenu) {
@@ -52,27 +88,61 @@ export default function Header() {
 
           <div className="fs-main-header">
             <div className={`${isMobileMenuOpen ? '' : 'mobile-header-content'}`}>
-            <Link to="/" ><img className="fs-logo" src='https://res.cloudinary.com/dekf5dyng/image/upload/v1752742536/official_tmj_logo_jygsft.png'></img></Link>
-            <button className="fs-mobile-menu-btn" onClick={toggleMobileMenu}>
-              <i className={`fas ${isMobileMenuOpen ? '' : 'fa-bars'}`}></i>
-            </button>
+              <Link to="/" ><img className="fs-logo" src='https://res.cloudinary.com/dekf5dyng/image/upload/v1752742536/official_tmj_logo_jygsft.png'></img></Link>
+              <button className="fs-mobile-menu-btn" onClick={toggleMobileMenu}>
+                <i className={`fas ${isMobileMenuOpen ? '' : 'fa-bars'}`}></i>
+              </button>
             </div>
             <nav className="fs-nav-container">
               <nav ref={navRef} className={`fs-nav-links ${isMobileMenuOpen ? 'fs-mobile-active' : ''}`}>
-                 <button className="fs-mobile-menu-btn" onClick={toggleMobileMenu}>
-              <i className={`fas ${isMobileMenuOpen ? 'fa-times' : ''}`}></i>
-            </button>
-                <div className="fs-nav-item">
+                <button className="fs-mobile-menu-btn" onClick={toggleMobileMenu}>
+                  <i className={`fas ${isMobileMenuOpen ? 'fa-times' : ''}`}></i>
+                </button>
+                {/* <div className="fs-nav-item">
                   <Link to="#" className="fs-main-link">Best Seller</Link>
-                </div>
-
-                <div className="fs-nav-item">
+                </div> */}
+                {categories?.map((cat) =>
+                  <div className="fs-nav-item" key={cat._id}>
+                    <Link to={`/category/${cat._id}`} className="fs-main-link" onClick={(e) => handleMainLinkClick(0, true, e)} >{cat.mainCategoryName} <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i></Link>
+                    {/* <Link to={`/category/${cat._id}`} className="fs-main-link" onClick={(e) => handleMainLinkClick(cat._id, true, e)}>
+                      {cat.mainCategoryName} <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i>
+                    </Link> */}
+                    <div className="fs-mega-menu fs-dropdown-menu">
+                      <div className="fs-mega-menu-column">
+                        <h4 className="fs-dropdown-title">{cat.mainCategoryName} Leather Jacket</h4>
+                        {cat.subCategories?.map((sub) => (
+                          <Link key={sub._id} to={`/subcategory/${sub._id}`}>{sub.categoryName}</Link>
+                        ))}
+                      </div>
+                      <div className="fs-mega-menu-column">
+                        <h4 className="fs-dropdown-title">Colors</h4>
+                        <Link to="#">Black</Link>
+                        <Link to="#">Brown</Link>
+                        <Link to="#">Tan</Link>
+                        <Link to="#">Cognac</Link>
+                      </div>
+                      <div className="fs-mega-menu-column">
+                        <h4 className="fs-dropdown-title">Bags & Purses</h4>
+                        <Link to="#">Handbags</Link>
+                        <Link to="#">Backpacks</Link>
+                        <Link to="#">Wallets</Link>
+                        <Link to="#">Clutches</Link>
+                      </div>
+                    </div>
+                    <div className={`fs-mobile-submenu ${activeSubmenu === 0 ? 'fs-active' : ''}`}>
+                      <div className="fs-dropdown-title">Categories</div>
+                      {cat.subCategories?.map((sub) => (
+                          <Link key={sub._id} to={`/subcategory/${sub._id}`}>{sub.categoryName}</Link>
+                        ))}<Link to="/product">Biker Leather Jackets</Link>
+                    </div>
+                  </div>
+                )}
+                {/* <div className="fs-nav-item">
                   <Link to="/men"
                     className="fs-main-link"
                     onClick={(e) => handleMainLinkClick(0, true, e)}>
                     Men <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i>
                   </Link>
-                  {/* Mega menu for Men */}
                   <div className="fs-mega-menu fs-dropdown-menu">
                     <div className="fs-mega-menu-column">
                       <h4 className="fs-dropdown-title">Men Leather Jacket</h4>
@@ -97,7 +167,6 @@ export default function Header() {
                       <Link to="#">Clutches</Link>
                     </div>
                   </div>
-                  {/* Mobile submenu (optional support) */}
                   <div className={`fs-mobile-submenu ${activeSubmenu === 0 ? 'fs-active' : ''}`}>
                     <div className="fs-dropdown-title">Categories</div>
                     <Link to="#">Dresses</Link>
@@ -111,7 +180,7 @@ export default function Header() {
                     <Link to="#">Best Sellers</Link>
                     <Link to="#">Sale</Link>
                   </div>
-                </div>
+                </div> */}
 
                 <div className="fs-nav-item">
                   <Link to="/women" className="fs-main-link" onClick={(e) => handleMainLinkClick(1, true, e)} >

@@ -75,11 +75,11 @@ const CategoryPage = () => {
     <div className="category-page">
       {/* Hero Section */}
       <section className="category-hero" data-aos="fade-in">
-        <div className="hero-content">
+        <div className="category-hero-content">
           <h1>Explore Our Collections</h1>
           <p>Discover premium designs crafted for style, durability, and timeless character</p>
         </div>
-        <div className="hero-scroll-indicator">
+        <div className="category-hero-scroll-indicator">
           <span>Scroll to explore</span>
           <div className="scroll-arrow"></div>
         </div>
@@ -187,7 +187,7 @@ const CategoryPage = () => {
 
           {/* Featured Products Carousel */}
           <div className="featured-products" data-aos="fade-up">
-            <h2 className="section-title">Featured Products</h2>
+            <h2 className="category-section-title">Featured Products</h2>
             <Swiper
               modules={[Navigation, Pagination, Autoplay]}
               spaceBetween={20}

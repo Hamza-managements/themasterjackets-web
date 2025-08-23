@@ -46,8 +46,7 @@ export default function Header() {
 
   // useEffect(() => {
   //   console.log("Categories in state after update:", categories);
-  // }, [categories]);
-
+  // }, [categories])
 
   const handleMainLinkClick = (index, hasSubmenu, e) => {
     if (window.innerWidth <= 992 && hasSubmenu) {
@@ -83,7 +82,7 @@ export default function Header() {
             data-aos-duration="500"
           >
             Summer Sale! Up to 50% off{' '}
-            <Link to="/product">Shop Now</Link>
+            <Link to="/product">Shop Now but wait first refresh</Link>
           </div>
 
           <div className="fs-main-header">

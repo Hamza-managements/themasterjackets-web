@@ -38,6 +38,8 @@ const CategoryListPage = () => {
   // Form state
   const [formData, setFormData] = useState({
     mainCategoryName: '',
+    description: '',
+    image: '',
     subCategories: [{ categoryName: '' }],
   });
 
@@ -57,7 +59,8 @@ const CategoryListPage = () => {
     try {
       setLoading(true);
       setError(null);
-      const res = await api.get('/api/category/fetch-all/68762589a469c496106e01d4');
+      const res = await api.get('/api/category/fetch-all');
+      console.log(res.data.data)
       setCategories(res.data.data);
     } catch (err) {
       const errorMsg = err.response?.data?.message || err.message || 'Failed to fetch categories';
@@ -85,7 +88,7 @@ const CategoryListPage = () => {
         toast.addEventListener('mouseleave', Swal.resumeTimer);
       }
     });
-    
+
     Toast.fire({
       icon: icon,
       title: message
@@ -107,6 +110,8 @@ const CategoryListPage = () => {
   const resetForm = () => {
     setFormData({
       mainCategoryName: '',
+      description: '',
+      image: '',
       subCategories: [{ categoryName: '' }],
     });
   };
@@ -165,6 +170,8 @@ const CategoryListPage = () => {
     setCurrentCategory(category);
     setFormData({
       mainCategoryName: category.mainCategoryName,
+      description: category.description,
+      image: category.image,
       subCategories: category.subCategories || [],
     });
     setShowModal(true);
@@ -190,6 +197,7 @@ const CategoryListPage = () => {
     try {
       setLoading(true);
       await api.post('/api/category/add/68762589a469c496106e01d4', formData);
+      console.log(formData)
       showToast('success', 'Category added successfully!');
       setShowModal(false);
       getAllCategories();
@@ -207,7 +215,9 @@ const CategoryListPage = () => {
       setLoading(true);
       await api.put(`/api/category/update/main-category/68762589a469c496106e01d4`, {
         categoryId: currentCategory._id,
-        updateMainCategoryName: formData.mainCategoryName,
+        description: formData.description,
+        image: formData.image,
+        mainCategoryName: formData.mainCategoryName,
       });
       showToast('success', 'Category updated successfully!');
       setShowModal(false);
@@ -226,7 +236,7 @@ const CategoryListPage = () => {
       setLoading(true);
       await api.put(`/api/category/add/sub-category/68762589a469c496106e01d4`, {
         categoryId: parentCategoryForEdit._id,
-        subCategories: [{categoryName:formData.subCategories[0].categoryName}]
+        subCategories: [{ categoryName: formData.subCategories[0].categoryName }]
       });
       showToast('success', 'Subcategory updated successfully!');
       setShowEditSubcategoryModal(false);
@@ -309,9 +319,9 @@ const CategoryListPage = () => {
   };
 
   // Filter categories based on search term
-  const filteredCategories = categories.filter(category => 
+  const filteredCategories = categories.filter(category =>
     category.mainCategoryName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    category.subCategories?.some(sub => 
+    category.subCategories?.some(sub =>
       sub.categoryName.toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
@@ -392,7 +402,7 @@ const CategoryListPage = () => {
                     {filteredCategories.map((category) => (
                       <div key={category._id} className="category-card">
                         <div className="category-header">
-                          <div 
+                          <div
                             className="category-title"
                             onClick={() => toggleCategoryExpansion(category._id)}
                           >
@@ -400,6 +410,7 @@ const CategoryListPage = () => {
                               {expandedCategories.has(category._id) ? <FaFolderOpen className="me-2" /> : <FaFolder className="me-2" />}
                               <h5 className="mb-0">{category.mainCategoryName}</h5>
                             </div>
+                            <img src={category.image || "https://image.pngaaa.com/700/5273700-middle.png"} className='image-category-admin' alt="" />
                             <Badge bg="primary" className='p-2 me-2' pill>
                               {category.subCategories?.length || 0} subcategories
                             </Badge>
@@ -437,6 +448,8 @@ const CategoryListPage = () => {
                         {/* Subcategories */}
                         {expandedCategories.has(category._id) && category.subCategories?.length > 0 && (
                           <div className="subcategories-list">
+                            <p className="subcategories-title mb-2">description: {category.description}</p>
+                            <h6 className="subcategories-title">Subcategories:</h6>
                             {category.subCategories.map((sub, index) => (
                               <div key={sub._id || `${category._id}-${index}`} className="subcategory-item">
                                 <div className="subcategory-info">
@@ -493,13 +506,36 @@ const CategoryListPage = () => {
                   className="form-control-custom"
                 />
               </Form.Group>
+              <Form.Group className="mb-4">
+                <Form.Label>Category Description</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="Enter category description"
+                  className="form-control-custom"
+                />
+              </Form.Group><Form.Group className="mb-4">
+                <Form.Label>Category Image</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="image"
+                  value={formData.image}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="Enter category image URL"
+                  className="form-control-custom"
+                />
+              </Form.Group>
 
               {/* Only allow adding subcategories on add mode */}
               {modalMode !== 'edit' && (
                 <>
                   <div className="d-flex justify-content-between align-items-center mb-3">
                     <Form.Label className="mb-0">Subcategories</Form.Label>
-                    <Button variant="outline-primary" size="sm" onClick={addSubCategoryField} className="btn-add-sub">
+                    <Button variant="outline-primary" size="sm" onClick={addSubCategoryField} className="btn-add-sub d-flex align-items-center">
                       <FaPlus className="me-1" />Add Another
                     </Button>
                   </div>
@@ -562,7 +598,7 @@ const CategoryListPage = () => {
             <Modal.Body>
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <Form.Label className="mb-0">Subcategories</Form.Label>
-                <Button variant="outline-primary" size="sm" onClick={addSubCategoryField} className="btn-add-sub">
+                <Button variant="outline-primary" size="sm" onClick={addSubCategoryField} className="btn-add-sub d-flex align-items-center">
                   <FaPlus className="me-1" />Add Another
                 </Button>
               </div>

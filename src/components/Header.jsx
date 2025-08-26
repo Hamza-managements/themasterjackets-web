@@ -32,7 +32,7 @@ export default function Header() {
     const getAllCategories = async () => {
       try {
         const res = await api.get(
-          "/api/category/fetch-all/68762589a469c496106e01d4"
+          "/api/category/fetch-all"
         );
         // console.log("Raw API response:", res.data.data);
         setCategories(res.data.data);
@@ -179,7 +179,7 @@ export default function Header() {
                     <Link to="#">Best Sellers</Link>
                     <Link to="#">Sale</Link>
                   </div>
-                </div> */}
+                </div>
 
                 <div className="fs-nav-item">
                   <Link to="/women" className="fs-main-link" onClick={(e) => handleMainLinkClick(1, true, e)} >
@@ -256,7 +256,7 @@ export default function Header() {
                     <Link to="#">Round</Link>
                     <Link to="#">Sports</Link>
                   </div>
-                </div>
+                </div> */}
 
                 <div className="fs-nav-item">
                   <Link to="#" className="fs-main-link">Brand <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i></Link>

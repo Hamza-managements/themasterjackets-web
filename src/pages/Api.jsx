@@ -5,6 +5,7 @@ const APITestingPage = () => {
   const { user } = useContext(AuthContext);
   const [apiResults, setApiResults] = useState({});
   const [loading, setLoading] = useState(false);
+  
 
   // Generic API call function
   const callAPI = async (endpoint, method = "GET", body = null) => {
@@ -58,7 +59,10 @@ const APITestingPage = () => {
 
   const fetchUserById = () => {
     const id = prompt("Enter User ID to fetch:", "564564564564564564");
-    if (!id) return;
+    if (!id) {
+      callAPI(`fetchById/68762589a469c496106e01d4?uid=${user.uid}`, "GET");
+      console.log("No ID provided, fetching current user." + user.uid);
+      return}
     callAPI(`fetchById/68762589a469c496106e01d4?uid=${id}`, "GET");
   };
 
@@ -148,7 +152,6 @@ const APITestingPage = () => {
     <div style={{ maxWidth: "800px", margin: "auto", padding: "20px" }}>
       <h1>API Testing Dashboard</h1>
       <p>Welcome, {user?.userName || "Admin"}</p>
-
       <div style={{
         display: "grid",
         gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",

@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { Link } from "react-router-dom";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import './Dashboard.css';
@@ -520,11 +521,13 @@ const Dashboard = () => {
 
           <div className="sidebar-footer">
             <div className="help-card">
+            <Link to="/contact-us" className="help-card">
               <FaQuestionCircle />
               <div>
                 <h4>Need Help?</h4>
                 <p>Contact our support team</p>
               </div>
+              </Link>
             </div>
           </div>
         </aside>

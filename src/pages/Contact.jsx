@@ -62,7 +62,7 @@ const ContactForm = () => {
 
       <form 
         ref={formRef} 
-        className="contact-form" 
+        className="contact-us-form" 
         onSubmit={handleSubmit}
         aria-label="Contact form"
       >
@@ -76,7 +76,7 @@ const ContactForm = () => {
           </div>
         )}
 
-        <div className="form-group">
+        <div className="contact-us-form-group">
           <label htmlFor="name">Full Name*</label>
           <input 
             type="text" 
@@ -87,7 +87,7 @@ const ContactForm = () => {
           />
         </div>
 
-        <div className="form-group">
+        <div className="contact-us-form-group">
           <label htmlFor="email">Email*</label>
           <input 
             type="email" 
@@ -98,7 +98,7 @@ const ContactForm = () => {
           />
         </div>
 
-        <div className="form-group">
+        <div className="contact-us-form-group">
           <label htmlFor="phone">Phone</label>
           <input 
             type="tel" 
@@ -111,7 +111,7 @@ const ContactForm = () => {
           </small>
         </div>
 
-        <div className="form-group">
+        <div className="contact-us-form-group">
           <label htmlFor="subject">Subject</label>
           <select 
             id="subject" 
@@ -131,7 +131,7 @@ const ContactForm = () => {
           </small>
         </div>
 
-        <div className="form-group full-width">
+        <div className="contact-us-form-group full-width">
           <label htmlFor="message">Your Message*</label>
           <textarea 
             id="message" 
@@ -142,7 +142,7 @@ const ContactForm = () => {
           ></textarea>
         </div>
 
-        <div className="form-group full-width" style={{ textAlign: 'center' }}>
+        <div className="contact-us-form-group full-width" style={{ textAlign: 'center' }}>
           <button 
             type="submit" 
             className="submit-btn" 

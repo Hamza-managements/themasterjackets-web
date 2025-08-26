@@ -43,7 +43,7 @@ const CategoryPage = () => {
         return config;
       });
       
-      const response = await api.get(`/api/category/fetchById/68762589a469c496106e01d4?categoryId=${categoryId}`);
+      const response = await api.get(`/api/category/fetchById?categoryId=${categoryId}`);
       // console.log("Fetched categories:", response.data.data);
       setCategories([response.data.data]);
     } catch (error) {
@@ -91,10 +91,10 @@ const CategoryPage = () => {
           <div 
             className="parallax-banner" 
             style={{ 
-              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),url(/images/${cat.mainCategoryName.toLowerCase()}.jpg)`
+              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),url(${cat.image})`
             }}
             // .replace(/\s+/g, "-")
-            // url('https://res.cloudinary.com/dekf5dyng/image/upload/v1749721392/men-leather-jackets_ewghdk.jpg')`
+            // url('https://res.cloudinary.com/dekf5dyng/image/upload/v1749721392/men-leather-jackets_ewghdk.jpg')` /images/${cat.mainCategoryName.toLowerCase()}.jpg
             // }}
             data-aos="zoom-out"
           >

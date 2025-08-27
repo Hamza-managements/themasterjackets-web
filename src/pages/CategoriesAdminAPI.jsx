@@ -448,7 +448,7 @@ const CategoryListPage = () => {
                         {/* Subcategories */}
                         {expandedCategories.has(category._id) && category.subCategories?.length > 0 && (
                           <div className="subcategories-list">
-                            <p className="subcategories-title mb-2">description: {category.description}</p>
+                            <p className="mb-3">Description: {category.description}</p>
                             <h6 className="subcategories-title">Subcategories:</h6>
                             {category.subCategories.map((sub, index) => (
                               <div key={sub._id || `${category._id}-${index}`} className="subcategory-item">

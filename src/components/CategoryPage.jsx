@@ -18,8 +18,8 @@ const CategoryPage = () => {
   const { categoryId } = useParams();
 
   useEffect(() => {
-    AOS.init({ 
-      duration: 1000, 
+    AOS.init({
+      duration: 1000,
       once: true,
       easing: 'ease-out-cubic'
     });
@@ -27,6 +27,10 @@ const CategoryPage = () => {
       fetchCategories();
     }
   }, [categoryId]);
+
+  useEffect(() => {
+  AOS.refresh();
+}, [activeSubcategory]);
 
   const fetchCategories = async () => {
     try {
@@ -42,7 +46,7 @@ const CategoryPage = () => {
         }
         return config;
       });
-      
+
       const response = await api.get(`/api/category/fetchById?categoryId=${categoryId}`);
       // console.log("Fetched categories:", response.data.data);
       setCategories([response.data.data]);
@@ -88,9 +92,9 @@ const CategoryPage = () => {
       {categories?.map((cat, index) => (
         <div key={cat._id} className="category-section">
           {/* Main Category Banner with Parallax Effect */}
-          <div 
-            className="parallax-banner" 
-            style={{ 
+          <div
+            className="parallax-banner"
+            style={{
               backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),url(${cat.image})`
             }}
             // .replace(/\s+/g, "-")
@@ -127,7 +131,9 @@ const CategoryPage = () => {
               <button
                 key={sub._id}
                 className={`subcategory-nav-item ${activeSubcategory === sub._id ? 'active' : ''}`}
-                onClick={() => setActiveSubcategory(sub._id)}
+                onClick={() =>
+                  setActiveSubcategory(activeSubcategory === sub._id ? null : sub._id)
+                }
               >
                 {sub.categoryName}
               </button>
@@ -158,7 +164,7 @@ const CategoryPage = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="subcategory-info">
                     <h2>{sub.categoryName}</h2>
                     <p>
@@ -172,12 +178,12 @@ const CategoryPage = () => {
                       <li>Exclusive Designs</li>
                     </ul>
                     <div className="subcategory-actions">
-                      <Link to={`/products/${sub._id}`} className="primary-btn">
+                      <Link to={`/products/${sub._id}`} className="category-primary-btn">
                         Shop Collection
                       </Link>
-                      <button className="secondary-btn">
+                      {/* <button className="category-secondary-btn">
                         View Lookbook
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 </div>

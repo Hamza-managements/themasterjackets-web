@@ -1,6 +1,6 @@
 import React from 'react';
 import 'aos/dist/aos.css';
-import './style.css'; // optional: if you have specific styles
+import './style.css';
 
 export default function StatsSection() {
   const stats = [

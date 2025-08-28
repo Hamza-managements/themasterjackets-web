@@ -12,10 +12,17 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 const CategoryPage = () => {
+  const categoryMap = {
+    "men": "68ac23c0146f4993994f41b2",
+    "women": "68ad7a27010f07c1100d3e56",
+    "new-in": "68ad9ab6010f07c1100d3f1e",
+  };
+  
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeSubcategory, setActiveSubcategory] = useState(null);
-  const { categoryId } = useParams();
+  const { slug } = useParams();
+  const categoryId = categoryMap[slug];
 
   useEffect(() => {
     AOS.init({
@@ -23,14 +30,16 @@ const CategoryPage = () => {
       once: true,
       easing: 'ease-out-cubic'
     });
-    if (categoryId) {
+    if (slug) {
       fetchCategories();
     }
-  }, [categoryId]);
+  }, [slug]);
 
   useEffect(() => {
-  AOS.refresh();
-}, [activeSubcategory]);
+    AOS.refresh();
+  }, [activeSubcategory]);
+
+
 
   const fetchCategories = async () => {
     try {

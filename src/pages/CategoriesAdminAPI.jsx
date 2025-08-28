@@ -408,7 +408,9 @@ const CategoryListPage = () => {
                           >
                             <div className="d-flex align-items-center">
                               {expandedCategories.has(category._id) ? <FaFolderOpen className="me-2" /> : <FaFolder className="me-2" />}
-                              <h5 className="mb-0">{category.mainCategoryName}</h5>
+                              <h5 className="mb-0 me-2"> {category.mainCategoryName} </h5>
+                              <h5 className="mb-0 me-2"> {category.slug} </h5>
+                              <h5 className="mb-0 me-2"> {category._id} </h5>
                             </div>
                             <img src={category.image || "https://image.pngaaa.com/700/5273700-middle.png"} className='image-category-admin' alt="" />
                             <Badge bg="primary" className='p-2 me-2' pill>

@@ -102,7 +102,7 @@ export default function Header() {
                 </div> */}
                 {categories?.map((cat) =>
                   <div className="fs-nav-item" key={cat._id}>
-                    <Link to={`/category/${cat._id}`} className="fs-main-link" onClick={(e) => handleMainLinkClick(0, true, e)} >{cat.mainCategoryName} <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i></Link>
+                    <Link to={`/category/${cat.slug}`} className="fs-main-link" onClick={(e) => handleMainLinkClick(0, true, e)} >{cat.mainCategoryName} <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i></Link>
                     {/* <Link to={`/category/${cat._id}`} className="fs-main-link" onClick={(e) => handleMainLinkClick(cat._id, true, e)}>
                       {cat.mainCategoryName} <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i>
                     </Link> */}

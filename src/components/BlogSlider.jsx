@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import './BlogSlider.css';
+import './styles/BlogSlider.css';
 
 const blogItems = [
   {

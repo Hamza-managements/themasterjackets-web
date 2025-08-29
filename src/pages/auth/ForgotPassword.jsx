@@ -4,7 +4,7 @@ import Swal from 'sweetalert2';
 import { motion } from 'framer-motion';
 import { FiMail, FiArrowLeft, FiCheckCircle } from 'react-icons/fi';
 import ReCAPTCHA from 'react-google-recaptcha';
-import './ForgotPassword.css';
+import '../styles/ForgotPassword.css';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');

@@ -1,7 +1,10 @@
 :root {
-    --dark-brown: #useEffect(() => {
-  AOS.refresh();
-}, [activeSubcategory]);;
+    --dark-brown: #useEffect(()=> {
+            AOS.refresh();
+        }
+
+        , [activeSubcategory]);
+    ;
     --tan: #A06D33;
     --gold: #D6AD60;
     --beige: #F8F5F2;
@@ -72,18 +75,18 @@ h2 {
 }
 
 .hero-btnn {
-  display: inline-block;
-  background-color: var(--tan);
-  border: none;
-  color: white;
-  text-decoration: none;
-  padding: 12px 26px;
-  border-radius: 3px;
-  font-size: 1.1rem;
-  cursor: pointer;
-  letter-spacing: 0.5px;
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  transition: background-color 0.3s ease;
+    display: inline-block;
+    background-color: var(--tan);
+    border: none;
+    color: white;
+    text-decoration: none;
+    padding: 12px 26px;
+    border-radius: 3px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: background-color 0.3s ease;
 }
 
 .hero-btnn:hover {
@@ -150,9 +153,12 @@ h2 {
     letter-spacing: 1px;
     transition: all 0.3s ease;
 }
-.hero-btn, .rj-hero-btn {
+
+.hero-btn,
+.rj-hero-btn {
     transition: background-color 0.3s ease, color 0.3s ease;
-  }
+}
+
 .rj-btn-light {
     background-color: white;
     color: var(--dark-brown);
@@ -212,21 +218,22 @@ h2 {
 }
 
 .bj-collection-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #e5e5e5; /* subtle Shopify-style border */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e5e5e5;
+    /* subtle Shopify-style border */
 }
 
 .bj-collection-header h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  color: #1c1c1c;
-  margin: 0;
-  line-height: 1.2;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #1c1c1c;
+    margin: 0;
+    line-height: 1.2;
 }
 
 

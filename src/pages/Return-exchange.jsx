@@ -1,5 +1,5 @@
 import React from 'react';
-import '../App.css';
+import './styles/Return&Contact.css';
 import { Link } from 'react-router-dom';
 
 

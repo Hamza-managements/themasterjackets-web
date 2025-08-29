@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './Footer.css';
+import './styles/Footer.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function Footer() {

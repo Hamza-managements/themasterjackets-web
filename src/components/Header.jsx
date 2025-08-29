@@ -1,4 +1,4 @@
-import './Header.css';
+import './styles/Header.css';
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { openCart } from './Cart';
 import { Link } from 'react-router-dom';

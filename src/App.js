@@ -25,24 +25,26 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './components/auth/AuthProvider';
 import PrivateRoute from './components/auth/PrivateRoute';
 import Home from './pages/Home';
-import AboutPage from './components/About';
-import CheckoutPage from './pages/CheckoutPage';
 import ReturnPolicy from './pages/Return-exchange';
+import AboutPage from './components/About';
+import ProductDetails from './pages/ProductDetails';
+import CheckoutPage from './pages/CheckoutPage';
 import ContactForm from './pages/Contact';
 import Login from './components/auth/Login';
 import SignUp from './components/auth/SignUp';
 import AdminDashboard from './pages/AdminDashboard';
 import AuthLayout from './layouts/AuthLayout';
 import MainLayout from './layouts/MainLayout';
-import APITestingPage from './pages/Api';
+import APITestingPage from './pages/AdminPages/Api';
 // import AccountSettings from './components/AccountsSettings';
 import NotFound from './pages/Notfound';
 import Dashboard from './components/Dashboard';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import CategoryListPage from './pages/CategoriesAdminAPI';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
+import CategoryListPage from './pages/AdminPages/CategoriesAdminAPI';
 import CategoryPage from './components/CategoryPage';
-import ProductDetails from './pages/ProductDetails';
+
+
 function App() {
   return (
     <Router>

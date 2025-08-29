@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import 'aos/dist/aos.css';
-import './style.css'; // optional if using separate CSS
+import './styles/style.css'; // optional if using separate CSS
 
 export default function DualHeroSection() {
   return (

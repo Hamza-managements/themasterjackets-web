@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './style.css';
+import './styles/style.css';
 import productsData from '../data/products.json';
 import { Link } from 'react-router-dom';
 

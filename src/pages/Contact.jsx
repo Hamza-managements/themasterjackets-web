@@ -1,10 +1,7 @@
-import React, { useRef, useState ,useEffect } from 'react';
+import { useRef, useState ,useEffect } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import '../App.css';
-import Header from '../components/Header';
-import CartSidebar from '../components/Cart';
-import Footer from '../components/Footer';
+import './styles/Return&Contact.css';
 
 const ContactForm = () => {
      useEffect(() => {

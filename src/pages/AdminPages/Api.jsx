@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { AuthContext } from "../components/auth/AuthProvider";
+import { AuthContext } from "../../components/auth/AuthProvider";
 
 const APITestingPage = () => {
   const { user } = useContext(AuthContext);

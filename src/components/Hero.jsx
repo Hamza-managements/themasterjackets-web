@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import 'aos/dist/aos.css';
-import './style.css';
+import './styles/style.css';
 
 export default function Hero() {
   return (

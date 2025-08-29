@@ -1,5 +1,3 @@
-""// utils/cartUtils.js
-
 export function getCartItems() {
   return JSON.parse(localStorage.getItem('cartsItems')) || [];
 }

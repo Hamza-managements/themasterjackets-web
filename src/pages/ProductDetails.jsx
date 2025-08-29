@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Modal, Button } from 'react-bootstrap';
+// import { Modal, Button } from 'react-bootstrap';
 // import SocialProof from './components/SocialProof';
 import StatsSection from '../components/StatsSection';
-import "./ProductDetails.css";
+import "./styles/ProductDetails.css";
 import Aos from 'aos';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import SizeChartOverlay from '../components/SizeChart';
+import { getProductDetails, getRelatedProducts } from '../components/ProductServices';
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -34,38 +35,39 @@ const ProductDetails = () => {
 
   const zoomLevel = 2;
 
-
   useEffect(() => {
     Aos.init({
       duration: 1000,
       once: true,
       easing: 'ease-out-cubic'
     });
+
     if (productId) {
-      fetchProductDetails(productId);
+      handleProductFetch(productId);
     } else {
-      // navigate('/');
+      navigate('/');
     }
   }, [productId, navigate]);
 
-  // Image gallery effect
   useEffect(() => {
     if (product && product.image) {
       setActiveImage(product.image);
     }
   }, [product]);
 
-  const fetchProductDetails = async (id) => {
+
+  const handleProductFetch = async (id) => {
     try {
       setIsLoading(true);
-      const response = await fetch('/data/products.json');
-      const data = await response.json();
-      const product = data.find(p => p.id === id);
+
+      const product = await getProductDetails(id); 
 
       if (product) {
         setProduct(product);
+
         if (product.category) {
-          fetchRelatedProducts(product.category);
+          const related = await getRelatedProducts(product.category);
+          setRelatedProducts(related.slice(0, 8));
         }
       } else {
         setError("Product not found");
@@ -79,16 +81,6 @@ const ProductDetails = () => {
     }
   };
 
-  const fetchRelatedProducts = async (category) => {
-    try {
-      const response = await fetch('assets/data/products.json');
-      const data = await response.json();
-      const related = data.filter(product => product.category === category);
-      setRelatedProducts(related.slice(0, 8));
-    } catch (err) {
-      console.error("Failed to fetch related products", err);
-    }
-  };
 
   const formatPrice = (price) => `$${parseFloat(price).toFixed(2)}`;
 
@@ -365,7 +357,7 @@ const ProductDetails = () => {
                 </div>
                 <br />
 
-               <SizeChartOverlay/>
+                <SizeChartOverlay />
 
                 {/* <span className="variant-title">
                   <a href="#sizeChartModal" data-bs-toggle="modal" data-bs-target="#sizeChartModal"
@@ -508,7 +500,7 @@ const ProductDetails = () => {
                   <div className="accordion-content">
                     <p>Our jackets are true to size. If you're between sizes or prefer a looser fit for
                       layering, we suggest sizing up.</p>
-                    <p><strong><SizeChartOverlay/></strong>
+                    <p><strong><SizeChartOverlay /></strong>
                     </p>
                   </div>
                 </div>

@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import Swal from 'sweetalert2';
 import { FiLock, FiCheck, FiEye, FiEyeOff } from 'react-icons/fi';
 import zxcvbn from 'zxcvbn';
-import './ResetPassword.css';
+import '../styles/ResetPassword.css';
+
 export default function ResetPassword() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();

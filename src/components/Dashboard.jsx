@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import './Dashboard.css';
+import './styles/Dashboard.css';
 import { AuthContext } from './auth/AuthProvider';
 import {
   FaBars,

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import productsData from '../data/products.json';
-import './Cart.css';
+// import productsData from '/data/products.json';
+import './styles/Cart.css';
+import { getCartItems } from './CartUtils';
+import { getProducts } from './ProductServices';
 
 export default function CartSidebar() {
   const navigate = useNavigate();
@@ -9,13 +11,16 @@ export default function CartSidebar() {
   const [cartItems, setCartItems] = useState([]);
 
   useEffect(() => {
-    const alreadyStored = localStorage.getItem('products');
-    if (!alreadyStored) {
-      localStorage.setItem('products', JSON.stringify(productsData));
-    }
+  const fetchProducts = async () => {
+    // const alreadyStored = localStorage.getItem('products');
+    // if (!alreadyStored) {
+    //   const response = await fetch('/data/products.json');
+    //   const productsData = await response.json();
+    //   localStorage.setItem('products', JSON.stringify(productsData));
+    // }
 
-    const storedProducts = JSON.parse(localStorage.getItem('products')) || [];
-    const cartIds = JSON.parse(localStorage.getItem('cartsItems')) || [];
+    const storedProducts =  await getProducts();
+    const cartIds = await getCartItems();
 
     const updatedCart = cartIds
       .map(item => {
@@ -25,7 +30,11 @@ export default function CartSidebar() {
       .filter(Boolean);
 
     setCartItems(updatedCart);
-  }, []);
+  };
+
+  fetchProducts();
+}, []);
+
 
   const refreshCart = () => {
     const storedProducts = JSON.parse(localStorage.getItem('products')) || [];

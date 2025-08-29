@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import "./CategoryPage.css";
+import "./styles/CategoryPage.css";
 import { Link, useParams } from "react-router-dom";
 import { Skeleton } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";

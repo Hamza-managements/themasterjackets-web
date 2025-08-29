@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import './CustomerGallery.css';
+import './styles/CustomerGallery.css';
 
 const galleryItems = [
   {

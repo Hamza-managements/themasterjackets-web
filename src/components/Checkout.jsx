@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import './Checkout.css';
+import './styles/Checkout.css';
 import zipToStateMap from '../data/fullZipData';
 
 

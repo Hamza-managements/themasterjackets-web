@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import "./AdminDashboard.css"; // Assuming you have a CSS file for styles
+import "./styles/AdminDashboard.css"; // Assuming you have a CSS file for styles
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import {

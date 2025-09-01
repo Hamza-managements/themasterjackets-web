@@ -1,11 +1,6 @@
 :root {
-    --dark-brown: #useEffect(()=> {
-            AOS.refresh();
-        }
-
-        , [activeSubcategory]);
-    ;
-    --tan: #A06D33;
+    --dark-brown:#3E2C1C;
+    --tann: #A06D33;
     --gold: #D6AD60;
     --beige: #F8F5F2;
     --black: #1A1A1A;
@@ -74,9 +69,9 @@ h2 {
     line-height: 1.6;
 }
 
-.hero-btnn {
+.hero-banner-btnn {
     display: inline-block;
-    background-color: var(--tan);
+    background-color: var(--tann);
     border: none;
     color: white;
     text-decoration: none;
@@ -89,7 +84,7 @@ h2 {
     transition: background-color 0.3s ease;
 }
 
-.hero-btnn:hover {
+.hero-banner-btnn:hover {
     background-color: var(--dark-brown);
     color: var(--gold);
 }
@@ -100,7 +95,7 @@ h2 {
 
 .feature-icon {
     font-size: 2.5rem;
-    color: var(--tan);
+    color: var(--tann);
     margin-bottom: 1rem;
 }
 
@@ -114,7 +109,7 @@ h2 {
 
 .rj-hero-right {
     flex: 1;
-    background-color: var(--tan);
+    background-color: var(--tann);
     color: white;
     display: flex;
     flex-direction: column;

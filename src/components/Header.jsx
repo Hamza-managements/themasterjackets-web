@@ -4,6 +4,7 @@ import { openCart } from './Cart';
 import { Link } from 'react-router-dom';
 import { AuthContext } from './auth/AuthProvider';
 import axios from 'axios';
+import Aos from 'aos';
 
 
 export default function Header() {
@@ -17,6 +18,11 @@ export default function Header() {
   };
 
   useEffect(() => {
+    Aos.init({
+      duration: 1000,
+      once: true,
+      easing: 'ease-out-cubic'
+    });
     const api = axios.create({
       baseURL: "https://themasterjacketsbackend-production.up.railway.app",
     });
@@ -110,7 +116,7 @@ export default function Header() {
                       <div className="fs-mega-menu-column">
                         <h4 className="fs-dropdown-title">{cat.mainCategoryName} Leather Jacket</h4>
                         {cat.subCategories?.map((sub) => (
-                          <Link key={sub._id} to={`/subcategory/${sub._id}`}>{sub.categoryName}</Link>
+                          <Link key={sub._id} to={`/products/${sub._id}`}>{sub.categoryName}</Link>
                         ))}
                       </div>
                       <div className="fs-mega-menu-column">
@@ -131,8 +137,8 @@ export default function Header() {
                     <div className={`fs-mobile-submenu ${activeSubmenu === 0 ? 'fs-active' : ''}`}>
                       <div className="fs-dropdown-title">Categories</div>
                       {cat.subCategories?.map((sub) => (
-                          <Link key={sub._id} to={`/subcategory/${sub._id}`}>{sub.categoryName}</Link>
-                        ))}<Link to="/product">Biker Leather Jackets</Link>
+                        <Link key={sub._id} to={`/subcategory/${sub._id}`}>{sub.categoryName}</Link>
+                      ))}<Link to="/product">Biker Leather Jackets</Link>
                     </div>
                   </div>
                 )}

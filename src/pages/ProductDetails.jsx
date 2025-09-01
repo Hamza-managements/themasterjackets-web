@@ -211,7 +211,7 @@ const ProductDetails = () => {
             {/* Product Gallery */}
             <div className="product-gallery">
               <div
-                className="image-container"
+                className="product-image-container"
                 ref={imageContainerRef}
                 onMouseEnter={activateZoom}
                 onMouseLeave={deactivateZoom}
@@ -401,18 +401,18 @@ const ProductDetails = () => {
               </div>
 
               <div className="action-buttons">
-                <button className="btn btn-addtocart" onClick={addToCart}>
+                <button className="detail-btn btn-addtocart" onClick={addToCart}>
                   <i className="fas fa-shopping-cart"></i>
                   Add to Cart
                 </button>
-                <button className="btn btn-secondary">
+                <button className="detail-btn btn-secondary">
                   <i className="far fa-heart"></i>
                   Wishlist
                 </button>
               </div>
 
               <div className="action-buttons">
-                <button className="btn btn-checkout" onClick={directCheckout}>
+                <button className="detail-btn btn-checkout" onClick={directCheckout}>
                   <i className="fas fa-credit-card payment-icon"></i>
                   <span className="checkout-text">Proceed to check out</span>
                 </button>

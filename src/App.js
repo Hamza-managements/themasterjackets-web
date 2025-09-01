@@ -43,6 +43,7 @@ import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import CategoryListPage from './pages/AdminPages/CategoriesAdminAPI';
 import CategoryPage from './components/CategoryPage';
+import ProductListingPage from './pages/ProductPage';
 
 
 function App() {
@@ -58,7 +59,7 @@ function App() {
             <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
             <Route path="/admin-dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>}/>
             <Route path="/category/:slug" element={<CategoryPage />} />
-
+            <Route path="/products/:id" element={<ProductListingPage />} />
             <Route path="/products-details/:id" element={<ProductDetails />} />
           </Route>
 

@@ -9,7 +9,7 @@ export default function Hero() {
       <div className="hero-content" data-aos="fade-up">
         <h1>Feel The Handmade luxury</h1>
         <p className="lead">Timeless comfort, rugged elegance. Designed to last a lifetime.</p>
-        <Link to="/products" className="hero-btnn">
+        <Link to="/products" className="hero-banner-btnn">
           View Collection
         </Link>
       </div>

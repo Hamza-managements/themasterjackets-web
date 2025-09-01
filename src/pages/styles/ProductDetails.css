@@ -40,7 +40,7 @@
 
 
         /* Main image container */
-        .image-container {
+        .product-image-container {
             position: relative;
             width: 100%;
             height: 500px;
@@ -66,7 +66,7 @@
         }
 
         /* Zoom active state */
-        .image-container.zoom-active {
+        .product-image-container.zoom-active {
             cursor: zoom-out;
         }
 
@@ -116,14 +116,14 @@
 
         /* Mobile responsiveness */
         @media (max-width: 768px) {
-            .image-container {
+            .product-image-container {
                 cursor: default;
             }
             .zoom-preview {
                 display: none;
             }
 
-            .image-container.zoom-active .main-image {
+            .product-image-container.zoom-active .main-image {
                 transform: none !important;
             }
         }
@@ -193,7 +193,7 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-            .image-container {
+            .product-image-container {
                 height: 400px;
             }
 
@@ -202,7 +202,7 @@
                 /* Hide zoom preview on mobile */
             }
 
-            .image-container:hover .main-image {
+            .product-image-container:hover .main-image {
                 transform: none;
                 /* Disable zoom on mobile */
             }
@@ -214,7 +214,7 @@
         }
 
         @media (max-width: 480px) {
-            .image-container {
+            .product-image-container {
                 height: 300px;
             }
 
@@ -453,16 +453,19 @@
             color: var(--dark);
         }
 
-        .quantity-input {
-            width: 60px;
-            height: 40px;
-            text-align: center;
-            border: none;
-            border-left: 1px solid var(--gray);
-            border-right: 1px solid var(--gray);
-            font-size: 16px;
-            font-weight: 600;
-        }
+   .quantity-input {
+  width: 80px;
+  height: 40px;
+  text-align: left;
+  /* border-top: 1px solid var(--gray); */
+  /* border-bottom: 1px solid var(--gray); */
+  /* border-left: none; */
+  /* border-right: none; */
+  font-size: 16px;
+  font-weight: 600;
+}
+
+
 
         /* === Action Buttons === */
         .action-buttons {
@@ -471,7 +474,7 @@
             margin-bottom: 30px;
         }
 
-        .btn {
+        .detail-btn {
             padding: 14px 30px;
             border-radius: 4px;
             font-weight: 600;

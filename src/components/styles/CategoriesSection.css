@@ -23,7 +23,7 @@
     background-color: var(--beige);
 }
 
-.container {
+.container-categories {
     max-width: 1200px;
     margin: 0 auto;
 }

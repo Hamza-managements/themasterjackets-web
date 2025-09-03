@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import './styles/style.css';
-import productsData from '../data/products.json';
 import { Link } from 'react-router-dom';
+import { getProducts } from './ProductServices';
 
-export default function FeaturedProducts() {
+export default function FeaturedProducts({title}) {
     const [products, setProducts] = useState([]);
     const [sortedProducts, setSortedProducts] = useState([]);
     const [sortOption, setSortOption] = useState('Sort by');
 
     useEffect(() => {
-        // Assume featured products are marked in JSON
-        const featured = productsData.slice(0, 8);
-        setProducts(featured);
-        setSortedProducts(featured);
+        const product = async() => {
+            const data = await getProducts();
+            const featured = data.slice(0, 8);
+            setProducts(featured);
+            setSortedProducts(featured);
+        }
+        product();
     }, []);
 
     useEffect(() => {
@@ -39,7 +42,7 @@ export default function FeaturedProducts() {
     return (
         <div className="bj-collection">
             <div className="bj-collection-header" data-aos="fade-up">
-            <h2><span>Featured Products</span></h2>
+            <h2>{title}</h2>
             <div>
                 <select className="bj-sort" onChange={(e) => setSortOption(e.target.value)} value={sortOption}>
                     <option>Sort by</option>
@@ -56,7 +59,7 @@ export default function FeaturedProducts() {
                 {sortedProducts.map(product => (
                     <Link
                         key={product.id}
-                        to={`/products-details?id=${product.id}`}
+                        to={`/products-details/${product.id}`}
                         style={{ textDecoration: 'none', color: 'inherit' }}
                     >
                         <div className="bj-product">

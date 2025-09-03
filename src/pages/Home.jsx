@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import Hero from '../components/Hero';
 import CategoriesSection from '../components/CategoriesSection';
-import productsData from '../data/products.json';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import FeaturedProducts from '../components/FeaturedProducts';
@@ -9,6 +8,7 @@ import StatsSection from '../components/StatsSection';
 import DualHeroSection from '../components/DualHeroSection';
 import CustomerGallery from '../components/CustomerGallery';
 import BlogSlider from '../components/BlogSlider';
+import { getProducts } from '../components/ProductServices';
 
 export default function Home() {
   const cartItems = [
@@ -30,12 +30,8 @@ export default function Home() {
     }
   ];
   localStorage.setItem('cartsItems', JSON.stringify(cartItems));
-  useEffect(() => {
-    const alreadySet = localStorage.getItem('products');
-    if (!alreadySet) {
-      localStorage.setItem('products', JSON.stringify(productsData));
-    }
 
+  useEffect(() => {
     AOS.init({
       duration: 800,
       once: true,
@@ -47,8 +43,9 @@ export default function Home() {
       <main>
         <Hero />
         <CategoriesSection />
-        <FeaturedProducts />
+        <FeaturedProducts title = "Best Sellers" />
         <StatsSection />
+        <FeaturedProducts title = "New Arrivals" />
         <DualHeroSection />
         <CustomerGallery />
         <BlogSlider />

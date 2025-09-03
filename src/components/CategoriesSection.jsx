@@ -21,11 +21,10 @@ export default function CategoriesSection() {
   return (
     <div className="categories-section" data-aos="fade-up" data-aos-duration="500">
       <div className="container-categories">
-        <div className="categories-section-header text-center mb-4">
+        {/* <div className="categories-section-header text-center mb-4">
           <h2>Shop by Categories</h2>
           <p>Discover our carefully curated collections for every taste and occasion</p>
-        </div>
-
+        </div> */}
         <div className="categories-grid">
           {categories.map((cat, idx) => (
             <div className="category-card" key={idx}>

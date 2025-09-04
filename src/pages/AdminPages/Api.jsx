@@ -5,7 +5,7 @@ const APITestingPage = () => {
   const { user } = useContext(AuthContext);
   const [apiResults, setApiResults] = useState({});
   const [loading, setLoading] = useState(false);
-  
+
 
   // Generic API call function
   const callAPI = async (endpoint, method = "GET", body = null) => {
@@ -62,7 +62,8 @@ const APITestingPage = () => {
     if (!id) {
       callAPI(`fetchById/68762589a469c496106e01d4?uid=${user.uid}`, "GET");
       console.log("No ID provided, fetching current user." + user.uid);
-      return}
+      return
+    }
     callAPI(`fetchById/68762589a469c496106e01d4?uid=${id}`, "GET");
   };
 
@@ -97,7 +98,7 @@ const APITestingPage = () => {
     );
   }
 
-   const allCategory = () => {
+  const allCategory = () => {
     callAPI(`change-activation-status/68762589a469c496106e01d4`, "PUT");
   };
 

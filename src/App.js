@@ -44,6 +44,7 @@ import ResetPassword from './pages/auth/ResetPassword';
 import CategoryListPage from './pages/AdminPages/CategoriesAdminAPI';
 import CategoryPage from './components/CategoryPage';
 import ProductListingPage from './pages/ProductPage';
+import AddProductPage from './pages/AdminPages/AddProduct';
 
 
 function App() {
@@ -80,6 +81,7 @@ function App() {
           {/* <Route path="/account/settings" element={<PrivateRoute> <AccountSettings /> </PrivateRoute> } /> */}
           <Route path="/api-testing" element={<APITestingPage />} />
           <Route path="/api-categories" element={<CategoryListPage />} />
+          <Route path="/add-product" element={<AddProductPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>

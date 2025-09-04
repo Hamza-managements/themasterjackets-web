@@ -88,7 +88,7 @@ export default function Header() {
             data-aos-duration="500"
           >
             Summer Sale! Up to 50% off{' '}
-            <Link to="/product">Shop Now but wait first refresh</Link>
+            <Link to="/products/68aec39c010f07c1100d40d6">Shop Now</Link>
           </div>
 
           <div className="fs-main-header">

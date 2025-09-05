@@ -47,6 +47,10 @@ const AddProductPage = () => {
         categoryId: ''
     });
 
+    function bracket () {
+        console.log(formData);
+    }
+
     const [currentSize, setCurrentSize] = useState({ size: '', quantity: 0 });
     const [currentColor, setCurrentColor] = useState({ colorName: '', image: '' });
     const [currentFaq, setCurrentFaq] = useState({ question: '', answer: '' });

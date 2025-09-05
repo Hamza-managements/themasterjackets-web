@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { TbCameraPlus } from "react-icons/tb";
+import { MdCancel } from "react-icons/md";
 
 const AddProductPage = () => {
     const navigate = useNavigate();
@@ -47,7 +48,7 @@ const AddProductPage = () => {
         categoryId: ''
     });
 
-    function bracket () {
+    function bracket() {
         console.log(formData);
     }
 
@@ -59,6 +60,8 @@ const AddProductPage = () => {
     const [currentSeason, setCurrentSeason] = useState('');
     const [currentStyle, setCurrentStyle] = useState('');
     const [imageFiles, setImageFiles] = useState([]);
+    const [errors, setErrors] = useState({});
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -108,26 +111,26 @@ const AddProductPage = () => {
         });
     };
 
-  const addToArray = (path, item) => {
-  if (item) {
-    setFormData(prev => {
-      const keys = path.split(".");
-      const newFormData = { ...prev };
-      let ref = newFormData;
+    const addToArray = (path, item) => {
+        if (item) {
+            setFormData(prev => {
+                const keys = path.split(".");
+                const newFormData = { ...prev };
+                let ref = newFormData;
 
-      for (let i = 0; i < keys.length - 1; i++) {
-        ref[keys[i]] = { ...ref[keys[i]] };
-        ref = ref[keys[i]];
-      }
+                for (let i = 0; i < keys.length - 1; i++) {
+                    ref[keys[i]] = { ...ref[keys[i]] };
+                    ref = ref[keys[i]];
+                }
 
-      const lastKey = keys[keys.length - 1];
-      const currentArray = Array.isArray(ref[lastKey]) ? ref[lastKey] : [];
-      ref[lastKey] = [...currentArray, item];
+                const lastKey = keys[keys.length - 1];
+                const currentArray = Array.isArray(ref[lastKey]) ? ref[lastKey] : [];
+                ref[lastKey] = [...currentArray, item];
 
-      return newFormData;
-    });
-  }
-};
+                return newFormData;
+            });
+        }
+    };
 
 
 
@@ -138,26 +141,40 @@ const AddProductPage = () => {
         }));
     };
 
-    const handleImageUpload = (e) => {
-        const files = Array.from(e.target.files);
-        setImageFiles(files);
+    // const handleImageUpload = (e) => {
+    //     const files = Array.from(e.target.files);
+    //     setImageFiles(files);
 
-        // Convert images to base64 for preview (in a real app, you'd upload to a server)
-        const imagePromises = files.map(file => {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
-                reader.readAsDataURL(file);
-            });
-        });
+    //     Convert images to base64 for preview (in a real app, you'd upload to a server)
+    //     const imagePromises = files.map(file => {
+    //         return new Promise((resolve) => {
+    //             const reader = new FileReader();
+    //             reader.onload = (e) => resolve(e.target.result);
+    //             reader.readAsDataURL(file);
+    //         });
+    //     });
 
-        Promise.all(imagePromises).then(base64Images => {
-            setFormData(prev => ({
-                ...prev,
-                productImages: [...prev.productImages, ...base64Images]
-            }));
-        });
+    //     Promise.all(imagePromises).then(base64Images => {
+    //         setFormData(prev => ({
+    //             ...prev,
+    //             productImages: [...prev.productImages, ...base64Images]
+    //         }));
+    //     });
+    // };
+
+    const handleImageUpload = (e, index) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const updatedImages = [...formData.productImages];
+                updatedImages[index] = reader.result;
+                setFormData({ ...formData, productImages: updatedImages });
+            };
+            reader.readAsDataURL(file);
+        }
     };
+
 
     const removeImage = (index) => {
         setFormData(prev => ({
@@ -184,48 +201,100 @@ const AddProductPage = () => {
     //         }));
     //     }
     // };
+    const validateForm = () => {
+        const newErrors = {};
+
+        // Product Name
+        if (!formData.productName || formData.productName.trim() === "") {
+            newErrors.productName = "Product name is required";
+        }
+
+        // Slug
+        if (!formData.slug || formData.slug.trim() === "") {
+            newErrors.slug = "Slug is required";
+        }
+
+        // Description
+        if (!formData.productDescription || formData.productDescription.trim() === "") {
+            newErrors.productDescription = "Product description is required";
+        }
+
+        // Images (Amazon requires at least 1, but we allowed 6 slots earlier)
+        if (!formData.productImages || formData.productImages.length === 0) {
+            newErrors.productImages = "Please upload at least one product image";
+        }
+
+        // Price validation
+        if (
+            !formData.productPrice.originalPrice ||
+            formData.productPrice.originalPrice <= 0
+        ) {
+            newErrors.originalPrice = "Original price must be greater than 0";
+        }
+
+        if (
+            formData.productPrice.discountedPrice &&
+            formData.productPrice.discountedPrice > formData.productPrice.originalPrice
+        ) {
+            newErrors.discountedPrice =
+                "Discounted price cannot exceed original price";
+        }
+
+        // Stock
+        if (
+            formData.stockQuantity === undefined ||
+            formData.stockQuantity < 0
+        ) {
+            newErrors.stockQuantity = "Stock quantity cannot be negative";
+        }
+
+        setErrors(newErrors);
+        
+        if (Object.keys(newErrors).length > 0) {
+    const firstErrorKey = Object.keys(newErrors)[0];
+    const errorElement = document.getElementById(firstErrorKey);
+    if (errorElement) {
+      errorElement.scrollIntoView({ behavior: "smooth", block: "center" });
+      errorElement.focus();
+    }
+  }
+
+        // Return whether form is valid
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        // Basic validation
-        if (!formData.productName || !formData.slug || !formData.productDescription) {
-            alert('Please fill in all required fields');
-            return;
-        }
-
-        if (formData.productImages.length === 0) {
-            alert('Please upload at least one product image');
-            return;
-        }
-
-        if (formData.productPrice.discountedPrice > formData.productPrice.originalPrice) {
-            alert('Discounted price cannot exceed original price');
-            return;
-        }
-
         try {
-            // In a real application, you would send the formData to your backend API
-            console.log('Product data:', formData);
+            const isValid = validateForm();
+            if (!isValid) {
+                // Just update errors state, UI will show messages automatically
+                return;
+            }
+
+            // ✅ If form is valid, proceed
+            console.log("Product data:", formData);
 
             // Simulate API call
-            alert('Product added successfully!');
-            navigate('/category/men');
+            alert("Product added successfully!");
+            navigate("/category/men");
         } catch (error) {
-            console.error('Error adding product:', error);
-            alert('Failed to add product. Please try again.');
+            console.error("Error adding product:", error);
+            alert("Failed to add product. Please try again.");
         }
     };
+
 
     return (
         <div className="add-product-container">
             <h1>Add New Product</h1>
 
-            <form onSubmit={handleSubmit} className="add-product-form">
+            <form onSubmit={handleSubmit} className="add-product-form" noValidate>
                 {/* Basic Information */}
                 <div className="add-product-form-group">
-                    <h2>Basic Information</h2>
+                    <h1 htmlFor="productName">The Master Jackets</h1>
 
+                    <h2>Basic Information</h2>
                     <div className="add-product-form-group">
                         <label htmlFor="productName">Product Name *</label>
                         <input
@@ -237,7 +306,11 @@ const AddProductPage = () => {
                             required
                             maxLength={100}
                             placeholder="Enter product name"
+                            className={errors.productName ? "input-error" : ""}
                         />
+                        {errors.productName && (
+                            <p className="error-text-amazon">{errors.productName}</p>
+                        )}
                         <span className="char-count">{formData.productName.length}/100</span>
                     </div>
 
@@ -253,6 +326,9 @@ const AddProductPage = () => {
                                 required
                                 placeholder="product-slug"
                             />
+                            {errors.slug && (
+                                <p className="error-text-amazon">{errors.slug}</p>
+                            )}
                             {/* <button
                                 type="button"
                                 onClick={handleSlugGeneration}
@@ -275,6 +351,9 @@ const AddProductPage = () => {
                             placeholder="Enter detailed product description (minimum 20 characters)"
                             rows={4}
                         />
+                        {errors.productDescription && (
+                            <p className="error-text-amazon">{errors.productDescription}</p>
+                        )}
                         <span className="char-count">{formData.productDescription.length} characters</span>
                     </div>
 
@@ -310,6 +389,9 @@ const AddProductPage = () => {
                                 min="0"
                                 step="0.01"
                             />
+                            {errors.discountedPrice && (
+                                <p className="error-text-amazon">{errors.discountedPrice}</p>
+                            )}
                         </div>
 
                         <div className="add-product-form-group">
@@ -324,6 +406,9 @@ const AddProductPage = () => {
                                 min="0"
                                 step="0.01"
                             />
+                            {errors.discountedPrice && (
+                                <p className="error-text-amazon">{errors.discountedPrice}</p>
+                            )}
                         </div>
 
                         <div className="add-product-form-group">
@@ -372,6 +457,9 @@ const AddProductPage = () => {
                                 required
                                 min="0"
                             />
+                            {errors.stockQuantity && (
+                                <p className="error-text-amazon">{errors.stockQuantity}</p>
+                            )}
                         </div>
                     </div>
 
@@ -432,7 +520,7 @@ const AddProductPage = () => {
                 </div>
 
                 {/* Images */}
-                <div className="add-product-form-group">
+                {/* <div className="add-product-form-group">
                     <h2>Product Images</h2>
 
                     <div className="add-product-form-group">
@@ -460,7 +548,47 @@ const AddProductPage = () => {
                             ))}
                         </div>
                     </div>
+                </div> */}
+                <div className="add-product-form-group">
+                    <h2>Product Images</h2>
+
+                    <div className="image-grid">
+                        {Array.from({ length: 6 }).map((_, index) => (
+                            <div key={index} className="image-box">
+                                {formData.productImages[index] ? (
+                                    <div className="image-preview">
+                                        <img
+                                            src={formData.productImages[index]}
+                                            alt={`Preview ${index + 1}`}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => removeImage(index)}
+                                            className="remove-image-btn"
+                                        >
+                                            <MdCancel />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <label className="upload-placeholder">
+                                        <TbCameraPlus />
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            style={{ display: "none" }}
+                                            onChange={(e) => handleImageUpload(e, index)}
+                                        />
+
+                                    </label>
+                                )}
+                                {errors.productImages && (
+                                    <p className="error-text-amazon">{errors.productImages}</p>
+                                )}
+                            </div>
+                        ))}
+                    </div>
                 </div>
+
 
                 {/* Colors */}
                 <div className="add-product-form-group">
@@ -948,13 +1076,13 @@ const AddProductPage = () => {
 }
 
 h1 {
-    color: #333;
+    color: #3E2C1C;
     margin-bottom: 30px;
     text-align: center;
     font-size: 24px;
 }
     h2 {
-    color: #1b1b1bff;
+    color: #3E2C1C;
     margin-bottom: 20px;
     font-size: 18px;
     font-family: Arial, Helvetica, sans-serif !important;
@@ -968,7 +1096,7 @@ h1 {
 }
 
 .add-product-form-section h2 {
-    color: #2d2d2dff;
+    color: #3E2C1C;
     margin-bottom: 20px;
     border-bottom: 2px solid #ddd;
     padding-bottom: 10px;
@@ -994,7 +1122,7 @@ label {
     display: block;
     margin-bottom: 5px;
     font-weight: 600;
-    color: #333;
+    color: #3E2C1C;
 }
 
 input,
@@ -1002,7 +1130,7 @@ select,
 textarea {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ccccccff;
+    border: 1px solid #fcedd1ff;
     border-radius: 4px;
     font-size: 14px;
 }
@@ -1014,7 +1142,7 @@ textarea {
 
 .char-count {
     font-size: 12px;
-    color: #666;
+    color: #3E2C1C;
     display: block;
     margin-top: 5px;
 }
@@ -1041,7 +1169,7 @@ textarea {
 .generate-slug-btn:hover {
     background: #0056b3;
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////
 .array-input-group {
     margin-top: 10px;
 }
@@ -1059,7 +1187,7 @@ textarea {
 
 .input-row button {
     padding: 10px 15px;
-    background: #28a745;
+    background: #3E2C1C;
     color: white;
     border: none;
     border-radius: 4px;
@@ -1067,8 +1195,12 @@ textarea {
     white-space: nowrap;
 }
 
+.input-row button:hover {
+    background: #5e3b1f;
+}
+
 .input-row button:disabled {
-    background: #ccc;
+    background: #fcedd1ff;
     cursor: not-allowed;
 }
 
@@ -1080,7 +1212,7 @@ textarea {
 }
 
 .array-item {
-    background: #e9ecef;
+    background: #fcedd1ff;
     padding: 8px 12px;
     border-radius: 20px;
     display: flex;
@@ -1093,7 +1225,7 @@ textarea {
     align-items: flex-start;
     border-radius: 8px;
     padding: 12px;
-    background: #f8f9fa;
+    background: #fcedd1ff;
 }
 
 .faq-item div {
@@ -1125,27 +1257,6 @@ textarea {
     min-height: 60px;
 }
 
-.image-previews {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-top: 15px;
-}
-
-.image-preview {
-    position: relative;
-    width: 100px;
-    height: 100px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.image-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
 
 .remove-image-btn {
     position: absolute;
@@ -1161,7 +1272,7 @@ textarea {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 16px;
     padding: 0;
 }
 
@@ -1188,12 +1299,12 @@ textarea {
     gap: 15px;
     margin-top: 30px;
     padding-top: 20px;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid #fcedd1ff;
 }
 
 .cancel-btn {
     padding: 12px 25px;
-    background: #6c757d;
+    background: #7d6c6cff;
     color: white;
     border: none;
     border-radius: 4px;
@@ -1213,6 +1324,15 @@ textarea {
     background: #218838;
 }
 
+.error-text-amazon{
+color: #e03105ff; 
+  font-size: 14px;
+  margin-top: 4px;
+}
+  .input-error {
+  border: 2px solid #e03105ff !important;
+  background-color: #fff5f5;
+}
 @media (max-width: 768px) {
     .form-row {
         flex-direction: column;
@@ -1225,9 +1345,81 @@ textarea {
     .input-row {
         flex-direction: column;
     }
-}`}</style>
+}
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.image-box {
+  width: 100%;
+  aspect-ratio: 1 / 1; /* keeps it square */
+  border: 2px dashed #bfbfbfff;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: #fcedd1ff;
+}
+
+.upload-placeholder {
+    font-size: 44px;
+  color: #666;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.remove-image-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: red;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+}
+`}</style>
         </div>
     );
 };
 
 export default AddProductPage;
+
+// .image-previews {
+//     display: flex;
+//     flex-wrap: wrap;
+//     gap: 15px;
+//     margin-top: 15px;
+// }
+
+// .image-preview {
+//     position: relative;
+//     width: 100px;
+//     height: 100px;
+//     border: 1px solid #ddd;
+//     border-radius: 4px;
+//     overflow: hidden;
+// }
+
+// .image-preview img {
+//     width: 100%;
+//     height: 100%;
+//     object-fit: cover;
+// }

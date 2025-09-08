@@ -48,10 +48,6 @@ const AddProductPage = () => {
         categoryId: ''
     });
 
-    function bracket() {
-        console.log(formData);
-    }
-
     const [currentSize, setCurrentSize] = useState({ size: '', quantity: 0 });
     const [currentColor, setCurrentColor] = useState({ colorName: '', image: '' });
     const [currentFaq, setCurrentFaq] = useState({ question: '', answer: '' });
@@ -220,8 +216,8 @@ const AddProductPage = () => {
         }
 
         // Images (Amazon requires at least 1, but we allowed 6 slots earlier)
-        if (!formData.productImages || formData.productImages.length === 0) {
-            newErrors.productImages = "Please upload at least one product image";
+        if (!formData.productImages || formData.productImages.filter(Boolean).length === 0) {
+            newErrors.productImages = ["Please upload at least one product image"];
         }
 
         // Price validation
@@ -249,16 +245,17 @@ const AddProductPage = () => {
         }
 
         setErrors(newErrors);
-        
-        if (Object.keys(newErrors).length > 0) {
-    const firstErrorKey = Object.keys(newErrors)[0];
-    const errorElement = document.getElementById(firstErrorKey);
-    if (errorElement) {
-      errorElement.scrollIntoView({ behavior: "smooth", block: "center" });
-      errorElement.focus();
-    }
-  }
 
+        if (Object.keys(newErrors).length > 0) {
+            const firstErrorKey = Object.keys(newErrors)[0];
+            const errorElement = document.getElementById(firstErrorKey);
+            if (errorElement) {
+                errorElement.scrollIntoView({ behavior: "smooth", block: "center" });
+                errorElement.focus();
+            }
+        }
+
+        console.log("Validation errors:", newErrors);
         // Return whether form is valid
         return Object.keys(newErrors).length === 0;
     };
@@ -268,7 +265,6 @@ const AddProductPage = () => {
         try {
             const isValid = validateForm();
             if (!isValid) {
-                // Just update errors state, UI will show messages automatically
                 return;
             }
 
@@ -287,16 +283,15 @@ const AddProductPage = () => {
 
     return (
         <div className="add-product-container">
-            <h1>Add New Product</h1>
+            <h1>The Master Jackets</h1>
 
             <form onSubmit={handleSubmit} className="add-product-form" noValidate>
                 {/* Basic Information */}
-                <div className="add-product-form-group">
-                    <h1 htmlFor="productName">The Master Jackets</h1>
-
+                <h1>Add New Product</h1>
+                <div className="add-product-form-section">
                     <h2>Basic Information</h2>
                     <div className="add-product-form-group">
-                        <label htmlFor="productName">Product Name *</label>
+                        <label htmlFor="productName">Product Title *</label>
                         <input
                             type="text"
                             id="productName"
@@ -325,6 +320,7 @@ const AddProductPage = () => {
                                 onChange={handleInputChange}
                                 required
                                 placeholder="product-slug"
+                                className={errors.slug ? "input-error" : ""}
                             />
                             {errors.slug && (
                                 <p className="error-text-amazon">{errors.slug}</p>
@@ -337,6 +333,7 @@ const AddProductPage = () => {
                                 Generate from Name
                             </button> */}
                         </div>
+
                     </div>
 
                     <div className="add-product-form-group">
@@ -349,6 +346,7 @@ const AddProductPage = () => {
                             required
                             minLength={20}
                             placeholder="Enter detailed product description (minimum 20 characters)"
+                            className={errors.productDescription ? "input-error" : ""}
                             rows={4}
                         />
                         {errors.productDescription && (
@@ -357,6 +355,50 @@ const AddProductPage = () => {
                         <span className="char-count">{formData.productDescription.length} characters</span>
                     </div>
 
+                    <div className="add-product-form-group">
+                        <label htmlFor="productImages">Product Images *</label>
+                        {errors.productImages && (
+                            <p className="error-text-amazon">{errors.productImages}</p>
+                        )}
+                        <div className="image-grid">
+                            {Array.from({ length: 6 }).map((_, index) => (
+                                <div key={index} className={`image-box ${errors.productImages && errors.productImages[index] ? "input-error" : ""}`}>
+                                    {formData.productImages[index] ? (
+                                        <div className="image-preview">
+                                            <img
+                                                src={formData.productImages[index]}
+                                                alt={`Preview ${index + 1}`}
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => removeImage(index)}
+                                                className="remove-image-btn"
+                                            >
+                                                <MdCancel />
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <label className="upload-placeholder">
+                                            <TbCameraPlus />
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                style={{ display: "none" }}
+                                                onChange={(e) => handleImageUpload(e, index)}
+                                                className={errors.productImages ? "input-error" : ""}
+                                            />
+
+                                        </label>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Specifications */}
+                <div className="add-product-form-section">
+                    <h2>Specifications</h2>
                     <div className="add-product-form-group">
                         <label htmlFor="stockKeepingUnit">SKU (Stock Keeping Unit) *</label>
                         <input
@@ -369,61 +411,6 @@ const AddProductPage = () => {
                             placeholder="e.g., PROD-001"
                             style={{ textTransform: 'uppercase' }}
                         />
-                    </div>
-                </div>
-
-                {/* Pricing */}
-                <div className="add-product-form-section">
-                    <h2>Pricing Information</h2>
-
-                    <div className="form-row">
-                        <div className="add-product-form-group">
-                            <label htmlFor="originalPrice">Original Price ($) *</label>
-                            <input
-                                type="number"
-                                id="originalPrice"
-                                name="productPrice.originalPrice"
-                                value={formData.productPrice.originalPrice}
-                                onChange={handleInputChange}
-                                required
-                                min="0"
-                                step="0.01"
-                            />
-                            {errors.discountedPrice && (
-                                <p className="error-text-amazon">{errors.discountedPrice}</p>
-                            )}
-                        </div>
-
-                        <div className="add-product-form-group">
-                            <label htmlFor="discountedPrice">Discounted Price ($) *</label>
-                            <input
-                                type="number"
-                                id="discountedPrice"
-                                name="productPrice.discountedPrice"
-                                value={formData.productPrice.discountedPrice}
-                                onChange={handleInputChange}
-                                required
-                                min="0"
-                                step="0.01"
-                            />
-                            {errors.discountedPrice && (
-                                <p className="error-text-amazon">{errors.discountedPrice}</p>
-                            )}
-                        </div>
-
-                        <div className="add-product-form-group">
-                            <label htmlFor="currency">Currency</label>
-                            <select
-                                id="currency"
-                                name="productPrice.currency"
-                                value={formData.productPrice.currency}
-                                onChange={handleInputChange}
-                            >
-                                <option value="USD">USD</option>
-                                <option value="EUR">EUR</option>
-                                <option value="GBP">GBP</option>
-                            </select>
-                        </div>
                     </div>
                 </div>
 
@@ -456,6 +443,7 @@ const AddProductPage = () => {
                                 onChange={handleInputChange}
                                 required
                                 min="0"
+                                className={errors.stockQuantity ? "input-error" : ""}
                             />
                             {errors.stockQuantity && (
                                 <p className="error-text-amazon">{errors.stockQuantity}</p>
@@ -510,7 +498,7 @@ const AddProductPage = () => {
                                             onClick={() => removeFromArray('sizes', index)}
                                             className="remove-btn"
                                         >
-                                            ×
+                                            <MdCancel />
                                         </button>
                                     </div>
                                 ))}
@@ -549,53 +537,15 @@ const AddProductPage = () => {
                         </div>
                     </div>
                 </div> */}
-                <div className="add-product-form-group">
-                    <h2>Product Images</h2>
-
-                    <div className="image-grid">
-                        {Array.from({ length: 6 }).map((_, index) => (
-                            <div key={index} className="image-box">
-                                {formData.productImages[index] ? (
-                                    <div className="image-preview">
-                                        <img
-                                            src={formData.productImages[index]}
-                                            alt={`Preview ${index + 1}`}
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => removeImage(index)}
-                                            className="remove-image-btn"
-                                        >
-                                            <MdCancel />
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <label className="upload-placeholder">
-                                        <TbCameraPlus />
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            style={{ display: "none" }}
-                                            onChange={(e) => handleImageUpload(e, index)}
-                                        />
-
-                                    </label>
-                                )}
-                                {errors.productImages && (
-                                    <p className="error-text-amazon">{errors.productImages}</p>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                </div>
 
 
                 {/* Colors */}
-                <div className="add-product-form-group">
+                <div className="add-product-form-section">
                     <h2>Available Colors</h2>
 
                     <div className="add-product-form-group">
                         <div className="array-input-group">
+                            <label htmlFor="colorName">Color Variation</label>
                             <div className="input-row">
                                 <input
                                     type="text"
@@ -623,24 +573,88 @@ const AddProductPage = () => {
 
                             <div className="array-items">
                                 {formData.colors.map((color, index) => (
-                                    <div key={index} className="array-item">
-                                        <span>{color.colorName}</span>
+                                    <div
+                                        key={index}
+                                        className="color-item"
+                                    >
+                                        <div className="color-thumb">
+                                            <img src={color.image} alt={color.colorName} />
+                                        </div>
+                                        <span className="color-name">{color.colorName}</span>
                                         <button
                                             type="button"
-                                            onClick={() => removeFromArray('colors', index)}
-                                            className="remove-btn"
+                                            onClick={() => removeFromArray("colors", index)}
+                                            className="color-remove-btn"
                                         >
-                                            ×
+                                            <MdCancel />
                                         </button>
                                     </div>
+
                                 ))}
                             </div>
                         </div>
                     </div>
                 </div>
 
+                {/* Pricing */}
+                <div className="add-product-form-section">
+                    <h2>Pricing Information</h2>
+
+                    <div className="form-row">
+                        <div className="add-product-form-group">
+                            <label htmlFor="originalPrice">Original Price ($) *</label>
+                            <input
+                                type="number"
+                                id="originalPrice"
+                                name="productPrice.originalPrice"
+                                value={formData.productPrice.originalPrice}
+                                onChange={handleInputChange}
+                                required
+                                min="0"
+                                step="0.01"
+                                className={errors.originalPrice ? "input-error" : ""}
+                            />
+                            {errors.originalPrice && (
+                                <p className="error-text-amazon">{errors.originalPrice}</p>
+                            )}
+                        </div>
+
+                        <div className="add-product-form-group">
+                            <label htmlFor="discountedPrice">Discounted Price ($) *</label>
+                            <input
+                                type="number"
+                                id="discountedPrice"
+                                name="productPrice.discountedPrice"
+                                value={formData.productPrice.discountedPrice}
+                                onChange={handleInputChange}
+                                required
+                                min="0"
+                                step="0.01"
+                                className={errors.discountedPrice ? "input-error" : ""}
+                            />
+                            {errors.discountedPrice && (
+                                <p className="error-text-amazon">{errors.discountedPrice}</p>
+                            )}
+                        </div>
+
+                        <div className="add-product-form-group">
+                            <label htmlFor="currency">Currency</label>
+                            <select
+                                id="currency"
+                                name="productPrice.currency"
+                                value={formData.productPrice.currency}
+                                onChange={handleInputChange}
+                            >
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                                <option value="GBP">GBP</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Attributes */}
-                <div className="add-product-form-group">
+                <div className="add-product-form-section">
                     <h2>Product Attributes</h2>
 
                     <div className="form-row">
@@ -768,7 +782,7 @@ const AddProductPage = () => {
                                             onClick={() => removeFromArray('attributes.season', index)}
                                             className="remove-btn"
                                         >
-                                            ×
+                                            <MdCancel />
                                         </button>
                                     </div>
                                 ))}
@@ -809,7 +823,7 @@ const AddProductPage = () => {
                                             onClick={() => removeFromArray('attributes.style', index)}
                                             className="remove-btn"
                                         >
-                                            ×
+                                            <MdCancel />
                                         </button>
                                     </div>
                                 ))}
@@ -819,7 +833,7 @@ const AddProductPage = () => {
                 </div>
 
                 {/* SEO Meta */}
-                <div className="add-product-form-group">
+                <div className="add-product-form-section">
                     <h2>SEO Information</h2>
 
                     <div className="add-product-form-group">
@@ -878,7 +892,7 @@ const AddProductPage = () => {
                                             onClick={() => removeFromArray('meta.keywords', index)}
                                             className="remove-btn"
                                         >
-                                            ×
+                                            <MdCancel />
                                         </button>
                                     </div>
                                 ))}
@@ -922,7 +936,7 @@ const AddProductPage = () => {
                                             onClick={() => removeFromArray('tags', index)}
                                             className="remove-btn"
                                         >
-                                            ×
+                                            <MdCancel />
                                         </button>
                                     </div>
                                 ))}
@@ -975,7 +989,7 @@ const AddProductPage = () => {
                                             onClick={() => removeFromArray('faq', index)}
                                             className="remove-btn"
                                         >
-                                            ×
+                                            <MdCancel />
                                         </button>
                                     </div>
                                 ))}
@@ -1076,31 +1090,43 @@ const AddProductPage = () => {
 }
 
 h1 {
-    color: #3E2C1C;
-    margin-bottom: 30px;
-    text-align: center;
-    font-size: 24px;
+  color: #2c1810; 
+  margin-bottom: 40px;
+  text-align: center;
+  font-size: 2rem; 
+  font-weight: bold;
+  font-family: Arial, Helvetica, sans-serif;
+  letter-spacing: 1px; 
+  position: relative;
 }
+
     h2 {
-    color: #3E2C1C;
-    margin-bottom: 20px;
-    font-size: 18px;
-    font-family: Arial, Helvetica, sans-serif !important;
+  color: #2c1810;
+  margin-bottom: 25px;
+  padding-bottom: 12px;
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 1.5rem; 
+  font-weight: bold;
+  border-bottom: 3px solid #D6AD60; 
+  position: relative;
 }
+
+h2::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 60px;
+  height: 3px;
+  background-color: #3E2C1C;
+}
+
 
 .add-product-form-section {
-    background: #f9f9f9;
+    background: #fcf4e4ff;
     padding: 20px;
     border-radius: 8px;
-    margin-bottom: 20px;
-}
-
-.add-product-form-section h2 {
-    color: #3E2C1C;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #ddd;
-    padding-bottom: 10px;
-    font-family: Arial, Helvetica, sans-serif;
+    margin-bottom: 8px;
 }
 
 .add-product-form-group {
@@ -1130,7 +1156,7 @@ select,
 textarea {
     width: 100%;
     padding: 10px;
-    border: 1px solid #fcedd1ff;
+    border: 1px solid #a4a4a4ff;
     border-radius: 4px;
     font-size: 14px;
 }
@@ -1395,6 +1421,66 @@ color: #e03105ff;
   width: 24px;
   height: 24px;
 }
+
+.color-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 110px;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  margin: 10px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.color-item:hover {
+  border-color: #3E2C1C;
+  transform: translateY(-3px);
+}
+
+.color-thumb img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.color-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  text-align: center;
+}
+
+.color-remove-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background: #b12704;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.color-remove-btn:hover {
+  background: #7d1c03;
+}
+
 `}</style>
         </div>
     );

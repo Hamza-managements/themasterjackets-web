@@ -95,18 +95,6 @@ const AddProductPage = () => {
         }));
     };
 
-    const handleArrayInputChange = (arrayName, value, index, field = null) => {
-        setFormData(prev => {
-            const newArray = [...prev[arrayName]];
-            if (field) {
-                newArray[index] = { ...newArray[index], [field]: value };
-            } else {
-                newArray[index] = value;
-            }
-            return { ...prev, [arrayName]: newArray };
-        });
-    };
-
     const addToArray = (path, item) => {
         if (item) {
             setFormData(prev => {
@@ -130,12 +118,31 @@ const AddProductPage = () => {
 
 
 
-    const removeFromArray = (arrayName, index) => {
-        setFormData(prev => ({
-            ...prev,
-            [arrayName]: prev[arrayName].filter((_, i) => i !== index)
-        }));
+    // const removeFromArray = (arrayName, index) => {
+    //     setFormData(prev => ({
+    //         ...prev,
+    //         [arrayName]: prev[arrayName].filter((_, i) => i !== index)
+    //     }));
+    // };
+
+    const removeFromArray = (path, index) => {
+        setFormData(prev => {
+            const updated = structuredClone(prev); // works in modern browsers
+            const keys = path.split(".");
+
+            // Navigate to the parent of the array
+            let obj = updated;
+            for (let i = 0; i < keys.length - 1; i++) {
+                obj = obj[keys[i]];
+            }
+
+            const lastKey = keys[keys.length - 1];
+            obj[lastKey] = obj[lastKey].filter((_, i) => i !== index);
+
+            return updated;
+        });
     };
+
 
     // const handleImageUpload = (e) => {
     //     const files = Array.from(e.target.files);
@@ -178,6 +185,7 @@ const AddProductPage = () => {
             productImages: prev.productImages.filter((_, i) => i !== index)
         }));
         setImageFiles(prev => prev.filter((_, i) => i !== index));
+        console.log(imageFiles);
     };
 
     const generateSlug = (name) => {

@@ -1,50 +1,27 @@
-// import logo from './logo.svg';
-// import './App.css';
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
-// export default App;
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './components/auth/AuthProvider';
-import PrivateRoute from './components/auth/PrivateRoute';
 import Home from './pages/Home';
-import ReturnPolicy from './pages/Return-exchange';
-import AboutPage from './components/About';
-import ProductDetails from './pages/ProductDetails';
-import CheckoutPage from './pages/CheckoutPage';
 import ContactForm from './pages/Contact';
-import Login from './components/auth/Login';
-import SignUp from './components/auth/SignUp';
-import AdminDashboard from './pages/AdminDashboard';
-import AuthLayout from './layouts/AuthLayout';
-import MainLayout from './layouts/MainLayout';
-import APITestingPage from './pages/AdminPages/Api';
-// import AccountSettings from './components/AccountsSettings';
-import NotFound from './pages/Notfound';
-import Dashboard from './components/Dashboard';
+import ReturnPolicy from './pages/Return-exchange';
+import ProductListingPage from './pages/ProductPage';
+import ProductDetails from './pages/ProductDetails';
+// import CheckoutPage from './pages/CheckoutPage';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
+import AdminDashboard from './pages/AdminDashboard';
 import CategoryListPage from './pages/AdminPages/CategoriesAdminAPI';
-import CategoryPage from './components/CategoryPage';
-import ProductListingPage from './pages/ProductPage';
 import AddProductPage from './pages/AdminPages/AddProduct';
+import APITestingPage from './pages/AdminPages/Api-auth-testing';
+import NotFound from './pages/Notfound';
+import PrivateRoute from './components/auth/PrivateRoute';
+import { AuthProvider } from './components/auth/AuthProvider';
+import Login from './components/auth/Login';
+import SignUp from './components/auth/SignUp';
+import AboutPage from './components/About';
+import Dashboard from './components/Dashboard';
+import CategoryPage from './components/CategoryPage';
+import AuthLayout from './layouts/AuthLayout';
+import MainLayout from './layouts/MainLayout';
+// import AccountSettings from './components/AccountsSettings';
 
 
 function App() {

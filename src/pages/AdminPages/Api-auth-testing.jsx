@@ -263,6 +263,11 @@ const APIResultBox = ({ endpoint, result }) => (
         <strong>Status:</strong> {result.status}
       </p>
     )}
+    {result.data?.data?.length && (
+      <p style={{ margin: "5px 0", color: "#666" }}>
+        <strong>Length:</strong> {result.data?.data?.length ?? "N/A"}
+      </p>
+    )}
     <pre style={{
       background: "white",
       padding: "10px",

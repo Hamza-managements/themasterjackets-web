@@ -291,11 +291,12 @@ const AddProductPage = () => {
 
     return (
         <div className="add-product-container">
-            <h1>The Master Jackets</h1>
+            <h1 className='mb-3'>The Master Jackets</h1>
+            <hr class="border-dark border-3 opacity-75" />
 
             <form onSubmit={handleSubmit} className="add-product-form" noValidate>
                 {/* Basic Information */}
-                <h1>Add New Product</h1>
+                <h1 className='mt-3'>Add New Product</h1>
                 <div className="add-product-form-section">
                     <h2>Basic Information</h2>
                     <div className="add-product-form-group">
@@ -1099,7 +1100,6 @@ const AddProductPage = () => {
 
 h1 {
   color: #2c1810; 
-  margin-bottom: 40px;
   text-align: center;
   font-size: 2rem; 
   font-weight: bold;

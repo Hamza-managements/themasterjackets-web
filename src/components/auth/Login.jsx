@@ -68,26 +68,39 @@ const Login = () => {
       const data = await res.json();
 
       if (res.ok && data.data.token) {
-        // console.log('Form Data:', formData);
-        // console.log('Login successful:', data , data.data.token);
+        console.log('Login successful:', data, data.data.token);
         const userObj = {
           token: data.data.token,
           uid: data.data.user._id,
+          role: data.data.user.role,
           contactNo: data.data.user.contactNo,
           userName: data.data.user.userName,
           userEmail: data.data.user.email,
         };
         login(userObj);
-        Swal.fire({
-          title: 'Login Successful!',
-          text: 'Redirecting to dashboard...',
-          icon: 'success',
-          timer: 3000,
-          showConfirmButton: false,
-          willClose: () => {
-            navigate('/dashboard');
-          }
-        });
+        if (data.data.user.role === 'admin') {
+          Swal.fire({
+            title: 'Login Successful!',
+            text: 'Redirecting to Admin dashboard...',
+            icon: 'success',
+            timer: 3000,
+            showConfirmButton: false,
+            willClose: () => {
+              navigate('/admin-dashboard');
+            }
+          });
+        } else {
+          Swal.fire({
+            title: 'Login Successful!',
+            text: 'Redirecting to dashboard...',
+            icon: 'success',
+            timer: 3000,
+            showConfirmButton: false,
+            willClose: () => {
+              navigate('/dashboard');
+            }
+          });
+        }
       } else {
         setErrors({ form: data.message || 'Invalid credentials' });
       }
@@ -99,9 +112,9 @@ const Login = () => {
   };
   useEffect(() => {
     if (user) {
-     setTimeout(() => {
-       navigate('/dashboard');
-     }, 3500);
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 3500);
     }
   }, [user, navigate]);
   return (

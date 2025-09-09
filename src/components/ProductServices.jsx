@@ -1,13 +1,8 @@
 export const getProducts = async () => {
   try {
     let products = JSON.parse(localStorage.getItem('products'));
-
-    if (!products || products.length === 0) {
       const response = await fetch('/data/products.json');
       products = await response.json();
-      localStorage.setItem('products', JSON.stringify(products));
-    }
-
     return products;
   } catch (err) {
     console.error("Failed to fetch products", err);
@@ -15,9 +10,9 @@ export const getProducts = async () => {
   }
 };
 
-export const getProductDetails = (id) => {
+export const getProductDetails = async (id) => {
   try {
-    const data = JSON.parse(localStorage.getItem('products')) || [];
+    const data = await getProducts();
     return data.find(p => p.id === id) || null;
   } catch (err) {
     console.error("Error reading products from localStorage:", err);
@@ -27,7 +22,7 @@ export const getProductDetails = (id) => {
 
 export const getRelatedProducts = async (category) => {
   try {
-    const data = JSON.parse(localStorage.getItem('products')) || [];
+    const data = await getProducts();
     return data.filter(product => product.category === category);
   } catch (err) {
     console.error("Failed to fetch related products", err);

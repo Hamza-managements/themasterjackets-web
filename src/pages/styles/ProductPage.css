@@ -5,6 +5,7 @@
             --gold: #D6AD60;
             --beige: #F8F5F2;
             --white: #FFFFFF;
+            --black: #000000;
         }
 
         * {
@@ -25,7 +26,7 @@
             display: flex;
             flex-direction: column;
             width: 100%;
-            padding: 0 15px;
+            overflow-x: hidden;
         }
 
         .plp-content {
@@ -162,7 +163,7 @@
         }
 
         .product-image {
-            height: 300px;
+            height: 42vh !important;
             background: var(--beige);
             position: relative;
             overflow: hidden;
@@ -180,11 +181,10 @@
             transform: scale(1.05);
         }
 
-        .product-badge {
+        .product-page-badge {
             position: absolute;
             top: 10px;
             left: 10px;
-            background: var(--tan);
             color: var(--white);
             padding: 4px 10px;
             font-size: 12px;
@@ -195,28 +195,21 @@
         }
 
         .badge-new {
-            background: rgba(212, 175, 55, 0.5);
+            background: rgba(212, 175, 55, 0.76);
             color: var(--dark-brown);
-            width:20%;
         }
-
+        
         .badge-sale {
-            width:20%;
-            background: rgba(192, 58, 43, 0.623);
+            background: rgba(192, 58, 43, 0.669);
         }
-
+        
         .badge-bestseller {
-            background: rgba(46, 134, 193, 0.8);
-            width:35%;
+            background: rgba(46, 134, 193, 0.693);
+            color: var(--black);
         }
 
         .badge-prime {
-            width:22%;
-            background: #1399ff88;
-        }
-
-        .product-page-details {
-            padding: 15px;
+            background: #1399ffab;
         }
 
         .product-page-title {
@@ -287,7 +280,7 @@
             }
 
             .product-filters {
-                width: 100%;
+                width: 100% !important;
                 display: none;
                 margin-bottom: 20px;
                 order: 1;
@@ -307,7 +300,7 @@
             }
 
             .product-image {
-                height: 200px;
+                height: 270px !important;;
             }
 
             .filter-toggle-btn {
@@ -323,7 +316,10 @@
             .toolbar h2 {
                 font-size: 1.3rem;
             }
+
         }
+
+
 
         @media (max-width: 480px) {
             .products {

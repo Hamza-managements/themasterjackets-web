@@ -110,13 +110,6 @@ const Login = () => {
       setIsSubmitting(false);
     }
   };
-  useEffect(() => {
-    if (user) {
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 3500);
-    }
-  }, [user, navigate]);
   return (
     <div className="auth-container">
       <div className="auth-header">

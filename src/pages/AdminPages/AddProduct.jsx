@@ -364,6 +364,185 @@ const AddProductPage = () => {
                         <span className="char-count">{formData.productDescription.length} characters</span>
                     </div>
 
+                    {/* Attributes */}
+                    <div className="aadd-product-form-group">
+                        <h2>Product Attributes</h2>
+
+                        <div className="form-row">
+                            <div className="add-product-form-group">
+                                <label htmlFor="material">Material</label>
+                                <input
+                                    type="text"
+                                    id="material"
+                                    name="attributes.material"
+                                    value={formData.attributes.material}
+                                    onChange={handleInputChange}
+                                    placeholder="e.g., Leather, Cotton"
+                                />
+                            </div>
+
+                            <div className="add-product-form-group">
+                                <label htmlFor="lining">Lining</label>
+                                <input
+                                    type="text"
+                                    id="lining"
+                                    name="attributes.lining"
+                                    value={formData.attributes.lining}
+                                    onChange={handleInputChange}
+                                    placeholder="e.g., Polyester, Silk"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="form-row">
+                            <div className="add-product-form-group">
+                                <label htmlFor="closure">Closure</label>
+                                <input
+                                    type="text"
+                                    id="closure"
+                                    name="attributes.closure"
+                                    value={formData.attributes.closure}
+                                    onChange={handleInputChange}
+                                    placeholder="e.g., Zipper, Buttons"
+                                />
+                            </div>
+
+                            <div className="add-product-form-group">
+                                <label htmlFor="fit">Fit</label>
+                                <input
+                                    type="text"
+                                    id="fit"
+                                    name="attributes.fit"
+                                    value={formData.attributes.fit}
+                                    onChange={handleInputChange}
+                                    placeholder="e.g., Regular, Slim"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="form-row">
+                            <div className="add-product-form-group">
+                                <label htmlFor="weight">Weight</label>
+                                <input
+                                    type="text"
+                                    id="weight"
+                                    name="attributes.weight"
+                                    value={formData.attributes.weight}
+                                    onChange={handleInputChange}
+                                    placeholder="e.g., 1.5 kg, 3.3 lbs"
+                                />
+                            </div>
+
+                            <div className="add-product-form-group">
+                                <label htmlFor="gender">Gender</label>
+                                <select
+                                    id="gender"
+                                    name="attributes.gender"
+                                    value={formData.attributes.gender}
+                                    onChange={handleInputChange}
+                                >
+                                    <option value="Men">Men</option>
+                                    <option value="Women">Women</option>
+                                    <option value="Unisex">Unisex</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="add-product-form-group">
+                            <label htmlFor="careInstructions">Care Instructions</label>
+                            <textarea
+                                id="careInstructions"
+                                name="attributes.careInstructions"
+                                value={formData.attributes.careInstructions}
+                                onChange={handleInputChange}
+                                rows={2}
+                                placeholder="Care instructions for the product"
+                            />
+                        </div>
+
+                        {/* Seasons */}
+                        <div className="add-product-form-group">
+                            <label>Seasons</label>
+                            <div className="array-input-group">
+                                <div className="input-row">
+                                    <input
+                                        type="text"
+                                        placeholder="Add season (e.g., Winter, Summer)"
+                                        value={currentSeason}
+                                        onChange={(e) => setCurrentSeason(e.target.value)}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            if (currentSeason) {
+                                                addToArray('attributes.season', currentSeason);
+                                                setCurrentSeason('');
+                                            }
+                                        }}
+                                    >
+                                        Add Season
+                                    </button>
+                                </div>
+
+                                <div className="array-items">
+                                    {formData.attributes.season.map((season, index) => (
+                                        <div key={index} className="array-item">
+                                            <span>{season}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => removeFromArray('attributes.season', index)}
+                                                className="remove-btn"
+                                            >
+                                                <MdCancel />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Styles */}
+                        <div className="add-product-form-group">
+                            <label>Styles</label>
+                            <div className="array-input-group">
+                                <div className="input-row">
+                                    <input
+                                        type="text"
+                                        placeholder="Add style (e.g., Casual, Formal)"
+                                        value={currentStyle}
+                                        onChange={(e) => setCurrentStyle(e.target.value)}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            if (currentStyle) {
+                                                addToArray('attributes.style', currentStyle);
+                                                setCurrentStyle('');
+                                            }
+                                        }}
+                                    >
+                                        Add Style
+                                    </button>
+                                </div>
+
+                                <div className="array-items">
+                                    {formData.attributes.style.map((style, index) => (
+                                        <div key={index} className="array-item">
+                                            <span>{style}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => removeFromArray('attributes.style', index)}
+                                                className="remove-btn"
+                                            >
+                                                <MdCancel />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="add-product-form-group">
                         <label htmlFor="productImages">Product Images *</label>
                         {errors.productImages && (
@@ -658,185 +837,6 @@ const AddProductPage = () => {
                                 <option value="EUR">EUR</option>
                                 <option value="GBP">GBP</option>
                             </select>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Attributes */}
-                <div className="add-product-form-section">
-                    <h2>Product Attributes</h2>
-
-                    <div className="form-row">
-                        <div className="add-product-form-group">
-                            <label htmlFor="material">Material</label>
-                            <input
-                                type="text"
-                                id="material"
-                                name="attributes.material"
-                                value={formData.attributes.material}
-                                onChange={handleInputChange}
-                                placeholder="e.g., Leather, Cotton"
-                            />
-                        </div>
-
-                        <div className="add-product-form-group">
-                            <label htmlFor="lining">Lining</label>
-                            <input
-                                type="text"
-                                id="lining"
-                                name="attributes.lining"
-                                value={formData.attributes.lining}
-                                onChange={handleInputChange}
-                                placeholder="e.g., Polyester, Silk"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="form-row">
-                        <div className="add-product-form-group">
-                            <label htmlFor="closure">Closure</label>
-                            <input
-                                type="text"
-                                id="closure"
-                                name="attributes.closure"
-                                value={formData.attributes.closure}
-                                onChange={handleInputChange}
-                                placeholder="e.g., Zipper, Buttons"
-                            />
-                        </div>
-
-                        <div className="add-product-form-group">
-                            <label htmlFor="fit">Fit</label>
-                            <input
-                                type="text"
-                                id="fit"
-                                name="attributes.fit"
-                                value={formData.attributes.fit}
-                                onChange={handleInputChange}
-                                placeholder="e.g., Regular, Slim"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="form-row">
-                        <div className="add-product-form-group">
-                            <label htmlFor="weight">Weight</label>
-                            <input
-                                type="text"
-                                id="weight"
-                                name="attributes.weight"
-                                value={formData.attributes.weight}
-                                onChange={handleInputChange}
-                                placeholder="e.g., 1.5 kg, 3.3 lbs"
-                            />
-                        </div>
-
-                        <div className="add-product-form-group">
-                            <label htmlFor="gender">Gender</label>
-                            <select
-                                id="gender"
-                                name="attributes.gender"
-                                value={formData.attributes.gender}
-                                onChange={handleInputChange}
-                            >
-                                <option value="Men">Men</option>
-                                <option value="Women">Women</option>
-                                <option value="Unisex">Unisex</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div className="add-product-form-group">
-                        <label htmlFor="careInstructions">Care Instructions</label>
-                        <textarea
-                            id="careInstructions"
-                            name="attributes.careInstructions"
-                            value={formData.attributes.careInstructions}
-                            onChange={handleInputChange}
-                            rows={2}
-                            placeholder="Care instructions for the product"
-                        />
-                    </div>
-
-                    {/* Seasons */}
-                    <div className="add-product-form-group">
-                        <label>Seasons</label>
-                        <div className="array-input-group">
-                            <div className="input-row">
-                                <input
-                                    type="text"
-                                    placeholder="Add season (e.g., Winter, Summer)"
-                                    value={currentSeason}
-                                    onChange={(e) => setCurrentSeason(e.target.value)}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        if (currentSeason) {
-                                            addToArray('attributes.season', currentSeason);
-                                            setCurrentSeason('');
-                                        }
-                                    }}
-                                >
-                                    Add Season
-                                </button>
-                            </div>
-
-                            <div className="array-items">
-                                {formData.attributes.season.map((season, index) => (
-                                    <div key={index} className="array-item">
-                                        <span>{season}</span>
-                                        <button
-                                            type="button"
-                                            onClick={() => removeFromArray('attributes.season', index)}
-                                            className="remove-btn"
-                                        >
-                                            <MdCancel />
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Styles */}
-                    <div className="add-product-form-group">
-                        <label>Styles</label>
-                        <div className="array-input-group">
-                            <div className="input-row">
-                                <input
-                                    type="text"
-                                    placeholder="Add style (e.g., Casual, Formal)"
-                                    value={currentStyle}
-                                    onChange={(e) => setCurrentStyle(e.target.value)}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        if (currentStyle) {
-                                            addToArray('attributes.style', currentStyle);
-                                            setCurrentStyle('');
-                                        }
-                                    }}
-                                >
-                                    Add Style
-                                </button>
-                            </div>
-
-                            <div className="array-items">
-                                {formData.attributes.style.map((style, index) => (
-                                    <div key={index} className="array-item">
-                                        <span>{style}</span>
-                                        <button
-                                            type="button"
-                                            onClick={() => removeFromArray('attributes.style', index)}
-                                            className="remove-btn"
-                                        >
-                                            <MdCancel />
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
                         </div>
                     </div>
                 </div>

@@ -383,7 +383,7 @@ const ProductListingPage = () => {
                 {/* Main Product Grid */}
                 <main className="product-grid">
                     <div className="toolbar">
-                        <div className="results-count">
+                        <div className="results-count hidden sm:block">
                             {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'}
                         </div>
                         <div>
@@ -412,7 +412,7 @@ const ProductListingPage = () => {
                                     >
                                         <img src={product.image} alt={product.title} />
                                         {product.badge && (
-                                            <span className={`product-badge badge-${product.badge}`}>
+                                            <span className={`product-page-badge badge-${product.badge}`}>
                                                 {formatBadgeText(product.badge)}
                                             </span>
                                         )}

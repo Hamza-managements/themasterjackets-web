@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import "./styles/AdminDashboard.css"; // Assuming you have a CSS file for styles
+import "./styles/AdminDashboard.css";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import {
@@ -14,7 +14,6 @@ import { Link, useNavigate } from 'react-router-dom';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement);
 
 const AdminDashboard = () => {
-    // const [darkMode, setDarkMode] = useDarkMode();
     const { user, logout } = useContext(AuthContext);
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [mobileView, setMobileView] = useState(false);
@@ -31,7 +30,8 @@ const AdminDashboard = () => {
         }
         return false;
     });
-    // Check screen size on load and resize
+
+
     useEffect(() => {
         AOS.init();
         handleRole();
@@ -49,16 +49,6 @@ const AdminDashboard = () => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    // Toggle dark mode
-    // useEffect(() => {
-    //     if (darkMode) {
-    //         console.log('Dark mode enabled');
-    //         document.documentElement.classList.add('dark');
-    //     } else {
-    //         document.documentElement.classList.remove('dark');
-    //     }
-    // }, [darkMode]);
-
     useEffect(() => {
         const html = document.documentElement;
         if (darkMode) {
@@ -70,7 +60,6 @@ const AdminDashboard = () => {
         }
     }, [darkMode]);
 
-    // Sample data for charts
     const salesData = {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
         datasets: [
@@ -169,20 +158,16 @@ const AdminDashboard = () => {
         <div className={`flex h-screen bg-gray-100 ${darkMode ? 'dark bg-gray-800' : ''}`}>
             {/* Sidebar */}
             <div
-                className={`${sidebarOpen ? 'w-48' : 'w-20'} ${darkMode ? 'dark bg-gray-800' : 'bg-white'} transition-all duration-300 shadow-md fixed md:relative z-10`}
-            >
-                <div className={`p-4 flex justify-between items-center border-b border-gray-200 ${darkMode ? 'dark bg-gray-800' : ''}`}>
-                    {sidebarOpen ? (
-                        <h1 className="text-xl font-bold text-gray-800 dark:text-white" onClick={() => setSidebarOpen(!sidebarOpen)}>AdminPanel</h1>
-                    ) : (
-                        <button
-                        onClick={() => setSidebarOpen(!sidebarOpen)}
-                        className={`p-1 rounded-lg ${darkMode ? 'dark hover:bg-gray-700 text-white' : 'hover:bg-gray-100'}`}
-                    >
-                        {sidebarOpen ? <FiX size={20} /> : <FiMenu size={20} />}
-                    </button>
+                className={`${sidebarOpen ? "w-48" : "w-0"} ${darkMode ? "dark bg-gray-800" : "bg-white"}overflow-hidden transition-all duration-300 shadow-md md:relative z-10`}>
+                <div className={`p-4 flex justify-between items-center border-b border-gray-200 ${darkMode ? "dark bg-gray-800" : ""}`}   >
+                    {sidebarOpen && (
+                        <h1
+                            className="text-xl font-bold text-gray-800 dark:text-white cursor-pointer"
+                            onClick={() => setSidebarOpen(!sidebarOpen)}
+                        >
+                            AdminPanel
+                        </h1>
                     )}
-                    
                 </div>
 
                 <nav className={`mt-6 ${sidebarOpen ? '' : 'd-none'}`}>
@@ -215,13 +200,6 @@ const AdminDashboard = () => {
                         onClick={() => setActiveMenu('products')}
                     />
                     <NavItem
-                        icon={<FiCalendar />}
-                        text="Calendar"
-                        active={activeMenu === 'calendar'}
-                        expanded={sidebarOpen}
-                        onClick={() => setActiveMenu('calendar')}
-                    />
-                    <NavItem
                         icon={<FiMail />}
                         text="Messages"
                         active={activeMenu === 'messages'}
@@ -241,20 +219,22 @@ const AdminDashboard = () => {
             {/* Main Content */}
             <div className="flex-1 overflow-auto">
                 {/* Header */}
-                <header className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} shadow-sm p-4 flex justify-between items-center sticky top-0 z-10`}>
-                    <div className="flex items-center">
+                <header className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} shadow-sm p-4 flex justify-between items-center top-0 z-10`}>
+                    <div className="flex items-center justify-between">
                         {mobileView && (
                             <button
                                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                                className={`${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}p-2 mr-2 rounded-lg `}
+                                className={`p-2 rounded-lg transition ${darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
+                                    }`}
                             >
-                                <FiMenu size={20} />
+                                <FiMenu size={20} className="text-gray-700 dark:text-gray-200" />
                             </button>
                         )}
-                        <h2 className="text-xl font-semibold text-gray-800 dark:text-white capitalize">
+                        <h2 className="text-xl font-semibold text-gray-800 dark:text-white capitalize ml-2">
                             {activeMenu}
                         </h2>
                     </div>
+
 
                     <div className="flex items-center space-x-4">
                         <button
@@ -297,7 +277,7 @@ const AdminDashboard = () => {
                                         ))}
                                     </div>
                                     <div className="px-4 py-2 text-center text-sm text-blue-600 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                                    onClick={() => setActiveMenu('orders')}>
+                                        onClick={() => setActiveMenu('orders')}>
                                         View all notifications
                                     </div>
                                 </div>
@@ -322,17 +302,10 @@ const AdminDashboard = () => {
 
                             {profileOpen && (
                                 <div className={`absolute right-0 mt-2 w-32 ${darkMode ? 'dark bg-gray-900' : 'bg-white'} rounded-lg shadow-lg py-1 z-20`}>
-                                    {/* <button
-                                        
-                                        href="#"
-                                        className={`block px-4 py-2 text-sm ${darkMode ? 'text-gray-300 hover:bg-gray-700' : ' text-gray-700 hover:bg-gray-100'}`}
-                                    >
-                                        Your Profile
-                                    </button> */}
                                     <button
                                         href="#"
                                         className={`block px-4 py-2 text-sm ${darkMode ? 'text-gray-300 hover:bg-gray-700' : ' text-gray-700 hover:bg-gray-100'}`}
-                                         onClick={() => setActiveMenu('settings')}
+                                        onClick={() => setActiveMenu('settings')}
                                     >
                                         Settings
                                     </button>
@@ -374,7 +347,7 @@ const AdminDashboard = () => {
                                         Recent Orders
                                     </h3>
                                     <button className="text-sm text-blue-500 hover:underline"
-                                    onClick={() => setActiveMenu('orders')}>
+                                        onClick={() => setActiveMenu('orders')}>
                                         View All
                                     </button>
                                 </div>
@@ -468,7 +441,7 @@ const AdminDashboard = () => {
                     {activeMenu === 'users' && (
                         <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
                             <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Users Management</h2>
-                            <Link to="/api-testing" className="text-gray-600 dark:text-gray-300">Click to see users...</Link>
+                            <Link to="/api-testing" target="_blank" rel="noopener noreferrer"><button className='px-4 py-2 rounded-lg bg-gray-700 text-white hover:bg-gray-900 transition'>Click to see users...</button></Link>
                         </div>
                     )}
                     {activeMenu === 'orders' && (
@@ -480,16 +453,33 @@ const AdminDashboard = () => {
 
                     {activeMenu === 'products' && (
                         <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
-                            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Products Management</h2>
-                            <p className="text-gray-600 dark:text-gray-300">Products content goes here...</p>
-                            <Link to="/api-categories" className="text-gray-600 dark:text-gray-300">Click to see Categories Table...</Link>
-                        </div>
-                    )}
+                            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                                Products Management
+                            </h2>
 
-                    {activeMenu === 'calendar' && (
-                        <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
-                            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Calendar </h2>
-                            <p className="text-gray-600 dark:text-gray-300">Calendar content goes here...</p>
+                            <div className="flex flex-wrap gap-3">
+                                {/* Add Product Button */}
+                                <Link to="/add-product">
+                                    <button className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition">
+                                        ➕ Add Product
+                                    </button>
+                                </Link>
+                            </div>
+
+                            {/* Categories Table Button */}
+                            <h2 className="text-xl font-semibold text-gray-800 dark:text-white my-4">
+                                Categories Management
+                            </h2>
+                            <Link
+                                to="/api-categories"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <button className="px-4 py-2 rounded-lg bg-gray-700 text-white hover:bg-gray-900 transition">
+                                    See Categories Table
+                                </button>
+                            </Link>
+
                         </div>
                     )}
 
@@ -508,7 +498,7 @@ const AdminDashboard = () => {
                     )}
                 </main>
             </div>
-        </div>
+        </div >
     );
 };
 

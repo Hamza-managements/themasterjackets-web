@@ -21,12 +21,14 @@ import Dashboard from './components/Dashboard';
 import CategoryPage from './components/CategoryPage';
 import AuthLayout from './layouts/AuthLayout';
 import MainLayout from './layouts/MainLayout';
+import ScrollToTop from './components/ScrollToTop';
 // import AccountSettings from './components/AccountsSettings';
 
 
 function App() {
   return (
     <Router>
+      <ScrollToTop/>
       <AuthProvider>
         <Routes>
           <Route element={<MainLayout />}>

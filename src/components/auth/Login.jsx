@@ -11,12 +11,11 @@ const Login = () => {
     userPassword: '',
     rememberMe: false
   });
-  const { login } = useContext(AuthContext);
+  const { login , user } = useContext(AuthContext);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -68,7 +67,7 @@ const Login = () => {
       const data = await res.json();
 
       if (res.ok && data.data.token) {
-        console.log('Login successful:', data, data.data.token);
+        // console.log('Login successful:', data, data.data.token);
         const userObj = {
           token: data.data.token,
           uid: data.data.user._id,

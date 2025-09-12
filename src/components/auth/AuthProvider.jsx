@@ -1,4 +1,3 @@
-// components/auth/AuthProvider.jsx
 import React, { createContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,7 +19,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const login = (userData, token) => {
+  const login = (userData) => {
     setUser(userData);
     localStorage.setItem('user', JSON.stringify(userData));
     localStorage.setItem('token', userData.token);
@@ -30,7 +29,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
     setUser(null);
-    // navigate('/');
+    navigate('/');
   };
 
   useEffect(() => {
@@ -46,7 +45,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {!loading && children}
     </AuthContext.Provider>
   );

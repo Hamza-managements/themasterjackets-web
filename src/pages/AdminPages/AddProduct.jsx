@@ -1,10 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TbCameraPlus } from "react-icons/tb";
 import { MdCancel } from "react-icons/md";
+import { fetchCategoriesAll } from '../../components/CartUtils';
 
 const AddProductPage = () => {
     const navigate = useNavigate();
+    const [categories, setCategories] = useState([]);
+
+    useEffect(() => {
+        // Fetch categories from backend API
+        const fetchCategories = async () => {
+            try {
+                const data = await fetchCategoriesAll()
+                setCategories(data);
+                console.log("Fetched categories:", data);
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+            }
+        };
+        fetchCategories();
+    }, []);
+
 
     const [formData, setFormData] = useState({
         productName: '',
@@ -292,7 +309,7 @@ const AddProductPage = () => {
     return (
         <div className="add-product-container">
             <h1 className='mb-3'>The Master Jackets</h1>
-            <hr class="border-dark border-3 opacity-75" />
+            <hr className="border-dark border-3 opacity-75" />
 
             <form onSubmit={handleSubmit} className="add-product-form" noValidate>
                 {/* Basic Information */}
@@ -1069,7 +1086,21 @@ const AddProductPage = () => {
 
                     <div className="add-product-form-group">
                         <label htmlFor="categoryId">Category ID *</label>
-                        <input
+                        <select
+                            id="categoryId"
+                            name="categoryId"
+                            value={formData.categoryId}
+                            onChange={handleInputChange}
+                            required
+                        >
+                            <option disabled value="">Select Category</option>
+                            {categories.map((cat) => (
+                                <option key={cat._id} value={cat._id}>
+                                    {cat.mainCategoryName}
+                                </option>
+                            ))}
+                        </select>
+                        {/* <input
                             type="text"
                             id="categoryId"
                             name="categoryId"
@@ -1077,7 +1108,7 @@ const AddProductPage = () => {
                             onChange={handleInputChange}
                             required
                             placeholder="Enter category ID"
-                        />
+                        /> */}
                     </div>
                 </div>
 

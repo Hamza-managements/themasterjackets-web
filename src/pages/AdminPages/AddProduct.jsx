@@ -7,6 +7,7 @@ import { fetchCategoriesAll } from '../../components/CartUtils';
 const AddProductPage = () => {
     const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
+    const [showButton, setShowButton] = useState(false);
 
     useEffect(() => {
         // Fetch categories from backend API
@@ -14,7 +15,6 @@ const AddProductPage = () => {
             try {
                 const data = await fetchCategoriesAll()
                 setCategories(data);
-                console.log("Fetched categories:", data);
             } catch (error) {
                 console.error("Error fetching categories:", error);
             }
@@ -101,7 +101,6 @@ const AddProductPage = () => {
         }
     };
 
-
     const handleNestedInputChange = (parent, child, value) => {
         setFormData(prev => ({
             ...prev,
@@ -132,8 +131,6 @@ const AddProductPage = () => {
             });
         }
     };
-
-
 
     // const removeFromArray = (arrayName, index) => {
     //     setFormData(prev => ({
@@ -222,7 +219,7 @@ const AddProductPage = () => {
     //         }));
     //     }
     // };
-    const validateForm = () => {
+    const validateForm = (onSubmit = false) => {
         const newErrors = {};
 
         // Product Name
@@ -245,33 +242,32 @@ const AddProductPage = () => {
             newErrors.productImages = ["Please upload at least one product image"];
         }
 
-        // Price validation
-        if (
-            !formData.productPrice.originalPrice ||
-            formData.productPrice.originalPrice <= 0
-        ) {
+        // Prices
+        const checkOriginalPrice = parseFloat(formData.productPrice.originalPrice);
+        const checkDiscountedPrice = parseFloat(formData.productPrice.discountedPrice);
+        console.log("Validating prices:", { checkOriginalPrice, checkDiscountedPrice });
+
+        if (isNaN(checkOriginalPrice) || checkOriginalPrice <= 0) {
             newErrors.originalPrice = "Original price must be greater than 0";
         }
 
-        if (
-            formData.productPrice.discountedPrice &&
-            formData.productPrice.discountedPrice > formData.productPrice.originalPrice
-        ) {
-            newErrors.discountedPrice =
-                "Discounted price cannot exceed original price";
+        if (!isNaN(checkDiscountedPrice) && checkOriginalPrice < checkDiscountedPrice) {
+            newErrors.discountedPrice = "Discounted price cannot exceed original price";
         }
 
         // Stock
         if (
+            formData.stockQuantity === "" ||
             formData.stockQuantity === undefined ||
-            formData.stockQuantity < 0
+            Number(formData.stockQuantity) < 0
         ) {
-            newErrors.stockQuantity = "Stock quantity cannot be negative";
+            newErrors.stockQuantity = "Stock quantity is required and cannot be negative";
         }
 
         setErrors(newErrors);
+        console.log("Validation errors:", newErrors);
 
-        if (Object.keys(newErrors).length > 0) {
+        if (onSubmit && Object.keys(newErrors).length > 0) {
             const firstErrorKey = Object.keys(newErrors)[0];
             const errorElement = document.getElementById(firstErrorKey);
             if (errorElement) {
@@ -279,16 +275,19 @@ const AddProductPage = () => {
                 errorElement.focus();
             }
         }
-
-        console.log("Validation errors:", newErrors);
-        // Return whether form is valid
+        setShowButton(Object.keys(newErrors).length === 0);
         return Object.keys(newErrors).length === 0;
     };
+
+    // ✅ Run validation whenever formData updates
+    useEffect(() => {
+        validateForm(false);
+    }, [formData]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const isValid = validateForm();
+            const isValid = validateForm(true);
             if (!isValid) {
                 return;
             }
@@ -559,9 +558,11 @@ const AddProductPage = () => {
                             </div>
                         </div>
                     </div>
+                </div>
 
+                <div className="add-product-form-section">
+                    <h2>Product Images</h2>
                     <div className="add-product-form-group">
-                        <label htmlFor="productImages">Product Images *</label>
                         {errors.productImages && (
                             <p className="error-text-amazon">{errors.productImages}</p>
                         )}
@@ -709,6 +710,58 @@ const AddProductPage = () => {
                                 ))}
                             </div>
                         </div>
+
+                        <div className="add-product-form-group">
+                            <div className="array-input-group">
+                                <label htmlFor="colorName">Color Variation</label>
+                                <div className="input-row">
+                                    <input
+                                        type="text"
+                                        placeholder="Color Name"
+                                        value={currentColor.colorName}
+                                        onChange={(e) => setCurrentColor({ ...currentColor, colorName: e.target.value })}
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="Image URL"
+                                        value={currentColor.image}
+                                        onChange={(e) => setCurrentColor({ ...currentColor, image: e.target.value })}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            addToArray('colors', currentColor);
+                                            setCurrentColor({ colorName: '', image: '' });
+                                        }}
+                                        disabled={!currentColor.colorName}
+                                    >
+                                        Add Color
+                                    </button>
+                                </div>
+
+                                <div className="array-items">
+                                    {formData.colors.map((color, index) => (
+                                        <div
+                                            key={index}
+                                            className="color-item"
+                                        >
+                                            <div className="color-thumb">
+                                                <img src={color.image} alt={color.colorName} />
+                                            </div>
+                                            <span className="color-name">{color.colorName}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => removeFromArray("colors", index)}
+                                                className="color-remove-btn"
+                                            >
+                                                <MdCancel />
+                                            </button>
+                                        </div>
+
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -742,64 +795,6 @@ const AddProductPage = () => {
                         </div>
                     </div>
                 </div> */}
-
-
-                {/* Colors */}
-                <div className="add-product-form-section">
-                    <h2>Available Colors</h2>
-
-                    <div className="add-product-form-group">
-                        <div className="array-input-group">
-                            <label htmlFor="colorName">Color Variation</label>
-                            <div className="input-row">
-                                <input
-                                    type="text"
-                                    placeholder="Color Name"
-                                    value={currentColor.colorName}
-                                    onChange={(e) => setCurrentColor({ ...currentColor, colorName: e.target.value })}
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Image URL"
-                                    value={currentColor.image}
-                                    onChange={(e) => setCurrentColor({ ...currentColor, image: e.target.value })}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        addToArray('colors', currentColor);
-                                        setCurrentColor({ colorName: '', image: '' });
-                                    }}
-                                    disabled={!currentColor.colorName}
-                                >
-                                    Add Color
-                                </button>
-                            </div>
-
-                            <div className="array-items">
-                                {formData.colors.map((color, index) => (
-                                    <div
-                                        key={index}
-                                        className="color-item"
-                                    >
-                                        <div className="color-thumb">
-                                            <img src={color.image} alt={color.colorName} />
-                                        </div>
-                                        <span className="color-name">{color.colorName}</span>
-                                        <button
-                                            type="button"
-                                            onClick={() => removeFromArray("colors", index)}
-                                            className="color-remove-btn"
-                                        >
-                                            <MdCancel />
-                                        </button>
-                                    </div>
-
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 {/* Pricing */}
                 <div className="add-product-form-section">
@@ -971,59 +966,6 @@ const AddProductPage = () => {
                     </div>
                 </div>
 
-                {/* FAQ */}
-                <div className="add-product-form-section">
-                    <h2>Frequently Asked Questions</h2>
-
-                    <div className="add-product-form-group">
-                        <div className="array-input-group">
-                            <div className="faq-input">
-                                <input
-                                    type="text"
-                                    placeholder="Question"
-                                    value={currentFaq.question}
-                                    onChange={(e) => setCurrentFaq({ ...currentFaq, question: e.target.value })}
-                                />
-                                <textarea
-                                    placeholder="Answer"
-                                    value={currentFaq.answer}
-                                    onChange={(e) => setCurrentFaq({ ...currentFaq, answer: e.target.value })}
-                                    rows={2}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        if (currentFaq.question && currentFaq.answer) {
-                                            addToArray('faq', currentFaq);
-                                            setCurrentFaq({ question: '', answer: '' });
-                                        }
-                                    }}
-                                >
-                                    Add FAQ
-                                </button>
-                            </div>
-
-                            <div className="array-items">
-                                {formData.faq.map((faq, index) => (
-                                    <div key={index} className="array-item faq-item">
-                                        <div>
-                                            <strong>Q: {faq.question}</strong>
-                                            <p>A: {faq.answer}</p>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => removeFromArray('faq', index)}
-                                            className="remove-btn"
-                                        >
-                                            <MdCancel />
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 {/* Shipping */}
                 <div className="add-product-form-section">
                     <h2>Shipping Information</h2>
@@ -1112,14 +1054,69 @@ const AddProductPage = () => {
                     </div>
                 </div>
 
+                {/* FAQ */}
+                <div className="add-product-form-section">
+                    <h2>Frequently Asked Questions</h2>
+
+                    <div className="add-product-form-group">
+                        <div className="array-input-group">
+                            <div className="faq-input">
+                                <input
+                                    type="text"
+                                    placeholder="Question"
+                                    value={currentFaq.question}
+                                    onChange={(e) => setCurrentFaq({ ...currentFaq, question: e.target.value })}
+                                />
+                                <textarea
+                                    placeholder="Answer"
+                                    value={currentFaq.answer}
+                                    onChange={(e) => setCurrentFaq({ ...currentFaq, answer: e.target.value })}
+                                    rows={2}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (currentFaq.question && currentFaq.answer) {
+                                            addToArray('faq', currentFaq);
+                                            setCurrentFaq({ question: '', answer: '' });
+                                        }
+                                    }}
+                                >
+                                    Add FAQ
+                                </button>
+                            </div>
+
+                            <div className="array-items">
+                                {formData.faq.map((faq, index) => (
+                                    <div key={index} className="array-item faq-item">
+                                        <div>
+                                            <strong>Q: {faq.question}</strong>
+                                            <p>A: {faq.answer}</p>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => removeFromArray('faq', index)}
+                                            className="remove-btn"
+                                        >
+                                            <MdCancel />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Submit Button */}
                 <div className="form-actions">
                     <button type="button" onClick={() => navigate('/products')} className="cancel-btn">
                         Cancel
                     </button>
-                    <button type="submit" className="submit-btn">
+                    {showButton ? (<button type="submit" className="submit-btn">
                         Add Product
-                    </button>
+                    </button>) : (<button type="submit" className="error-btn">
+                        Fix the errors to submit
+                    </button>)}
                 </div>
             </form>
 
@@ -1322,6 +1319,19 @@ textarea {
     min-height: 60px;
 }
 
+.faq-input button {
+    padding: 10px 15px;
+    background: #3E2C1C;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.faq-input button:hover {
+    background: #5e3b1f;
+}
 
 .remove-image-btn {
     position: absolute;
@@ -1369,7 +1379,7 @@ textarea {
 
 .cancel-btn {
     padding: 12px 25px;
-    background: #7d6c6cff;
+    background: #604949ff;
     color: white;
     border: none;
     border-radius: 4px;
@@ -1387,6 +1397,21 @@ textarea {
 
 .submit-btn:hover {
     background: #218838;
+    transform: translateY(-2px);
+}
+
+.error-btn {
+    padding: 12px 25px;
+    background: #dc3545; 
+    color: white;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+.error-btn:hover {
+    background: #a71d2a;
+    transform: translateY(-2px);
 }
 
 .error-text-amazon{

@@ -584,7 +584,7 @@ const AddProductPage = () => {
                                                     <MdCancel />
                                                 </button>
                                                 {index === 0 && (
-                                                    <div className="main-image-label text-center">
+                                                    <div className="main-image-label">
                                                         MAIN IMAGE
                                                     </div>
                                                 )}
@@ -600,7 +600,7 @@ const AddProductPage = () => {
                                                     className={errors.productImages ? "input-error" : ""}
                                                 />
                                                 {index === 0 && (
-                                                    <div className="main-image-label text-center">
+                                                    <div className="main-image-label">
                                                         MAIN IMAGE
                                                     </div>
                                                 )}
@@ -1561,10 +1561,11 @@ color: #e03105ff;
   bottom: 0;
   left: 0;
   width: 100%;
-  background: rgba(182, 182, 182, 0.6); /* semi-transparent */
-  color: #0f0f0fff;
+  background: #3e2c1cc2; /* semi-transparent */
+  color: #efededff;
   font-size: 12px;
   font-weight: 600;
+  letter-spacing: 0.5px;
   text-align: center;
   padding: 4px 0;
   border-radius: 0 0 4px 4px;

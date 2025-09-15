@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TbCameraPlus } from "react-icons/tb";
 import { MdCancel } from "react-icons/md";
@@ -219,7 +219,7 @@ const AddProductPage = () => {
     //         }));
     //     }
     // };
-    const validateForm = (onSubmit = false) => {
+    const validateForm = useCallback((onSubmit = false) => {
         const newErrors = {};
 
         // Product Name
@@ -277,12 +277,12 @@ const AddProductPage = () => {
         }
         setShowButton(Object.keys(newErrors).length === 0);
         return Object.keys(newErrors).length === 0;
-    };
+    }, [formData]);
 
     // ✅ Run validation whenever formData updates
     useEffect(() => {
-        validateForm(false);
-    }, [formData]);
+        validateForm();
+    }, [formData, validateForm]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -568,35 +568,46 @@ const AddProductPage = () => {
                         )}
                         <div className="image-grid">
                             {Array.from({ length: 6 }).map((_, index) => (
-                                <div key={index} className={`image-box ${errors.productImages && errors.productImages[index] ? "input-error" : ""}`}>
-                                    {formData.productImages[index] ? (
-                                        <div className="image-preview">
-                                            <img
-                                                src={formData.productImages[index]}
-                                                alt={`Preview ${index + 1}`}
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={() => removeImage(index)}
-                                                className="remove-image-btn"
-                                            >
-                                                <MdCancel />
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <label className="upload-placeholder">
-                                            <TbCameraPlus />
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                style={{ display: "none" }}
-                                                onChange={(e) => handleImageUpload(e, index)}
-                                                className={errors.productImages ? "input-error" : ""}
-                                            />
-
-                                        </label>
-                                    )}
-                                </div>
+                                <>
+                                    <div key={index} className={`image-box ${errors.productImages && errors.productImages[index] ? "input-error" : ""}`}>
+                                        {formData.productImages[index] ? (
+                                            <div className="image-preview">
+                                                <img
+                                                    src={formData.productImages[index]}
+                                                    alt={`Preview ${index + 1}`}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeImage(index)}
+                                                    className="remove-image-btn"
+                                                >
+                                                    <MdCancel />
+                                                </button>
+                                                {index === 0 && (
+                                                    <div className="main-image-label text-center">
+                                                        MAIN IMAGE
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <label className="upload-placeholder">
+                                                <TbCameraPlus />
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    style={{ display: "none" }}
+                                                    onChange={(e) => handleImageUpload(e, index)}
+                                                    className={errors.productImages ? "input-error" : ""}
+                                                />
+                                                {index === 0 && (
+                                                    <div className="main-image-label text-center">
+                                                        MAIN IMAGE
+                                                    </div>
+                                                )}
+                                            </label>
+                                        )}
+                                    </div>
+                                </>
                             ))}
                         </div>
                     </div>
@@ -1543,6 +1554,20 @@ color: #e03105ff;
 
 .color-remove-btn:hover {
   background: #7d1c03;
+}
+
+.main-image-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(182, 182, 182, 0.6); /* semi-transparent */
+  color: #0f0f0fff;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  padding: 4px 0;
+  border-radius: 0 0 4px 4px;
 }
 
 `}</style>

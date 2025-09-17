@@ -163,7 +163,7 @@ const CategoryPage = () => {
                     <div
                       className="image-container"
                       style={{
-                        backgroundImage: `url(/images/${sub.categoryName.replace(/\s+/g, "-").toLowerCase()}.jpg)`,
+                        backgroundImage: `url(/images/${cat.mainCategoryName.replace(/\s+/g, "-").toLowerCase()}/${sub.categoryName.replace(/\s+/g, "-").toLowerCase()}.jpg)`,
                       }}
                     >
                       <div className="image-overlay">

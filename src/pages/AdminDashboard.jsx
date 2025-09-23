@@ -7,14 +7,15 @@ import {
     LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement
 } from 'chart.js';
 import { Bar, Line, Pie } from 'react-chartjs-2';
-import { FiHome, FiUsers, FiSettings, FiPieChart, FiShoppingCart, FiCalendar, FiMail, FiBell, FiMenu, FiX, FiSun, FiMoon, FiRefreshCw } from 'react-icons/fi';
+import { FiHome, FiUsers, FiSettings, FiPieChart, FiShoppingCart, FiMail, FiBell, FiMenu, FiSun, FiMoon } from 'react-icons/fi';
 import { RiRefund2Fill } from "react-icons/ri";
 import { AuthContext } from '../components/auth/AuthProvider';
 import { Link, useNavigate } from 'react-router-dom';
+import AdminSettings from '../components/AdminDashboardSettings';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement);
 
 const AdminDashboard = () => {
-    const { user, logout } = useContext(AuthContext);
+    const { user, logout, isAdmin } = useContext(AuthContext);
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [mobileView, setMobileView] = useState(false);
     const [activeMenu, setActiveMenu] = useState('dashboard');
@@ -43,7 +44,6 @@ const AdminDashboard = () => {
                 setSidebarOpen(true);
             }
         };
-
         handleResize();
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
@@ -53,10 +53,8 @@ const AdminDashboard = () => {
         const html = document.documentElement;
         if (darkMode) {
             html.classList.add('dark');
-            localStorage.setItem('darkMode', 'true');
         } else {
             html.classList.remove('dark');
-            localStorage.setItem('darkMode', 'false');
         }
     }, [darkMode]);
 
@@ -119,39 +117,8 @@ const AdminDashboard = () => {
     ];
 
     const handleRole = async (e) => {
-        const response = await fetch(
-            "https://themasterjacketsbackend-production.up.railway.app/api/user/fetch-all/68762589a469c496106e01d4?role=admin", {
-            headers: {
-                "Content-Type": "application/json",
-                "authorization": `Bearer ${localStorage.getItem('token')}`,
-            },
-        }
-        );
-        const data = await response.json();
-        let userEmail = "No user found";
-        try {
-            const stored = localStorage.getItem("user");
-            const user = stored ? JSON.parse(stored) : null;
-            if (user?.userEmail) {
-                userEmail = user.userEmail;
-            }
-        } catch (err) {
-            console.warn("Failed to parse stored user:", err);
-        }
-        console.log("User Email:", userEmail);
-
-        if (!Array.isArray(data?.data)) {
-            console.error("Expected data.data to be an array of users", data);
-        } else {
-            const comparisons = data.data.map(u => ({
-                adminEmail: u.email,
-                isCurrentUser: u.email === userEmail,
-            }));
-            const isAdmin = comparisons.some(c => c.isCurrentUser);
-            console.log("Is current user an admin?", isAdmin);
-            if (!isAdmin) {
-                navigate('/');
-            }
+        if (!isAdmin) {
+            navigate('/');
         }
     };
     return (
@@ -457,13 +424,29 @@ const AdminDashboard = () => {
                                 Products Management
                             </h2>
 
-                            <div className="flex flex-wrap gap-3">
-                                {/* Add Product Button */}
-                                <Link to="/add-product">
-                                    <button className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition">
+                            <div className="d-flex gap-3">
+                                <div className="flex flex-wrap gap-3">
+                                    {/* Manage Product Button */}
+                                    <Link
+                                        to="/manage-product"
+                                        target='_blank'
+                                        className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-green-600 text-white font-medium shadow-md hover:bg-green-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
+                                    >
+                                        <FiSettings className="text-lg" />
+                                        Manage Product
+                                    </Link>
+                                </div>
+                                <br />
+
+                                <div className="flex flex-wrap gap-3">
+                                    {/* Add Product Button */}
+                                    <Link to="/add-product"
+                                        target='_blank'
+                                        className="px-5 py-3 rounded-lg bg-green-600 text-white font-medium shadow-md hover:bg-green-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
+                                    >
                                         ➕ Add Product
-                                    </button>
-                                </Link>
+                                    </Link>
+                                </div>
                             </div>
 
                             {/* Categories Table Button */}
@@ -474,10 +457,9 @@ const AdminDashboard = () => {
                                 to="/api-categories"
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                className={`${darkMode ? 'bg-gray-900 my-4' : 'bg-gray-700 hover:bg-gray-900'} text-white px-5 py-2 font-medium shadow-md rounded-lg transition`}
                             >
-                                <button className="px-4 py-2 rounded-lg bg-gray-700 text-white hover:bg-gray-900 transition">
-                                    See Categories Table
-                                </button>
+                                See Categories Table
                             </Link>
 
                         </div>
@@ -491,10 +473,7 @@ const AdminDashboard = () => {
                     )}
 
                     {activeMenu === 'settings' && (
-                        <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
-                            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Settings</h2>
-                            <p className="text-gray-600 dark:text-gray-300">Settings content goes here...</p>
-                        </div>
+                        <AdminSettings darkMode={darkMode}/>
                     )}
                 </main>
             </div>

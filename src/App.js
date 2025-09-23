@@ -10,6 +10,7 @@ import ResetPassword from './pages/auth/ResetPassword';
 import AdminDashboard from './pages/AdminDashboard';
 import CategoryListPage from './pages/AdminPages/CategoriesAdminAPI';
 import AddProductPage from './pages/AdminPages/AddProduct';
+import ProductManagementPage from './pages/AdminPages/ManageProduct';
 import APITestingPage from './pages/AdminPages/Api-auth-testing';
 import NotFound from './pages/Notfound';
 import PrivateRoute from './components/auth/PrivateRoute';
@@ -61,6 +62,7 @@ function App() {
           <Route path="/api-testing" element={<APITestingPage />} />
           <Route path="/api-categories" element={<CategoryListPage />} />
           <Route path="/add-product" element={<AddProductPage />} />
+          <Route path="/manage-product" element={<ProductManagementPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>

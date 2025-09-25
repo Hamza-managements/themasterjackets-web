@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './styles/style.css';
 import { Link } from 'react-router-dom';
-import { getProducts } from './ProductServices';
+import { getProducts } from '../utils/ProductServices';
 
 export default function FeaturedProducts({title}) {
     const [products, setProducts] = useState([]);

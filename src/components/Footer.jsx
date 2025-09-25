@@ -1,16 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './styles/Footer.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { fetchCategoriesAll } from '../utils/CartUtils';
+
 
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [categories, setCategories] = useState([]);
+
   const [toastMessage, setToastMessage] = useState('');
 
   // Validation
   const isValidEmail = (email) => /^[^ ]+@[^ ]+\.[a-z]{2,6}$/i.test(email);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await fetchCategoriesAll()
+        setCategories(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   // Toast Message
   const showToast = (message) => {
@@ -48,7 +64,6 @@ export default function Footer() {
         )}
 
         <div className="row footer-links-row">
-
           {/* Brand */}
           <div className="col-lg-3 col-md-6 footer-col">
             <span>
@@ -61,23 +76,9 @@ export default function Footer() {
               <a href="#"><i className="fab fa-pinterest-p"></i></a>
               <a href="#"><i className="fab fa-twitter"></i></a>
             </div>
-          </div>
-
-
-            <div className="col-lg-3 col-md-6 footer-col">
-              <h5 className="footer-heading">Shop</h5>
-              <ul className="footer-links-main">
-                <li><Link to="/product">Biker Jacket</Link></li>
-                <li><Link to="/product">New Arrivals</Link></li>
-                <li><Link to="/product">Best Sellers</Link></li>
-                <li><Link to="/product">Sale Items</Link></li>
-              </ul>
-            </div>
-
-            {/* Column 2 */}
-            <div className="col-lg-3 col-md-6 footer-col">
-              <h5 className="footer-heading">Information</h5>
-              <ul className="footer-links-main">
+            <div className='mt-4' >
+              <h5 className="footer-heading mb-1">Information</h5>
+              <ul className="py-1">
                 <li><Link to="/about">About Us</Link></li>
                 <li><Link to="/contact-us">Contact Us</Link></li>
                 <li><Link to="/return-exchange">Return & Policy</Link></li>
@@ -85,8 +86,37 @@ export default function Footer() {
                 <li><a href="#">Careers</a></li>
               </ul>
             </div>
+          </div>
 
-            
+
+          {categories?.filter(cat => cat.mainCategoryName === "Men" || cat.mainCategoryName === "Women")
+            .map(category => (
+              <div key={category._id} className="col-lg-3 col-md-6 footer-col">
+                <h5 className="footer-heading"> {category.mainCategoryName}</h5>
+                <ul className="footer-links-main">
+                  {category.subCategories?.map((sub) => (
+                    <Link key={sub._id} to={`/products/${sub._id}`}>{sub.categoryName}</Link>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+
+
+
+          {/* Column 2 */}
+          {/* <div className="col-lg-3 col-md-6 footer-col">
+            <h5 className="footer-heading">Information</h5>
+            <ul className="footer-links-main">
+              <li><Link to="/about">About Us</Link></li>
+              <li><Link to="/contact-us">Contact Us</Link></li>
+              <li><Link to="/return-exchange">Return & Policy</Link></li>
+              <li><a href="#">Blog</a></li>
+              <li><a href="#">Careers</a></li>
+            </ul>
+          </div> */}
+
+
 
           {/* Newsletter */}
           <div className="col-lg-3 col-md-6 footer-col">

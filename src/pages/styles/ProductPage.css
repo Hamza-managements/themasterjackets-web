@@ -200,7 +200,8 @@
         }
         
         .badge-sale {
-            background: rgba(192, 58, 43, 0.669);
+            background: rgba(249, 29, 5, 0.718);
+            color: var(--black);
         }
         
         .badge-bestseller {
@@ -210,6 +211,7 @@
 
         .badge-prime {
             background: #1399ffab;
+            color: var(--black);
         }
 
         .product-page-title {

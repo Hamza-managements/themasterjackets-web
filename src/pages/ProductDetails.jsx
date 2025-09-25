@@ -8,7 +8,7 @@ import Aos from 'aos';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import SizeChartOverlay from '../components/SizeChart';
-import { getProductDetails, getRelatedProducts } from '../components/ProductServices';
+import { getProductDetails, getRelatedProducts } from '../utils/ProductServices';
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -405,10 +405,6 @@ const ProductDetails = () => {
                   <i className="fas fa-shopping-cart"></i>
                   Add to Cart
                 </button>
-                <button className="detail-btn btn-secondary">
-                  <i className="far fa-heart"></i>
-                  Wishlist
-                </button>
               </div>
 
               <div className="action-buttons">
@@ -439,14 +435,15 @@ const ProductDetails = () => {
               </div>
 
               <div className="product-meta">
-                <div className="meta-item">
+                
+                {/* <div className="meta-item">
                   <span className="meta-label">Category:</span>
                   <span>{product.category || "Watches, Limited Edition"}</span>
                 </div>
                 <div className="meta-item">
                   <span className="meta-label">Availability:</span>
                   <span style={{ color: 'green' }}>In Stock (Only 5 left)</span>
-                </div>
+                </div> */}
               </div>
 
               <div className="accordion">

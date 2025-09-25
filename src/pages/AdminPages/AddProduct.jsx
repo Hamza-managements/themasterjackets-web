@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TbCameraPlus } from "react-icons/tb";
 import { MdCancel } from "react-icons/md";
-import { fetchCategoriesAll } from '../../components/CartUtils';
+import { fetchCategoriesAll } from '../../utils/CartUtils';
 
 const AddProductPage = () => {
     const navigate = useNavigate();
@@ -10,7 +10,6 @@ const AddProductPage = () => {
     const [showButton, setShowButton] = useState(false);
 
     useEffect(() => {
-        // Fetch categories from backend API
         const fetchCategories = async () => {
             try {
                 const data = await fetchCategoriesAll()

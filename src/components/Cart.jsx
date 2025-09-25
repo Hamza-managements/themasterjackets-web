@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 // import productsData from '/data/products.json';
 import './styles/Cart.css';
-import { getCartItems } from './CartUtils';
-import { getProducts } from './ProductServices';
+import { getCartItems } from '../utils/CartUtils';
+import { getProducts } from '../utils/ProductServices';
 
 export default function CartSidebar() {
   const navigate = useNavigate();

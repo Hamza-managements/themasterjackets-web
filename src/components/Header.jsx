@@ -1,9 +1,9 @@
 import './styles/Header.css';
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import { useContext, useState, useEffect, useRef } from 'react';
 import { openCart } from './Cart';
 import { Link } from 'react-router-dom';
 import { AuthContext } from './auth/AuthProvider';
-import axios from 'axios';
+import { fetchCategoriesAll } from '../utils/CartUtils';
 import Aos from 'aos';
 
 
@@ -23,31 +23,15 @@ export default function Header() {
       once: true,
       easing: 'ease-out-cubic'
     });
-    const api = axios.create({
-      baseURL: "https://themasterjacketsbackend-production.up.railway.app",
-    });
-
-    api.interceptors.request.use((config) => {
-      const token = localStorage.getItem("token");
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      return config;
-    });
-
-    const getAllCategories = async () => {
+    const fetchCategories = async () => {
       try {
-        const res = await api.get(
-          "/api/category/fetch-all"
-        );
-        // console.log("Raw API response:", res.data.data);
-        setCategories(res.data.data);
-      } catch (err) {
-        console.error("Failed to fetch categories:", err);
+        const data = await fetchCategoriesAll()
+        setCategories(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
       }
     };
-
-    getAllCategories();
+    fetchCategories();
   }, []);
 
   // useEffect(() => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './styles/ProductPage.css';
-import { getProducts } from '../components/ProductServices';
+import { getProducts } from '../utils/ProductServices';
 
 const ProductListingPage = () => {
     const navigate = useNavigate();
@@ -360,8 +360,7 @@ const ProductListingPage = () => {
                                     checked={filters.delivery === 'prime'}
                                     onChange={(e) => handleFilterChange('delivery', e.target.value)}
                                 />
-                                <span style={{ marginRight: '8px' }}>Amazon Prime</span>
-                                <i className="fa-brands fa-amazon"></i>
+                                <span style={{ marginRight: '8px' }}>Prime</span>
                             </label>
                         </div>
                         <div className="product-filter-option">

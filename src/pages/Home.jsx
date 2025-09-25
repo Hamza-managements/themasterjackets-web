@@ -8,7 +8,8 @@ import StatsSection from '../components/StatsSection';
 import DualHeroSection from '../components/DualHeroSection';
 import CustomerGallery from '../components/CustomerGallery';
 import BlogSlider from '../components/BlogSlider';
-import { getProducts } from '../components/ProductServices';
+import { getProducts } from '../utils/ProductServices';
+import FeaturedProductsCarousel from '../components/FeaturedProductsCarousel';
 
 export default function Home() {
   const cartItems = [
@@ -45,7 +46,7 @@ export default function Home() {
         <CategoriesSection />
         <FeaturedProducts title = "Best Sellers" />
         <StatsSection />
-        <FeaturedProducts title = "New Arrivals" />
+        <FeaturedProductsCarousel title = "New Arrivals" />
         <DualHeroSection />
         <CustomerGallery />
         <BlogSlider />

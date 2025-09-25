@@ -5,11 +5,10 @@ import "aos/dist/aos.css";
 import "./styles/CategoryPage.css";
 import { Link, useParams } from "react-router-dom";
 import { Skeleton } from "@mui/material";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import FeaturedProductsCarousel from "./FeaturedProductsCarousel";
 
 const CategoryPage = () => {
   const categoryMap = {
@@ -17,10 +16,9 @@ const CategoryPage = () => {
     "women": "68ad7a27010f07c1100d3e56",
     "new-in": "68ad9ab6010f07c1100d3f1e",
   };
-  
+
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeSubcategory, setActiveSubcategory] = useState(null);
   const { slug } = useParams();
   const categoryId = categoryMap[slug];
 
@@ -34,11 +32,6 @@ const CategoryPage = () => {
       fetchCategories();
     }
   }, [slug]);
-
-  useEffect(() => {
-    AOS.refresh();
-  }, [activeSubcategory]);
-
 
 
   const fetchCategories = async () => {
@@ -57,7 +50,6 @@ const CategoryPage = () => {
       });
 
       const response = await api.get(`/api/category/fetchById?categoryId=${categoryId}`);
-      // console.log("Fetched categories:", response.data.data);
       setCategories([response.data.data]);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -87,7 +79,7 @@ const CategoryPage = () => {
   return (
     <div className="category-page">
       {/* Hero Section */}
-      <section className="category-hero" data-aos="fade-in">
+      {/* <section className="category-hero" data-aos="fade-in">
         <div className="category-hero-content">
           <h1>Explore Our Collections</h1>
           <p>Discover premium designs crafted for style, durability, and timeless character</p>
@@ -96,46 +88,24 @@ const CategoryPage = () => {
           <span>Scroll to explore</span>
           <div className="scroll-arrow"></div>
         </div>
-      </section>
-
+      </section> */}
       {categories?.map((cat, index) => (
         <div key={cat._id} className="category-section">
-          {/* Main Category Banner with Parallax Effect */}
-          <div
-            className="parallax-banner"
-            style={{
-              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),url(${cat.image})`
-            }}
-            // .replace(/\s+/g, "-")
-            // url('https://res.cloudinary.com/dekf5dyng/image/upload/v1749721392/men-leather-jackets_ewghdk.jpg')` /images/${cat.mainCategoryName.toLowerCase()}.jpg
-            // }}
-            data-aos="zoom-out"
-          >
+          <div className="parallax-banner" data-aos="zoom-out">
             <div className="parallax-content">
-              <h1 className="main-category-title">{cat.mainCategoryName}</h1>
-              <p className="main-category-description">
-                Explore our exclusive {cat.mainCategoryName}&apos;s collection. Premium designs
-                crafted for style, durability, and timeless character.
-              </p>
-              <div className="category-stats">
-                <div className="stat-item">
-                  <span className="stat-number">{cat.subCategories?.length || 0}</span>
-                  <span className="stat-label">Collections</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-number">100+</span>
-                  <span className="stat-label">Products</span>
-                </div>
-                <div className="stat-item premium">
-                  <span className="stat-number">Premium</span>
-                  <span className="stat-label">Quality</span>
-                </div>
-              </div>
+              <h1 className="main-category-title">
+                {cat.mainCategoryName === "New In"
+                  ? `${cat.mainCategoryName} Leather Jackets`
+                  : `${cat.mainCategoryName}'s Leather Jackets`}
+              </h1>
+
+              <p className="main-category-subtitle mb-3">Discover premium designs crafted for style, durability, and timeless character</p>
             </div>
           </div>
+          <hr class="border border-dark border-1 w-100 mx-auto" />
 
           {/* Subcategory Navigation */}
-          <div className="subcategory-nav" data-aos="fade-up">
+          {/* <div className="subcategory-nav" data-aos="fade-up">
             {cat.subCategories?.map((sub) => (
               <button
                 key={sub._id}
@@ -147,10 +117,39 @@ const CategoryPage = () => {
                 {sub.categoryName}
               </button>
             ))}
+          </div> */}
+          <div className="subcategories-grid">
+            {cat.subCategories?.map((sub, subIndex) => (
+              <div
+                key={sub._id}
+                className="subcategory-card"
+                data-aos="fade-up"
+                data-aos-delay={subIndex * 75}
+              >
+                <div
+                  className="subcategory-image"
+                  style={{
+                    backgroundImage: `url(/images/${cat.mainCategoryName.replace(/\s+/g, "-").toLowerCase()}/${sub.categoryName.replace(/\s+/g, "-").toLowerCase()}.jpg)`,
+                  }}
+                >
+                  <div className="image-overlay">
+                  </div>
+                </div>
+
+                <div className="subcategory-info">
+                  <h2>{sub.categoryName}</h2>
+                  <div className="subcategory-actions">
+                    <Link to={`/products/${sub._id}`} className="category-primary-btn">
+                      Shop Now
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
 
           {/* Subcategory Content */}
-          <div className="subcategories-container">
+          {/* <div className="subcategories-container">
             {cat.subCategories?.map((sub, subIndex) => (
               <div
                 key={sub._id}
@@ -190,47 +189,13 @@ const CategoryPage = () => {
                       <Link to={`/products/${sub._id}`} className="category-primary-btn">
                         Shop Collection
                       </Link>
-                      {/* <button className="category-secondary-btn">
-                        View Lookbook
-                      </button> */}
                     </div>
                   </div>
                 </div>
               </div>
             ))}
-          </div>
-
-          {/* Featured Products Carousel */}
-          <div className="featured-products" data-aos="fade-up">
-            <h2 className="category-section-title">Featured Products</h2>
-            <Swiper
-              modules={[Navigation, Pagination, Autoplay]}
-              spaceBetween={20}
-              slidesPerView={1}
-              navigation
-              pagination={{ clickable: true }}
-              autoplay={{ delay: 5000 }}
-              breakpoints={{
-                640: { slidesPerView: 2 },
-                1024: { slidesPerView: 3 },
-                1280: { slidesPerView: 4 }
-              }}
-            >
-              {[1, 2, 3, 4, 5]?.map((item) => (
-                <SwiperSlide key={item}>
-                  <div className="product-card">
-                    <div className="product-image">
-                      <div className="product-badge">New</div>
-                    </div>
-                    <div className="product-info">
-                      <h3>Product Name</h3>
-                      <p className="product-price">$129.99</p>
-                    </div>
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
+          </div> */}
+          <FeaturedProductsCarousel title="Customer Favorites" />
         </div>
       ))}
     </div>

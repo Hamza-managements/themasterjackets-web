@@ -215,7 +215,7 @@
     gap: 20px;
     align-items: center;
     position: relative;
-    z-index: 1001;
+    /* z-index: 1001; */
 }
 
 .fs-header-actions a {
@@ -402,7 +402,7 @@
 
     /* Ensure header actions stay visible */
     .fs-header-actions {
-        z-index: 1001;
+        /* z-index: 1001; */
         background: white;
         padding: 10px 0;
     }

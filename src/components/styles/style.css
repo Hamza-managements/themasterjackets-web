@@ -1,5 +1,5 @@
 :root {
-    --dark-brown:#3E2C1C;
+    --dark-brown: #3E2C1C;
     --tann: #A06D33;
     --gold: #D6AD60;
     --beige: #F8F5F2;
@@ -176,6 +176,11 @@ h2 {
 
 /* Responsive tweaks */
 @media (max-width: 768px) {
+    .hero {
+        background-attachment: scroll;
+        height: 60vh;
+    }
+
     .rj-hero-title {
         font-size: 1.8rem;
     }

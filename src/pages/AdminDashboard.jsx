@@ -21,16 +21,9 @@ const AdminDashboard = () => {
     const [activeMenu, setActiveMenu] = useState('dashboard');
     const [notificationsOpen, setNotificationsOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
+    const [darkMode, setDarkMode] = useState(false)
     const navigate = useNavigate();
 
-    const [darkMode, setDarkMode] = useState(() => {
-        if (typeof window !== 'undefined') {
-            const saved = localStorage.getItem('darkMode');
-            if (saved !== null) return JSON.parse(saved);
-            return window.matchMedia('(prefers-color-scheme: dark)').matches;
-        }
-        return false;
-    });
 
 
     useEffect(() => {
@@ -49,14 +42,14 @@ const AdminDashboard = () => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    useEffect(() => {
-        const html = document.documentElement;
-        if (darkMode) {
-            html.classList.add('dark');
-        } else {
-            html.classList.remove('dark');
-        }
-    }, [darkMode]);
+    // useEffect(() => {
+    //     const html = document.documentElement;
+    //     if (darkMode) {
+    //         html.classList.add('dark');
+    //     } else {
+    //         html.classList.remove('dark');
+    //     }
+    // }, [darkMode]);
 
     const salesData = {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
@@ -122,7 +115,7 @@ const AdminDashboard = () => {
         }
     };
     return (
-        <div className={`flex h-screen bg-gray-100 ${darkMode ? 'dark bg-gray-800' : ''}`}>
+        <div className={`flex h-screen bg-gray-100 ${darkMode ? "dark bg-gray-800" : "bg-white"}`}>
             {/* Sidebar */}
             <div
                 className={`${sidebarOpen ? "w-48" : "w-0"} ${darkMode ? "dark bg-gray-800" : "bg-white"}overflow-hidden transition-all duration-300 shadow-md md:relative z-10`}>

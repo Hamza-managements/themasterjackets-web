@@ -28,35 +28,36 @@ const CategoryPage = () => {
       once: true,
       easing: 'ease-out-cubic'
     });
+    const fetchCategories = async () => {
+      try {
+        setLoading(true);
+        const api = axios.create({
+          baseURL: 'https://themasterjacketsbackend-production.up.railway.app',
+        });
+
+        api.interceptors.request.use((config) => {
+          const token = localStorage.getItem('token');
+          if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+          }
+          return config;
+        });
+        if (!categoryId) return;
+        const response = await api.get(`/api/category/fetchById?categoryId=${categoryId}`);
+        setCategories([response.data.data]);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
     if (slug) {
       fetchCategories();
     }
-  }, [slug]);
+  }, [slug, categoryId]);
 
 
-  const fetchCategories = async () => {
-    try {
-      setLoading(true);
-      const api = axios.create({
-        baseURL: 'https://themasterjacketsbackend-production.up.railway.app',
-      });
 
-      api.interceptors.request.use((config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-      });
-
-      const response = await api.get(`/api/category/fetchById?categoryId=${categoryId}`);
-      setCategories([response.data.data]);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (loading) {
     return (

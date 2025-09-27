@@ -293,8 +293,12 @@ export default function Header() {
                 <div className="fs-dropdown-menu-user">
                   {user ? (
                     <>
-                      <Link to="/dashboard" className="fs-dropdown-link">
-                        <i className="fas fa-user-circle"></i> My Account
+                      <Link
+                        to={user?.role === "admin" ? "/admin-dashboard" : "/dashboard"}
+                        className="fs-dropdown-link"
+                      >
+                        <i className="fas fa-user-circle"></i>{" "}
+                        {user?.role === "admin" ? "Admin Dashboard" : "My Account"}
                       </Link>
                       <Link to="/orders" className="fs-dropdown-link">
                         <i className="fas fa-box-open"></i> My Orders

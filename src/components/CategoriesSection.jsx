@@ -27,16 +27,18 @@ export default function CategoriesSection() {
         </div> */}
         <div className="categories-grid">
           {categories.map((cat, idx) => (
-            <div className="category-card" key={idx}>
-              <div className="category-img position-relative">
-                <img src={cat.image} alt={cat.title} />
-                <span className="items-count">{cat.count} items</span>
+            <Link to={`/category/${cat.link}`} >
+              <div className="category-card" key={idx}>
+                <div className="category-img position-relative">
+                  <img src={cat.image} alt={cat.title} />
+                  <span className="items-count">{cat.count} items</span>
+                </div>
+                <div className="category-content text-center">
+                  <h3>{cat.title}</h3>
+                  <button className="shop-now-btn">Shop Now</button>
+                </div>
               </div>
-              <div className="category-content text-center">
-                <h3>{cat.title}</h3>
-                <Link to={`/category/${cat.link}`} className="shop-now-btn">Shop Now</Link>
-              </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

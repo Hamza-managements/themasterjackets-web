@@ -244,7 +244,6 @@ const AddProductPage = () => {
         // Prices
         const checkOriginalPrice = parseFloat(formData.productPrice.originalPrice);
         const checkDiscountedPrice = parseFloat(formData.productPrice.discountedPrice);
-        console.log("Validating prices:", { checkOriginalPrice, checkDiscountedPrice });
 
         if (isNaN(checkOriginalPrice) || checkOriginalPrice <= 0) {
             newErrors.originalPrice = "Original price must be greater than 0";

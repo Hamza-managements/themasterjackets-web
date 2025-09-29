@@ -78,7 +78,7 @@ export default function SizeChartOverlay() {
                         }}
                     >
                         <img
-                            src="https://res.cloudinary.com/dekf5dyng/image/upload/f_webp/v1749721391/chart_vnri1x.png"
+                            src="https://res.cloudinary.com/dekf5dyng/image/upload/v1759134684/Men_s_Leather_size_chart_mypyqy.jpg"
                             alt="Size Chart"
                             style={{
                                 width: "auto",

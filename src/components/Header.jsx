@@ -87,15 +87,9 @@ export default function Header() {
                 <button className="fs-mobile-menu-btn" onClick={toggleMobileMenu}>
                   <i className={`fas ${isMobileMenuOpen ? 'fa-times' : ''}`}></i>
                 </button>
-                {/* <div className="fs-nav-item">
-                  <Link to="#" className="fs-main-link">Best Seller</Link>
-                </div> */}
                 {categories?.map((cat) =>
                   <div className="fs-nav-item" key={cat._id}>
                     <Link to={`/category/${cat.slug}`} className="fs-main-link" onClick={(e) => handleMainLinkClick(0, true, e)} >{cat.mainCategoryName} <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i></Link>
-                    {/* <Link to={`/category/${cat._id}`} className="fs-main-link" onClick={(e) => handleMainLinkClick(cat._id, true, e)}>
-                      {cat.mainCategoryName} <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i>
-                    </Link> */}
                     <div className="fs-mega-menu fs-dropdown-menu">
                       <div className="fs-mega-menu-column">
                         <h4 className="fs-dropdown-title">{cat.mainCategoryName} Leather Jacket</h4>
@@ -109,13 +103,6 @@ export default function Header() {
                         <Link to="#">Brown</Link>
                         <Link to="#">Tan</Link>
                         <Link to="#">Cognac</Link>
-                      </div>
-                      <div className="fs-mega-menu-column">
-                        <h4 className="fs-dropdown-title">Bags & Purses</h4>
-                        <Link to="#">Handbags</Link>
-                        <Link to="#">Backpacks</Link>
-                        <Link to="#">Wallets</Link>
-                        <Link to="#">Clutches</Link>
                       </div>
                     </div>
                     <div className={`fs-mobile-submenu ${activeSubmenu === 0 ? 'fs-active' : ''}`}>
@@ -257,18 +244,6 @@ export default function Header() {
                   </div>
                   <div className="fs-mobile-submenu">
                     <Link to="/about">About us</Link>
-                    <Link to="/contact-us">Contact us</Link>
-                    <Link to="/return-exchange">Return & Exchange</Link>
-                  </div>
-                </div>
-
-                <div className="fs-nav-item">
-                  <Link to="#" className="fs-main-link">Help <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i></Link>
-                  <div className="fs-dropdown-menu">
-                    <Link to="/contact-us">Contact us</Link>
-                    <Link to="/return-exchange">Return & Exchange</Link>
-                  </div>
-                  <div className="fs-mobile-submenu">
                     <Link to="/contact-us">Contact us</Link>
                     <Link to="/return-exchange">Return & Exchange</Link>
                   </div>

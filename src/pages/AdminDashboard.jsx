@@ -24,8 +24,6 @@ const AdminDashboard = () => {
     const [darkMode, setDarkMode] = useState(false)
     const navigate = useNavigate();
 
-
-
     useEffect(() => {
         AOS.init();
         handleRole();

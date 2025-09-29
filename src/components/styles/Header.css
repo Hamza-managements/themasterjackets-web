@@ -171,16 +171,17 @@
     padding: 8px 20px;
     font-size: 14px;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.8px;
+    border-bottom: 1px solid #663f125b;
 }
 
 /* Mega Menu Styles */
 .fs-mega-menu {
     position: absolute;
-    left: 50%;
     transform: translateX(-50%);
-    width: 800px;
-    background: white;
+    left: 50%;
+    width: 600px;
+    background: rgb(255, 255, 255);
     display: flex;
     padding: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -199,15 +200,7 @@
 
 .fs-mega-menu .fs-mega-menu-column {
     flex: 1;
-    padding: 0 15px;
-}
-
-.fs-mega-menu .fs-mega-menu-column h4 {
-    font-size: 15px;
-    color: var(--dark-brown);
-    margin-bottom: 15px;
-    padding-bottom: 5px;
-    border-bottom: 1px solid var(--beige);
+    /* padding: 0 15px; */
 }
 
 .fs-header-actions {

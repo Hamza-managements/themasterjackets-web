@@ -15,6 +15,7 @@ const CategoryPage = () => {
     "men": "68ac23c0146f4993994f41b2",
     "women": "68ad7a27010f07c1100d3e56",
     "new-in": "68ad9ab6010f07c1100d3f1e",
+    "halloween": "68da47a52dd010a7a0b6cf3f",
   };
 
   const [categories, setCategories] = useState([]);
@@ -100,7 +101,7 @@ const CategoryPage = () => {
                   : `${cat.mainCategoryName}'s Leather Jackets`}
               </h1>
 
-              <p className="main-category-subtitle mb-3">Discover premium designs crafted for style, durability, and timeless character</p>
+              <p className="main-category-subtitle mb-3">{cat.description ||"Discover premium designs crafted for style, durability, and timeless character"}</p>
             </div>
           </div>
           <hr class="border border-dark border-1 w-100 mx-auto" />

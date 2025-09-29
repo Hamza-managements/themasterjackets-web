@@ -15,17 +15,11 @@
            border-top: 3px solid var(--gold);
        }
 
-       .footer-logo {
-           max-width: 180px;
-           margin-bottom: 1.5rem;
-           filter: brightness(0) invert(1);
-       }
-
        .footer-heading {
            color: var(--gold);
            font-size: 1.2rem;
-           margin-bottom: 1.5rem;
-           letter-spacing: 1px;
+           margin-bottom: 2px;
+           letter-spacing: 0.8px;
            position: relative;
            padding-bottom: 10px;
        }
@@ -40,31 +34,15 @@
            background: var(--gold);
        }
 
-
-       .footer-links-main {
-           display: flex;
-           flex-direction: column !important;
-           list-style: none;
-           padding: 0;
-           gap: 0.5rem;
-       }
-
-
-       .footer-links-main li {
-           margin-bottom: 0.8rem;
-       }
-
        .footer-links-main a {
            color: var(--beige);
-           text-decoration: none;
-           transition: all 0.3s ease;
+           transition: all 0.2s ease;
            font-size: 0.95rem;
        }
 
        .footer-links-main a:hover {
            color: var(--gold);
-           text-decoration: none;
-           padding-left: 5px;
+           padding-left: 6px;
        }
 
        .footer-contact p {
@@ -83,8 +61,8 @@
 
        .social-icons {
            display: flex;
-           gap: 15px;
-           margin-top: 1.5rem;
+           gap: 10px;
+           margin-top: 1rem;
        }
 
        .social-icons a {
@@ -106,18 +84,15 @@
            transform: translateY(-3px);
        }
 
-       .newsletter-input {
-           background: rgba(248, 245, 242, 0.1);
+       .newsletter-input,
+       .newsletter-input:focus {
+           background: rgba(248, 242, 242, 0.1);
            border: 1px solid var(--tan);
-           color: var(--beige);
+           color: var(--gold);
            padding: 10px 15px;
            width: 100%;
            margin-bottom: 10px;
            border-radius: 4px;
-       }
-
-       .newsletter-input::placeholder {
-           color: rgba(248, 245, 242, 0.7);
        }
 
        .newsletter-btn {
@@ -134,6 +109,15 @@
        .newsletter-btn:hover {
            background: var(--tan);
            color: var(--beige);
+       }
+
+       .toast-message-footer {
+           background: var(--tan);
+           color: var(--dark-brown);
+           padding: 6px;
+           text-align: center;
+           border-radius: 8px;
+           margin-top: 10px;
        }
 
        .footer-bottom {
@@ -157,8 +141,28 @@
            margin: 0 6px;
            transition: filter 0.3s ease;
            vertical-align: middle;
-           filter: brightness(0) invert(1);
            opacity: 0.8;
+       }
+
+       .stripe-footer {
+           filter: invert(39%) sepia(84%) saturate(7000%) hue-rotate(235deg) brightness(95%) contrast(105%);
+       }
+
+       .paypal-footer {
+           filter: invert(13%) sepia(73%) saturate(3670%) hue-rotate(203deg) brightness(94%) contrast(103%);
+       }
+
+       .visa-footer {
+           filter: invert(16%) sepia(92%) saturate(4100%) hue-rotate(226deg) brightness(95%) contrast(102%);
+       }
+
+
+       .applepay-footer {
+           filter: brightness(0) invert(1);
+       }
+
+       .mastercard-footer-alt {
+           filter: invert(64%) sepia(84%) saturate(3277%) hue-rotate(2deg) brightness(102%) contrast(101%);
        }
 
        .payment-methods img:hover {

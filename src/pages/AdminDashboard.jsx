@@ -26,7 +26,9 @@ const AdminDashboard = () => {
 
     useEffect(() => {
         AOS.init();
-        handleRole();
+        if (!isAdmin) {
+            navigate('/');
+        }
         const handleResize = () => {
             setMobileView(window.innerWidth < 768);
             if (window.innerWidth < 768) {
@@ -38,7 +40,7 @@ const AdminDashboard = () => {
         handleResize();
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
-    }, []);
+    }, [isAdmin, navigate]);
 
     // useEffect(() => {
     //     const html = document.documentElement;
@@ -107,11 +109,6 @@ const AdminDashboard = () => {
         { title: 'Returns and Refunds', value: '2', change: '-3%', icon: <RiRefund2Fill /> },
     ];
 
-    const handleRole = async (e) => {
-        if (!isAdmin) {
-            navigate('/');
-        }
-    };
     return (
         <div className={`flex h-screen bg-gray-100 ${darkMode ? "dark bg-gray-800" : "bg-white"}`}>
             {/* Sidebar */}
@@ -419,7 +416,7 @@ const AdminDashboard = () => {
                                 <div className="flex flex-wrap gap-3">
                                     {/* Manage Product Button */}
                                     <Link
-                                        to="/manage-product"
+                                        to="/manage-all-products"
                                         target='_blank'
                                         className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-green-600 text-white font-medium shadow-md hover:bg-green-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
                                     >

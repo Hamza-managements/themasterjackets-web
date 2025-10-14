@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import "./styles/CategoryPage.css";
@@ -9,6 +8,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import FeaturedProductsCarousel from "./FeaturedProductsCarousel";
+import { fetchCategoriesById } from "../utils/CartUtils";
 
 const CategoryPage = () => {
   const categoryMap = {
@@ -29,31 +29,19 @@ const CategoryPage = () => {
       once: true,
       easing: 'ease-out-cubic'
     });
-    const fetchCategories = async () => {
-      try {
+    
+    if (slug) {
+      const getCategories = async () => {
         setLoading(true);
-        const api = axios.create({
-          baseURL: 'https://themasterjacketsbackend-production.up.railway.app',
-        });
-
-        api.interceptors.request.use((config) => {
-          const token = localStorage.getItem('token');
-          if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-          }
-          return config;
-        });
-        if (!categoryId) return;
-        const response = await api.get(`/api/category/fetchById?categoryId=${categoryId}`);
-        setCategories([response.data.data]);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      } finally {
+        try {
+          const data = await fetchCategoriesById(categoryId);
+          setCategories(data);
+        } catch (error) {
+          console.error("Error fetching categories:", error);
+        }
         setLoading(false);
       }
-    };
-    if (slug) {
-      fetchCategories();
+      getCategories();
     }
   }, [slug, categoryId]);
 
@@ -141,7 +129,7 @@ const CategoryPage = () => {
                 <div className="subcategory-info">
                   <h2>{sub.categoryName}</h2>
                   <div className="subcategory-actions">
-                    <Link to={`/products/${sub._id}`} className="category-primary-btn">
+                    <Link to={`/products/${cat.slug}/${sub.slug}`} className="category-primary-btn">
                       Shop Now
                     </Link>
                   </div>

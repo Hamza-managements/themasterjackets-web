@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-// import productsData from '/data/products.json';
 import './styles/Cart.css';
 import { getCartItems } from '../utils/CartUtils';
 import { getProducts } from '../utils/ProductServices';
@@ -12,13 +11,6 @@ export default function CartSidebar() {
 
   useEffect(() => {
   const fetchProducts = async () => {
-    // const alreadyStored = localStorage.getItem('products');
-    // if (!alreadyStored) {
-    //   const response = await fetch('/data/products.json');
-    //   const productsData = await response.json();
-    //   localStorage.setItem('products', JSON.stringify(productsData));
-    // }
-
     const storedProducts =  await getProducts();
     const cartIds = await getCartItems();
 

@@ -6,7 +6,6 @@ const APITestingPage = () => {
   const [apiResults, setApiResults] = useState({});
   const [loading, setLoading] = useState(false);
 
-
   // Generic API call function
   const callAPI = async (endpoint, method = "GET", body = null) => {
     setLoading(true);
@@ -24,7 +23,7 @@ const APITestingPage = () => {
       }
 
       const response = await fetch(
-        `https://themasterjacketsbackend-production.up.railway.app/api/user/${endpoint}`,
+        `https://themasterjacketsbackend-production.up.railway.app/api/${endpoint}`,
         options
       );
 
@@ -53,24 +52,24 @@ const APITestingPage = () => {
   };
 
   // Specific API functions
-  const fetchAllUsers = () => callAPI("fetch-all/68762589a469c496106e01d4");
+  const fetchAllUsers = () => callAPI("user/fetch-all/68762589a469c496106e01d4");
 
-  const fetchAdmins = () => callAPI("fetch-all/68762589a469c496106e01d4?role=admin");
+  const fetchAdmins = () => callAPI("user/fetch-all/68762589a469c496106e01d4?role=admin");
 
   const fetchUserById = () => {
     const id = prompt("Enter User ID to fetch:", "564564564564564564");
     if (!id) {
-      callAPI(`fetchById/68762589a469c496106e01d4?uid=${user.uid}`, "GET");
-      console.log("No ID provided, fetching current user." + user.uid);
+      callAPI(`user/fetchById/68762589a469c496106e01d4?uid=${user.uid}`, "GET");
+      console.log("No ID provided, fetching current user." + user.userName);
       return
     }
-    callAPI(`fetchById/68762589a469c496106e01d4?uid=${id}`, "GET");
+    callAPI(`user/fetchById/68762589a469c496106e01d4?uid=${id}`, "GET");
   };
 
   const changeUserStatus = () => {
     const id = prompt("Enter User ID to fetch:", "564564564564564564");
     if (!id) return;
-    callAPI(`change-activation-status/68762589a469c496106e01d4?uid=${id}`, "PUT");
+    callAPI(`user/change-activation-status/68762589a469c496106e01d4?uid=${id}`, "PUT");
   };
 
   const updateUser = () => {
@@ -79,7 +78,7 @@ const APITestingPage = () => {
     const contactNo = prompt("Enter Contact number", "5555555555");
     if (!uid) return;
     callAPI(
-      "update/68762589a469c496106e01d4",
+      "user/update/68762589a469c496106e01d4",
       "PUT",
       {
         uid,
@@ -93,15 +92,28 @@ const APITestingPage = () => {
     const id = prompt("Enter User ID to fetch:", "564564564564564564");
     if (!id) return;
     callAPI(
-      `delete/68762589a469c496106e01d4?uid=${id}`,
+      `user/delete/68762589a469c496106e01d4?uid=${id}`,
       "DELETE"
     );
   }
 
-  const allCategory = () => {
-    callAPI(`change-activation-status/68762589a469c496106e01d4`, "PUT");
-  };
+  const fetchAllProduct = async () => callAPI("product/fetch-all", "GET")
 
+  const fetchProductById = () => {
+    let id = prompt("Enter Product ID to fetch:", "564564564564564564");
+    if (!id) return;
+    callAPI(`product/fetch/${id}`, "GET")
+  }
+
+  const deleteProductByID = () => {
+    const id = prompt("Enter User ID to fetch:", "564564564564564564");
+    if (!id) return;
+    callAPI(
+      `product/delete/68762589a469c496106e01d4?productId=${id}`,
+      "DELETE"
+    );
+  }
+  
 
   // User Check
   const checkAdminStatus = async () => {
@@ -192,6 +204,21 @@ const APITestingPage = () => {
         <APITestButton
           label="Check Admin Status"
           onClick={checkAdminStatus}
+          loading={loading}
+        />
+        <APITestButton
+          label="Fetch all products"
+          onClick={fetchAllProduct}
+          loading={loading}
+        />
+        <APITestButton
+          label="Fetch product by id"
+          onClick={fetchProductById}
+          loading={loading}
+        />
+        <APITestButton
+          label="delete product by id"
+          onClick={deleteProductByID}
           loading={loading}
         />
       </div>

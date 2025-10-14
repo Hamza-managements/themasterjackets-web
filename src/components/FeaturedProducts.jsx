@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './styles/style.css';
 import { Link } from 'react-router-dom';
-import { getProducts } from '../utils/ProductServices';
+import { getALLProducts } from '../utils/ProductServices';
 
 export default function FeaturedProducts({title}) {
     const [products, setProducts] = useState([]);
@@ -10,7 +10,7 @@ export default function FeaturedProducts({title}) {
 
     useEffect(() => {
         const product = async() => {
-            const data = await getProducts();
+            const data = await getALLProducts();
             const featured = data.slice(0, 8);
             setProducts(featured);
             setSortedProducts(featured);
@@ -65,13 +65,13 @@ export default function FeaturedProducts({title}) {
                         <div className="bj-product">
                             <div className="bj-product-badge">Sale</div>
                             <div className="bj-product-image">
-                                <img src={product.image} alt={product.title} />
+                                <img src={product.image || product.productImages[0]} alt={product.title|| product.productName} />
                             </div>
                             <h4 className="bj-product-title">
-                                <span className="bj-product-title">{product.title}</span>
+                                <span className="bj-product-title">{product.title || product.productName}</span>
                             </h4>
                             <div className="bj-product-price">
-                                <span className="sale">${product.price.toFixed(2)}</span>
+                                <span className="sale">${product.price || product.variations[0].productPrice.originalPrice}</span>
                             </div>
                         </div>
                     </Link>

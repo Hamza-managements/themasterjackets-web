@@ -63,7 +63,7 @@ export default function SizeChartOverlay() {
                             }}
                             aria-label="Close"
                         >
-                            ×
+                           <i className="fas fa-close" />
                         </button>
                     </div>
 

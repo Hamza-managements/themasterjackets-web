@@ -1,6 +1,5 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-// import { useAuth } from './UseAuth';
 import './Login.css';
 import { AuthContext } from './AuthProvider';
 import Swal from 'sweetalert2';
@@ -11,7 +10,7 @@ const Login = () => {
     userPassword: '',
     rememberMe: false
   });
-  const { login , user } = useContext(AuthContext);
+  const { login } = useContext(AuthContext);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);

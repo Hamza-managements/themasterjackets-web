@@ -1,17 +1,20 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import ContactForm from './pages/Contact';
 import ReturnPolicy from './pages/Return-exchange';
 import ProductListingPage from './pages/ProductPage';
+import SubCategoryProductPage from './pages/SubCategoryProducts';
 import ProductDetails from './pages/ProductDetails';
 // import CheckoutPage from './pages/CheckoutPage';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import AdminDashboard from './pages/AdminDashboard';
 import CategoryListPage from './pages/AdminPages/CategoriesAdminAPI';
-import AddProductPage from './pages/AdminPages/AddProduct';
+import UpdateProductPage from './pages/AdminPages/UpdateSingleProduct';
 import ProductManagementPage from './pages/AdminPages/ManageProduct';
 import APITestingPage from './pages/AdminPages/Api-auth-testing';
+import AmazonStyleProductPage from './pages/AdminPages/AddProduct';
+import AllProductManagementPage from './pages/AdminPages/ManageAllProducts';
 import NotFound from './pages/Notfound';
 import PrivateRoute from './components/auth/PrivateRoute';
 import { AuthProvider } from './components/auth/AuthProvider';
@@ -29,7 +32,7 @@ import ScrollToTop from './components/ScrollToTop';
 function App() {
   return (
     <Router>
-      <ScrollToTop/>
+      <ScrollToTop />
       <AuthProvider>
         <Routes>
           <Route element={<MainLayout />}>
@@ -38,20 +41,18 @@ function App() {
             <Route path="/return-exchange" element={<ReturnPolicy />} />
             <Route path="/contact-us" element={<ContactForm />} />
             <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-            <Route path="/admin-dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>}/>
+            <Route path="/admin-dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
             <Route path="/category/:slug" element={<CategoryPage />} />
-            <Route path="/products/:id" element={<ProductListingPage />} />
-            <Route path="/products-details/:id" element={<ProductDetails />} />
+            <Route path="/products/:slug/all" element={<ProductListingPage />} />
+            <Route path="/products/:categorySlug/:slug" element={<SubCategoryProductPage />} />
+            <Route path="/products-details/:productId" element={<ProductDetails />} />
           </Route>
 
-          {/* Auth routes with auth layout */}
+
           <Route path="auth" element={<AuthLayout />}>
             <Route path="login" element={<Login />} />
             <Route path="signup" element={<SignUp />} />
           </Route>
-
-        {/* Dynamic products route */}
-          {/* <Route path="/products/:subcategoryId" element={<ProductListingPage />} /> */}
 
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
@@ -61,8 +62,11 @@ function App() {
           {/* <Route path="/account/settings" element={<PrivateRoute> <AccountSettings /> </PrivateRoute> } /> */}
           <Route path="/api-testing" element={<APITestingPage />} />
           <Route path="/api-categories" element={<CategoryListPage />} />
-          <Route path="/add-product" element={<AddProductPage />} />
-          <Route path="/manage-product" element={<ProductManagementPage />} />
+          <Route path="/add-product" element={<AmazonStyleProductPage />} />
+          <Route path="/manage-all-products" element={<AllProductManagementPage />} />
+          <Route path="/edit-product/:productId" element={<UpdateProductPage />} />
+          <Route path="/manage-single-product/:productId" element={<ProductManagementPage />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>
@@ -71,5 +75,3 @@ function App() {
 }
 
 export default App;
-
-

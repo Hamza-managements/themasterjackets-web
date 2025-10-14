@@ -1,5 +1,4 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from './UseAuth';
 import React, { useContext, useEffect, useState } from 'react';
 import './Signup.css';
 import { AuthContext } from './AuthProvider';

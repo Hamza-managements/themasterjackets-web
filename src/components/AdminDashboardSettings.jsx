@@ -97,7 +97,7 @@ const AdminSettings = ({darkMode}) => {
                 </div>
             </form>
 
-            <style jsx>
+            <style>
                 {`.settings-wrapper {
   background: ${darkMode ? '#1f2937' : '#fff'};
   border-radius: 10px;

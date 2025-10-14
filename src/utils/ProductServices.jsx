@@ -1,8 +1,10 @@
-export const getProducts = async () => {
+import axios from 'axios';
+
+export const getALLProducts = async () => {
   try {
     let products = JSON.parse(localStorage.getItem('products'));
-      const response = await fetch('/data/products.json');
-      products = await response.json();
+    const response = await fetch('/data/products.json');
+    products = await response.json();
     return products;
   } catch (err) {
     console.error("Failed to fetch products", err);
@@ -27,5 +29,130 @@ export const getRelatedProducts = async (category) => {
   } catch (err) {
     console.error("Failed to fetch related products", err);
     return [];
+  }
+};
+
+////////////////////////////REAL API DATA
+const api = axios.create({
+  baseURL: 'https://themasterjacketsbackend-production.up.railway.app',
+});
+
+export const getProducts = async () => {
+  try {
+    api.interceptors.request.use((config) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    });
+    const response = await api.get('/api/product/fetch-all');
+
+    return response.data.data;
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    throw error;
+  }
+};
+
+export const getSingleProduct = async (productId) => {
+  try {
+    const response = await api.get(`/api/product/fetch/${productId}`);
+    return response.data.data;
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    throw error;
+  }
+};
+
+export const deleteProduct = async (productId) => {
+  try {
+    api.interceptors.request.use((config) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    });
+    const response = await api.delete(`/api/product/delete/68762589a469c496106e01d4?productId=${productId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    throw error;
+  }
+};
+
+export const updateProduct = async (formData) => {
+  try {
+    api.interceptors.request.use((config) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    });
+    const response = await api.put(`/api/product/update/68762589a469c496106e01d4`, formData);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    throw error;
+  }
+};
+
+export const getProductBySubCategoryId = async (CategoryId, SubCategoryId) => {
+  try {
+    api.interceptors.request.use((config) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    });
+    const response = await api.get(`/api/product/fetch-by-sub-category?categoryId=${CategoryId}&subCategoryId=${SubCategoryId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    throw error;
+  }
+};
+
+export const addProductVariation = async (productId, currentVariation) => {
+  try {
+    api.interceptors.request.use((config) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    });
+    console.log("Adding variation to productId:", productId, "with data:", currentVariation);
+    const response = await api.put(
+      `/api/product/add-variation/68762589a469c496106e01d4`,
+      {
+        productId,
+        variationData: currentVariation
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error adding variation:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const deleteProductVariation = async (productId, variationId) => {
+  try {
+    api.interceptors.request.use((config) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    });
+    const response = await api.delete(`/api/product/delete-variation/68762589a469c496106e01d4?productId=${productId}&variationId=${variationId}`);
+    return response.data;
+  } catch (error) {
+    console.error("❌ Error on deleting variation:", error.response?.data || error.message);
+    throw error;
   }
 };

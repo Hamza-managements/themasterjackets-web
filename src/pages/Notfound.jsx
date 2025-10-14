@@ -8,25 +8,24 @@ const NotFound = () => {
   const [countdown, setCountdown] = useState(10);
   const [suggestedPages, setSuggestedPages] = useState([]);
   const timerRef = useRef(null);
-
-  // Common pages that might be relevant
-  const commonPages = [
-    { path: '/', name: 'Home' },
-    { path: "/return-exchange", name: "Return Exchange" },
-    { path: '/about', name: 'About Us' },
-    { path: '/contact-us', name: 'Contact' },
-    { path: '/dashboard', name: 'Dashboard' },
-    { path: '/admin-dashboard', name: 'Admin Dashboard' },
-    { path: '/auth/signup', name: 'Sign up' },
-    { path: '/auth/login', name: 'Log in' },
-    { path: '/forgot-password', name: 'Forgot password' },
-    { path: '/checkout', name: 'Checkout' },
-    // { path: '/blog', name: 'Blog' },
-    // { path: '/products', name: 'Products' },
-    // { path: '/services', name: 'Services' },
-  ];
-
+  
   useEffect(() => {
+    const commonPages = [
+      { path: '/', name: 'Home' },
+      { path: "/return-exchange", name: "Return Exchange" },
+      { path: '/about', name: 'About Us' },
+      { path: '/contact-us', name: 'Contact' },
+      { path: '/dashboard', name: 'Dashboard' },
+      { path: '/admin-dashboard', name: 'Admin Dashboard' },
+      { path: '/auth/signup', name: 'Sign up' },
+      { path: '/auth/login', name: 'Log in' },
+      { path: '/forgot-password', name: 'Forgot password' },
+      { path: '/checkout', name: 'Checkout' },
+      // { path: '/blog', name: 'Blog' },
+      // { path: '/products', name: 'Products' },
+      // { path: '/services', name: 'Services' },
+    ];
+
     const invalidPath = location.pathname.toLowerCase();
     const suggestions = commonPages.filter(page =>
       page.path.toLowerCase().includes(invalidPath.split('/')[1]) ||
@@ -34,6 +33,7 @@ const NotFound = () => {
     );
     setSuggestedPages(suggestions.slice(0, 3));
   }, [location]);
+
 
   useEffect(() => {
     if (timerRef.current) {

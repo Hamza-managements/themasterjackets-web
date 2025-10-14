@@ -89,7 +89,7 @@ export default function BlogGallery() {
               {blogItems.map((item, index) => (
                 <div className="blog-gallery-item" key={index}>
                   <div className="blog-gallery-img">
-                    <img src={item.img} alt="Customer Image" loading="lazy" />
+                    <img src={item.img} alt="Customer Img" loading="lazy" />
                   </div>
                   <div className="blog-gallery-content">
                     <h4>{item.title}</h4>

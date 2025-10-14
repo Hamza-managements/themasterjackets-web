@@ -93,8 +93,9 @@ export default function Header() {
                     <div className="fs-mega-menu fs-dropdown-menu">
                       <div className="fs-mega-menu-column">
                         <h4 className="fs-dropdown-title">{cat.mainCategoryName} Leather Jacket</h4>
+                        <Link to={`/products/${cat.slug}/all`}>View All</Link>
                         {cat.subCategories?.map((sub) => (
-                          <Link key={sub._id} to={`/products/${sub._id}`}>{sub.categoryName}</Link>
+                          <Link key={sub._id} to={`/products/${cat.slug}/${sub.slug}`}>{sub.categoryName}</Link>
                         ))}
                       </div>
                       <div className="fs-mega-menu-column">

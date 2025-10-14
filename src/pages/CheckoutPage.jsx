@@ -1,7 +1,7 @@
 // pages/CheckoutPage.jsx
 import React, { useEffect, useState } from 'react';
 import Checkout from '../components/Checkout';
-import productsData from '../data/products.json';
+import productsData from '/data/products.json';
 
 const CheckoutPage = () => {
   const [cartItems, setCartItems] = useState([]);

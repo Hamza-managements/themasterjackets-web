@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import Hero from '../components/Hero';
 import CategoriesSection from '../components/CategoriesSection';
 import AOS from 'aos';
@@ -8,7 +8,6 @@ import StatsSection from '../components/StatsSection';
 import DualHeroSection from '../components/DualHeroSection';
 import CustomerGallery from '../components/CustomerGallery';
 import BlogSlider from '../components/BlogSlider';
-import { getProducts } from '../utils/ProductServices';
 import FeaturedProductsCarousel from '../components/FeaturedProductsCarousel';
 
 export default function Home() {

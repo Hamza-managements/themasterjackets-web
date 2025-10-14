@@ -57,7 +57,7 @@ const FeaturedProductsCarousel = ({ title = "Featured Products"}) => {
           </SwiperSlide>
         ))}
       </Swiper>
-      <style jsx>{`
+      <style>{`
         /* Featured Products */
 .featured-products {
   margin: 60px 0;

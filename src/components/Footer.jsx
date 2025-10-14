@@ -89,7 +89,7 @@ export default function Footer() {
                 <h5 className="footer-heading"> {category.mainCategoryName}</h5>
                 <ul className="footer-links-main">
                   {category.subCategories?.map((sub) => (
-                    <li><Link key={sub._id} to={`/products/${sub._id}`}>{sub.categoryName}</Link></li>
+                    <li key={sub._id}><Link to={`/products/${sub._id}`}>{sub.categoryName}</Link></li>
                   ))}
                 </ul>
               </div>

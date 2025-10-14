@@ -27,8 +27,8 @@ export default function CategoriesSection() {
         </div> */}
         <div className="categories-grid">
           {categories.map((cat, idx) => (
-            <Link to={`/category/${cat.link}`} >
-              <div className="category-card" key={idx}>
+            <Link to={`/category/${cat.link}`} key={idx} >
+              <div className="category-card">
                 <div className="category-img position-relative">
                   <img src={cat.image} alt={cat.title} />
                   <span className="items-count">{cat.count} items</span>

@@ -1,20 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Table, Modal, Form, Spinner, Alert, Card, Badge, Row, Col } from 'react-bootstrap';
-import axios from 'axios';
+import { useState, useEffect, useCallback } from 'react';
+import { Button, Modal, Form, Spinner, Alert, Card, Badge, Row, Col } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-import { FaEdit, FaTrash, FaPlus, FaFolder, FaFolderOpen, FaSearch, FaSort, FaFilter } from 'react-icons/fa';
-
-const api = axios.create({
-  baseURL: 'https://themasterjacketsbackend-production.up.railway.app',
-});
-
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+import { FaEdit, FaTrash, FaPlus, FaFolder, FaFolderOpen, FaSearch } from 'react-icons/fa';
+import { addCategory, addSubCategory, deleteCategory, deleteSubCategory, fetchCategoriesAll, updateCategory, updateSingleSubcategory } from '../../utils/CartUtils';
 
 const CategoryListPage = () => {
   // State
@@ -29,7 +17,7 @@ const CategoryListPage = () => {
   const [showSubcategoryModal, setShowSubcategoryModal] = useState(false);
   const [parentCategoryId, setParentCategoryId] = useState(null);
   const [showEditSubcategoryModal, setShowEditSubcategoryModal] = useState(false);
-  const [subcategoryToEdit, setSubcategoryToEdit] = useState(null);
+  const [, setSubcategoryToEdit] = useState(null);
   const [parentCategoryForEdit, setParentCategoryForEdit] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedCategories, setExpandedCategories] = useState(new Set());
@@ -53,29 +41,8 @@ const CategoryListPage = () => {
     }
   }, [error, success]);
 
-  // Fetch categories
-  const getAllCategories = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const res = await api.get('/api/category/fetch-all');
-      console.log(res.data.data)
-      setCategories(res.data.data);
-    } catch (err) {
-      const errorMsg = err.response?.data?.message || err.message || 'Failed to fetch categories';
-      setError(errorMsg);
-      showToast('error', errorMsg);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getAllCategories();
-  }, []);
-
   // Toast notification
-  const showToast = (icon, message) => {
+  const showToast = useCallback((icon, message) => {
     const Toast = Swal.mixin({
       toast: true,
       position: 'top-end',
@@ -92,7 +59,28 @@ const CategoryListPage = () => {
       icon: icon,
       title: message
     });
-  };
+  }, []);
+
+  // Fetch categories
+  const getAllCategories = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await fetchCategoriesAll();
+      console.log(data)
+      setCategories(data);
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || err.message || 'Failed to fetch categories';
+      setError(errorMsg);
+      showToast('error', errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  }, [showToast]);
+
+  useEffect(() => {
+    getAllCategories();
+  }, [getAllCategories]);
 
   // Toggle category expansion
   const toggleCategoryExpansion = (categoryId) => {
@@ -192,11 +180,10 @@ const CategoryListPage = () => {
   };
 
   // API calls
-  const addCategory = async () => {
+  const addCategoryHandler = async (formData) => {
     try {
       setLoading(true);
-      await api.post('/api/category/add/68762589a469c496106e01d4', formData);
-      console.log(formData)
+      await addCategory(formData);
       showToast('success', 'Category added successfully!');
       setShowModal(false);
       getAllCategories();
@@ -209,15 +196,16 @@ const CategoryListPage = () => {
     }
   };
 
-  const updateCategory = async () => {
+  const updateCategoryHandler = async () => {
     try {
       setLoading(true);
-      await api.put(`/api/category/update/main-category/68762589a469c496106e01d4`, {
+      const updatedData = {
         categoryId: currentCategory._id,
         description: formData.description,
         image: formData.image,
         mainCategoryName: formData.mainCategoryName,
-      });
+      }
+      await updateCategory(updatedData);
       showToast('success', 'Category updated successfully!');
       setShowModal(false);
       getAllCategories();
@@ -230,13 +218,14 @@ const CategoryListPage = () => {
     }
   };
 
-  const updateSingleSubcategory = async () => {
+  const updateSingleSubcategoryHandler = async () => {
     try {
       setLoading(true);
-      await api.put(`/api/category/add/sub-category/68762589a469c496106e01d4`, {
+      const updatedData = {
         categoryId: parentCategoryForEdit._id,
         subCategories: [{ categoryName: formData.subCategories[0].categoryName }]
-      });
+      }
+      await updateSingleSubcategory(updatedData);
       showToast('success', 'Subcategory updated successfully!');
       setShowEditSubcategoryModal(false);
       getAllCategories();
@@ -249,12 +238,10 @@ const CategoryListPage = () => {
     }
   };
 
-  const deleteCategory = async () => {
+  const deleteCategoryHandler = async () => {
     try {
       setLoading(true);
-      await api.delete(
-        `/api/category/delete/main-category/68762589a469c496106e01d4?mainCategoryId=${currentCategory._id}`
-      );
+      await deleteCategory(currentCategory._id);
       showToast('success', 'Category deleted successfully!');
       setShowDeleteConfirm(false);
       getAllCategories();
@@ -267,13 +254,14 @@ const CategoryListPage = () => {
     }
   };
 
-  const addSubCategory = async () => {
+  const addSubCategoryHandler = async () => {
     try {
       setLoading(true);
-      await api.put(`/api/category/add/sub-category/68762589a469c496106e01d4`, {
+      const data = {
         categoryId: parentCategoryId,
         subCategories: formData.subCategories,
-      });
+      }
+      await addSubCategory(data);
       showToast('success', 'Subcategory added successfully!');
       setShowSubcategoryModal(false);
       getAllCategories();
@@ -286,7 +274,7 @@ const CategoryListPage = () => {
     }
   };
 
-  const deleteSubCategory = async (categoryId, subcategoryId, subcategoryName) => {
+  const deleteSubCategoryHandler = async (categoryId, subcategoryId, subcategoryName) => {
     const result = await Swal.fire({
       title: 'Are you sure?',
       text: `You are about to delete "${subcategoryName}". This action cannot be undone.`,
@@ -302,9 +290,7 @@ const CategoryListPage = () => {
     if (result.isConfirmed) {
       try {
         setLoading(true);
-        await api.delete(
-          `/api/category/delete/sub-category/68762589a469c496106e01d4?mainCategoryId=${categoryId}&subCategoryId=${subcategoryId}`
-        );
+        await deleteSubCategory(categoryId, subcategoryId);
         showToast('success', 'Subcategory deleted successfully!');
         getAllCategories();
       } catch (err) {
@@ -330,9 +316,9 @@ const CategoryListPage = () => {
     e.preventDefault();
     try {
       if (modalMode === 'add') {
-        await addCategory();
+        await addCategoryHandler();
       } else {
-        await updateCategory();
+        await updateCategoryHandler();
       }
     } catch (err) {
       // Error handling is done in the individual functions
@@ -454,7 +440,9 @@ const CategoryListPage = () => {
                             {category.subCategories.map((sub, index) => (
                               <div key={sub._id || `${category._id}-${index}`} className="subcategory-item">
                                 <div className="subcategory-info">
-                                  <span className="subcategory-name">{sub.categoryName}</span>
+                                  <h4 className="subcategory-name">{sub.categoryName}</h4>
+                                  <br />
+                                  <span className="subcategory-id">ID: {sub._id}</span>
                                 </div>
                                 <div className="subcategory-actions">
                                   <Button
@@ -468,7 +456,7 @@ const CategoryListPage = () => {
                                   <Button
                                     variant="outline-danger"
                                     size="sm"
-                                    onClick={() => deleteSubCategory(category._id, sub._id, sub.categoryName)}
+                                    onClick={() => deleteSubCategoryHandler(category._id, sub._id, sub.categoryName)}
                                   >
                                     <FaTrash className="me-1" />Delete
                                   </Button>
@@ -593,7 +581,7 @@ const CategoryListPage = () => {
           <Form
             onSubmit={(e) => {
               e.preventDefault();
-              addSubCategory();
+              addSubCategoryHandler();
             }}
           >
             <Modal.Body>
@@ -652,7 +640,7 @@ const CategoryListPage = () => {
           <Form
             onSubmit={(e) => {
               e.preventDefault();
-              updateSingleSubcategory();
+              updateSingleSubcategoryHandler();
             }}
           >
             <Modal.Body>
@@ -704,7 +692,7 @@ const CategoryListPage = () => {
             <Button variant="outline-secondary" onClick={() => setShowDeleteConfirm(false)}>
               Cancel
             </Button>
-            <Button variant="danger" onClick={deleteCategory} disabled={loading} className="btn-delete-confirm">
+            <Button variant="danger" onClick={deleteCategoryHandler} disabled={loading} className="btn-delete-confirm">
               {loading ? (
                 <>
                   <Spinner animation="border" size="sm" className="me-2" />
@@ -719,7 +707,7 @@ const CategoryListPage = () => {
           </Modal.Footer>
         </Modal>
       </div>
-      <style jsx>{`
+      <style>{`
         .category-manager {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -952,8 +940,13 @@ const CategoryListPage = () => {
 
 .subcategory-name {
   font-weight: 500;
-  color: #495057;
+  color: #34393dff;
 }
+ 
+.subcategory-id {
+  font-size: 0.85rem;
+  color: #676a6eff; 
+  }  
 
 .subcategory-actions {
   display: flex;

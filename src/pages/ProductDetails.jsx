@@ -1,104 +1,81 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-// import { Modal, Button } from 'react-bootstrap';
-// import SocialProof from './components/SocialProof';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import StatsSection from '../components/StatsSection';
 import "./styles/ProductDetails.css";
 import Aos from 'aos';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import SizeChartOverlay from '../components/SizeChart';
-import { getProductDetails, getRelatedProducts } from '../utils/ProductServices';
+import { getProductBySubCategoryId, getSingleProduct } from '../utils/ProductServices';
 
 const ProductDetails = () => {
-  const { id } = useParams();
+  const { productId } = useParams();
   const navigate = useNavigate();
-  const productId = parseInt(id);
 
-  // State declarations
   const [product, setProduct] = useState(null);
+  const [selectedVariation, setSelectedVariation] = useState(null); // ✅ fixed
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [quantity, setQuantity] = useState(1);
-  const [selectedSize, setSelectedSize] = useState('Small');
-  const [selectedColor, setSelectedColor] = useState('rose-gold');
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [activeImage, setActiveImage] = useState('');
   const [isZoomActive, setIsZoomActive] = useState(false);
-  const [show, setShow] = useState(false);
 
-
-  // Refs for image gallery
   const imageContainerRef = useRef(null);
   const mainImageRef = useRef(null);
   const zoomPreviewRef = useRef(null);
-
   const zoomLevel = 2;
 
-  useEffect(() => {
-    Aos.init({
-      duration: 1000,
-      once: true,
-      easing: 'ease-out-cubic'
-    });
-
-    if (productId) {
-      handleProductFetch(productId);
-    } else {
-      navigate('/');
-    }
-  }, [productId, navigate]);
-
-  useEffect(() => {
-    if (product && product.image) {
-      setActiveImage(product.image);
-    }
-  }, [product]);
-
-
-  const handleProductFetch = async (id) => {
+  const handleProductFetch = useCallback(async (productId) => {
     try {
       setIsLoading(true);
+      const fetchedProduct = await getSingleProduct(productId);
+      console.log("Fetched product details:", fetchedProduct);
 
-      const product = await getProductDetails(id); 
-
-      if (product) {
-        setProduct(product);
-
-        if (product.category) {
-          const related = await getRelatedProducts(product.category);
-          setRelatedProducts(related.slice(0, 8));
-        }
+      if (fetchedProduct) {
+        setProduct(fetchedProduct);
+        const res = await getProductBySubCategoryId(fetchedProduct.categoryId._id, fetchedProduct.subCategoryId)
+        setRelatedProducts(res?.data);
+        console.log("Related products data:", relatedProducts);
+        setSelectedVariation(fetchedProduct.variations?.[0] || null);
+        setActiveImage(
+          fetchedProduct.variations?.[0]?.productImages?.[0] ||
+          fetchedProduct.productImages?.[0] ||
+          ''
+        );
       } else {
         setError("Product not found");
         navigate('/');
       }
     } catch (err) {
       setError("Failed to fetch product details. Please try again later.");
-      console.log(err);
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
+  }, [navigate]);
+
+  const formatPrice = (price) => `$${price.toFixed(2)}`;
+
+  const fetchRelatedProducts = (categoryId) => {
+    console.log("fetchID" + categoryId);
   };
-
-
-  const formatPrice = (price) => `$${parseFloat(price).toFixed(2)}`;
 
   const handleQuantityChange = (amount) => {
     setQuantity(prev => Math.max(1, prev + amount));
   };
 
-  const handleSizeSelect = (size) => {
-    setSelectedSize(size);
+  const handleSizeSelect = (size) => setSelectedSize(size);
+
+  const handleColorSelect = (variation) => {
+    setSelectedColor(variation.attributes.color);
+    setSelectedVariation(variation);
+    setActiveImage(variation.productImages?.[0]);
   };
 
-  const handleColorSelect = (color) => {
-    setSelectedColor(color);
-  };
-
-  const handleThumbnailClick = (src) => {
-    setActiveImage(src);
-  };
+  const handleThumbnailClick = (src) => setActiveImage(src);
 
   const handleZoomMove = (e) => {
     if (!isZoomActive || !imageContainerRef.current || !zoomPreviewRef.current) return;
@@ -128,55 +105,49 @@ const ProductDetails = () => {
   };
 
   const addToCart = () => {
-    if (!product || !selectedSize) return;
+    if (!product || !selectedVariation || !selectedVariation.attributes.color) return;
 
     const cartItems = JSON.parse(localStorage.getItem('cartsItems')) || [];
     const productIndex = cartItems.findIndex(
-      item => item.id === product.id && item.size === selectedSize
+      item => item.id === product._id && item.variation === selectedVariation.variationName
     );
 
     if (productIndex !== -1) {
       cartItems[productIndex].quantity += quantity;
     } else {
       cartItems.push({
-        id: product.id,
-        quantity,
+        id: product._id,
+        name: product.productName,
+        variation: selectedVariation.variationName,
+        color: selectedColor,
         size: selectedSize,
-        color: selectedColor
+        quantity,
+        image: selectedVariation.productImages?.[0],
+        price: selectedVariation.productPrice.discountedPrice,
       });
     }
 
     localStorage.setItem('cartsItems', JSON.stringify(cartItems));
-    // You would call your cart initialization function here
   };
 
   const directCheckout = () => {
-    if (!product || !selectedSize) return;
-
-    const cartItems = JSON.parse(localStorage.getItem('cartsItems')) || [];
-    const productIndex = cartItems.findIndex(
-      item => item.id === product.id && item.size === selectedSize
-    );
-
-    if (productIndex !== -1) {
-      cartItems[productIndex].quantity += quantity;
-    } else {
-      cartItems.push({
-        id: product.id,
-        quantity,
-        size: selectedSize,
-        color: selectedColor
-      });
-    }
-
-    localStorage.setItem('cartsItems', JSON.stringify(cartItems));
+    addToCart();
     setIsLoading(true);
-
     setTimeout(() => {
       setIsLoading(false);
       navigate('/checkout');
-    }, 2500);
+    }, 2000);
   };
+
+  useEffect(() => {
+    Aos.init({
+      duration: 1000,
+      once: true,
+      easing: 'ease-out-cubic'
+    });
+
+    if (productId) handleProductFetch(productId);
+  }, [productId, handleProductFetch]);
 
   if (isLoading) {
     return (
@@ -202,13 +173,27 @@ const ProductDetails = () => {
     );
   }
 
+  const currentImages = selectedVariation?.productImages?.length
+    ? selectedVariation.productImages
+    : product.productImages;
+
   return (
     <div className="product-main-container">
-
       <main className="product-main-container">
         <section className="product-section">
           <div className="product-container">
-            {/* Product Gallery */}
+            <div className="thumbnail-container">
+              {currentImages.map((img, i) => (
+                <img
+                  key={i}
+                  src={img}
+                  alt={`thumbnail-${i}`}
+                  className={`thumbnail ${activeImage === img ? 'active' : ''}`}
+                  onClick={() => handleThumbnailClick(img)}
+                />
+              ))}
+            </div>
+            {/* ✅ Product Gallery */}
             <div className="product-gallery">
               <div
                 className="product-image-container"
@@ -218,53 +203,27 @@ const ProductDetails = () => {
                 onMouseMove={handleZoomMove}
               >
                 <img
-                  src={activeImage || product.image}
-                  alt={product.title}
+                  src={activeImage}
+                  alt={product.productName}
                   className="main-image"
                   ref={mainImageRef}
                 />
               </div>
-              <div className="thumbnail-container">
-                <img
-                  src={product.image}
-                  alt={product.title}
-                  className={`thumbnail ${activeImage === product.image ? 'active' : ''}`}
-                  onClick={() => handleThumbnailClick(product.image)}
-                />
-                <img
-                  src="https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
-                  alt="Watch thumbnail 2"
-                  className={`thumbnail ${activeImage === "https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" ? 'active' : ''}`}
-                  onClick={() => handleThumbnailClick("https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80")}
-                />
-                <img
-                  src="https://images.unsplash.com/photo-1609587312208-cea54be969e7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
-                  alt="Watch thumbnail 3"
-                  className={`thumbnail ${activeImage === "https://images.unsplash.com/photo-1609587312208-cea54be969e7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" ? 'active' : ''}`}
-                  onClick={() => handleThumbnailClick("https://images.unsplash.com/photo-1609587312208-cea54be969e7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80")}
-                />
-                <img
-                  src="https://images.unsplash.com/photo-1539874754764-5a96559165b0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
-                  alt="Watch thumbnail 4"
-                  className={`thumbnail ${activeImage === "https://images.unsplash.com/photo-1539874754764-5a96559165b0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" ? 'active' : ''}`}
-                  onClick={() => handleThumbnailClick("https://images.unsplash.com/photo-1539874754764-5a96559165b0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80")}
-                />
-              </div>
+
               <div
                 className="zoom-preview"
                 ref={zoomPreviewRef}
                 style={{
-                  backgroundImage: `url('${activeImage || product.image}')`,
+                  backgroundImage: `url('${activeImage}')`,
                   backgroundSize: `${zoomLevel * 100}%`,
                   opacity: isZoomActive ? 1 : 0
                 }}
               />
             </div>
 
-            {/* Product Details */}
+            {/* ✅ Product Details */}
             <div className="product-details">
-              <h1 className="product-title">{product.title}</h1>
-              <p className="product-subtitle">Limited Edition Automatic Watch</p>
+              <h1 className="product-title">{product.productName}</h1>
 
               <div className="rating">
                 <div className="stars">
@@ -296,53 +255,61 @@ const ProductDetails = () => {
                 <span className="review-count">142 reviews</span>
               </div>
 
-              <div className="price-container">
-                <span className="current-price">{formatPrice(product.price)}</span>
-                {product.originalPrice && product.originalPrice > product.price && (
-                  <>
-                    <span className="original-price">{formatPrice(product.originalPrice)}</span>
-                    <span className="discount">
-                      {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
-                    </span>
-                  </>
-                )}
-              </div>
-
-              <div className="color-variant-selector">
-                <span className="variant-title">Case Color:</span>
-                <div className="variant-options">
-                  <label className={`color-variant-option ${selectedColor === 'rose-gold' ? 'active' : ''}`}>
-                    <input
-                      type="radio"
-                      name="case-color"
-                      value="rose-gold"
-                      checked={selectedColor === 'rose-gold'}
-                      onChange={() => handleColorSelect('rose-gold')}
-                    />
-                    <span
-                      className="color-swatch"
-                      style={{ backgroundColor: '#73401c', border: '1px solid #492912' }}
-                    ></span>
-                    <span className="sr-only">Cognac</span>
-                  </label>
-
-                  <label className={`color-variant-option ${selectedColor === 'black-pvd' ? 'active' : ''}`}>
-                    <input
-                      type="radio"
-                      name="case-color"
-                      value="black-pvd"
-                      checked={selectedColor === 'black-pvd'}
-                      onChange={() => handleColorSelect('black-pvd')}
-                    />
-                    <span
-                      className="color-swatch"
-                      style={{ backgroundColor: '#2a2a2a', border: '1px solid #000000' }}
-                    ></span>
-                    <span className="sr-only">Black PVD</span>
-                  </label>
+              {/* Price */}
+              {selectedVariation && (
+                <div className="price-container">
+                  <span className="current-price">
+                    {formatPrice(selectedVariation.productPrice.discountedPrice)}
+                  </span>
+                  {selectedVariation.productPrice.originalPrice >
+                    selectedVariation.productPrice.discountedPrice && (
+                      <>
+                        <span className="original-price">
+                          {formatPrice(selectedVariation.productPrice.originalPrice)}
+                        </span>
+                        <span className="discount">
+                          {Math.round(
+                            ((selectedVariation.productPrice.originalPrice -
+                              selectedVariation.productPrice.discountedPrice) /
+                              selectedVariation.productPrice.originalPrice) * 100
+                          )}% OFF
+                        </span>
+                      </>
+                    )}
                 </div>
-              </div>
+              )}
 
+              {/* ✅ Color Variations */}
+              {product.variations?.length > 0 && (
+                <div className="color-variant-selector">
+                  <span className="variant-title">Color:</span>
+                  <div className="variant-options">
+                    {product.variations.map((variation, i) => (
+                      <img
+                        key={i}
+                        src={variation.productImages[i]}
+                        onClick={() => handleColorSelect(variation)}
+                        className={`color-circle ${selectedVariation?.variationName === variation.variationName
+                          ? 'active'
+                          : ''
+                          }`}
+                        style={{
+                          backgroundColor: variation.attributes.color.toLowerCase(),
+                          width: '70px',
+                          height: '80px',
+                          objectFit: 'cover',
+                          borderRadius: '10%',
+                          border: '1px solid #ccc',
+                          marginRight: '8px'
+                        }}
+                        title={variation.attributes.color}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* ✅ Sizes */}
               <div className="variant-selector">
                 <div className="variant-options pt-2">
                   {['XS', 'Small', 'Medium', 'Large', 'XL', '2XL', '3XL', '4XL'].map(size => (
@@ -356,35 +323,10 @@ const ProductDetails = () => {
                   ))}
                 </div>
                 <br />
-
                 <SizeChartOverlay />
-
-                {/* <span className="variant-title">
-                  <a href="#sizeChartModal" data-bs-toggle="modal" data-bs-target="#sizeChartModal"
-                    style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <i className="fas fa-ruler-combined"></i> Size chart
-                  </a>
-                </span>
-
-                <div className="modal fade" id="sizeChartModal" tabIndex="-1" aria-labelledby="sizeChartModalLabel" aria-hidden="true">
-                  <div className="modal-dialog">
-                    <div className="modal-content">
-                      <div className="modal-header">
-                        <h5 className="modal-title" id="sizeChartModalLabel">Size Chart</h5>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div className="modal-body">
-                        <img
-                          src="https://res.cloudinary.com/dekf5dyng/image/upload/f_webp/v1749721391/chart_vnri1x.png"
-                          alt="Size Chart"
-                          loading="lazy"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div> */}
               </div>
 
+              {/* Quantity */}
               <div className="quantity-selector">
                 <span className="quantity-title">Quantity:</span>
                 <div className="quantity-control">
@@ -400,70 +342,45 @@ const ProductDetails = () => {
                 </div>
               </div>
 
+              {/* Buttons */}
               <div className="action-buttons">
                 <button className="detail-btn btn-addtocart" onClick={addToCart}>
                   <i className="fas fa-shopping-cart"></i>
                   Add to Cart
                 </button>
               </div>
-
               <div className="action-buttons">
                 <button className="detail-btn btn-checkout" onClick={directCheckout}>
                   <i className="fas fa-credit-card payment-icon"></i>
                   <span className="checkout-text">Proceed to check out</span>
                 </button>
               </div>
-
               <div className="highlight-list">
                 <span className="variant-title"> Specifications</span>
-                <div className="highlight-item">
-                  <i className="fas fa-check-circle highlight-icon"></i>
-                  <span>Swiss Automatic Movement (ETA 2894-2)</span>
-                </div>
-                <div className="highlight-item">
-                  <i className="fas fa-check-circle highlight-icon"></i>
-                  <span>42mm Stainless Steel Case with Rose Gold Plating</span>
-                </div>
-                <div className="highlight-item">
-                  <i className="fas fa-check-circle highlight-icon"></i>
-                  <span>Scratch-Resistant Sapphire Crystal</span>
-                </div>
-                <div className="highlight-item">
-                  <i className="fas fa-check-circle highlight-icon"></i>
-                  <span>Water Resistant to 50m (5ATM)</span>
-                </div>
+                {product?.specifications.map((spec, index) => (
+                  <div key={index} className="highlight-item">
+                    <i className="fas fa-check-circle highlight-icon"></i>
+                    <span>{spec}</span>
+                  </div>))}
               </div>
-
-              <div className="product-meta">
-                
-                {/* <div className="meta-item">
-                  <span className="meta-label">Category:</span>
-                  <span>{product.category || "Watches, Limited Edition"}</span>
-                </div>
-                <div className="meta-item">
-                  <span className="meta-label">Availability:</span>
-                  <span style={{ color: 'green' }}>In Stock (Only 5 left)</span>
-                </div> */}
-              </div>
-
               <div className="accordion">
                 <div className="accordion-item">
                   <input type="checkbox" id="accordion-1" className="accordion-toggle" />
-                  <label htmlFor="accordion-1" className="accordion-title">Timeless Craftsmanship</label>
+                  <label htmlFor="accordion-1" className="accordion-title">Product Features</label>
                   <div className="accordion-content">
-                    <p>The Heritage Chronograph represents the pinnacle of Swiss watchmaking.
-                      Each component is meticulously crafted by master watchmakers with decades
-                      of experience. The elegant rose gold plating complements the sunburst
-                      champagne dial, creating a sophisticated aesthetic that transitions
-                      seamlessly from boardroom to evening wear.</p>
-                    <h6 className="title">What's Included</h6>
-                    <ul>
-                      <li>Heritage Chronograph Watch</li>
-                      <li>Genuine Leather Presentation Box</li>
-                      <li>Certificate of Authenticity</li>
-                      <li>2-Year International Warranty</li>
-                      <li>Care Instructions</li>
-                    </ul>
+                    <p>{product.productDescription}</p>
+                    <br />
+                    <h3 className="fs-6 mb-2"><strong>What's Included</strong></h3>
+                    {product?.attributes && (
+                      <ul className="list-disc pl-5 space-y-1">
+                        {Object.entries(product.attributes).map(([key, value]) => (
+                          <li key={key} className="text-secondary">
+                            <strong className="capitalize">{key.replace(/([A-Z])/g, ' $1')}:</strong>{" "}
+                            {Array.isArray(value) ? value.join(", ") : value || "N/A"}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 </div>
 
@@ -471,22 +388,22 @@ const ProductDetails = () => {
                   <input type="checkbox" id="accordion-2" className="accordion-toggle" />
                   <label htmlFor="accordion-2" className="accordion-title">Shipping & Returns</label>
                   <div className="accordion-content">
-                    <h6>Shipping Information</h6>
-                    <p>
+                    <h6>Shipping Information:</h6>
+                    <p style={{ padding: "5px", color: "#666666ff" }}>
                       We offer worldwide shipping via DHL Express. Orders placed before 2pm EST
                       are processed the same business day. Delivery times vary by destination:
                     </p>
-                    <ul>
+                    <ul style={{ padding: "5px", color: "#666666ff" }}>
                       <li>USA: 5-7 business days</li>
                       <li>Europe: 4-5 business days</li>
                       <li>Other regions: 5-10 business days</li>
                     </ul>
-                    <h6>Returns Policy</h6>
-                    <p>
-                      We offer a 30-day return policy for unworn watches in original condition
+                    <h6>Returns Policy:</h6>
+                    <p style={{ padding: "5px", color: "#666666ff" }}>
+                      {`We offer a ${product.refundPolicy} for unworn jackets in original condition
                       with all packaging and documentation. Please contact our customer service
                       to initiate a return. Return shipping is the responsibility of the customer
-                      unless the item is faulty.
+                      unless the item is faulty.`}
                     </p>
                   </div>
                 </div>
@@ -497,8 +414,17 @@ const ProductDetails = () => {
                   <div className="accordion-content">
                     <p>Our jackets are true to size. If you're between sizes or prefer a looser fit for
                       layering, we suggest sizing up.</p>
-                    <p><strong><SizeChartOverlay /></strong>
-                    </p>
+                    <p style={{ padding: "5px" }}><strong><SizeChartOverlay /></strong></p>
+                    <div className="product-meta">
+                      <div className="meta-item">
+                        <span className="meta-label">Category:</span>
+                        <span>{product.categoryId.mainCategoryName || "Watches, Limited Edition"}</span>
+                      </div>
+                      <div className="meta-item">
+                        <span className="meta-label">Availability:</span>
+                        <span style={{ color: 'green' }}>{`${selectedVariation.inventoryStatus} (Only ${selectedVariation.stockQuantity} left)` || "In Stock (Only 5 left)"}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -507,28 +433,47 @@ const ProductDetails = () => {
 
           <StatsSection />
 
-          {/* <SocialProof /> */}
-
           {/* Related Products */}
           <div className="related-products">
-            <h2 className="section-title">You May Also Like</h2>
+            <h3 className="section-title">You May Also Like</h3>
             <div className="related-grid">
-              {relatedProducts.map(product => (
-                <div key={product.id} className="related-item">
-                  <a
+              {relatedProducts.slice(0, 8).map(product => (
+                <div key={product._id} className="related-item">
+                  <Link
                     style={{ textDecoration: 'none', color: 'inherit' }}
-                    href={`/products-details/${product.id}`}
+                    to={`/products-details/${product.categoryId._id}`}
                     onClick={(e) => {
                       e.preventDefault();
                       navigate(`/products-details/${product.id}`);
                     }}
                   >
-                    <img src={product.image} alt={product.title} className="related-image" />
-                    <div className="related-info">
-                      <h3 className="related-title">{product.title}</h3>
-                      <p className="related-price">${product.price.toFixed(2)}</p>
+                    <div className="related-product-image" >
+                      <img
+                        src={
+                          product.productImages?.[0] ||
+                          product.variations?.[0]?.productImages?.[0]
+                        }
+                        alt={product.productName}
+                        className="related-main-image"
+                      />
+                      <img
+                        src={
+                          product.productImages?.[1] ||
+                          product.variations?.[0]?.productImages?.[1] ||
+                          product.productImages?.[0]
+                        }
+                        alt={`${product.productName} - hover`}
+                        className="related-hover-image"
+                      />
                     </div>
-                  </a>
+                    <div className="related-info">
+                      <h3 className="related-title">{product.productName}</h3>
+                      <div className='related-price-container'>
+                        <p className="related-price">${product.variations[0].productPrice.discountedPrice.toFixed(2)}</p>
+                        <span className="related-original-price">${product.variations[0].productPrice.originalPrice.toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </Link>
                 </div>
               ))}
             </div>

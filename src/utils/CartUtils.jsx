@@ -13,6 +13,33 @@ const api = axios.create({
   baseURL: 'https://themasterjacketsbackend-production.up.railway.app',
 });
 
+export async function fetchAllUsers() {
+  try {
+    const response = await api.get("/api/user/fetch-all/68762589a469c496106e01d4");
+    return response.data.data;
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    throw error;
+  }
+}
+
+export async function deleteUser(userId) {
+  try {
+    api.interceptors.request.use((config) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    });
+    const response = await api.delete(`/api/user/delete/68762589a469c496106e01d4?uid=${userId}`);
+    return response.data.data;
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    throw error;
+  }
+}
+
 export async function fetchCategoriesAll() {
   try {
     api.interceptors.request.use((config) => {
@@ -94,9 +121,9 @@ export const addSubCategory = async (data) => {
 export const deleteSubCategory = async (categoryId, subcategoryId) => {
   try {
     await api.delete(
-          `/api/category/delete/sub-category/68762589a469c496106e01d4?mainCategoryId=${categoryId}&subCategoryId=${subcategoryId}`
-        );
+      `/api/category/delete/sub-category/68762589a469c496106e01d4?mainCategoryId=${categoryId}&subCategoryId=${subcategoryId}`
+    );
   } catch (err) {
     console.error("Error fetching categories:", err);
-  } 
+  }
 };

@@ -7,7 +7,7 @@
 }
 
 body {
-    font-family: 'Outfit', sans-serif;
+    font-family: "DM Sans", sans-serif !important;
     background-color: var(--beige);
     margin: 0;
     padding: 0;
@@ -22,7 +22,6 @@ body {
 
 h1,
 h2 {
-    font-family: Georgia, 'Times New Roman', Times, serif !important;
     font-weight: bold;
 }
 
@@ -80,7 +79,6 @@ h2 {
     font-size: 1.1rem;
     cursor: pointer;
     letter-spacing: 0.5px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     transition: background-color 0.3s ease;
 }
 

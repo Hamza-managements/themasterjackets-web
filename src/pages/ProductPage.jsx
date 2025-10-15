@@ -289,7 +289,6 @@ export default function ProductListingPage() {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
@@ -303,8 +302,7 @@ export default function ProductListingPage() {
             flex-direction: column;
             width: 100%;
             overflow-x: hidden;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    max-width: 1400px;
+            max-width: 1400px;
         }
 
         .plp-content {

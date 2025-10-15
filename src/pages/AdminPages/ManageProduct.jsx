@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { addProductVariation, deleteProductVariation, getSingleProduct } from '../../utils/ProductServices';
+import { useProducts } from "../../context/ProductContext";
 import Swal from "sweetalert2";
 
 const AllProductManagementPage = () => {
@@ -10,6 +11,7 @@ const AllProductManagementPage = () => {
   const [, setSelectedProduct] = useState(null);
   const [showVariationModal, setShowVariationModal] = useState(false);
   const [showErrors, setShowErrors] = useState(false);
+  const { refreshProducts } = useProducts();
 
   const emptyVariation = {
     stockKeepingUnit: "",
@@ -28,7 +30,7 @@ const AllProductManagementPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await getSingleProduct(productId || "68de64aa540dc59b1572f4c7");
+        const res = await getSingleProduct(productId);
         if (res) setProducts([res]);
       } catch (err) {
         console.error("Error fetching products:", err);
@@ -68,6 +70,7 @@ const AllProductManagementPage = () => {
       return;
     }
     const res = await addProductVariation(productId, v);
+    refreshProducts();
 
     Swal.fire({
       icon: "success",

@@ -2,8 +2,6 @@
 html,
 body {
   overflow-x: hidden;
-    font-family: Arial, Helvetica, sans-serif !important;
-
 }
 
 .checkout-container {
@@ -15,7 +13,6 @@ body {
 }
 
 .checkout-container h1 {
-  font-family: Arial, Helvetica, sans-serif;
   font-size: 2.4rem;
   margin-bottom: 2.5rem;
   color: #070707;
@@ -48,7 +45,6 @@ body {
 }
 
 .form-section h2 {
-  font-family: Arial, Helvetica, sans-serif !important;
   font-size: 1.3rem;
   padding-top: 0.55rem;
   margin-bottom: 1rem;
@@ -458,7 +454,6 @@ body {
 }
 
 .sans {
-  font-family: Arial, Helvetica, sans-serif !important;
   color: black;
 }
 
@@ -674,7 +669,6 @@ body {
 
 /* Base Styles */
 .policy-content {
-  font-family: 'Helvetica Neue', sans-serif;
   color: #333;
   line-height: 1.6;
   max-height: 70vh;

@@ -25,8 +25,8 @@ import {
   FaHeart,
   FaSyncAlt
 } from 'react-icons/fa';
-import { MdPayment, MdSecurity } from 'react-icons/md';
-import { BsGraphUp, BsShieldLock } from 'react-icons/bs';
+import { MdSecurity } from 'react-icons/md';
+import { BsShieldLock } from 'react-icons/bs';
 
 const Dashboard = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -1332,7 +1332,6 @@ const Dashboard = () => {
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     color: var(--dark-color);
     background-color: #f5f7fa;
@@ -1347,7 +1346,6 @@ button {
     cursor: pointer;
     border: none;
     background: none;
-    font-family: inherit;
 }
 
 /* Dashboard Container */
@@ -1367,7 +1365,6 @@ button {
     box-shadow: var(--box-shadow);
     position: sticky;
     top: 0;
-    z-index: 100;
 }
 
 .topbar-left {
@@ -1486,7 +1483,6 @@ button {
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
     padding: 1rem 0;
-    z-index: 10;
     display: none;
 }
 
@@ -1533,7 +1529,6 @@ button {
     background-color: rgb(230, 227, 227);
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
-    z-index: 10;
 }
 
 .notification-btn:hover .notifications-panel,

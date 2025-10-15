@@ -11,7 +11,6 @@
            background-color: var(--dark-brown);
            color: var(--beige) !important;
            padding: 4rem 0 0;
-           font-family: 'Segoe UI', Roboto, -apple-system, sans-serif;
            border-top: 3px solid var(--gold);
        }
 
@@ -49,7 +48,6 @@
            margin-bottom: 1rem;
            font-size: 0.95rem;
            color: var(--beige);
-           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
        }
 
        .footer-contact i {

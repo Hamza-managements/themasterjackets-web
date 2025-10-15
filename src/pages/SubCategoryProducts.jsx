@@ -569,7 +569,6 @@ const SubCategoryProductPage = () => {
             .plp-container {
     max-width: 1400px;
     margin: 0 auto;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* Mobile Filter Header */

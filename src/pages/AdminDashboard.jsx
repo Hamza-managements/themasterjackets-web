@@ -12,10 +12,13 @@ import { RiRefund2Fill } from "react-icons/ri";
 import { AuthContext } from '../components/auth/AuthProvider';
 import { Link, useNavigate } from 'react-router-dom';
 import AdminSettings from '../components/AdminDashboardSettings';
+import { deleteUser, fetchAllUsers } from '../utils/CartUtils';
+import Swal from 'sweetalert2';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement);
 
 const AdminDashboard = () => {
     const { user, logout, isAdmin } = useContext(AuthContext);
+    const [allUser, setAllUser] = useState([])
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [mobileView, setMobileView] = useState(false);
     const [activeMenu, setActiveMenu] = useState('dashboard');
@@ -41,6 +44,14 @@ const AdminDashboard = () => {
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, [isAdmin, navigate]);
+
+    useEffect(() => {
+        const getAllUsers = async () => {
+            const res = await fetchAllUsers();
+            setAllUser(res);
+        }
+        getAllUsers();
+    }, []);
 
     // useEffect(() => {
     //     const html = document.documentElement;
@@ -109,6 +120,30 @@ const AdminDashboard = () => {
         { title: 'Returns and Refunds', value: '2', change: '-3%', icon: <RiRefund2Fill /> },
     ];
 
+    const deleteUserFromDashboard = async (userId) => {
+        const confirm = await Swal.fire({
+            title: "Are you sure?",
+            text: "This will permanently delete the User.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, delete it!",
+        });
+
+        if (confirm.isConfirmed) {
+            try {
+                await deleteUser(userId);
+                Swal.fire("Deleted!", "User has been deleted. ", "success");
+                window.location.reload();
+            } catch (error) {
+                console.error("Error deleting User:", error);
+                Swal.fire("Error!", "Failed to delete User.", "error");
+            }
+        }
+    }
+
+
     return (
         <div className={`flex h-screen bg-gray-100 ${darkMode ? "dark bg-gray-800" : "bg-white"}`}>
             {/* Sidebar */}
@@ -116,12 +151,12 @@ const AdminDashboard = () => {
                 className={`${sidebarOpen ? "w-48" : "w-0"} ${darkMode ? "dark bg-gray-800" : "bg-white"}overflow-hidden transition-all duration-300 shadow-md md:relative z-10`}>
                 <div className={`p-4 flex justify-between items-center border-b border-gray-200 ${darkMode ? "dark bg-gray-800" : ""}`}   >
                     {sidebarOpen && (
-                        <h1
+                        <h3
                             className="text-xl font-bold text-gray-800 dark:text-white cursor-pointer"
                             onClick={() => setSidebarOpen(!sidebarOpen)}
                         >
                             AdminPanel
-                        </h1>
+                        </h3>
                     )}
                 </div>
 
@@ -132,13 +167,6 @@ const AdminDashboard = () => {
                         active={activeMenu === 'dashboard'}
                         expanded={sidebarOpen}
                         onClick={() => setActiveMenu('dashboard')}
-                    />
-                    <NavItem
-                        icon={<FiShoppingCart />}
-                        text="Orders"
-                        active={activeMenu === 'orders'}
-                        expanded={sidebarOpen}
-                        onClick={() => setActiveMenu('orders')}
                     />
                     <NavItem
                         icon={<FiUsers />}
@@ -153,6 +181,13 @@ const AdminDashboard = () => {
                         active={activeMenu === 'products'}
                         expanded={sidebarOpen}
                         onClick={() => setActiveMenu('products')}
+                    />
+                    <NavItem
+                        icon={<FiShoppingCart />}
+                        text="Orders"
+                        active={activeMenu === 'orders'}
+                        expanded={sidebarOpen}
+                        onClick={() => setActiveMenu('orders')}
                     />
                     <NavItem
                         icon={<FiMail />}
@@ -185,9 +220,9 @@ const AdminDashboard = () => {
                                 <FiMenu size={20} className="text-gray-700 dark:text-gray-200" />
                             </button>
                         )}
-                        <h2 className="text-xl font-semibold text-gray-800 dark:text-white capitalize ml-2">
+                        <h3 className="text-xl font-semibold text-gray-800 dark:text-white capitalize ml-2">
                             {activeMenu}
-                        </h2>
+                        </h3>
                     </div>
 
 
@@ -394,31 +429,74 @@ const AdminDashboard = () => {
                     )}
 
                     {activeMenu === 'users' && (
-                        <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
-                            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Users Management</h2>
-                            <Link to="/api-testing" target="_blank" rel="noopener noreferrer"><button className='px-4 py-2 rounded-lg bg-gray-700 text-white hover:bg-gray-900 transition'>Click to see users...</button></Link>
+                        <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-6 rounded-lg shadow-md`}>
+                            <h3 className="text-2xl font-semibold text-gray-800 dark:text-white mb-6">
+                                Users Management
+                            </h3>
+
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full text-sm text-left border-collapse">
+                                    <thead className="border-b border-gray-200 dark:border-gray-700">
+                                        <tr>
+                                            <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">User ID</th>
+                                            <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Name</th>
+                                            <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Email</th>
+                                            <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Role</th>
+                                            <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Status</th>
+                                            <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300 text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {allUser?.map((user) => (
+                                            <tr
+                                                key={user._id}
+                                                className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                                            >
+                                                <td className="px-4 py-3">{user._id}</td>
+                                                <td className="px-4 py-3">{user.userName}</td>
+                                                <td className="px-4 py-3">{user.email}</td>
+                                                <td className="px-4 py-3">{user.role}</td>
+                                                <td className="px-4 py-3">
+                                                    <span
+                                                        className={`px-3 py-1 rounded-full text-xs font-medium ${user.isActive
+                                                            ? 'bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-100'
+                                                            : 'bg-red-100 text-red-700 dark:bg-red-800 dark:text-red-100'
+                                                            }`}
+                                                    >
+                                                        {user.isActive ? 'Active' : 'Inactive'}
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-3 text-right">
+                                                    <button onClick={(e)=> deleteUserFromDashboard(user._id)} className="text-red-600 hover:underline dark:text-red-400">delete</button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     )}
+
                     {activeMenu === 'orders' && (
                         <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
-                            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Orders Management</h2>
+                            <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Orders Management</h3>
                             <p className="text-gray-600 dark:text-gray-300">Orders content goes here...</p>
                         </div>
                     )}
 
                     {activeMenu === 'products' && (
                         <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
-                            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                            <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
                                 Products Management
-                            </h2>
+                            </h3>
 
-                            <div className="d-flex gap-3">
+                            <div className="d-flex gap-2">
                                 <div className="flex flex-wrap gap-3">
                                     {/* Manage Product Button */}
                                     <Link
                                         to="/manage-all-products"
                                         target='_blank'
-                                        className="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-green-600 text-white font-medium shadow-md hover:bg-green-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
+                                        className="inline-flex items-center gap-2 px-4 py-3 rounded-3xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
                                     >
                                         <FiSettings className="text-lg" />
                                         Manage Product
@@ -430,7 +508,7 @@ const AdminDashboard = () => {
                                     {/* Add Product Button */}
                                     <Link to="/add-product"
                                         target='_blank'
-                                        className="px-5 py-3 rounded-lg bg-green-600 text-white font-medium shadow-md hover:bg-green-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
+                                        className="px-4 py-3 rounded-3xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
                                     >
                                         ➕ Add Product
                                     </Link>
@@ -438,14 +516,14 @@ const AdminDashboard = () => {
                             </div>
 
                             {/* Categories Table Button */}
-                            <h2 className="text-xl font-semibold text-gray-800 dark:text-white my-4">
+                            <h3 className="text-xl font-semibold text-gray-800 dark:text-white my-4">
                                 Categories Management
-                            </h2>
+                            </h3>
                             <Link
                                 to="/api-categories"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className={`${darkMode ? 'bg-gray-900 my-4' : 'bg-gray-700 hover:bg-gray-900'} text-white px-5 py-2 font-medium shadow-md rounded-lg transition`}
+                                className={`${darkMode ? 'bg-gray-900 my-4' : 'bg-gray-700 hover:bg-gray-900'} text-white px-3 py-3 font-medium shadow-md rounded-lg transition`}
                             >
                                 See Categories Table
                             </Link>
@@ -455,13 +533,13 @@ const AdminDashboard = () => {
 
                     {activeMenu === 'messages' && (
                         <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
-                            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Messages </h2>
+                            <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Messages </h3>
                             <p className="text-gray-600 dark:text-gray-300">Messages content goes here...</p>
                         </div>
                     )}
 
                     {activeMenu === 'settings' && (
-                        <AdminSettings darkMode={darkMode}/>
+                        <AdminSettings darkMode={darkMode} />
                     )}
                 </main>
             </div>

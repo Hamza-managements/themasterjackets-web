@@ -74,8 +74,6 @@
 }
 
 .fs-nav-links a.fs-main-link {
-    font-family: 'Outfit', sans-serif;
-    ;
     color: var(--black);
     text-decoration: none;
     font-weight: 500;

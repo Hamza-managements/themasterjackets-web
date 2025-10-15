@@ -1,3 +1,21 @@
+# robots.txt for The Master Jackets
+
 User-agent: *
 Allow: /
+
+# Block internal build and config files
+Disallow: /static/
+Disallow: /node_modules/
+
+# Sitemap location
 Sitemap: https://themasterjackets-web.vercel.app/sitemap.xml
+
+# Extra directives
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: *
+Crawl-delay: 10

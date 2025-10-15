@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import {
+  RotateCw,
   Plus,
   Package,
   CheckCircle,
@@ -9,36 +10,16 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { deleteProduct, getProducts } from "../../utils/ProductServices";
+import { deleteProduct } from "../../utils/ProductServices";
+import { useProducts } from "../../context/ProductContext";
 
 const ManageProducts = () => {
   const navigate = useNavigate();
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
-
   const [selectedProducts, setSelectedProducts] = useState([]);
-  const [bulkAction, setBulkAction] = useState("");
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        const data = await getProducts()
-        console.log("✅ Fetched products:", data);
-        setProducts(data || []);
-      } catch (err) {
-        console.error("❌ Failed to fetch products:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
+  const { products, loading, lastFetched, refreshProducts } = useProducts();
 
   // ✅ Filter + Sort + Search
   const filteredProducts = useMemo(() => {
@@ -102,7 +83,7 @@ const ManageProducts = () => {
     if (confirm.isConfirmed) {
       try {
         await deleteProduct(productId);
-        setProducts((prev) => prev.filter((p) => p._id !== productId));
+        refreshProducts();
         Swal.fire("Deleted!", "Product has been deleted.", "success");
       } catch (error) {
         console.error("Error deleting product:", error);
@@ -134,14 +115,20 @@ const ManageProducts = () => {
             <p className="text-gray-600 mt-1">
               View and manage your entire product catalog
             </p>
+            <p className="text-sm text-gray-500 mt-1">
+              Last updated: {lastFetched ? new Date(lastFetched).toLocaleString() : "Never"}
+            </p>
           </div>
-          <button
-            onClick={() => navigate("/add-product")}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <Plus size={18} />
-            Add Product
-          </button>
+          <div className="flex items-center gap-4">
+            <button onClick={refreshProducts} className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"><RotateCw size={18} /></button>
+            <button
+              onClick={() => navigate("/add-product")}
+              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <Plus size={18} />
+              Add Product
+            </button>
+          </div>
         </div>
       </div>
 
@@ -262,7 +249,7 @@ const ManageProducts = () => {
                         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       />
                     </td>
-                   <td className="px-4 py-3">
+                    <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <img
                           src={product.productImages?.[0]}
@@ -282,11 +269,10 @@ const ManageProducts = () => {
                     </td>
                     <td className="px-4 py-3">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                          product.status
-                            ? "bg-green-100 text-green-700"
-                            : "bg-gray-100 text-gray-700"
-                        }`}
+                        className={`px-2 py-1 rounded-full text-xs font-semibold ${product.status
+                          ? "bg-green-100 text-green-700"
+                          : "bg-gray-100 text-gray-700"
+                          }`}
                       >
                         {product.status ? "Published" : "Unpublished"}
                       </span>

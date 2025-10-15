@@ -27,7 +27,7 @@ const AdminSettings = ({darkMode}) => {
 
     return (
         <div className="settings-wrapper">
-            <h2 className="settings-header">⚙️ Admin Settings</h2>
+            <h3 className="settings-header">⚙️ Admin Settings</h3>
 
             <form className="settings-form" onSubmit={handleSubmit}>
                 {/* General */}
@@ -105,7 +105,6 @@ const AdminSettings = ({darkMode}) => {
   box-shadow: 0 4px 10px rgba(0,0,0,0.08);
   max-width: 700px;
   margin: auto;
-  font-family: "Segoe UI", Roboto, sans-serif;
 }
 
 .settings-header {

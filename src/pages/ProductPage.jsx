@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getProducts } from "../utils/ProductServices";
 import { FaStar } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
+import { message } from "antd";
 
 export default function ProductListingPage() {
     const {slug} = useParams();
@@ -30,7 +31,7 @@ export default function ProductListingPage() {
                 setProducts(res || []);
                 setFiltered(res || []);
             } catch (error) {
-                console.error("❌ Error fetching products:", error);
+                message.error("Product not Found");
             }
         };
         fetchProducts();
@@ -47,7 +48,7 @@ export default function ProductListingPage() {
                     (p) => p.categoryId === selectedCategoryId
                 );
             } else {
-                console.warn("⚠️ No matching category ID found for:", filters.category);
+                message.warning("⚠️ No matching category ID found for:", filters.category);
             }
         }
 

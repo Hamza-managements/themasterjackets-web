@@ -5,8 +5,10 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { useEffect, useState } from "react";
 import { getProducts } from "../utils/ProductServices";
+import { useNavigate } from "react-router-dom";
 
-const FeaturedProductsCarousel = ({ title = "Featured Products"}) => {
+const FeaturedProductsCarousel = ({ title = "Featured Products" }) => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   useEffect(() => {
     const product = async () => {
@@ -16,6 +18,10 @@ const FeaturedProductsCarousel = ({ title = "Featured Products"}) => {
     }
     product();
   }, []);
+
+  const navigateToProductDetail = (productId) => {
+    navigate(`/products-details/${productId}`);
+  };
 
   return (
     <div className="featured-products" data-aos="fade-up">
@@ -35,20 +41,20 @@ const FeaturedProductsCarousel = ({ title = "Featured Products"}) => {
       >
         {products?.map((product) => (
           <SwiperSlide key={product._id || product.id}>
-            <div className="product-card">
-              <div className="product-image">
-                {product.badge && (
-                  <div className="product-badge">{product.badge}</div>
+            <div className="featured-product-card" onClick={() => navigateToProductDetail(product._id)}>
+              <div className="featured-product-image">
+                {product.attributes.badge && (
+                  <div className="featured-product-badge">{product.attributes.badge}</div>
                 )}
-                <img src={product.image} alt={product.title} />
+                <img src={product.productImages[0]} alt={product.productName} />
               </div>
-              <div className="product-info">
-                <h3>{product.title}</h3>
-                <div className="product-page-price">
-                  ${Number(product.price).toFixed(2)}
-                  {product.originalPrice && (
-                    <span className="product-page-original-price">
-                      ${Number(product.originalPrice).toFixed(2)}
+              <div className="featured-product-info">
+                <h3>{product.productName}</h3>
+                <div className="featured-product-price">
+                  ${Number(product.variations[0].productPrice.discountedPrice).toFixed(2)}
+                  {product.variations[0].productPrice.originalPrice && (
+                    <span className="featured-product-original-price">
+                      ${Number(product.variations[0].productPrice.originalPrice).toFixed(2)}
                     </span>
                   )}
                 </div>
@@ -60,7 +66,7 @@ const FeaturedProductsCarousel = ({ title = "Featured Products"}) => {
       <style>{`
         /* Featured Products */
 .featured-products {
-  margin: 60px 0;
+  margin: 20px 0;
   padding: 0 20px;
 }
 
@@ -72,7 +78,7 @@ const FeaturedProductsCarousel = ({ title = "Featured Products"}) => {
   position: relative;
 }
 
-.product-card {
+.featured-product-card {
   background: white;
   border-radius: 8px;
   overflow: hidden;
@@ -80,18 +86,18 @@ const FeaturedProductsCarousel = ({ title = "Featured Products"}) => {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.product-card:hover {
+.featured-product-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
 }
 
-.product-image {
-  height: 250px;
+.featured-product-image {
+  height: 350px;
   background: #f5f5f5;
   position: relative;
 }
 
-.product-badge {
+.featured-product-badge {
   position: absolute;
   top: 15px;
   right: 15px;
@@ -103,20 +109,33 @@ const FeaturedProductsCarousel = ({ title = "Featured Products"}) => {
   font-weight: 600;
 }
 
-.product-info {
+.featured-product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.featured-product-info {
   padding: 20px;
 }
 
-.product-info h3 {
+.featured-product-info h3 {
   font-size: 1.2rem;
   margin-bottom: 10px;
   font-weight: 600;
 }
 
-.product-price {
+.featured-product-price {
   font-size: 1.1rem;
   font-weight: 700;
   color: #333;
+}
+.featured-product-original-price {
+  text-decoration: line-through;
+  color: #999;  
+  font-weight: 400;
+  margin-left: 10px;
+  font-size: 0.9rem;
 }
 
       `}</style>

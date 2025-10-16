@@ -4,7 +4,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
     Filter,
     X,
-    Truck,
     Crown,
     Zap,
     ChevronDown,
@@ -56,7 +55,7 @@ const SubCategoryProductPage = () => {
             }
 
             if (!matchedSubCategory) {
-                Swal.fire("Not Found", "No subcategory found for this URL.", "error");
+                Swal.fire("Not Found", "No subcategory found for this URL.", "warning");
                 setProducts([]);
                 return;
             }
@@ -64,8 +63,7 @@ const SubCategoryProductPage = () => {
             const res = await getProductBySubCategoryId(matchedCategory._id, matchedSubCategory._id);
             setProducts(res.data || []);
         } catch (error) {
-            console.error("Error fetching products:", error);
-            Swal.fire("Error", "Failed to load products.", "error");
+            Swal.fire("Not Found", "No subcategory found for this URL.", "warning");
         } finally {
             setLoading(false);
         }

@@ -1,16 +1,6 @@
-/* Blog gallery section - Responsive */
-:root {
-    --primary-color: #D6AD60; /* gold */
-    --secondary-color: #A06D33; /* tan */
-    --light-color: #F8F5F2; /* beige */
-    --dark-color: #3E2C1C; /* dark brown */
-    --text-dark: #1A1A1A; /* black */
-    --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
 .blog-gallery-section {
     padding: 4rem 1rem;
-    background-color: var(--light-color);
+    background-color: var(--beige);
     position: relative;
 }
 
@@ -23,7 +13,7 @@
 .blog-gallery-title h2 {
     font-size: clamp(1.8rem, 4vw, 2.5rem);
     font-weight: 700;
-    color: var(--dark-color);
+    color: var(--dark-brown);
     margin-bottom: 0.5rem;
     line-height: 1.2;
 }
@@ -95,7 +85,7 @@
     font-size: clamp(1.1rem, 3vw, 1.3rem);
     font-weight: 600;
     margin-bottom: 0.5rem;
-    color: var(--dark-color);
+    color: var(--dark-brown);
 }
 
 .blog-gallery-content p {
@@ -122,7 +112,7 @@
 .blog-gallery-name {
     font-weight: 600;
     font-size: 0.9rem;
-    color: var(--dark-color);
+    color: var(--dark-brown);
 }
 
 .blog-gallery-title {
@@ -154,7 +144,7 @@
 }
 
 .blog-gallery-dot.active {
-    background: var(--primary-color);
+    background: var(--gold);
     transform: scale(1.2);
 }
 
@@ -196,12 +186,12 @@
     pointer-events: auto; /* Enable clicks */
     transition: all 0.3s ease;
     border: none;
-    color: var(--dark-color);
+    color: var(--dark-brown);
     opacity: 0.9;
 }
 
 .blog-gallery-arrow:hover {
-    background: var(--primary-color);
+    background: var(--gold);
     color: white;
     opacity: 1;
     transform: scale(1.1);

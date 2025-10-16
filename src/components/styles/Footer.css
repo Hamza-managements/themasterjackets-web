@@ -1,21 +1,13 @@
-       :root {
-           --dark-brown: #3E2C1C;
-           --tan: #A06D33;
-           --gold: #D6AD60;
-           --beige: #F8F5F2;
-           --white: #FFFFFF;
-       }
-
        .luxury-footer {
            overflow-x: hidden;
-           background-color: var(--dark-brown);
+           background-color: var(--black);
            color: var(--beige) !important;
            padding: 4rem 0 0;
-           border-top: 3px solid var(--gold);
+           border-top: 3px solid var(--dark-red);
        }
 
        .footer-heading {
-           color: var(--gold);
+           color: var(--dark-red);
            font-size: 1.2rem;
            margin-bottom: 2px;
            letter-spacing: 0.8px;
@@ -30,7 +22,7 @@
            bottom: 0;
            width: 50px;
            height: 2px;
-           background: var(--gold);
+           background: var(--dark-red);
        }
 
        .footer-links-main a {
@@ -40,7 +32,7 @@
        }
 
        .footer-links-main a:hover {
-           color: var(--gold);
+           color: var(--dark-red);
            padding-left: 6px;
        }
 
@@ -51,7 +43,7 @@
        }
 
        .footer-contact i {
-           color: var(--gold);
+           color: var(--dark-red);
            margin-right: 10px;
            width: 20px;
            text-align: center;
@@ -77,16 +69,16 @@
        }
 
        .social-icons a:hover {
-           background: var(--gold);
-           color: var(--dark-brown);
+           background: var(--dark-red);
+           color: var(--black);
            transform: translateY(-3px);
        }
 
        .newsletter-input,
        .newsletter-input:focus {
            background: rgba(248, 242, 242, 0.1);
-           border: 1px solid var(--tan);
-           color: var(--gold);
+           border: 1px solid var(--red);
+           color: var(--dark-red);
            padding: 10px 15px;
            width: 100%;
            margin-bottom: 10px;
@@ -94,8 +86,8 @@
        }
 
        .newsletter-btn {
-           background: var(--gold);
-           color: var(--dark-brown);
+           background: var(--dark-red);
+           color: var(--black);
            border: none;
            padding: 10px 20px;
            font-weight: 600;
@@ -105,13 +97,13 @@
        }
 
        .newsletter-btn:hover {
-           background: var(--tan);
+           background: var(--red);
            color: var(--beige);
        }
 
        .toast-message-footer {
-           background: var(--tan);
-           color: var(--dark-brown);
+           background: var(--red);
+           color: var(--black);
            padding: 6px;
            text-align: center;
            border-radius: 8px;
@@ -119,7 +111,7 @@
        }
 
        .footer-bottom {
-           background: var(--black);
+           background: var(--dark-gray);
            width: 100%;
            padding: 1.5rem 0;
            margin-top: 3rem;
@@ -170,7 +162,7 @@
        .copyright,
        .copyright a {
            text-align: center;
-           color: var(--tan);
+           color: var(--black);
            text-decoration: none;
        }
 

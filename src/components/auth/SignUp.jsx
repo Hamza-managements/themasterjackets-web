@@ -11,6 +11,7 @@ const Signup = () => {
      navigate('/dashboard');
     }
   }, [user, navigate]);
+  
   const [formData, setFormData] = useState({
     userName: '',
     email: '',

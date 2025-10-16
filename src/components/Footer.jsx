@@ -62,7 +62,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-lg-3 col-md-6 footer-col">
             <span>
-              <b style={{ color: '#D6AD60' }}>The Master Jackets</b>
+              <b style={{ color: '#b72d2d' }}>The Master Jackets</b>
             </span>
             <p>Premium quality products crafted with care for the discerning customer.</p>
             <div className="social-icons">
@@ -160,7 +160,7 @@ export default function Footer() {
         <div className="row align-items-center">
           <div className="col-md-6">
             <div className="copyright">
-              &copy; 2025 <Link to="/"><b style={{ color: '#c58a1cff' }}>The Master Jackets</b></Link>. All rights reserved.
+              &copy; 2025 <Link to="/"><b style={{ color: '#000000ff' }}>The Master Jackets</b></Link>. All rights reserved.
             </div>
           </div>
           <div className="col-md-6 d-flex justify-content-around gap-2">

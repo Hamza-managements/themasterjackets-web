@@ -1,20 +1,4 @@
 /* CSS for the Categories Section of the The Maste Jackets */
-:root {
-    --dark-brown: #3E2C1C;
-    --tan: #A06D33;
-    --gold: #D6AD60;
-    --beige: #F8F5F2;
-    --black: #1A1A1A;
-    --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    --transition: all 0.3s ease;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 .categories-section {
     padding-top: 3rem;
     padding-left: 2rem;

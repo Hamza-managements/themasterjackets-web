@@ -1,20 +1,7 @@
-:root {
-    --dark-brown: #3E2C1C;
-    --tan: #A06D33;
-    --gold: #D6AD60;
-    --beige: #F8F5F2;
-    --black: #1A1A1A;
-    --bj-light: #F8F5F2;
-    --bj-dark: #663f12;
-}
-
-
 #mainHeader {
     top: 0;
     z-index: 1000;
     background-color: #fff;
-    /* required if content scrolls over */
-
 }
 
 .fs-header-container {
@@ -28,7 +15,7 @@
 
 
 .fs-announcement-bar {
-    background: var(--dark-brown);
+    background: var(--black);
     color: var(--beige);
     text-align: center;
     padding: 6px 0;
@@ -40,7 +27,7 @@
 
 
 .fs-announcement-bar a {
-    color: var(--tan);
+    color: var(--red);
     text-decoration: underline;
     margin-left: 5px;
 }
@@ -144,7 +131,7 @@
 .fs-dropdown-link {
     display: block;
     padding: 8px 20px;
-    color: var(--dark-brown);
+    color: var(--black);
     text-decoration: none;
     font-size: 14px;
     transition: all 0.2s ease;
@@ -210,7 +197,7 @@
 }
 
 .fs-header-actions a {
-    color: var(--dark-brown);
+    color: var(--black);
     font-size: 18px;
     position: relative;
 }
@@ -219,8 +206,8 @@
     position: absolute;
     top: -8px;
     right: -8px;
-    background: var(--bj-dark);
-    color: white;
+    background: var(--gray);
+    color: var(--light-red);
     border-radius: 50%;
     width: 18px;
     height: 18px;

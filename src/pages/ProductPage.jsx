@@ -274,17 +274,7 @@ export default function ProductListingPage() {
                     </button>
                 </div>
             </div>
-            <style>{`        /* === Color Palette === */
-        :root {
-            --blue: #2563eb;
-            --red: #eb2424;
-            --lightRed: #b72d2d;
-            --gold: #D6AD60;
-            --beige: #F8F5F2;
-            --white: #FFFFFF;
-            --black: #000000;
-        }
-
+            <style>{`
         * {
             margin: 0;
             padding: 0;

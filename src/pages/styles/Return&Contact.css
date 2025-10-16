@@ -1,27 +1,9 @@
-:root {
-    --dark-brown: #3E2C1C;
-    --tan: #A06D33;
-    --gold: #D6AD60;
-    --beige: #F8F5F2;
-    --white: #FFFFFF;
-}
-
-/* === Base Styles === */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 body {
     background-color: var(--beige);
     color: var(--dark-brown);
     line-height: 1.7;
 }
 
-/* h1,h2,h3,h4,h5,h6{
-            letter-spacing: 0.01em;
-        } */
 .container {
     max-width: 1200px;
     margin: 0 auto;

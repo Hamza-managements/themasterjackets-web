@@ -1309,31 +1309,9 @@ const Dashboard = () => {
         </main>
       </div>
       <style>{`
-      :root {
-    --primary-color: #A06D33;
-    --primary-light: #e6f0ff;
-    --secondary-color: #D6AD60;
-    --success-color: #4cc9f0;
-    --warning-color: #f8961e;
-    --danger-color: #f72585;
-    --dark-color: #3E2C1C;
-    --light-color: #f8f9fa;
-    --gray-color: #6c757d;
-    --light-gray: #e9ecef;
-    --border-radius: 8px;
-    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --transition: all 0.3s ease;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 body {
     line-height: 1.6;
-    color: var(--dark-color);
+    color: var(--dark-brown);
     background-color: #f5f7fa;
 }
 
@@ -1378,7 +1356,7 @@ button {
     background: none;
     border: none;
     font-size: 1.25rem;
-    color: var(--gray-color);
+    color: var(--gray);
 }
 
 .search-bar {
@@ -1391,7 +1369,7 @@ button {
     left: 1rem;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--gray-color);
+    color: var(--gray);
 }
 
 .search-bar input {
@@ -1405,8 +1383,8 @@ button {
 
 .search-bar input:focus {
     outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px var(--primary-light);
+    border-color: var(--tan);
+    box-shadow: 0 0 0 2px var(--beige);
 }
 
 .topbar-right {
@@ -1420,14 +1398,14 @@ button {
     background: none;
     border: none;
     font-size: 1.25rem;
-    color: var(--gray-color);
+    color: var(--gray);
 }
 
 .notification-badge {
     position: absolute;
     top: -5px;
     right: -5px;
-    background-color: var(--dark-color);
+    background-color: var(--dark-brown);
     color: white;
     border-radius: 50%;
     width: 18px;
@@ -1451,7 +1429,7 @@ button {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background-color: var(--primary-color);
+    background-color: var(--tan);
     color: white;
     display: flex;
     align-items: center;
@@ -1509,7 +1487,7 @@ button {
 }
 
 .dropdown-menu button:hover {
-    background-color: var(--light-color);
+    background-color: var(--light);
 }
 
 .dropdown-divider {
@@ -1545,7 +1523,7 @@ button {
 }
 
 .notifications-header button {
-    color: var(--primary-color);
+    color: var(--tan);
     font-size: 0.9rem;
     font-weight: 500;
 }
@@ -1562,12 +1540,12 @@ button {
 }
 
 .notification-item:hover {
-    background-color: var(--light-color);
+    background-color: var(--light);
 }
 
 .notification-icon {
     font-size: 1.25rem;
-    color: var(--primary-color);
+    color: var(--tan);
 }
 
 .notification-content {
@@ -1575,7 +1553,7 @@ button {
 }
 
 .notification-content small {
-    color: var(--gray-color);
+    color: var(--gray);
     font-size: 0.8rem;
 }
 
@@ -1586,13 +1564,13 @@ button {
     justify-content: center;
     padding: 2rem;
     text-align: center;
-    color: var(--gray-color);
+    color: var(--gray);
 }
 
 .empty-notifications svg {
     font-size: 2rem;
     margin-bottom: 1rem;
-    color: var(--primary-color);
+    color: var(--tan);
 }
 
 /* Dashboard Grid Layout */
@@ -1624,7 +1602,7 @@ button {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background-color: var(--primary-color);
+    background-color: var(--tan);
     color: white;
     display: flex;
     align-items: center;
@@ -1640,7 +1618,7 @@ button {
 }
 
 .user-profile-card p {
-    color: var(--gray-color);
+    color: var(--gray);
     font-size: 0.9rem;
     margin-bottom: 1rem;
 }
@@ -1662,7 +1640,7 @@ button {
 }
 
 .user-stats small {
-    color: var(--gray-color);
+    color: var(--gray);
     font-size: 0.8rem;
 }
 
@@ -1679,35 +1657,35 @@ button {
     gap: 0.75rem;
     padding: 0.75rem 1rem;
     border-radius: var(--border-radius);
-    color: var(--gray-color);
+    color: var(--gray);
     transition: var(--transition);
     position: relative;
 }
 
 .dashboard-nav button:hover {
-    background-color: var(--light-color);
-    color: var(--primary-color);
+    background-color: var(--light);
+    color: var(--tan);
 }
 
 .dashboard-nav button.active {
-    background-color: var(--primary-light);
-    color: var(--primary-color);
+    background-color: var(--beige);
+    color: var(--tan);
     font-weight: 500;
 }
 
 .dashboard-nav button.active .nav-icon {
-    color: var(--primary-color);
+    color: var(--tan);
 }
 
 .nav-icon {
     font-size: 1.1rem;
-    color: var(--gray-color);
+    color: var(--gray);
 }
 
 .nav-badge {
     position: absolute;
     right: 1rem;
-    background-color: var(--primary-color);
+    background-color: var(--tan);
     color: white;
     border-radius: 50%;
     width: 22px;
@@ -1729,13 +1707,13 @@ button {
     align-items: center;
     gap: 1rem;
     padding: 1rem;
-    background-color: var(--light-color);
+    background-color: var(--light);
     border-radius: var(--border-radius);
 }
 
 .help-card svg {
     font-size: 1.5rem;
-    color: var(--primary-color);
+    color: var(--tan);
 }
 
 .help-card h4 {
@@ -1745,7 +1723,7 @@ button {
 
 .help-card p {
     font-size: 0.85rem;
-    color: var(--gray-color);
+    color: var(--gray);
 }
 
 /* Main Content */
@@ -1766,7 +1744,7 @@ button {
 }
 
 .content-header p {
-    color: var(--gray-color);
+    color: var(--gray);
 }
 
 /* Stats Grid */
@@ -1788,19 +1766,19 @@ button {
 }
 
 /* .stat-card.primary {
-  border-left: 4px solid var(--primary-color);
+  border-left: 4px solid var(--tan);
 }
 
 .stat-card.success {
-  border-left: 4px solid var(--success-color);
+  border-left: 4px solid var(--tortoise);
 }
 
 .stat-card.warning {
-  border-left: 4px solid var(--warning-color);
+  border-left: 4px solid var(--orange);
 }
 
 .stat-card.info {
-  border-left: 4px solid var(--secondary-color);
+  border-left: 4px solid var(--gold);
 } */
 
 .stat-icon {
@@ -1814,8 +1792,8 @@ button {
 }
 
 .stat-card.primary .stat-icon {
-    background-color: var(--primary-light);
-    color: var(--primary-color);
+    background-color: var(--beige);
+    color: var(--tan);
 }
 
 .stat-card.success .stat-icon {
@@ -1825,12 +1803,12 @@ button {
 
 .stat-card.warning .stat-icon {
     background-color: rgba(248, 150, 30, 0.1);
-    color: var(--warning-color);
+    color: var(--orange);
 }
 
 .stat-card.info .stat-icon {
     background-color: rgba(63, 55, 201, 0.1);
-    color: var(--secondary-color);
+    color: var(--gold);
 }
 
 .stat-info h3 {
@@ -1839,7 +1817,7 @@ button {
 }
 
 .stat-info p {
-    color: var(--gray-color);
+    color: var(--gray);
     font-size: 0.9rem;
     margin-bottom: 0.25rem;
 }
@@ -1878,7 +1856,7 @@ button {
 }
 
 .btn-text {
-    color: var(--primary-color);
+    color: var(--tan);
     font-weight: 500;
     background: none;
     border: none;
@@ -1912,7 +1890,7 @@ td {
 
 th {
     font-weight: 500;
-    color: var(--gray-color);
+    color: var(--gray);
     font-size: 0.9rem;
     text-transform: uppercase;
 }
@@ -1957,7 +1935,7 @@ th {
 
 .return-reason {
     font-size: 0.85rem;
-    color: var(--gray-color);
+    color: var(--gray);
     margin-left: 0.5rem;
 }
 
@@ -1978,14 +1956,14 @@ th {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--light-color);
-    color: var(--gray-color);
+    background-color: var(--light);
+    color: var(--gray);
     transition: var(--transition);
 }
 
 .btn-icon:hover {
-    background-color: var(--primary-light);
-    color: var(--primary-color);
+    background-color: var(--beige);
+    color: var(--tan);
 }
 
 /* Quick Actions */
@@ -2011,13 +1989,13 @@ th {
 .action-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-    border-color: var(--primary-light);
+    border-color: var(--beige);
 }
 
 .action-card svg {
     font-size: 1.5rem;
     margin-bottom: 0.75rem;
-    color: var(--primary-color);
+    color: var(--tan);
 }
 
 /* Orders List */
@@ -2040,7 +2018,7 @@ th {
     left: 1rem;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--gray-color);
+    color: var(--gray);
 }
 
 .search-box input {
@@ -2090,7 +2068,7 @@ th {
 }
 
 .order-header small {
-    color: var(--gray-color);
+    color: var(--gray);
     font-size: 0.85rem;
 }
 
@@ -2102,7 +2080,7 @@ th {
 
 .payment-method {
     font-size: 0.85rem;
-    color: var(--gray-color);
+    color: var(--gray);
 }
 
 .order-items {
@@ -2141,7 +2119,7 @@ th {
 
 .item-details p {
     font-size: 0.85rem;
-    color: var(--gray-color);
+    color: var(--gray);
 }
 
 .order-footer {
@@ -2159,7 +2137,7 @@ th {
 }
 
 .order-total span {
-    color: var(--gray-color);
+    color: var(--gray);
 }
 
 .order-total strong {
@@ -2176,7 +2154,7 @@ th {
     border: 1px solid var(--light-gray);
     border-radius: var(--border-radius);
     background-color: white;
-    color: var(--dark-color);
+    color: var(--dark-brown);
     font-size: 0.9rem;
     display: flex;
     align-items: center;
@@ -2185,13 +2163,13 @@ th {
 }
 
 .btn-outline:hover {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
+    border-color: var(--tan);
+    color: var(--tan);
 }
 
 .btn-outline.danger {
-    border-color: var(--danger-color);
-    color: var(--danger-color);
+    border-color: var(--light-red);
+    color: var(--light-red);
 }
 
 .btn-outline.danger:hover {
@@ -2201,7 +2179,7 @@ th {
 .btn-primary {
     padding: 0.5rem 1rem;
     border-radius: var(--border-radius);
-    background-color: var(--primary-color);
+    background-color: var(--tan);
     color: white;
     font-size: 0.9rem;
     display: flex;
@@ -2211,7 +2189,7 @@ th {
 }
 
 .btn-primary:hover {
-    background-color: var(--secondary-color);
+    background-color: var(--gold);
 }
 
 .empty-state {
@@ -2238,7 +2216,7 @@ th {
 }
 
 .empty-state p {
-    color: var(--gray-color);
+    color: var(--gray);
     margin-bottom: 1.5rem;
     max-width: 400px;
 }
@@ -2291,7 +2269,7 @@ th {
 
 .detail-row label {
     display: block;
-    color: var(--gray-color);
+    color: var(--gray);
     font-size: 0.9rem;
     margin-bottom: 0.25rem;
 }
@@ -2337,8 +2315,8 @@ th {
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px var(--primary-light);
+    border-color: var(--tan);
+    box-shadow: 0 0 0 2px var(--beige);
 }
 
 .address-fields {
@@ -2390,7 +2368,7 @@ th {
 }
 
 .address-card.default {
-    border-color: var(--primary-color);
+    border-color: var(--tan);
     border-width: 2px;
 }
 
@@ -2402,8 +2380,8 @@ th {
 }
 
 .default-badge {
-    background-color: var(--primary-light);
-    color: var(--primary-color);
+    background-color: var(--beige);
+    color: var(--tan);
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
     font-size: 0.8rem;
@@ -2433,14 +2411,14 @@ th {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--light-color);
-    color: var(--gray-color);
+    background-color: var(--light);
+    color: var(--gray);
     transition: var(--transition);
 }
 
 .icon-btn:hover {
-    background-color: var(--primary-light);
-    color: var(--primary-color);
+    background-color: var(--beige);
+    color: var(--tan);
 }
 
 .address-card.add-new {
@@ -2453,8 +2431,8 @@ th {
 }
 
 .address-card.add-new:hover {
-    border-color: var(--primary-color);
-    background-color: var(--primary-light);
+    border-color: var(--tan);
+    background-color: var(--beige);
 }
 
 .add-new-content {
@@ -2462,11 +2440,11 @@ th {
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
-    color: var(--gray-color);
+    color: var(--gray);
 }
 
 .address-card.add-new:hover .add-new-content {
-    color: var(--primary-color);
+    color: var(--tan);
 }
 
 .address-card.add-new svg {
@@ -2506,8 +2484,8 @@ th {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background-color: var(--primary-light);
-    color: var(--primary-color);
+    background-color: var(--beige);
+    color: var(--tan);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2520,7 +2498,7 @@ th {
 }
 
 .security-info p {
-    color: var(--gray-color);
+    color: var(--gray);
     font-size: 0.9rem;
 }
 
@@ -2535,7 +2513,7 @@ th {
 }
 
 .status-disabled {
-    color: var(--gray-color);
+    color: var(--gray);
     font-size: 0.85rem;
     font-weight: 500;
 }
@@ -2571,7 +2549,7 @@ th {
 }
 
 .option-row p {
-    color: var(--gray-color);
+    color: var(--gray);
     font-size: 0.9rem;
 }
 

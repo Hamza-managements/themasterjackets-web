@@ -1,14 +1,4 @@
 /* User Dashboard Styles */
-:root {
-    --dark-brown: #3E2C1C;
-    --tan: #A06D33;
-    --gold: #D6AD60;
-    --beige: #F8F5F2;
-    --black: #1A1A1A;
-    --bj-light: #F8F5F2;
-    --bj-dark: #663f12;
-}
-
 .user-dashboard-container {
   max-width: 1200px;
   margin: 2rem auto;

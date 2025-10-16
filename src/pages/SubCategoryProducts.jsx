@@ -557,15 +557,6 @@ const SubCategoryProductPage = () => {
             </div>
             <style>
                 {`
-                :root {
-            --dark-brown: #3E2C1C;
-            --red: #eb2424;
-            --lightRed: #b72d2d;
-            --gold: #D6AD60;
-            --beige: #F8F5F2;
-            --white: #FFFFFF;
-            --black: #000000;
-        }
             .plp-container {
     max-width: 1400px;
     margin: 0 auto;
@@ -587,7 +578,7 @@ const SubCategoryProductPage = () => {
     align-items: center;
     gap: 8px;
     padding: 10px 16px;
-    background: var(--lightRed);
+    background: var(--light-red);
     color: white;
     border: none;
     border-radius: 8px;

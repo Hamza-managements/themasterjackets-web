@@ -160,7 +160,7 @@ export default function Footer() {
         <div className="row align-items-center">
           <div className="col-md-6">
             <div className="copyright">
-              &copy; 2025 <Link to="/"><b style={{ color: '#000000ff' }}>The Master Jackets</b></Link>. All rights reserved.
+              &copy; 2025 <Link to="/"><b>The Master Jackets</b></Link>. All rights reserved.
             </div>
           </div>
           <div className="col-md-6 d-flex justify-content-around gap-2">

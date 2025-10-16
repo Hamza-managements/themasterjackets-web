@@ -48,7 +48,7 @@ const AmazonStyleProductPage = () => {
       careInstructions: 'Dry clean only',
       season: [],
       style: [],
-      gender: 'Men', 
+      gender: 'Men',
       badge: ""
     },
     refundPolicy: '30-day return & refund policy',
@@ -92,7 +92,7 @@ const AmazonStyleProductPage = () => {
           productImages: [],
           productPrice: { originalPrice: 0, discountedPrice: 0, currency: "USD" },
           stockQuantity: 0,
-          attributes: { color: "", size: "", material: "", weight: ""},
+          attributes: { color: "", size: "", material: "", weight: "" },
           inventoryStatus: "in stock",
           shipping: { shippingCharges: 0, isFreeShipping: true, estimatedDeliveryDays: 5 },
           ratings: { count: 5 },
@@ -466,14 +466,24 @@ const AmazonStyleProductPage = () => {
                       Bullet Points *
                     </label>
                     <textarea
-                      onChange={handleSpecChange}
-                      value={formData.specifications.join("\n")}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          specifications: e.target.value.split('\n'), // split text by new lines
+                        }))
+                      }
+                      value={
+                        Array.isArray(formData.specifications)
+                          ? formData.specifications.join('\n') // join array by new lines for textarea
+                          : formData.specifications || ''
+                      }
                       rows={5}
                       style={{ border: '1px solid #2564eb7e' }}
                       className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Bullet point specifications, one per line"
                     />
                   </div>
+
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">

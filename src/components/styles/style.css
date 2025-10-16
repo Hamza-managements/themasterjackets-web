@@ -14,7 +14,7 @@
     --dark-gray: #5a5959;
     --blue: #2563eb;
     --tortoise: #4cc9f0;
-    --red: #ef071e;
+    --red: #db162a;
     --light-red: #b72d2d;
     --dark-red: #ef071e;
     --green: #03993f;
@@ -24,7 +24,8 @@
 }
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
+    /* font-family: Arial, Helvetica, sans-serif; */
+    font-family: "Inter Tight", sans-serif !important;
     /* font-family: "DM Sans", sans-serif !important; */
     background-color: var(--beige);
     margin: 0;
@@ -88,7 +89,7 @@ h2 {
 
 .hero-banner-btnn {
     display: inline-block;
-    background-color: var(--tann);
+    background-color: var(--light-red);
     border: none;
     color: white;
     text-decoration: none;
@@ -111,7 +112,7 @@ h2 {
 
 .feature-icon {
     font-size: 2.5rem;
-    color: var(--tann);
+    color: var(--red);
     margin-bottom: 1rem;
 }
 
@@ -125,7 +126,7 @@ h2 {
 
 .rj-hero-right {
     flex: 1;
-    background-color: var(--tann);
+    background-color: var(--black);
     color: white;
     display: flex;
     flex-direction: column;
@@ -240,13 +241,11 @@ h2 {
     margin-bottom: 2rem;
     padding-bottom: 1rem;
     border-bottom: 1px solid #e5e5e5;
-    /* subtle Shopify-style border */
 }
 
 .bj-collection-header h2 {
     font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
+    font-weight: 600;
     color: #1c1c1c;
     margin: 0;
     line-height: 1.2;

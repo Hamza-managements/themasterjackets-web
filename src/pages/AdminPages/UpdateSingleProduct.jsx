@@ -4,7 +4,7 @@ import {
     ArrowLeft,
     Save,
     Plus,
-    Trash2,
+    Trash,
     Upload,
     Image as ImageIcon,
     Tag,
@@ -37,7 +37,7 @@ const UpdateProductPage = () => {
             careInstructions: "",
             season: [],
             style: [],
-            badge:"",
+            badge: "",
             gender: ""
         },
         tags: [],
@@ -529,24 +529,32 @@ const UpdateProductPage = () => {
 
                                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
                                     {imagePreviews.map((preview, index) => (
-                                        <div key={index} className="relative group">
+                                        <div
+                                            key={index}
+                                            className="relative group overflow-visible"
+                                            style={{ position: "relative", zIndex: 10 }}
+                                        >
                                             <img
                                                 src={preview}
                                                 alt={`Product ${index + 1}`}
-                                                className="w-full h-32 object-cover rounded-lg border"
+                                                className="w-full h-48 object-cover rounded-lg border z-0"
                                             />
+
+                                            {/* Delete Button */}
                                             <button
                                                 onClick={() => removeImage(index)}
-                                                className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                                className="absolute top-2 right-2 bg-red-500 px-1 py-1 rounded text-xs z-40 cusor-pointer"
                                             >
-                                                <Trash2 size={14} />
+                                                <Trash size={16} color="white" />
                                             </button>
+                                            {/* Main Badge */}
                                             {index === 0 && (
-                                                <span className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded text-xs">
+                                                <span className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded text-xs z-40">
                                                     Main
                                                 </span>
                                             )}
                                         </div>
+
                                     ))}
 
                                     <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
@@ -662,7 +670,7 @@ const UpdateProductPage = () => {
                                                 ))}
                                             </select>
                                         </div>
-                                        
+
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                                 Badge
@@ -866,7 +874,7 @@ const UpdateProductPage = () => {
                                                     onClick={() => handleArrayUpdate('faq', 'remove', null, index)}
                                                     className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                                 >
-                                                    <Trash2 size={18} />
+                                                    <Trash size={18} />
                                                 </button>
                                             </div>
                                             <div className="space-y-4">

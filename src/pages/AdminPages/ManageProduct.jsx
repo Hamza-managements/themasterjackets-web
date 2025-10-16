@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { addProductVariation, deleteProductVariation, getSingleProduct } from '../../utils/ProductServices';
 import { useProducts } from "../../context/ProductContext";
 import Swal from "sweetalert2";
+import VariationImageUploader from '../../components/AddVariationImages';
 
 const AllProductManagementPage = () => {
   const navigate = useNavigate();
@@ -244,51 +245,7 @@ const AllProductManagementPage = () => {
               </div>
 
               {/* Product Image */}
-              <div className="form-group">
-                <label>Product Images *</label>
-
-                {currentVariation.productImages.map((img, index) => (
-                  <div key={index} className="flex items-center gap-2 mb-2">
-                    <input
-                      type="url"
-                      placeholder={`Image URL ${index + 1}`}
-                      value={img}
-                      onChange={(e) =>
-                        setCurrentVariation((prev) => {
-                          const updated = [...prev.productImages];
-                          updated[index] = e.target.value;
-                          return { ...prev, productImages: updated };
-                        })
-                      }
-                    />
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setCurrentVariation((prev) => ({
-                          ...prev,
-                          productImages: prev.productImages.filter((_, i) => i !== index),
-                        }))
-                      }
-                      className="p-2 text-red-600 hover:text-red-800"
-                    >
-                      ✖
-                    </button>
-                  </div>
-                ))}
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setCurrentVariation((prev) => ({
-                      ...prev,
-                      productImages: [...prev.productImages, ""],
-                    }))
-                  }
-                  className="p-2 bg-gray-200 rounded hover:bg-gray-300"
-                >
-                  ➕ Add Image
-                </button>
-              </div>
+              <VariationImageUploader currentVariation={currentVariation} setCurrentVariation={setCurrentVariation} />
 
               {/* Price */}
               <div className={`form-group ${showErrors && !currentVariation.productPrice.originalPrice ? 'error' : ''}`}>

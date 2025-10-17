@@ -45,9 +45,6 @@ const CategoryPage = () => {
     }
   }, [slug, categoryId]);
 
-
-
-
   if (loading) {
     return (
       <div className="category-page-loading">
@@ -68,17 +65,6 @@ const CategoryPage = () => {
 
   return (
     <div className="category-page">
-      {/* Hero Section */}
-      {/* <section className="category-hero" data-aos="fade-in">
-        <div className="category-hero-content">
-          <h1>Explore Our Collections</h1>
-          <p>Discover premium designs crafted for style, durability, and timeless character</p>
-        </div>
-        <div className="category-hero-scroll-indicator">
-          <span>Scroll to explore</span>
-          <div className="scroll-arrow"></div>
-        </div>
-      </section> */}
       {categories?.map((cat, index) => (
         <div key={cat._id} className="category-section">
           <div className="parallax-banner" data-aos="zoom-out">

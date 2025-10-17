@@ -19,13 +19,13 @@
     background-color: var(--black);
     color: var(--beige) !important;
     padding: 4rem 0 0;
-    border-top: 3px solid var(--dark-red);
+    border-top: 3px solid var(--red);
     overflow-x: hidden;
     z-index: 0;
 }
 
 .footer-heading {
-    color: var(--dark-red);
+    color: var(--red);
     font-size: 1.2rem;
     margin-bottom: 2px;
     letter-spacing: 0.8px;
@@ -40,7 +40,7 @@
     bottom: 0;
     width: 50px;
     height: 2px;
-    background: var(--dark-red);
+    background: var(--red);
 }
 
 .footer-links-main a {
@@ -96,7 +96,7 @@
 .newsletter-input:focus {
     background: rgba(248, 242, 242, 0.1);
     border: 1px solid var(--red);
-    color: var(--dark-red);
+    color: var(--red);
     padding: 10px 15px;
     width: 100%;
     margin-bottom: 10px;
@@ -105,7 +105,7 @@
 
 .newsletter-btn {
     background: var(--dark-red);
-    color: var(--black);
+    color: var(--beige);
     border: none;
     padding: 10px 20px;
     font-weight: 600;
@@ -116,7 +116,6 @@
 
 .newsletter-btn:hover {
     background: var(--red);
-    color: var(--beige);
 }
 
 .toast-message-footer {

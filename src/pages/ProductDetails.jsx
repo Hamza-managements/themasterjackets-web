@@ -441,11 +441,8 @@ const ProductDetails = () => {
                 <div key={product._id} className="related-item">
                   <Link
                     style={{ textDecoration: 'none', color: 'inherit' }}
-                    to={`/products-details/${product.categoryId._id}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      navigate(`/products-details/${product.id}`);
-                    }}
+                    to={`/products-details/${product._id}`}
+                    target='blank'
                   >
                     <div className="related-product-image" >
                       <img

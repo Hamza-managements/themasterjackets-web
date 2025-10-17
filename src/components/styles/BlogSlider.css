@@ -1,6 +1,6 @@
 .blog-gallery-section {
     padding: 4rem 1rem;
-    background-color: var(--beige);
+    background-color: var(--light);
     position: relative;
 }
 
@@ -13,13 +13,13 @@
 .blog-gallery-title h2 {
     font-size: clamp(1.8rem, 4vw, 2.5rem);
     font-weight: 700;
-    color: var(--dark-brown);
+    color: var(--dark-gray);
     margin-bottom: 0.5rem;
     line-height: 1.2;
 }
 
 .blog-gallery-title p {
-    color: var(--text-dark);
+    color: var(--dark-gray);
     max-width: 700px;
     margin: 0 auto;
     font-size: clamp(0.9rem, 2vw, 1.1rem);
@@ -89,7 +89,7 @@
 }
 
 .blog-gallery-content p {
-    color: var(--text-dark);
+    color: var(--dark-gray);
     font-size: clamp(0.85rem, 2vw, 0.95rem);
     margin-bottom: 1rem;
     line-height: 1.5;
@@ -117,7 +117,7 @@
 
 .blog-gallery-title {
     font-size: 0.8rem;
-    color: var(--text-dark);
+    color: var(--dark-gray);
 }
 
 /* Navigation */
@@ -144,7 +144,7 @@
 }
 
 .blog-gallery-dot.active {
-    background: var(--gold);
+    background: var(--red);
     transform: scale(1.2);
 }
 
@@ -186,12 +186,12 @@
     pointer-events: auto; /* Enable clicks */
     transition: all 0.3s ease;
     border: none;
-    color: var(--dark-brown);
+    color: var(--black);
     opacity: 0.9;
 }
 
 .blog-gallery-arrow:hover {
-    background: var(--gold);
+    background: var(--black);
     color: white;
     opacity: 1;
     transform: scale(1.1);

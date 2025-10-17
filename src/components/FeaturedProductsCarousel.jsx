@@ -46,7 +46,23 @@ const FeaturedProductsCarousel = ({ title = "Featured Products" }) => {
                 {product.attributes.badge && (
                   <div className="featured-product-badge">{product.attributes.badge}</div>
                 )}
-                <img src={product.productImages[0]} alt={product.productName} />
+                <img
+                  src={
+                    product.productImages?.[0] ||
+                    product.variations?.[0]?.productImages?.[0]
+                  }
+                  alt={product.productName}
+                  className="main-image"
+                />
+                <img
+                  src={
+                    product.productImages?.[1] ||
+                    product.variations?.[0]?.productImages?.[1] ||
+                    product.productImages?.[0]
+                  }
+                  alt={`${product.productName} - hover`}
+                  className="hover-image"
+                />
               </div>
               <div className="featured-product-info">
                 <h3>{product.productName}</h3>
@@ -92,27 +108,63 @@ const FeaturedProductsCarousel = ({ title = "Featured Products" }) => {
 }
 
 .featured-product-image {
-  height: 350px;
-  background: #f5f5f5;
   position: relative;
+  overflow: hidden;
+  height: 50vh;
+  background: var(--beige);
+  cursor: pointer;
+  border-radius: 8px;
 }
 
+/* Badge */
 .featured-product-badge {
   position: absolute;
   top: 15px;
   right: 15px;
   background: #ff0000be;
   color: white;
-  padding: 5px 10px;
+  padding: 4px 8px;
   font-size: 0.8rem;
   text-transform: uppercase;
-  font-weight: 600;
+  z-index: 2;
+  border-radius: 4px;
 }
 
+/* Images */
 .featured-product-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: opacity 0.6s ease, transform 0.4s ease;
+  display: block;
+}
+
+/* Base states */
+.featured-product-image .main-image {
+  opacity: 1;
+}
+
+.featured-product-image .hover-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
+
+/* Hover behavior */
+.featured-product-image:hover .main-image {
+  opacity: 0;
+  transform: scale(1.05);
+}
+
+.featured-product-image:hover .hover-image {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+/* Optional: card-wide hover scaling */
+.featured-product-card:hover .featured-product-image img {
+  transform: scale(1.05);
 }
 
 .featured-product-info {

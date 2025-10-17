@@ -75,14 +75,13 @@ function VariationImageUploader({ currentVariation, setCurrentVariation }) {
                             <img
                                 src={url}
                                 alt={`Variation ${index}`}
-                                className="w-full h-32 object-cover rounded-lg border"
+                                className="w-full h-48 object-cover rounded-lg border"
                             />
                             <button
                                 onClick={() => removeImage(index)}
-                                className="absolute top-2 right-2 bg-white p-1 rounded-full shadow opacity-0 
-                group-hover:opacity-100 transition z-20 hover:scale-110"
+                                className="absolute top-2 right-2 bg-red-600 px-1 py-1 rounded text-xs"
                             >
-                                <Trash size={14} color="red" />
+                                <Trash size={14} color="white" />
                             </button>
 
                             {index === 0 && (

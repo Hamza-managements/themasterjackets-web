@@ -1,6 +1,6 @@
 #mainHeader {
     top: 0;
-    z-index: 1;
+    z-index: 1001;
     background-color: #fff;
 }
 
@@ -267,7 +267,7 @@
         justify-content: space-between;
         align-items: center;
         width: 100%;
-    }    
+    }
 
     .fs-main-header {
         padding: 15px 20px;
@@ -294,7 +294,7 @@
         opacity: 1;
     }
 
-    .fs-dropdown-menu-user{
+    .fs-dropdown-menu-user {
         right: 0;
         left: auto;
     }

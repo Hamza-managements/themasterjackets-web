@@ -1,20 +1,27 @@
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
 .main-content {
-  min-height: 120vh; 
-  position: relative;
-  z-index: 1;
-  background: var(--light);
+    flex: 1;
+    background: var(--light);
+    position: relative;
+    z-index: 1;
 }
 
 .luxury-footer {
-  position: sticky;
-  bottom: 0;
-  left: 0;
-  z-index: 0;
-  overflow-x: hidden;
-  background-color: var(--black);
-  color: var(--beige) !important;
-  padding-top: 2rem;
-  border-top: 3px solid var(--dark-red);
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--black);
+    color: var(--beige) !important;
+    padding: 4rem 0 0;
+    border-top: 3px solid var(--dark-red);
+    overflow-x: hidden;
+    z-index: 0;
 }
 
 .footer-heading {
@@ -208,15 +215,25 @@
 
 
 .footer-brand {
-  width: 100%;
-  text-align: center;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .footer-brand h2 {
-  font-size: clamp(2rem, 6vw, 6rem); 
-  letter-spacing: 0.5rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.9);
+    font-size: clamp(2rem, 6vw, 6rem);
+    letter-spacing: 0.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Mobile footer styles */
+@media (max-width: 768px) {
+    .footer-brand {
+        display: none;
+    }
+    .luxury-footer {
+        position: relative;
+    }
 }

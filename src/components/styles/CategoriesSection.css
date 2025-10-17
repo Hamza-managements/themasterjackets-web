@@ -1,15 +1,11 @@
 /* CSS for the Categories Section of the The Maste Jackets */
 .categories-section {
-    padding-top: 3rem;
-    padding-left: clamp(1rem, 4vw, 3rem);
-    padding-right: clamp(1rem, 4vw, 3rem);
     background-color: var(--beige);
 }
 
 .container-categories {
     width: 100%;
     max-width: 1600px;
-    margin: 0 auto;
 }
 
 .categories-section-header {
@@ -33,12 +29,10 @@
 .categories-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
 }
 
 .category-card {
     background: white;
-    border-radius: 10px;
     overflow: hidden;
     box-shadow: var(--shadow);
     transition: var(--transition);
@@ -46,7 +40,6 @@
 }
 
 .category-card:hover {
-    transform: translateY(-10px);
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
 }
 

@@ -145,17 +145,21 @@ export default function Footer() {
                 </div>
               </div>
             )}
-            
+
             {toastMessage && (
               <div class="toast-message-footer">
                 {toastMessage}
               </div>
-           )}
+            )}
 
           </div>
         </div>
       </div>
 
+      <div className="footer-brand">
+        <h2>THE MASTER JACKETS</h2>
+      </div>
+      
       <div className="footer-bottom">
         <div className="row align-items-center">
           <div className="col-md-6">

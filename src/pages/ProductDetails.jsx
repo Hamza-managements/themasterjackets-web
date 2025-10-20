@@ -373,12 +373,16 @@ const ProductDetails = () => {
                     <h3 className="fs-6 mb-2"><strong>What's Included</strong></h3>
                     {product?.attributes && (
                       <ul className="list-disc pl-5 space-y-1">
-                        {Object.entries(product.attributes).map(([key, value]) => (
-                          <li key={key} className="text-secondary">
-                            <strong className="capitalize">{key.replace(/([A-Z])/g, ' $1')}:</strong>{" "}
-                            {Array.isArray(value) ? value.join(", ") : value || "N/A"}
-                          </li>
-                        ))}
+                        {Object.entries(product.attributes)
+                          .filter(([key]) => !["weight", "season", "badge"].includes(key)) // 👈 filter out unwanted keys
+                          .map(([key, value]) => (
+                            <li key={key} className="text-secondary">
+                              <strong className="capitalize">
+                                {key.replace(/([A-Z])/g, " $1")}:
+                              </strong>{" "}
+                              {Array.isArray(value) ? value.join(", ") : value || "N/A"}
+                            </li>
+                          ))}
                       </ul>
                     )}
                   </div>

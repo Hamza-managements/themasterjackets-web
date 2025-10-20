@@ -37,7 +37,10 @@ const AmazonStyleProductPage = () => {
       description: '',
       keywords: []
     },
-    faq: [],
+    faq: [{
+      "question": "How to wash the Leather Jacket",
+      "answer": "Use a soft cloth or brush to clean dust — never a washing machine or dry-cleaning.\nApply petroleum jelly or baby oil to keep leather soft and shiny.\nNever use an iron or heat to remove wrinkles.\nIf wet, let it air-dry naturally.\nReal leather has a natural skin smell that goes away when aired out."
+    }],
     tags: [],
     attributes: {
       material: '',
@@ -1096,7 +1099,7 @@ const AmazonStyleProductPage = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Meta Description *
                         <span className="text-xs text-gray-500 ml-2">
-                          {formData.meta.description.length}/160 characters
+                          {formData.meta.description.length}/260 characters
                         </span>
                       </label>
                       <textarea
@@ -1108,11 +1111,11 @@ const AmazonStyleProductPage = () => {
                         rows={4}
                         className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500"
                         placeholder="Compelling meta description that encourages clicks"
-                        maxLength={160}
+                        maxLength={260}
                       />
                     </div>
 
-                    <div>
+                    {/* <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Keywords
                       </label>
@@ -1153,7 +1156,55 @@ const AmazonStyleProductPage = () => {
                           ))}
                         </div>
                       </div>
+                    </div> */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Meta Description / Keywords
+                      </label>
+
+                      <textarea
+                        style={{ border: '1px solid #2564eb7e' }}
+                        onChange={(e) => {
+                          const paragraph = e.target.value;
+
+                          const extractedKeywords = paragraph
+                            .split(",")
+                            .filter((word) => word.length > 3)
+                            .map((word) => word.toLowerCase())
+                            .slice(0, 20);
+                          setFormData((prev) => ({
+                            ...prev,
+                            meta: {
+                              ...prev.meta,
+                              keywords: extractedKeywords,
+                            },
+                          }));
+                        }}
+                        placeholder="Paste a paragraph; keywords will be generated automatically"
+                        rows={4}
+                        className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      />
+
+                      {formData.meta.keywords.length > 0 && (
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {formData.meta.keywords.map((keyword, index) => (
+                            <span
+                              key={index}
+                              className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                            >
+                              #{keyword}
+                              <button
+                                onClick={() => removeKeyword(index)}
+                                className="hover:text-blue-900"
+                              >
+                                <Trash2 size={12} />
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
+
                   </div>
 
                   {/* Product Tags */}

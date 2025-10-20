@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import {
   RotateCw,
   Plus,
@@ -8,7 +8,7 @@ import {
   DollarSign,
   Search,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { deleteProduct } from "../../utils/ProductServices";
 import { useProducts } from "../../context/ProductContext";
@@ -45,7 +45,7 @@ const ManageProducts = () => {
       result.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
     if (sortBy === "name")
       result.sort((a, b) =>
-        a.productTitle.localeCompare(b.productTitle)
+        a.productName.localeCompare(b.productName)
       );
 
     return result;
@@ -109,6 +109,7 @@ const ManageProducts = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
+       <Link to='/' target="_blank" className="hover:underline"><h3 className="text-center text-3xl font-bold text-gray-700 mt-2">The Master Jackets</h3></Link>
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Manage Products</h1>
@@ -257,7 +258,7 @@ const ManageProducts = () => {
                           className="w-12 h-12 object-cover rounded-md"
                         />
                         <div>
-                          <p className="font-medium text-gray-900">{product.productName}</p>
+                          <Link target="_blank" to={`/products-details/${product._id}`} className="hover:underline"><p className="font-medium text-gray-900">{product.productName}</p></Link>
                           <p className="text-sm text-gray-500">{product.parentStockKeepingUnit}</p>
                         </div>
                       </div>

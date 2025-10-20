@@ -148,60 +148,64 @@ const AdminDashboard = () => {
         <div className={`flex h-screen bg-gray-100 ${darkMode ? "dark bg-gray-800" : "bg-white"}`}>
             {/* Sidebar */}
             <div
-                className={`${sidebarOpen ? "w-48" : "w-0"} ${darkMode ? "dark bg-gray-800" : "bg-white"}overflow-hidden transition-all duration-300 shadow-md md:relative z-10`}>
-                <div className={`p-4 flex justify-between items-center border-b border-gray-200 ${darkMode ? "dark bg-gray-800" : ""}`}   >
-                    {sidebarOpen && (
+                className={`${sidebarOpen ? "w-32" : "w-0"} ${darkMode ? "dark bg-gray-800" : "bg-white"} transition-all duration-300 shadow-md md:relative z-10`}>
+                {sidebarOpen && (
+                    <div className={`p-4 flex justify-between items-center border-b border-gray-200 ${darkMode ? "dark bg-gray-800" : ""}`}   >
                         <h3
                             className="text-xl font-bold text-gray-800 dark:text-white cursor-pointer"
                             onClick={() => setSidebarOpen(!sidebarOpen)}
                         >
                             AdminPanel
                         </h3>
-                    )}
-                </div>
+                    </div>
+                )}
 
-                <nav className={`mt-6 ${sidebarOpen ? '' : 'd-none'}`}>
+                <nav className={`mt-0 ${sidebarOpen ? '' : 'd-none'}`}>
                     <NavItem
                         icon={<FiHome />}
                         text="Dashboard"
                         active={activeMenu === 'dashboard'}
                         expanded={sidebarOpen}
-                        onClick={() => setActiveMenu('dashboard')}
+                        onClick={() => { setActiveMenu('dashboard'); setSidebarOpen(!sidebarOpen) }}
                     />
                     <NavItem
                         icon={<FiUsers />}
                         text="Users"
                         active={activeMenu === 'users'}
                         expanded={sidebarOpen}
-                        onClick={() => setActiveMenu('users')}
+                        onClick={() => { setActiveMenu('users'); setSidebarOpen(!sidebarOpen) }}
+
                     />
                     <NavItem
                         icon={<FiShoppingCart />}
                         text="Products"
                         active={activeMenu === 'products'}
                         expanded={sidebarOpen}
-                        onClick={() => setActiveMenu('products')}
+                        onClick={() => { setActiveMenu('products'); setSidebarOpen(!sidebarOpen) }}
                     />
                     <NavItem
                         icon={<FiShoppingCart />}
                         text="Orders"
                         active={activeMenu === 'orders'}
                         expanded={sidebarOpen}
-                        onClick={() => setActiveMenu('orders')}
+                        onClick={() => { setActiveMenu('orders'); setSidebarOpen(!sidebarOpen) }}
+
                     />
                     <NavItem
                         icon={<FiMail />}
                         text="Messages"
                         active={activeMenu === 'messages'}
                         expanded={sidebarOpen}
-                        onClick={() => setActiveMenu('messages')}
+                        onClick={() => { setActiveMenu('messages'); setSidebarOpen(!sidebarOpen) }}
+
                     />
                     <NavItem
                         icon={<FiSettings />}
                         text="Settings"
                         active={activeMenu === 'settings'}
                         expanded={sidebarOpen}
-                        onClick={() => setActiveMenu('settings')}
+                        onClick={() => { setActiveMenu('settings'); setSidebarOpen(!sidebarOpen) }}
+
                     />
                 </nav>
             </div>
@@ -212,6 +216,15 @@ const AdminDashboard = () => {
                 <header className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} shadow-sm p-4 flex justify-between items-center top-0 z-10`}>
                     <div className="flex items-center justify-between">
                         {mobileView && (
+                            <button
+                                onClick={() => setSidebarOpen(!sidebarOpen)}
+                                className={`p-2 rounded-lg transition ${darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
+                                    }`}
+                            >
+                                <FiMenu size={20} className="text-gray-700 dark:text-gray-200" />
+                            </button>
+                        )}
+                        {!sidebarOpen && !mobileView && (
                             <button
                                 onClick={() => setSidebarOpen(!sidebarOpen)}
                                 className={`p-2 rounded-lg transition ${darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
@@ -285,7 +298,7 @@ const AdminDashboard = () => {
                                 <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
                                     {user && user.userName ? user.userName.charAt(0).toUpperCase() : 'A'}
                                 </div>
-                                {sidebarOpen && (
+                                {!sidebarOpen && !mobileView && (
                                     <span className={`${darkMode ? 'text-white' : 'text-gray-700'}`}>{user.userName}</span>
                                 )}
                             </button>
@@ -467,7 +480,7 @@ const AdminDashboard = () => {
                                                     </span>
                                                 </td>
                                                 <td className="px-4 py-3 text-right">
-                                                    <button onClick={(e)=> deleteUserFromDashboard(user._id)} className="text-red-600 hover:underline dark:text-red-400">delete</button>
+                                                    <button onClick={(e) => deleteUserFromDashboard(user._id)} className="text-red-600 hover:underline dark:text-red-400">delete</button>
                                                 </td>
                                             </tr>
                                         ))}

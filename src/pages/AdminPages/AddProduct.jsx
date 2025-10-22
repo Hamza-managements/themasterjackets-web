@@ -15,6 +15,7 @@ import {
   Ruler,
   Scissors,
   Badge,
+  Trash,
 } from 'lucide-react';
 import { AuthContext } from '../../components/auth/AuthProvider';
 import Swal from "sweetalert2";
@@ -95,7 +96,7 @@ const AmazonStyleProductPage = () => {
           productImages: [],
           productPrice: { originalPrice: 0, discountedPrice: 0, currency: "USD" },
           stockQuantity: 0,
-          attributes: { color: "", size: "", material: "", weight: "1.2 kg" },
+          attributes: { color: "", size: ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"], material: "", weight: "1.2 kg" },
           inventoryStatus: "in stock",
           shipping: { shippingCharges: 0, isFreeShipping: true, estimatedDeliveryDays: 5 },
           ratings: { count: 5 },
@@ -282,16 +283,19 @@ const AmazonStyleProductPage = () => {
     }));
   };
 
-  const updateStyle = (style, checked) => {
-    setFormData(prev => ({
-      ...prev,
-      attributes: {
-        ...prev.attributes,
-        style: checked
-          ? [...prev.attributes.style, style]
-          : prev.attributes.style.filter(s => s !== style)
-      }
-    }));
+  const [customStyle, setCustomStyle] = useState("");
+
+  const updateStyle = (style, isChecked) => {
+    setFormData((prev) => {
+      const updatedStyles = isChecked
+        ? [...prev.attributes.style, style]
+        : prev.attributes.style.filter((s) => s !== style);
+
+      return {
+        ...prev,
+        attributes: { ...prev.attributes, style: updatedStyles },
+      };
+    });
   };
 
   const TabButton = ({ id, icon: Icon, label, isActive }) => (
@@ -373,11 +377,11 @@ const AmazonStyleProductPage = () => {
   };
 
   const seasonOptions = ['Spring', 'Summer', 'Fall', 'Winter', 'All'];
-  const styleOptions = ['Casual', 'Formal', 'Sport', 'Business', 'Vintage', 'Modern'];
+  const [styleOptions, setStyleOptions] = useState(['Casual', 'Formal', 'Sport', 'Business', 'Vintage', 'Modern']);
   const fitOptions = ['Slim', 'Regular', 'Relaxed', 'Oversized'];
   const closureOptions = ['Zipper', 'Buttons', 'Velcro', 'Snap', 'Elastic'];
   const genderOptions = ['Men', 'Women'];
-  const badgeOptions = ['None', 'New Arrival', 'Best Seller', 'Limited Edition', 'Exclusive', 'Sale']
+  const badgeOptions = ['None', 'New Arrival', 'Best Seller', 'Limited Edition', 'Exclusive', 'Sale'];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -515,22 +519,47 @@ const AmazonStyleProductPage = () => {
                   <h3 className="text-lg font-medium text-gray-900 mb-4">Main Product Images</h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {imagePreviews.map((preview, index) => (
-                      <div key={index} className="relative group">
+                      // <div key={index} className="relative group">
+                      //   <img
+                      //     src={preview}
+                      //     alt={`Product ${index + 1}`}
+                      //     className="w-full h-48 object-cover rounded-lg border"
+                      //   />
+                      //   <button
+                      //     onClick={() => removeImage(index)}
+                      //     className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      //   >
+                      //     <Trash2 size={14} />
+                      //   </button>
+                      // </div>
+                      <div
+                        key={index}
+                        className="relative group overflow-visible"
+                        style={{ position: "relative", zIndex: 10 }}
+                      >
                         <img
                           src={preview}
                           alt={`Product ${index + 1}`}
-                          className="w-full h-32 object-cover rounded-lg border"
+                          className="w-full h-48 object-cover rounded-lg border z-0"
                         />
+
+                        {/* Delete Button */}
                         <button
                           onClick={() => removeImage(index)}
-                          className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-2 right-2 bg-red-500 px-1 py-1 rounded text-xs z-40 cusor-pointer"
                         >
-                          <Trash2 size={14} />
+                          <Trash size={16} color="white" />
                         </button>
+                        {/* Main Badge */}
+                        {index === 0 && (
+                          <span className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded text-xs z-40">
+                            Main
+                          </span>
+                        )}
                       </div>
                     ))}
 
-                    <label className="flex flex-col items-center justify-center w-full h-32rounded-lg cursor-pointer transition-colors label-border">
+                    <label className="flex flex-col items-center justify-center w-full h-48 rounded-lg cursor-pointer transition-colors label-border">
                       <Upload size={24} className="text-gray-400 mb-2" />
                       <span className="text-sm text-gray-500">Upload Image</span>
                       <input
@@ -575,7 +604,7 @@ const AmazonStyleProductPage = () => {
                         </button>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
                             Variation Name
@@ -618,7 +647,7 @@ const AmazonStyleProductPage = () => {
                           />
                         </div>
 
-                        <div className="mb-3">
+                        {/* <div className="mb-3">
                           <label className="form-label fw-medium">Size</label>
                           <select
                             value={variation.attributes.size}
@@ -634,8 +663,42 @@ const AmazonStyleProductPage = () => {
                             <option value="XL">XL</option>
                             <option value="XXL">XXL</option>
                           </select>
-                        </div>
+                        </div> */}
 
+                        <div className="mb-3">
+                          <label className="form-label fw-medium">Available Sizes</label>
+
+                          <div className="flex flex-wrap gap-3 mt-2">
+                            {["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"].map((size) => {
+                              const isChecked = variation.attributes.size?.includes(size) || false;
+
+                              return (
+                                <label key={size} className="flex items-center gap-2 cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    checked={isChecked}
+                                    onChange={(e) => {
+                                      const checked = e.target.checked;
+                                      let updatedSizes = variation.attributes.size || [];
+
+                                      if (checked) {
+                                        // Add size if checked
+                                        updatedSizes = [...updatedSizes, size];
+                                      } else {
+                                        // Remove size if unchecked
+                                        updatedSizes = updatedSizes.filter((s) => s !== size);
+                                      }
+
+                                      updateNestedVariation(index, "attributes", "size", updatedSizes);
+                                    }}
+                                    className="accent-blue-600 w-4 h-4"
+                                  />
+                                  <span className="uppercase text-gray-700">{size}</span>
+                                </label>
+                              );
+                            })}
+                          </div>
+                        </div>
 
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -775,22 +838,22 @@ const AmazonStyleProductPage = () => {
                         </label>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                           {variation.productImages.map((image, imgIndex) => (
-                            <div key={imgIndex} className="relative group">
+                            <div key={imgIndex} className="relative group overflow-visible">
                               <img
                                 src={image}
                                 alt={`Variation ${index + 1} - ${imgIndex + 1}`}
-                                className="w-full h-24 object-cover rounded-lg border"
+                                className="w-full h-48 object-cover rounded-lg border z-0"
                               />
                               <button
                                 onClick={() => removeImage(imgIndex, index)}
-                                className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="absolute top-2 right-2 bg-red-500 px-1 py-1 rounded text-xs z-40 cusor-pointer"
                               >
-                                <Trash2 size={12} />
+                                <Trash2 size={12} color={"#fafbfbff"} />
                               </button>
                             </div>
                           ))}
 
-                          <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
+                          <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
                             <Upload size={20} className="text-gray-400 mb-1" />
                             <span className="text-xs text-gray-500">Add Image</span>
                             <input
@@ -1041,11 +1104,13 @@ const AmazonStyleProductPage = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-3">
                         Style
                       </label>
-                      <div className="flex flex-col items-start space-y-2">
-                        {styleOptions.map(style => (
-                          <label key={style} className="flex items-center space-x-2">
+
+                      {/* Checkboxes for existing style options */}
+                      <div className="flex flex-col items-start space-y-2 mb-3">
+                        {styleOptions.map((style) => (
+                          <label key={style} className="flex items-center space-x-2 cursor-pointer">
                             <input
-                              style={{ border: '1px solid #2564eb7e' }}
+                              style={{ border: "1px solid #2564eb7e" }}
                               type="checkbox"
                               checked={formData.attributes.style.includes(style)}
                               onChange={(e) => updateStyle(style, e.target.checked)}
@@ -1055,7 +1120,32 @@ const AmazonStyleProductPage = () => {
                           </label>
                         ))}
                       </div>
+
+                      {/* Input for custom style */}
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={customStyle}
+                          onChange={(e) => setCustomStyle(e.target.value)}
+                          placeholder="Add custom style"
+                          className="flex-1 px-3 py-2 rounded-lg border focus:ring-2 focus:ring-blue-500 border-blue-300"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (customStyle.trim() && !formData.attributes.style.includes(customStyle.trim())) {
+                              updateStyle(customStyle.trim(), true);
+                              setStyleOptions((prev) => [...prev, customStyle.trim()]);
+                              setCustomStyle("");
+                            }
+                          }}
+                          className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                          Add
+                        </button>
+                      </div>
                     </div>
+
                   </div>
                 </div>
               </div>

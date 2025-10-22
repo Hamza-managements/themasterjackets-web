@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { addProductVariation, deleteProductVariation, getSingleProduct } from '../../utils/ProductServices';
 import { useProducts } from "../../context/ProductContext";
 import Swal from "sweetalert2";
@@ -20,7 +20,7 @@ const AllProductManagementPage = () => {
     productImages: [],
     productPrice: { originalPrice: 0, discountedPrice: 0, currency: "USD" },
     stockQuantity: 0,
-    attributes: { color: "", size: "", material: "Leather", weight: "1.5 Kg" },
+    attributes: { color: "", size: ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"], material: "Leather", weight: "1.5 Kg" },
     inventoryStatus: "in stock",
     shipping: { shippingCharges: 0, isFreeShipping: false, estimatedDeliveryDays: 5 },
     ratings: { count: 5 },
@@ -143,7 +143,7 @@ const AllProductManagementPage = () => {
                 ))}
               </div>
               <div className="product-basic-info">
-                <h3>{product.productName}</h3>
+                <Link target="_blank" to={`/products-details/${product._id}`} className='hover:underline'><h3>{product.productName}</h3></Link>
                 <p className="product-sku">SKU: {product.parentStockKeepingUnit}</p>
               </div>
             </div>
@@ -183,10 +183,10 @@ const AllProductManagementPage = () => {
                         <img src={variation?.productImages[0]} alt={variation?.variationName} />
                       </div>
                       <div className="variation-info">
-                        <span className="variation-name">{variation?.variationName}</span>
+                        <span className="variation-name">{variation?.variationName} | {variation?.attributes.color}</span>
                         <span className="variation-sku">{variation?.stockKeepingUnit}</span>
                         <span className="variation-details">
-                          {variation?.attributes.size} | {variation?.attributes.color} | $
+                          {variation?.attributes.size.map((s)=> `${s} `)}  | $
                           {variation?.productPrice.originalPrice}
                         </span>
                       </div>
@@ -236,7 +236,7 @@ const AllProductManagementPage = () => {
                 <label>Variation Name *</label>
                 <input
                   type="text"
-                  placeholder='E.g., "Black Leather Jacket - Size M"'
+                  placeholder='E.g., "Black Leather Jacket"'
                   value={currentVariation.variationName}
                   onChange={(e) =>
                     setCurrentVariation((prev) => ({ ...prev, variationName: e.target.value }))
@@ -310,7 +310,7 @@ const AllProductManagementPage = () => {
                   }
                 />
               </div>
-              <div className={`form-group ${showErrors && !currentVariation.attributes.size ? 'error' : ''}`}>
+              {/* <div className={`form-group ${showErrors && !currentVariation.attributes.size ? 'error' : ''}`}>
                 <label>Size *</label>
                 <select
                   value={currentVariation.attributes.size}
@@ -326,7 +326,55 @@ const AllProductManagementPage = () => {
                     <option key={s} value={s}>{s}</option>
                   ))}
                 </select>
+              </div> */}
+              <div
+                className={`checkbox-group sizes  ${showErrors &&
+                  (!currentVariation.attributes.size ||
+                    currentVariation.attributes.size.length === 0)
+                  ? "error"
+                  : ""
+                  }`}
+              >
+                <label className='label mr-2 pt-2'>Available Sizes *</label>
+                <hr />
+                <div className="flex flex-wrap gap-3 mt-2">
+                  {["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"].map((s) => {
+                    const isChecked =
+                      currentVariation.attributes.size?.includes(s) || false;
+
+                    return (
+                      <label key={s} className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={(e) => {
+                            const checked = e.target.checked;
+                            setCurrentVariation((prev) => {
+                              const currentSizes = prev.attributes.size || [];
+                              let updatedSizes;
+
+                              if (checked) {
+                                // Add size if checked
+                                updatedSizes = [...currentSizes, s];
+                              } else {
+                                // Remove size if unchecked
+                                updatedSizes = currentSizes.filter((size) => size !== s);
+                              }
+
+                              return {
+                                ...prev,
+                                attributes: { ...prev.attributes, size: updatedSizes },
+                              };
+                            });
+                          }}
+                        />
+                        {s}
+                      </label>
+                    );
+                  })}
+                </div>
               </div>
+
 
               <div className="form-group">
                 <label>Shipping Charges *</label>
@@ -342,10 +390,11 @@ const AllProductManagementPage = () => {
                   }
                 />
               </div>
-              <div className="form-group">
+              <div className="checkbox-group">
                 <input
                   type="checkbox"
                   checked={currentVariation.shipping.isFreeShipping}
+                  className='mt-1'
                   onChange={(e) =>
                     setCurrentVariation((prev) => ({
                       ...prev,
@@ -741,16 +790,20 @@ display: flex;
 
         .checkbox-group {
   display: flex;
-  align-items: center;
+  align-items: start;
   margin-bottom: 0.75rem;
   flex-wrap: wrap;
 }
 
-.checkbox-group label {
+.sizes {
+flex-direction: column;
+}
+
+.checkbox-group .label {
   margin-top: 3px;
   display: flex;
   align-items: center;
-  font-size: 14px;
+  font-weight: 600;
   color: #333;
   cursor: pointer;
 }

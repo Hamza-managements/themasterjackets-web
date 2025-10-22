@@ -32,13 +32,10 @@ const ProductDetails = () => {
     try {
       setIsLoading(true);
       const fetchedProduct = await getSingleProduct(productId);
-      console.log("Fetched product details:", fetchedProduct);
-
       if (fetchedProduct) {
         setProduct(fetchedProduct);
         const res = await getProductBySubCategoryId(fetchedProduct.categoryId._id, fetchedProduct.subCategoryId)
         setRelatedProducts(res?.data);
-        console.log("Related products data:", relatedProducts);
         setSelectedVariation(fetchedProduct.variations?.[0] || null);
         setActiveImage(
           fetchedProduct.variations?.[0]?.productImages?.[0] ||
@@ -312,7 +309,7 @@ const ProductDetails = () => {
               {/* ✅ Sizes */}
               <div className="variant-selector">
                 <div className="variant-options pt-2">
-                  {['XS', 'Small', 'Medium', 'Large', 'XL', '2XL', '3XL', '4XL'].map(size => (
+                  {selectedVariation.attributes.size.map(size => (
                     <div
                       key={size}
                       className={`variant-option ${selectedSize === size ? 'selected' : ''}`}

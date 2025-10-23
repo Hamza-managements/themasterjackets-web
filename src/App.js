@@ -27,6 +27,7 @@ import CategoryPage from './components/CategoryPage';
 import AuthLayout from './layouts/AuthLayout';
 import MainLayout from './layouts/MainLayout';
 import ScrollToTop from './components/ScrollToTop';
+import SearchResults from './pages/SearchResults';
 // import AccountSettings from './components/AccountsSettings';
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
               <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
               <Route path="/admin-dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
               <Route path="/category/:slug" element={<CategoryPage />} />
+              <Route path="/search" element={<SearchResults />} />
               <Route path="/products/:slug/all" element={<ProductListingPage />} />
               <Route path="/products/:categorySlug/:slug" element={<SubCategoryProductPage />} />
               <Route path="/products-details/:productId" element={<ProductDetails />} />

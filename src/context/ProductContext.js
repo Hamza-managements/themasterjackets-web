@@ -9,7 +9,11 @@ export const ProductProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [lastFetched, setLastFetched] = useState(null);
 
-  // ✅ Move the function outside useEffect
+  // 🔍 Global search states
+  const [query, setQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+
+  // ✅ Fetch all products (with caching)
   const fetchAllProducts = async (forceRefresh = false) => {
     try {
       setLoading(true);
@@ -18,7 +22,7 @@ export const ProductProvider = ({ children }) => {
       const cachedTime = localStorage.getItem("productsFetchedAt");
       const now = Date.now();
 
-      // ✅ Use cache if valid and not forced to refresh
+      // 🧠 Use cache if valid and not forcing refresh
       if (
         cachedProducts &&
         cachedTime &&
@@ -31,7 +35,6 @@ export const ProductProvider = ({ children }) => {
         return;
       }
 
-      // ✅ Fetch new data from API
       const data = await getProducts();
 
       if (data && Array.isArray(data)) {
@@ -45,7 +48,6 @@ export const ProductProvider = ({ children }) => {
     } catch (err) {
       console.error("❌ Error fetching products:", err);
 
-      // Fallback to cache if API fails
       const fallback = localStorage.getItem("allProducts");
       if (fallback) {
         setProducts(JSON.parse(fallback));
@@ -56,14 +58,37 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
+  // 🔁 Auto refresh every 6 hours
   useEffect(() => {
-    fetchAllProducts(); // initial load
-
-    // Auto-refresh every 6 hours
+    fetchAllProducts();
     const interval = setInterval(() => fetchAllProducts(true), REFRESH_INTERVAL);
-
     return () => clearInterval(interval);
   }, []);
+
+  // 🔍 Global Search Logic
+  const handleGlobalSearch = (input) => {
+    setQuery(input);
+
+    if (!input.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    const lowerInput = input.toLowerCase();
+
+    const filtered = products.filter((product) => {
+      const nameMatch = product.productName?.toLowerCase().includes(lowerInput);
+      const descMatch = product.productDescription?.toLowerCase().includes(lowerInput);
+
+      const tagMatch = Array.isArray(product.tags)
+        ? product.tags.some((tag) => tag.toLowerCase().includes(lowerInput))
+        : false;
+
+      return nameMatch || descMatch || tagMatch;
+    });
+
+    setSearchResults(filtered);
+  };
 
   return (
     <ProductContext.Provider
@@ -72,6 +97,10 @@ export const ProductProvider = ({ children }) => {
         loading,
         lastFetched,
         refreshProducts: () => fetchAllProducts(true),
+
+        query,
+        searchResults,
+        handleGlobalSearch,
       }}
     >
       {children}

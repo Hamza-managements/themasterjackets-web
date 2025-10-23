@@ -141,6 +141,7 @@ const SubCategoryProductPage = () => {
         });
 
         setFilteredProducts(filtered);
+        setShowFilters(false);
     }, [products, filters, sortOption]);
 
     const handleFilterChange = (filterType, value, isCheckbox = false) => {
@@ -278,6 +279,7 @@ const SubCategoryProductPage = () => {
             <div className="plp-content">
                 {/* Filters Sidebar */}
                 <aside className={`product-filters ${showFilters ? 'active' : ''}`}>
+                    <div className={`${showFilters ? 'product-filters-top-margin' : 'd-none'}`}></div>
                     <div className="filter-header">
                         <h2>Filters</h2>
                         <div className="filter-actions">
@@ -1132,6 +1134,11 @@ const SubCategoryProductPage = () => {
     .product-filters {
         width: 100%;
         max-width: none;
+    }
+    
+    .product-filters-top-margin {
+       height: 18vh;
+       bgackground: white;
     }
 }
 

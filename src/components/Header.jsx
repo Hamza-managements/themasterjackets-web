@@ -1,10 +1,11 @@
 import './styles/Header.css';
 import { useContext, useState, useEffect, useRef } from 'react';
 import { openCart } from './Cart';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from './auth/AuthProvider';
 import { fetchCategoriesAll } from '../utils/CartUtils';
 import Aos from 'aos';
+import { useProducts } from '../context/ProductContext';
 
 
 export default function Header() {
@@ -34,9 +35,19 @@ export default function Header() {
     fetchCategories();
   }, []);
 
-  // useEffect(() => {
-  //   console.log("Categories in state after update:", categories);
-  // }, [categories])
+  const [input, setInput] = useState("");
+  const { handleGlobalSearch } = useProducts();
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    handleGlobalSearch(input);
+    navigate("/search");
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") handleSearch();
+  };
+
 
   const handleMainLinkClick = (index, hasSubmenu, e) => {
     if (window.innerWidth <= 992 && hasSubmenu) {
@@ -109,11 +120,12 @@ export default function Header() {
                     <div className={`fs-mobile-submenu ${activeSubmenu === 0 ? 'fs-active' : ''}`}>
                       <div className="fs-dropdown-title">Categories</div>
                       {cat.subCategories?.map((sub) => (
-                        <Link key={sub._id} to={`/subcategory/${sub._id}`}>{sub.categoryName}</Link>
-                      ))}<Link to="/product">Biker Leather Jackets</Link>
+                        <Link key={sub._id} to={`/products/${cat.slug}/${sub.slug}`}>{sub.categoryName}</Link>
+                      ))}
                     </div>
                   </div>
                 )}
+
                 {/* <div className="fs-nav-item">
                   <Link to="/men"
                     className="fs-main-link"
@@ -255,8 +267,18 @@ export default function Header() {
             <div className={`${isMobileMenuOpen ? 'd-none' : 'fs-header-actions '}`}>
               {/* Search Bar */}
               <div className="fs-search-bar">
-                <i className="fas fa-search"></i>
-                <input type="text" placeholder="Search..." />
+                <i
+                  className="fas fa-search"
+                  onClick={handleSearch}
+                  style={{ cursor: "pointer" }}
+                ></i>
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                />
               </div>
 
               {/* User Dropdown */}

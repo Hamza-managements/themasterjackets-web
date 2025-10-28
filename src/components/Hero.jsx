@@ -85,7 +85,7 @@ const Hero = () => {
       <div className="absolute inset-0 flex justify-center items-end pb-16 z-10" data-aos="fade-up">
         <Link
           to={slides[current].link}
-          className="hero-banner-btnn bg-white text-black px-6 py-3 rounded-full font-semibold uppercase tracking-wide hover:bg-black hover:text-white transition-all duration-300"
+          className="hero-banner-btnn px-6 py-3 rounded-full font-semibold uppercase"
         >
           View Collection
         </Link>

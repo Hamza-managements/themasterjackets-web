@@ -327,6 +327,8 @@ const AllProductManagementPage = () => {
                   ))}
                 </select>
               </div> */}
+
+              {/* Sizes */}
               <div
                 className={`checkbox-group sizes  ${showErrors &&
                   (!currentVariation.attributes.size ||
@@ -374,7 +376,6 @@ const AllProductManagementPage = () => {
                   })}
                 </div>
               </div>
-
 
               <div className="form-group">
                 <label>Shipping Charges *</label>

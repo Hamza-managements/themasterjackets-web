@@ -656,14 +656,10 @@ const AmazonStyleProductPage = () => {
                             className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 uppercase"
                           >
                             <option value="" disabled>Select size</option>
-                            <option value="XS">XS</option>
-                            <option value="S">S</option>
-                            <option value="M">M</option>
-                            <option value="L">L</option>
-                            <option value="XL">XL</option>
-                            <option value="2XL">2XL</option>
-                            <option value="3XL">3XL</option>
-                            <option value="4XL">4XL</option>
+                            <option value="">Select Size</option>
+                  {["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"].map((s) => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
                           </select>
                         </div> */}
 

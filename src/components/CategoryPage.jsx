@@ -7,7 +7,6 @@ import { Skeleton } from "@mui/material";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import FeaturedProductsCarousel from "./FeaturedProductsCarousel";
 import { fetchCategoriesById } from "../utils/CartUtils";
 
 const CategoryPage = () => {
@@ -171,7 +170,6 @@ const CategoryPage = () => {
               </div>
             ))}
           </div> */}
-          <FeaturedProductsCarousel title="Customer Favorites" />
         </div>
       ))}
     </div>

@@ -43,7 +43,6 @@ function App() {
               <Route path="/return-exchange" element={<ReturnPolicy />} />
               <Route path="/contact-us" element={<ContactForm />} />
               <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-              <Route path="/admin-dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
               <Route path="/category/:slug" element={<CategoryPage />} />
               <Route path="/search" element={<SearchResults />} />
               <Route path="/products/:slug/all" element={<ProductListingPage />} />
@@ -64,6 +63,7 @@ function App() {
             {/* admin routes */}
             {/* <Route path="/account/settings" element={<PrivateRoute> <AccountSettings /> </PrivateRoute> } /> */}
             <Route path="/api-testing" element={<APITestingPage />} />
+            <Route path="/admin-dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
             <Route path="/api-categories" element={<CategoryListPage />} />
             <Route path="/add-product" element={<AmazonStyleProductPage />} />
             <Route path="/manage-all-products" element={<AllProductManagementPage />} />

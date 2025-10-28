@@ -1,18 +1,126 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import 'aos/dist/aos.css';
-import './styles/style.css';
+import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 
-export default function Hero() {
+const Hero = () => {
+  const slides = [
+    {
+      desktop: "https://res.cloudinary.com/dekf5dyng/image/upload/v1761633364/1920X900_dpvh6j.jpg",
+      tablet: "https://res.cloudinary.com/dekf5dyng/image/upload/v1761633364/1000X12000_x0s51z.jpg",
+      mobile: "https://res.cloudinary.com/dekf5dyng/image/upload/v1761633364/800X1200_wge46p.jpg",
+      link: "/category/men",
+    },
+    {
+      desktop: "https://res.cloudinary.com/dvmpyh0hj/image/upload/v1760615184/hilkmru9zutcneybpwwc.png",
+      tablet: "https://res.cloudinary.com/dvmpyh0hj/image/upload/v1760615184/hilkmru9zutcneybpwwc.png",
+      mobile: "https://res.cloudinary.com/dvmpyh0hj/image/upload/v1760615184/hilkmru9zutcneybpwwc.png",
+      link: "/category/women",
+    },
+    {
+      desktop: "https://res.cloudinary.com/dekf5dyng/image/upload/v1761633364/1920X900_dpvh6j.jpg",
+      tablet: "https://res.cloudinary.com/dekf5dyng/image/upload/v1761633364/1000X12000_x0s51z.jpg",
+      mobile: "https://res.cloudinary.com/dekf5dyng/image/upload/v1761633364/800X1200_wge46p.jpg",
+      link: "/category/new-in",
+    },
+  ];
+
+  const [current, setCurrent] = useState(0);
+  const touchStartX = useRef(null);
+  const touchEndX = useRef(null);
+
+  // Auto slide
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % slides.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [slides.length]);
+
+  // Handle swipe
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const diff = touchStartX.current - touchEndX.current;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) setCurrent((prev) => (prev + 1) % slides.length);
+      else setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+    }
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
+
   return (
-    <section className="hero">
-      <div className="hero-content" data-aos="fade-up">
-        {/* <h1>Feel The Handmade luxury</h1>
-        <p className="lead">Timeless comfort, rugged elegance. Designed to last a lifetime.</p> */}
-        <Link to="/category/men" className="hero-banner-btnn">
+    <section
+      className="relative w-full h-[90vh] overflow-hidden select-none"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      {slides.map((slide, index) => (
+        <picture
+          key={index}
+          className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${
+            index === current ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          {/* 👇 order matters — smallest screen first */}
+          <source media="(max-width: 640px)" srcSet={slide.mobile} />
+          <source media="(max-width: 1024px)" srcSet={slide.tablet} />
+          <img
+            src={slide.desktop}
+            alt={`Slide ${index + 1}`}
+            className="w-full h-full object-cover"
+          />
+        </picture>
+      ))}
+
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black/20"></div>
+
+      {/* Content */}
+      <div className="absolute inset-0 flex justify-center items-end pb-16 z-10" data-aos="fade-up">
+        <Link
+          to={slides[current].link}
+          className="hero-banner-btnn bg-white text-black px-6 py-3 rounded-full font-semibold uppercase tracking-wide hover:bg-black hover:text-white transition-all duration-300"
+        >
           View Collection
         </Link>
       </div>
+
+      {/* Arrows */}
+      <button
+        onClick={() => setCurrent((prev) => (prev - 1 + slides.length) % slides.length)}
+        className="absolute left-5 top-1/2 -translate-y-1/2 text-white text-3xl z-10 opacity-70 hover:opacity-100"
+      >
+        ‹
+      </button>
+      <button
+        onClick={() => setCurrent((prev) => (prev + 1) % slides.length)}
+        className="absolute right-5 top-1/2 -translate-y-1/2 text-white text-3xl z-10 opacity-70 hover:opacity-100"
+      >
+        ›
+      </button>
+
+      {/* Dots */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrent(index)}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              current === index
+                ? "bg-white scale-110"
+                : "bg-white/50 hover:bg-white/80"
+            }`}
+          ></button>
+        ))}
+      </div>
     </section>
   );
-}
+};
+
+export default Hero;

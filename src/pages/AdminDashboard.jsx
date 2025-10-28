@@ -103,6 +103,43 @@ const AdminDashboard = () => {
         ],
     };
 
+    const bestSellingProducts = [
+        {
+            name: 'Autmn HoodedLeather Jacket',
+            category: 'Men',
+            unitsSold: 320,
+            trend: 90,
+            image:
+                'https://res.cloudinary.com/dekf5dyng/image/upload/v1761389483/mju0f4kotiphnpw7yi4z.jpg',
+        },
+        {
+            name: 'Shearling Bomber',
+            category: 'Men',
+            unitsSold: 275,
+            trend: 76,
+            image:
+                'https://res.cloudinary.com/dekf5dyng/image/upload/v1760617290/x3rivrq4vohh5obcjifn.jpg',
+        },
+        {
+            name: 'Black Biker Leather Jacket',
+            category: 'New In',
+            unitsSold: 190,
+            trend: 62,
+            image:
+                'https://res.cloudinary.com/dekf5dyng/image/upload/v1759832334/oqd8zvybrzdtrsoaxc2f.jpg',
+        },
+        {
+            name: 'Suede Overshirt',
+            category: 'Men',
+            unitsSold: 145,
+            trend: 48,
+            image:
+                'https://res.cloudinary.com/dekf5dyng/image/upload/v1759404249/hdctwk1vrf5vvemzbecf.jpg',
+        },
+    ];
+
+
+
     // Sample recent orders
     const recentOrders = [
         { id: 1, customer: 'John Doe', product: 'Austin Leather Jacket', amount: '$139.00', status: 'Completed' },
@@ -113,8 +150,8 @@ const AdminDashboard = () => {
     ];
 
     // Stats cards data
+    // { title: 'Sales', value: '$12,345', change: '+12%', icon: <FiPieChart /> },
     const stats = [
-        { title: 'Sales', value: '$12,345', change: '+12%', icon: <FiPieChart /> },
         { title: 'Open Orders', value: '126', change: '+7%', icon: <FiShoppingCart /> },
         { title: 'Buyer Messages', value: '4', change: '+5%', icon: <FiMail /> },
         { title: 'Returns and Refunds', value: '2', change: '-3%', icon: <RiRefund2Fill /> },
@@ -145,418 +182,525 @@ const AdminDashboard = () => {
 
 
     return (
-        <div className={`flex h-screen bg-gray-100 ${darkMode ? "dark bg-gray-800" : "bg-white"}`}>
-            {/* Sidebar */}
-            <div
-                className={`${sidebarOpen ? "w-32" : "w-0"} ${darkMode ? "dark bg-gray-800" : "bg-white"} transition-all duration-300 shadow-md md:relative z-10`}>
-                {sidebarOpen && (
-                    <div className={`p-4 flex justify-between items-center border-b border-gray-200 ${darkMode ? "dark bg-gray-800" : ""}`}   >
-                        <h3
-                            className="text-xl font-bold text-gray-800 dark:text-white cursor-pointer"
-                            onClick={() => setSidebarOpen(!sidebarOpen)}
-                        >
-                            AdminPanel
-                        </h3>
-                    </div>
-                )}
-
-                <nav className={`mt-0 ${sidebarOpen ? '' : 'd-none'}`}>
-                    <NavItem
-                        icon={<FiHome />}
-                        text="Dashboard"
-                        active={activeMenu === 'dashboard'}
-                        expanded={sidebarOpen}
-                        onClick={() => { setActiveMenu('dashboard'); setSidebarOpen(!sidebarOpen) }}
-                    />
-                    <NavItem
-                        icon={<FiUsers />}
-                        text="Users"
-                        active={activeMenu === 'users'}
-                        expanded={sidebarOpen}
-                        onClick={() => { setActiveMenu('users'); setSidebarOpen(!sidebarOpen) }}
-
-                    />
-                    <NavItem
-                        icon={<FiShoppingCart />}
-                        text="Products"
-                        active={activeMenu === 'products'}
-                        expanded={sidebarOpen}
-                        onClick={() => { setActiveMenu('products'); setSidebarOpen(!sidebarOpen) }}
-                    />
-                    <NavItem
-                        icon={<FiShoppingCart />}
-                        text="Orders"
-                        active={activeMenu === 'orders'}
-                        expanded={sidebarOpen}
-                        onClick={() => { setActiveMenu('orders'); setSidebarOpen(!sidebarOpen) }}
-
-                    />
-                    <NavItem
-                        icon={<FiMail />}
-                        text="Messages"
-                        active={activeMenu === 'messages'}
-                        expanded={sidebarOpen}
-                        onClick={() => { setActiveMenu('messages'); setSidebarOpen(!sidebarOpen) }}
-
-                    />
-                    <NavItem
-                        icon={<FiSettings />}
-                        text="Settings"
-                        active={activeMenu === 'settings'}
-                        expanded={sidebarOpen}
-                        onClick={() => { setActiveMenu('settings'); setSidebarOpen(!sidebarOpen) }}
-
-                    />
-                </nav>
-            </div>
-
-            {/* Main Content */}
-            <div className="flex-1 overflow-auto">
-                {/* Header */}
-                <header className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} shadow-sm p-4 flex justify-between items-center top-0 z-10`}>
-                    <div className="flex items-center justify-between">
-                        {mobileView && (
-                            <button
+        <>
+            <div className={`flex h-screen bg-gray-100 ${darkMode ? "dark bg-gray-800" : "bg-white"}`}>
+                {/* Sidebar */}
+                <div
+                    className={`${sidebarOpen ? "w-48" : "w-0"} ${darkMode ? "dark bg-gray-800" : "bg-white"} transition-all duration-300 shadow-md md:relative z-10`}>
+                    {sidebarOpen && (
+                        <div className={`p-4 flex justify-between items-center border-b border-gray-200 ${darkMode ? "dark bg-gray-800" : ""}`}   >
+                            <h3
+                                className="text-xl font-bold text-gray-800 dark:text-white cursor-pointer"
                                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                                className={`p-2 rounded-lg transition ${darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
-                                    }`}
                             >
-                                <FiMenu size={20} className="text-gray-700 dark:text-gray-200" />
-                            </button>
-                        )}
-                        {!sidebarOpen && !mobileView && (
-                            <button
-                                onClick={() => setSidebarOpen(!sidebarOpen)}
-                                className={`p-2 rounded-lg transition ${darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
-                                    }`}
-                            >
-                                <FiMenu size={20} className="text-gray-700 dark:text-gray-200" />
-                            </button>
-                        )}
-                        <h3 className="text-xl font-semibold text-gray-800 dark:text-white capitalize ml-2">
-                            {activeMenu}
-                        </h3>
-                    </div>
+                                AdminPanel
+                            </h3>
+                        </div>
+                    )}
 
+                    <nav className={`mt-0 ${sidebarOpen ? '' : 'd-none'}`}>
+                        <NavItem
+                            icon={<FiHome />}
+                            text="Dashboard"
+                            active={activeMenu === 'dashboard'}
+                            expanded={sidebarOpen}
+                            onClick={() => { setActiveMenu('dashboard'); setSidebarOpen(!sidebarOpen) }}
+                        />
+                        <NavItem
+                            icon={<FiUsers />}
+                            text="Users"
+                            active={activeMenu === 'users'}
+                            expanded={sidebarOpen}
+                            onClick={() => { setActiveMenu('users'); setSidebarOpen(!sidebarOpen) }}
 
-                    <div className="flex items-center space-x-4">
-                        <button
-                            onClick={() => setDarkMode(!darkMode)}
-                            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300"
-                            aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-                        >
-                            {darkMode ? (
-                                <FiSun size={20} className="text-yellow-400" />
-                            ) : (
-                                <FiMoon size={20} className="text-gray-600 dark:text-gray-300" />
+                        />
+                        <NavItem
+                            icon={<FiShoppingCart />}
+                            text="Products"
+                            active={activeMenu === 'products'}
+                            expanded={sidebarOpen}
+                            onClick={() => { setActiveMenu('products'); setSidebarOpen(!sidebarOpen) }}
+                        />
+                        <NavItem
+                            icon={<FiShoppingCart />}
+                            text="Orders"
+                            active={activeMenu === 'orders'}
+                            expanded={sidebarOpen}
+                            onClick={() => { setActiveMenu('orders'); setSidebarOpen(!sidebarOpen) }}
+
+                        />
+                        <NavItem
+                            icon={<FiMail />}
+                            text="Messages"
+                            active={activeMenu === 'messages'}
+                            expanded={sidebarOpen}
+                            onClick={() => { setActiveMenu('messages'); setSidebarOpen(!sidebarOpen) }}
+
+                        />
+                        <NavItem
+                            icon={<FiSettings />}
+                            text="Settings"
+                            active={activeMenu === 'settings'}
+                            expanded={sidebarOpen}
+                            onClick={() => { setActiveMenu('settings'); setSidebarOpen(!sidebarOpen) }}
+
+                        />
+                    </nav>
+                </div>
+
+                {/* Main Content */}
+                <div className="flex-1 overflow-auto">
+                    {/* Header */}
+                    <header className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} shadow-sm p-4 flex justify-between items-center top-0 z-10`}>
+                        <div className="flex items-center justify-between">
+                            {mobileView && (
+                                <button
+                                    onClick={() => setSidebarOpen(!sidebarOpen)}
+                                    className={`p-2 rounded-lg transition ${darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
+                                        }`}
+                                >
+                                    <FiMenu size={20} className="text-gray-700 dark:text-gray-200" />
+                                </button>
                             )}
-                        </button>
-
-                        <div className="relative">
-                            <button
-                                onClick={() => {
-                                    setNotificationsOpen(!notificationsOpen);
-                                    setProfileOpen(false);
-                                }}
-                                className={`p-2 rounded-lg ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} relative`}
-                            >
-                                <FiBell size={20} />
-                                <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
-                            </button>
-
-                            {notificationsOpen && (
-                                <div className={`absolute right-0 mt-2 w-72 rounded-lg shadow-lg py-2 z-20 ${darkMode ? 'bg-gray-800 ' : 'bg-white'}`} >
-                                    <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
-                                        <h3 className="font-medium text-gray-800 dark:text-white">Notifications</h3>
-                                    </div>
-                                    <div className="divide-y divide-gray-200 dark:divide-gray-700">
-                                        {[1, 2, 3].map((item) => (
-                                            <div key={item} className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
-                                                <p className="text-sm text-gray-600 dark:text-gray-300">
-                                                    New order received #{1000 + item}
-                                                </p>
-                                                <p className="text-xs text-gray-500 mt-1">2 hours ago</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                    <div className="px-4 py-2 text-center text-sm text-blue-600 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                                        onClick={() => setActiveMenu('orders')}>
-                                        View all notifications
-                                    </div>
-                                </div>
+                            {!sidebarOpen && !mobileView && (
+                                <button
+                                    onClick={() => setSidebarOpen(!sidebarOpen)}
+                                    className={`p-2 rounded-lg transition ${darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
+                                        }`}
+                                >
+                                    <FiMenu size={20} className="text-gray-700 dark:text-gray-200" />
+                                </button>
                             )}
+                            <h3 className="text-xl font-semibold text-gray-800 dark:text-white capitalize ml-2">
+                                {activeMenu}
+                            </h3>
                         </div>
 
-                        <div className="relative">
+                        {!mobileView && (
+                            <div className="flex justify-center items-center h-full">
+                                {darkMode ? (
+                                    <Link to="/" target="_blank" className="inline-block">
+                                        <img
+                                            src="https://res.cloudinary.com/dekf5dyng/image/upload/v1761554899/TMJ_logo_dark_kyarf4.png"
+                                            alt="Logo"
+                                            className="max-w-[180px] h-auto"
+                                        />
+                                    </Link>) : (
+                                    <Link to="/" target="_blank" className="inline-block">
+                                        <img
+                                            src="https://res.cloudinary.com/dvmpyh0hj/image/upload/v1760615184/hilkmru9zutcneybpwwc.png"
+                                            alt="Logo"
+                                            className="max-w-[180px] h-auto"
+                                        />
+                                    </Link>)
+                                }
+                            </div>
+                        )}
+
+
+                        <div className="flex items-center space-x-4">
                             <button
-                                onClick={() => {
-                                    setProfileOpen(!profileOpen);
-                                    setNotificationsOpen(false);
-                                }}
-                                className="flex items-center space-x-2 focus:outline-none"
+                                onClick={() => setDarkMode(!darkMode)}
+                                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-300"
+                                aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
                             >
-                                <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
-                                    {user && user.userName ? user.userName.charAt(0).toUpperCase() : 'A'}
-                                </div>
-                                {!sidebarOpen && !mobileView && (
-                                    <span className={`${darkMode ? 'text-white' : 'text-gray-700'}`}>{user.userName}</span>
+                                {darkMode ? (
+                                    <FiSun size={20} className="text-yellow-400" />
+                                ) : (
+                                    <FiMoon size={20} className="text-gray-600 dark:text-gray-300" />
                                 )}
                             </button>
 
-                            {profileOpen && (
-                                <div className={`absolute right-0 mt-2 w-32 ${darkMode ? 'dark bg-gray-900' : 'bg-white'} rounded-lg shadow-lg py-1 z-20`}>
-                                    <button
-                                        href="#"
-                                        className={`block px-4 py-2 text-sm ${darkMode ? 'text-gray-300 hover:bg-gray-700' : ' text-gray-700 hover:bg-gray-100'}`}
-                                        onClick={() => setActiveMenu('settings')}
-                                    >
-                                        Settings
-                                    </button>
-                                    <button
-                                        href="#"
-                                        onClick={logout}
-                                        className={`block px-4 py-2 text-sm ${darkMode ? 'text-gray-300 hover:bg-gray-700' : ' text-gray-700 hover:bg-gray-100'}`}
-                                    >
-                                        Sign out
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </header>
+                            <div className="relative">
+                                <button
+                                    onClick={() => {
+                                        setNotificationsOpen(!notificationsOpen);
+                                        setProfileOpen(false);
+                                    }}
+                                    className={`p-2 rounded-lg ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'} relative`}
+                                >
+                                    <FiBell size={20} />
+                                    <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+                                </button>
 
-                {/* Dashboard Content */}
-                <main className={`p-4 ${darkMode ? 'dark bg-gray-800' : 'bg-white'}`}>
-                    {activeMenu === 'dashboard' && (
-                        <>
-                            {/* Stats Cards */}
-                            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 ${darkMode ? 'dark bg-gray-800' : 'bg-white'}`}>
-                                {stats.map((stat, index) => (
-                                    <StatCard
-                                        key={index}
-                                        title={stat.title}
-                                        value={stat.value}
-                                        change={stat.change}
-                                        icon={stat.icon}
-                                        darkMode={darkMode}
-                                    />
-                                ))}
+                                {notificationsOpen && (
+                                    <div className={`absolute right-0 mt-2 w-72 rounded-lg shadow-lg py-2 z-20 ${darkMode ? 'bg-gray-800 ' : 'bg-white'}`} >
+                                        <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+                                            <h3 className="font-medium text-gray-800 dark:text-white">Notifications</h3>
+                                        </div>
+                                        <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                                            {[1, 2, 3].map((item) => (
+                                                <div key={item} className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                                                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                                                        New order received #{1000 + item}
+                                                    </p>
+                                                    <p className="text-xs text-gray-500 mt-1">2 hours ago</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className="px-4 py-2 text-center text-sm text-blue-600 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                                            onClick={() => setActiveMenu('orders')}>
+                                            View all notifications
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
-                            {/* Recent Orders */}
-                            <div className={`${darkMode ? 'dark bg-gray-900 text-white' : 'bg-white'} p-4 rounded-lg shadow mb-6 overflow-x-auto`}>
-                                <div className="flex justify-between items-center mb-4">
-                                    <h3 className="text-lg font-medium">
-                                        Recent Orders
-                                    </h3>
-                                    <button className="text-sm text-blue-500 hover:underline"
-                                        onClick={() => setActiveMenu('orders')}>
-                                        View All
-                                    </button>
+                            <div className="relative">
+                                <button
+                                    onClick={() => {
+                                        setProfileOpen(!profileOpen);
+                                        setNotificationsOpen(false);
+                                    }}
+                                    className="flex items-center space-x-2 focus:outline-none"
+                                >
+                                    <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                                        {user && user.userName ? user.userName.charAt(0).toUpperCase() : 'A'}
+                                    </div>
+                                    {!sidebarOpen && !mobileView && (
+                                        <span className={`${darkMode ? 'text-white' : 'text-gray-700'}`}>{user.userName}</span>
+                                    )}
+                                </button>
+
+                                {profileOpen && (
+                                    <div className={`absolute right-0 mt-2 w-32 ${darkMode ? 'dark bg-gray-900' : 'bg-white'} rounded-lg shadow-lg py-1 z-20`}>
+                                        <button
+                                            href="#"
+                                            className={`block px-4 py-2 text-sm ${darkMode ? 'text-gray-300 hover:bg-gray-700' : ' text-gray-700 hover:bg-gray-100'}`}
+                                            onClick={() => setActiveMenu('settings')}
+                                        >
+                                            Settings
+                                        </button>
+                                        <button
+                                            href="#"
+                                            onClick={logout}
+                                            className={`block px-4 py-2 text-sm ${darkMode ? 'text-gray-300 hover:bg-gray-700' : ' text-gray-700 hover:bg-gray-100'}`}
+                                        >
+                                            Sign out
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Dashboard Content */}
+                    <main className={`p-4 ${darkMode ? 'dark bg-gray-800' : 'bg-white'}`}>
+                        {activeMenu === 'dashboard' && (
+                            <>
+                                {/* Stats Cards */}
+                                <div
+                                    className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 ${darkMode ? 'dark bg-gray-800' : 'bg-white'
+                                        }`}
+                                >
+                                    {stats.map((stat, index) => (
+                                        <StatCard
+                                            key={index}
+                                            title={stat.title}
+                                            value={stat.value}
+                                            change={stat.change}
+                                            icon={stat.icon}
+                                            darkMode={darkMode}
+                                        />
+                                    ))}
                                 </div>
 
-                                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
-                                    <thead className={darkMode ? 'bg-gray-800' : 'bg-gray-50'}>
-                                        <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
-                                                Order ID
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
-                                                Customer
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
-                                                Product
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
-                                                Amount
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
-                                                Status
-                                            </th>
-                                        </tr>
-                                    </thead>
+                                {/* ✨ Best Selling Products Section */}
+                                <div
+                                    className={`rounded-2xl shadow-xl p-6 transition-all duration-500 ${darkMode
+                                        ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100'
+                                        : 'bg-gradient-to-br from-white via-gray-50 to-white text-gray-900'
+                                        }`}
+                                >
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h2 className="text-xl font-semibold tracking-wide">
+                                            Best Selling Products
+                                        </h2>
+                                        <span
+                                            className={`text-sm px-3 py-1 rounded-full ${darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'
+                                                }`}
+                                        >
+                                            This Month
+                                        </span>
+                                    </div>
 
-                                    <tbody className={`${darkMode ? 'bg-gray-900 divide-gray-700' : 'bg-white divide-gray-200'} divide-y`}>
-                                        {recentOrders.map((order) => (
-                                            <tr key={order.id}>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">
-                                                    #{order.id}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                                                    {order.customer}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">
-                                                    {order.product}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">
-                                                    {order.amount}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span
-                                                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${order.status === 'Completed'
-                                                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                                            : order.status === 'Pending'
-                                                                ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                                                                : order.status === 'Processing'
-                                                                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                                                                    : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                                    <div className="overflow-x-auto">
+                                        <table className="min-w-full border-collapse">
+                                            <thead>
+                                                <tr
+                                                    className={`text-left text-sm uppercase tracking-wider ${darkMode
+                                                        ? 'bg-gray-800 text-gray-300'
+                                                        : 'bg-gray-100 text-gray-700'
+                                                        }`}
+                                                >
+                                                    <th className="px-6 py-3 rounded-tl-xl">Product</th>
+                                                    <th className="px-6 py-3">Category</th>
+                                                    <th className="px-6 py-3">Units Sold</th>
+                                                    <th className="px-6 py-3 rounded-tr-xl">Trend</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                {bestSellingProducts.map((product, index) => (
+                                                    <tr
+                                                        key={index}
+                                                        className={`transition-all duration-300 ${darkMode
+                                                            ? 'hover:bg-gray-800/70 border-gray-800'
+                                                            : 'hover:bg-gray-50 border-gray-200'
                                                             }`}
                                                     >
-                                                        {order.status}
-                                                    </span>
-                                                </td>
+                                                        {/* Product */}
+                                                        <td className="px-6 py-4 flex items-center gap-3">
+                                                            <img
+                                                                src={product.image}
+                                                                alt={product.name}
+                                                                className="w-10 h-10 rounded-lg object-cover shadow-md"
+                                                            />
+                                                            <span className="font-medium">{product.name}</span>
+                                                        </td>
+
+                                                        {/* Category */}
+                                                        <td className="px-6 py-4 text-sm opacity-80">
+                                                            {product.category}
+                                                        </td>
+
+                                                        {/* Units Sold */}
+                                                        <td className="px-6 py-4 font-semibold">{product.unitsSold}</td>
+                                                        {/* Trend Bar */}
+                                                        <td className="px-6 py-4">
+                                                            <div className="w-24 bg-gray-300 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+                                                                <div
+                                                                    className={`h-full rounded-full ${product.trend >= 80
+                                                                        ? 'bg-green-500'
+                                                                        : product.trend >= 50
+                                                                            ? 'bg-yellow-400'
+                                                                            : 'bg-red-500'
+                                                                        }`}
+                                                                    style={{ width: `${product.trend}%` }}
+                                                                ></div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </>
+                        )}
+
+                        {activeMenu === 'users' && (
+                            <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-2 rounded-lg shadow-md`}>
+                                <h3 className="text-2xl font-semibold text-gray-800 dark:text-white mb-6">
+                                    Users Management
+                                </h3>
+
+                                <div className="overflow-x-auto">
+                                    <table className="min-w-full text-sm text-left border-collapse">
+                                        <thead className="border-b border-gray-200 dark:border-gray-700">
+                                            <tr>
+                                                <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">User ID</th>
+                                                <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Name</th>
+                                                <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Email</th>
+                                                <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Role</th>
+                                                <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Status</th>
+                                                <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300 text-right">Actions</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-
-
-                            {/* Charts */}
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                                <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm lg:col-span-2">
-                                    <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-4">
-                                        Sales Overview
-                                    </h3>
-                                    <Line data={salesData} />
+                                        </thead>
+                                        <tbody>
+                                            {allUser?.map((user) => (
+                                                <tr
+                                                    key={user._id}
+                                                    className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                                                >
+                                                    <td className="px-4 py-3">{user._id}</td>
+                                                    <td className="px-4 py-3">{user.userName}</td>
+                                                    <td className="px-4 py-3">{user.email}</td>
+                                                    <td className="px-4 py-3">{user.role}</td>
+                                                    <td className="px-4 py-3">
+                                                        <span
+                                                            className={`px-3 py-1 rounded-full text-xs font-medium ${user.isActive
+                                                                ? 'bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-100'
+                                                                : 'bg-red-100 text-red-700 dark:bg-red-800 dark:text-red-100'
+                                                                }`}
+                                                        >
+                                                            {user.isActive ? 'Active' : 'Inactive'}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-4 py-3 text-right">
+                                                        <button onClick={(e) => deleteUserFromDashboard(user._id)} className="text-red-600 hover:underline dark:text-red-400">delete</button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
                                 </div>
 
-                                <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
-                                    <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-4">
-                                        Revenue Sources
-                                    </h3>
-                                    <Pie data={revenueSourcesData} />
+                                <div className="grid grid-cols-1 gap-6 mb-6">
+                                    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                                        <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-4">
+                                            User Growth
+                                        </h3>
+                                        <Bar data={userGrowthData} />
+                                    </div>
                                 </div>
                             </div>
+                        )}
 
-                            <div className="grid grid-cols-1 gap-6 mb-6">
-                                <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
-                                    <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-4">
-                                        User Growth
-                                    </h3>
-                                    <Bar data={userGrowthData} />
-                                </div>
-                            </div>
+                        {activeMenu === 'orders' && (
+                            <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-2 rounded-lg shadow-sm`}>
+                                <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Orders Management</h3>
+                                {/* Recent Orders */}
+                                <div className={`${darkMode ? 'dark bg-gray-900 text-white' : 'bg-white'} p-4 rounded-lg shadow mb-6 overflow-x-auto`}>
+                                    <div className="flex justify-between items-center mb-4">
+                                        <h3 className="text-lg font-medium">
+                                            Recent Orders
+                                        </h3>
+                                        <button className="text-sm text-blue-500 hover:underline"
+                                            onClick={() => setActiveMenu('orders')}>
+                                            View All
+                                        </button>
+                                    </div>
 
-                        </>
-                    )}
-
-                    {activeMenu === 'users' && (
-                        <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-6 rounded-lg shadow-md`}>
-                            <h3 className="text-2xl font-semibold text-gray-800 dark:text-white mb-6">
-                                Users Management
-                            </h3>
-
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full text-sm text-left border-collapse">
-                                    <thead className="border-b border-gray-200 dark:border-gray-700">
-                                        <tr>
-                                            <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">User ID</th>
-                                            <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Name</th>
-                                            <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Email</th>
-                                            <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Role</th>
-                                            <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Status</th>
-                                            <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300 text-right">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {allUser?.map((user) => (
-                                            <tr
-                                                key={user._id}
-                                                className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
-                                            >
-                                                <td className="px-4 py-3">{user._id}</td>
-                                                <td className="px-4 py-3">{user.userName}</td>
-                                                <td className="px-4 py-3">{user.email}</td>
-                                                <td className="px-4 py-3">{user.role}</td>
-                                                <td className="px-4 py-3">
-                                                    <span
-                                                        className={`px-3 py-1 rounded-full text-xs font-medium ${user.isActive
-                                                            ? 'bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-100'
-                                                            : 'bg-red-100 text-red-700 dark:bg-red-800 dark:text-red-100'
-                                                            }`}
-                                                    >
-                                                        {user.isActive ? 'Active' : 'Inactive'}
-                                                    </span>
-                                                </td>
-                                                <td className="px-4 py-3 text-right">
-                                                    <button onClick={(e) => deleteUserFromDashboard(user._id)} className="text-red-600 hover:underline dark:text-red-400">delete</button>
-                                                </td>
+                                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
+                                        <thead className={darkMode ? 'bg-gray-800' : 'bg-gray-50'}>
+                                            <tr>
+                                                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
+                                                    Order ID
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
+                                                    Customer
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
+                                                    Product
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
+                                                    Amount
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
+                                                    Status
+                                                </th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    )}
+                                        </thead>
 
-                    {activeMenu === 'orders' && (
-                        <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
-                            <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Orders Management</h3>
-                            <p className="text-gray-600 dark:text-gray-300">Orders content goes here...</p>
-                        </div>
-                    )}
-
-                    {activeMenu === 'products' && (
-                        <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
-                            <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-                                Products Management
-                            </h3>
-
-                            <div className="d-flex gap-2">
-                                <div className="flex flex-wrap gap-3">
-                                    {/* Manage Product Button */}
-                                    <Link
-                                        to="/manage-all-products"
-                                        target='_blank'
-                                        className="inline-flex items-center gap-2 px-4 py-3 rounded-3xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
-                                    >
-                                        <FiSettings className="text-lg" />
-                                        Manage Product
-                                    </Link>
+                                        <tbody className={`${darkMode ? 'bg-gray-900 divide-gray-700' : 'bg-white divide-gray-200'} divide-y`}>
+                                            {recentOrders.map((order) => (
+                                                <tr key={order.id}>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">
+                                                        #{order.id}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                                                        {order.customer}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">
+                                                        {order.product}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">
+                                                        {order.amount}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <span
+                                                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${order.status === 'Completed'
+                                                                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                                                : order.status === 'Pending'
+                                                                    ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                                                                    : order.status === 'Processing'
+                                                                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                                                                        : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                                                                }`}
+                                                        >
+                                                            {order.status}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <br />
 
-                                <div className="flex flex-wrap gap-3">
-                                    {/* Add Product Button */}
-                                    <Link to="/add-product"
-                                        target='_blank'
-                                        className="px-4 py-3 rounded-3xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
-                                    >
-                                        ➕ Add Product
-                                    </Link>
+                                <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Sales</h3>
+                                {/* Charts */}
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                                    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm lg:col-span-2">
+                                        <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-4">
+                                            Sales Overview
+                                        </h3>
+                                        <Line data={salesData} />
+                                    </div>
+
+                                    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                                        <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-4">
+                                            Revenue Sources
+                                        </h3>
+                                        <Pie data={revenueSourcesData} />
+                                    </div>
                                 </div>
+
                             </div>
+                        )}
 
-                            {/* Categories Table Button */}
-                            <h3 className="text-xl font-semibold text-gray-800 dark:text-white my-4">
-                                Categories Management
-                            </h3>
-                            <Link
-                                to="/api-categories"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={`${darkMode ? 'bg-gray-900 my-4' : 'bg-gray-700 hover:bg-gray-900'} text-white px-3 py-3 font-medium shadow-md rounded-lg transition`}
-                            >
-                                See Categories Table
-                            </Link>
+                        {activeMenu === 'products' && (
+                            <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
+                                <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                                    Products Management
+                                </h3>
 
-                        </div>
-                    )}
+                                <div className="d-flex gap-2">
+                                    <div className="flex flex-wrap gap-3">
+                                        {/* Manage Product Button */}
+                                        <Link
+                                            to="/manage-all-products"
+                                            target='_blank'
+                                            className="inline-flex items-center gap-2 px-4 py-3 rounded-3xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
+                                        >
+                                            <FiSettings className="text-lg" />
+                                            Manage Product
+                                        </Link>
+                                    </div>
+                                    <br />
 
-                    {activeMenu === 'messages' && (
-                        <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
-                            <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Messages </h3>
-                            <p className="text-gray-600 dark:text-gray-300">Messages content goes here...</p>
-                        </div>
-                    )}
+                                    <div className="flex flex-wrap gap-3">
+                                        {/* Add Product Button */}
+                                        <Link to="/add-product"
+                                            target='_blank'
+                                            className="px-4 py-3 rounded-3xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
+                                        >
+                                            ➕ Add Product
+                                        </Link>
+                                    </div>
+                                </div>
 
-                    {activeMenu === 'settings' && (
-                        <AdminSettings darkMode={darkMode} />
-                    )}
-                </main>
-            </div>
-        </div >
+                                {/* Categories Table Button */}
+                                <h3 className="text-xl font-semibold text-gray-800 dark:text-white my-4">
+                                    Categories Management
+                                </h3>
+                                <Link
+                                    to="/api-categories"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={`${darkMode ? 'bg-gray-900 my-4' : 'bg-gray-700 hover:bg-gray-900'} text-white px-3 py-3 font-medium shadow-md rounded-lg transition`}
+                                >
+                                    See Categories Table
+                                </Link>
+
+                            </div>
+                        )}
+
+                        {activeMenu === 'messages' && (
+                            <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-4 rounded-lg shadow-sm`}>
+                                <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Messages </h3>
+                                <p className="text-gray-600 dark:text-gray-300">Messages content goes here...</p>
+                            </div>
+                        )}
+
+                        {activeMenu === 'settings' && (
+                            <AdminSettings darkMode={darkMode} />
+                        )}
+                    </main>
+                </div>
+            </div >
+        </>
+
     );
 };
 

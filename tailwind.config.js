@@ -7,10 +7,6 @@ export default {
   ],
   theme: {
     extend: {
-      fontFamily: {
-        sans: ['"DM Sans"', 'sans-serif'],
-        code: ['"Google Sans Code"', 'monospace'],
-      },
       colors: {
         dark: {
           900: '#1e87f8ff',

@@ -95,7 +95,7 @@ const ReturnPolicy = () => {
           <section className="cta-section">
             <h2>Need Help With Your Return?</h2>
             <p>Our customer service team is here to assist you with any questions about returns or exchanges.</p>
-            <Link to="/contact-us" className="cta-btn">Contact Returns Team</Link>
+            <Link to="/contact-us" className="cta-btn-return">Contact Returns Team</Link>
 
           </section>
 

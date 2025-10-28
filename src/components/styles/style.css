@@ -24,8 +24,8 @@
 }
 
 body {
-    /* font-family: Arial, Helvetica, sans-serif; */
     font-family: "Inter Tight", sans-serif !important;
+    /* font-family: Arial, Helvetica, sans-serif; */
     /* font-family: "DM Sans", sans-serif !important; */
     background-color: var(--beige);
     margin: 0;
@@ -46,17 +46,42 @@ h2 {
 }
 
 .hero {
-    background: url('https://res.cloudinary.com/dekf5dyng/image/upload/v1758802036/Banner_tznhye.jpg') no-repeat center center/cover;
-    background-attachment: fixed;
+    background: url('https://res.cloudinary.com/dekf5dyng/image/upload/v1761566404/Men_Leather_Jacket_siekxq.jpg') no-repeat center center / cover;
     height: 80vh;
     color: var(--beige);
     display: flex;
-    align-items: end;
+    align-items: flex-end;
     justify-content: center;
     text-align: center;
     position: relative;
+    transition: all 0.5s ease-in-out;
 }
 
+/* 🔥 Add smooth scaling + adjust for smaller screens */
+@media (max-width: 1024px) {
+    .hero {
+        height: 70vh;
+        background-position: center top;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        height: 60vh;
+        background-size: contain;
+        background-position: center top;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        height: 50vh;
+        background-size: contain;
+        background-position: top center;
+    }
+}
+
+/* overlay */
 .hero::before {
     content: '';
     position: absolute;
@@ -66,12 +91,15 @@ h2 {
     height: 100%;
     background: rgba(30, 20, 10, 0.4);
     z-index: 1;
+    transition: background 0.3s ease;
 }
 
+/* text container */
 .hero-content {
     position: relative;
     z-index: 2;
     max-width: 700px;
+    padding: 2rem;
 }
 
 .hero-content h1 {

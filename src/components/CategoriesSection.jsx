@@ -31,7 +31,6 @@ export default function CategoriesSection() {
               <div className="category-card">
                 <div className="category-img position-relative">
                   <img src={cat.image} alt={cat.title} />
-                  <span className="items-count">{cat.count} items</span>
                 </div>
                 <div className="category-content text-center">
                   <h3>{cat.title}</h3>

@@ -1,6 +1,6 @@
 body {
     background-color: var(--beige);
-    color: var(--dark-brown);
+    color: var(--black);
     line-height: 1.7;
 }
 
@@ -66,7 +66,7 @@ body {
 
 .policy-card h3 {
     font-size: 1.3rem;
-    color: var(--dark-brown);
+    color: var(--black);
     margin-bottom: 15px;
     display: flex;
     align-items: center;
@@ -74,7 +74,7 @@ body {
 
 .policy-card h3 i {
     margin-right: 15px;
-    color: var(--tan);
+    color: var(--red);
 }
 
 .policy-card p {
@@ -99,7 +99,7 @@ body {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--tan);
+    background: var(--red);
 }
 
 /* === Process Steps === */
@@ -116,13 +116,13 @@ body {
     padding: 30px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
     text-align: center;
-    border-top: 4px solid var(--tan);
+    border-top: 4px solid var(--dark-brown);
 }
 
 .step-number {
     width: 40px;
     height: 40px;
-    background: var(--tan);
+    background: var(--black);
     color: var(--beige);
     border-radius: 50%;
     display: flex;
@@ -135,12 +135,12 @@ body {
 .step-card h4 {
     font-size: 1.2rem;
     margin-bottom: 15px;
-    color: var(--dark-brown);
+    color: var(--black);
 }
 
 /* === CTA Section === */
 .cta-section {
-    background: var(--tan);
+    background: var(--gray);
     padding: 60px 20px;
     text-align: center;
     border-radius: 10px;
@@ -148,21 +148,21 @@ body {
 }
 
 .cta-section h2 {
-    color: var(--beige);
+    color: var(--black);
     margin-bottom: 20px;
 }
 
 .cta-section p {
-    color: var(--beige);
+    color: var(--black);
     opacity: 0.9;
     max-width: 700px;
     margin: 0 auto 30px;
 }
 
-.cta-btn {
+.cta-btn-return {
     display: inline-block;
     padding: 12px 30px;
-    background: var(--dark-brown);
+    background: var(--black);
     color: var(--beige);
     text-decoration: none;
     border-radius: 50px;
@@ -170,9 +170,9 @@ body {
     transition: all 0.3s ease;
 }
 
-.cta-btn:hover {
-    background: var(--beige);
-    color: var(--dark-brown);
+.cta-btn-return:hover {
+    background: var(--red);
+    color: var(--beige);
 }
 
 /* === Responsive Design === */
@@ -221,13 +221,13 @@ body {
 
 .form-header h1 {
     font-size: clamp(1.8rem, 5vw, 2.2rem);
-    color: var(--dark-brown);
+    color: var(--black);
     margin-bottom: 10px;
     font-weight: 600;
 }
 
 .form-header p {
-    color: var(--tan);
+    color: var(--dark-gray);
     font-size: clamp(1rem, 3vw, 1.1rem);
     max-width: 600px;
     margin: 0 auto;
@@ -256,17 +256,18 @@ body {
 .contact-us-form-group label {
     display: block;
     margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: var(--tan);
+    font-weight: 700;
+    color: var(--black);
     font-size: clamp(0.9rem, 3vw, 1rem);
 }
 
 .contact-us-form-group input,
 .contact-us-form-group select,
 .contact-us-form-group textarea {
+    color: var(--black);
     width: 100%;
     padding: 12px 15px;
-    border: 1px solid var(--tan);
+    border: 1px solid var(--dark-gray);
     border-radius: 8px;
     font-size: clamp(0.95rem, 3vw, 1rem);
     transition: all 0.2s ease;
@@ -288,7 +289,7 @@ body {
 
 /* Submit Button */
 .submit-btn {
-    background: var(--tan);
+    background: var(--black);
     color: white;
     border: none;
     padding: 14px 25px;
@@ -305,7 +306,7 @@ body {
 }
 
 .submit-btn:hover {
-    background: var(--dark-brown);
+    background: var(--red);
     transform: translateY(-2px);
 }
 
@@ -354,7 +355,7 @@ body {
 }
 
 .info-icon {
-    background: var(--tan);
+    background: var(--red);
     color: white;
     width: 36px;
     height: 36px;
@@ -368,14 +369,14 @@ body {
 
 .info-content h3 {
     font-size: clamp(1rem, 3vw, 1.1rem);
-    color: var(--dark-brown);
+    color: var(--black);
     margin-bottom: 5px;
     font-weight: 600;
 }
 
 .info-content address {
     font-style: normal;
-    color: #835929;
+    color: var(--dark-gray);
     /* line-height: 1.6;*/
     /* background: #f9f9f9; */
     /* border-left: 4px solid #007BFF;  */
@@ -387,7 +388,7 @@ body {
 
 .info-content p,
 .info-content a {
-    color: var(--tan);
+    color: var(--dark-gray);
     text-decoration: none;
     transition: color 0.2s ease;
     font-size: clamp(0.85rem, 3vw, 0.95rem);
@@ -395,7 +396,7 @@ body {
 }
 
 .info-content a:hover {
-    color: var(--dark-brown);
+    color: var(--black);
     text-decoration: underline;
 }
 

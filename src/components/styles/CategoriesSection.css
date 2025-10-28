@@ -1,136 +1,146 @@
-/* CSS for the Categories Section of the The Maste Jackets */
+/* Categories Section */
 .categories-section {
-    background-color: var(--beige);
+  background-color: var(--beige);
+  padding: 2rem 2rem;
 }
 
 .container-categories {
-    width: 100%;
-    max-width: 1600px;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
 }
 
 .categories-section-header {
-    text-align: center;
+  text-align: center;
+  margin-bottom: 2rem;
 }
 
 .categories-section-header h2 {
-    font-size: 2.5rem;
-    color: var(--black);
-    margin-bottom: 1rem;
-    font-weight: 700;
+  font-size: 2.5rem;
+  color: var(--black);
+  margin-bottom: 1rem;
+  font-weight: 700;
 }
 
 .categories-section-header p {
-    color: var(--dark-gray);
-    font-size: 1.1rem;
-    max-width: 700px;
-    margin: 0 auto;
+  color: var(--dark-gray);
+  font-size: 1.1rem;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
+/* ⚡ Main Grid - Two Equal Columns */
 .categories-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* always two columns */
+  gap: 0; /* remove space between to make it seamless 50/50 */
+  width: 100%;
 }
 
+/* Each Category Card */
 .category-card {
-    background: white;
-    overflow: hidden;
-    box-shadow: var(--shadow);
-    transition: var(--transition);
-    position: relative;
+  position: relative;
+  background: white;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  height: 80vh; /* equal height for visual balance */
 }
 
 .category-card:hover {
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
 }
 
+/* Image */
 .category-img {
-    height: 60vh;
-    overflow: hidden;
-    position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 .category-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: var(--transition);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition);
 }
 
 .category-card:hover .category-img img {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
 
+/* Overlay content centered */
 .category-content {
-    padding: 1.5rem;
-    text-align: center;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  color: var(--beige);
+  background: rgba(0, 0, 0, 0.45);
+  padding: 2rem 1rem;
 }
 
 .category-content h3 {
-    color: var(--dark-brown);
-    margin-bottom: 0.5rem;
-    font-size: 1.3rem;
+  color: var(--beige);
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
 }
 
 .category-content p {
-    color: var(--black);
-    font-size: 0.9rem;
-    margin-bottom: 1.5rem;
-    opacity: 0.8;
+  color: var(--beige);
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
 }
 
 .shop-now-btn {
-    display: inline-block;
-    background-color: var(--red);
-    color: var(--beige);
-    padding: 0.6rem 1.5rem;
-    text-decoration: none;
-    font-weight: 600;
-    transition: var(--transition);
+  display: inline-block;
+  background-color: var(--red);
+  color: var(--beige);
+  padding: 0.6rem 1.5rem;
+  text-decoration: none;
+  font-weight: 600;
+  transition: var(--transition);
 }
 
 .shop-now-btn:hover {
-    background-color: var(--black);
-    color: var(--beige);
+  background-color: var(--black);
+  color: var(--beige);
 }
 
-.items-count {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background-color: var(--dark-gray);
-    color: white;
-    padding: 0.3rem 0.6rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-}
-
+/* 📱 Mobile Responsive */
 @media (max-width: 768px) {
-    .categories-grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 20px;
-    }
-    
-    .section-header h2 {
-        font-size: 2rem;
-    }
+  .categories-grid {
+    grid-template-columns: 1fr; /* one card per row */
+  }
 
-    .category-img {
-        height: 40vh;
-    }
+  .category-card {
+    height: 60vh;
+  }
+
+  .category-content {
+    padding: 1.5rem;
+  }
+
+  .category-content h3 {
+    font-size: 1.3rem;
+  }
+
+  .category-content p {
+    font-size: 0.95rem;
+  }
 }
 
-@media (max-width: 576px) {
-    .categories-section {
-        padding: 3rem 1rem;
-    }
-    
-    .categories-grid {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-    
-    .section-header h2 {
-        font-size: 1.8rem;
-    }
+@media (max-width: 480px) {
+  .categories-section {
+    padding: 2rem 1rem;
+  }
+
+  .category-card {
+    height: 50vh;
+  }
+
+  .category-content h3 {
+    font-size: 1.2rem;
+  }
 }

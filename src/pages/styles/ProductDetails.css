@@ -360,6 +360,7 @@
             border-radius: 4px;
             cursor: pointer;
             transition: all 0.3s;
+            margin-bottom: 5px;
         }
 
         .variant-option:hover {
@@ -369,6 +370,29 @@
         .variant-option.selected {
             background-color: var(--darker);
             color: var(--beige)
+        }
+
+        .color-circle {
+            width: 65px;
+            height: 75px;
+            border-radius: 10%;
+            object-fit: cover;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+        }
+
+        .color-circle:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 10px #fc000026;
+            border-color: #fc0000aa;
+        }
+
+        .color-circle.active {
+            border-color: #000000bd;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+            transform: scale(1.05);
         }
 
         /* === Quantity Selector === */

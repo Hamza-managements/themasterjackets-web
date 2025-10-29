@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { message } from "antd";
 
 export default function ProductListingPage() {
-    const {slug} = useParams();
+    const { slug } = useParams();
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -147,9 +147,11 @@ export default function ProductListingPage() {
                                             alt={`${product.productName} - hover`}
                                             className="hover-image"
                                         />
-                                        <span className="product-page-badge badge-bestseller">
-                                            Bestseller
-                                        </span>
+                                        {product.attributes.badge && product.attributes.badge != "None" ? (
+                                            <span className="product-page-badge badge-bestseller">
+                                                {product.attributes.badge}
+                                            </span>
+                                        ) : null}
                                     </div>
 
                                     <div className="product-page-details" style={{ padding: "15px" }}>

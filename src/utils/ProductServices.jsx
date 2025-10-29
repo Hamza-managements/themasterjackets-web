@@ -141,6 +141,24 @@ export const addProductVariation = async (productId, currentVariation) => {
   }
 };
 
+export const updateProductVariation = async (currentVariation) => {
+  try {
+    api.interceptors.request.use((config) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    });
+    console.log("updatung variation to productId:", currentVariation);
+    const response = await api.put(`/api/product/update-variation/68762589a469c496106e01d4`, currentVariation);
+    return response.data;
+  } catch (error) {
+    console.warn("❌ Error adding variation:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
 export const deleteProductVariation = async (productId, variationId) => {
   try {
     api.interceptors.request.use((config) => {

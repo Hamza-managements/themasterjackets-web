@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { addProductVariation, deleteProductVariation, getSingleProduct } from '../../utils/ProductServices';
+import { addProductVariation, deleteProductVariation, getSingleProduct, updateProductVariation } from '../../utils/ProductServices';
 import { useProducts } from "../../context/ProductContext";
 import Swal from "sweetalert2";
 import VariationImageUploader from '../../components/AddVariationImages';
@@ -11,6 +11,7 @@ const AllProductManagementPage = () => {
   const [products, setProducts] = useState([]);
   const [, setSelectedProduct] = useState(null);
   const [showVariationModal, setShowVariationModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [showErrors, setShowErrors] = useState(false);
   const { refreshProducts } = useProducts();
 
@@ -20,7 +21,7 @@ const AllProductManagementPage = () => {
     productImages: [],
     productPrice: { originalPrice: 0, discountedPrice: 0, currency: "USD" },
     stockQuantity: 0,
-    attributes: { color: "", size: ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"], material: "Leather", weight: "1.5 Kg" },
+    attributes: { color: "", size: "", material: "Leather", weight: "1.5 Kg" },
     inventoryStatus: "in stock",
     shipping: { shippingCharges: 0, isFreeShipping: false, estimatedDeliveryDays: 5 },
     ratings: { count: 5 },
@@ -41,9 +42,16 @@ const AllProductManagementPage = () => {
   }, [productId]);
 
   const openVariationModal = (product = null) => {
+    setIsEditing(false);
     setSelectedProduct(product);
     setCurrentVariation(emptyVariation);
     setShowErrors(false);
+    setShowVariationModal(true);
+  };
+
+  const openEditVariationModal = (variation) => {
+    setIsEditing(true);
+    setCurrentVariation(variation);
     setShowVariationModal(true);
   };
 
@@ -51,6 +59,7 @@ const AllProductManagementPage = () => {
     setShowVariationModal(false);
     setSelectedProduct(null);
     setShowErrors(false);
+    setIsEditing(false);
     setCurrentVariation(emptyVariation);
   };
 
@@ -83,6 +92,35 @@ const AllProductManagementPage = () => {
       window.location.reload();
     }, 1500);
   };
+
+  const handleUpdateVariation = async () => {
+    if (!currentVariation.stockKeepingUnit || !currentVariation.variationName) {
+      setShowErrors(true);
+      return;
+    }
+
+    const { _id, stockKeepingUnit, ...rest } = currentVariation;
+
+    const body = {
+      productId,
+      variationId: _id,
+      ...rest
+    };
+    const res = await updateProductVariation(body);
+
+    refreshProducts();
+
+    Swal.fire({
+      icon: "success",
+      title: "Variation Updated!",
+      text: "Your product variation was updated successfully.",
+    })
+    closeVariationModal();
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
+  };
+
 
   const deleteVariationHandler = (productId, variationId) => {
     Swal.fire({
@@ -186,12 +224,18 @@ const AllProductManagementPage = () => {
                         <span className="variation-name">{variation?.variationName} | {variation?.attributes.color}</span>
                         <span className="variation-sku">{variation?.stockKeepingUnit}</span>
                         <span className="variation-details">
-                          {variation?.attributes.size.map((s)=> `${s} `)}  | $
+                          {variation?.attributes.size}  | $
                           {variation?.productPrice.originalPrice}
                         </span>
                       </div>
                       <div className="variation-actions">
                         <span className="stock-input">{variation?.stockQuantity}</span>
+                        <button
+                          className="btn-outline"
+                          onClick={() => openEditVariationModal(variation)}
+                        >
+                          Edit
+                        </button>
                         <button onClick={(e) => deleteVariationHandler(product._id, variation._id)} className="btn-danger">Delete</button>
                       </div>
                     </div>
@@ -210,10 +254,9 @@ const AllProductManagementPage = () => {
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <h3>Add New Variation</h3>
+              <h3>{isEditing ? "Edit Variation" : "Add New Variation"}</h3>
               <button onClick={closeVariationModal} className="close-btn">×</button>
             </div>
-
             <div className="modal-body">
               {/* SKU */}
               <div className={`form-group ${showErrors && !currentVariation.stockKeepingUnit ? 'error' : ''}`}>
@@ -310,7 +353,7 @@ const AllProductManagementPage = () => {
                   }
                 />
               </div>
-              {/* <div className={`form-group ${showErrors && !currentVariation.attributes.size ? 'error' : ''}`}>
+              <div className={`form-group ${showErrors && !currentVariation.attributes.size ? 'error' : ''}`}>
                 <label>Size *</label>
                 <select
                   value={currentVariation.attributes.size}
@@ -326,10 +369,10 @@ const AllProductManagementPage = () => {
                     <option key={s} value={s}>{s}</option>
                   ))}
                 </select>
-              </div> */}
+              </div>
 
               {/* Sizes */}
-              <div
+              {/* <div
                 className={`checkbox-group sizes  ${showErrors &&
                   (!currentVariation.attributes.size ||
                     currentVariation.attributes.size.length === 0)
@@ -375,7 +418,7 @@ const AllProductManagementPage = () => {
                     );
                   })}
                 </div>
-              </div>
+              </div> */}
 
               <div className="form-group">
                 <label>Shipping Charges *</label>
@@ -408,14 +451,19 @@ const AllProductManagementPage = () => {
             </div>
 
             <div className="modal-actions">
-              <button onClick={closeVariationModal} className="btn-secondary">Cancel</button>
-              <button onClick={handleAddVariation} className="btn-primary">Add Variation</button>
+              <button onClick={closeVariationModal} className="btn-secondary">
+                Cancel
+              </button>
+              <button
+                onClick={isEditing ? handleUpdateVariation : handleAddVariation}
+                className="btn-primary"
+              >
+                {isEditing ? "Update Variation" : "Add Variation"}
+              </button>
             </div>
           </div>
         </div>
       )}
-
-
 
       <style>{`
         .product-management-container {

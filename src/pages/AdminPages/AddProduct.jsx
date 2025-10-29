@@ -96,7 +96,7 @@ const AmazonStyleProductPage = () => {
           productImages: [],
           productPrice: { originalPrice: 0, discountedPrice: 0, currency: "USD" },
           stockQuantity: 0,
-          attributes: { color: "", size: ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"], material: "", weight: "1.2 kg" },
+          attributes: { color: "", size: "", material: "", weight: "1.2 kg" },
           inventoryStatus: "in stock",
           shipping: { shippingCharges: 0, isFreeShipping: true, estimatedDeliveryDays: 5 },
           ratings: { count: 5 },
@@ -627,7 +627,7 @@ const AmazonStyleProductPage = () => {
                             type="text"
                             value={variation.stockKeepingUnit}
                             style={{ border: '1px solid #2564eb7e', textTransform: 'uppercase' }}
-                            onChange={(e) => updateVariation(index, 'stockKeepingUnit', e.target.value)}
+                            onChange={(e) => updateVariation(index, 'stockKeepingUnit', e.target.value.toUpperCase())}
                             className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500"
                             placeholder="SKU-001-BL-L"
                           />
@@ -647,7 +647,7 @@ const AmazonStyleProductPage = () => {
                           />
                         </div>
 
-                        {/* <div className="mb-3">
+                        <div className="mb-3">
                           <label className="form-label fw-medium">Size</label>
                           <select
                             value={variation.attributes.size}
@@ -656,14 +656,12 @@ const AmazonStyleProductPage = () => {
                             className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 uppercase"
                           >
                             <option value="" disabled>Select size</option>
-                            <option value="">Select Size</option>
-                  {["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"].map((s) => (
-                    <option key={s} value={s}>{s}</option>
-                  ))}
+                            {["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"].map((s) => (
+                              <option key={s} value={s}>{s}</option>
+                            ))}
                           </select>
-                        </div> */}
-
-                        <div className="mb-3">
+                        </div>
+                        {/* <div className="mb-3">
                           <label className="form-label fw-medium">Available Sizes</label>
 
                           <div className="flex flex-wrap gap-3 mt-2">
@@ -696,8 +694,7 @@ const AmazonStyleProductPage = () => {
                               );
                             })}
                           </div>
-                        </div>
-
+                        </div> */}
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
                             Weight

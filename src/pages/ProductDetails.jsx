@@ -13,7 +13,7 @@ const ProductDetails = () => {
   const navigate = useNavigate();
 
   const [product, setProduct] = useState(null);
-  const [selectedVariation, setSelectedVariation] = useState(null); // ✅ fixed
+  const [selectedVariation, setSelectedVariation] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState(null);
@@ -64,7 +64,19 @@ const ProductDetails = () => {
     setQuantity(prev => Math.max(1, prev + amount));
   };
 
-  const handleSizeSelect = (size) => setSelectedSize(size);
+  const handleSizeSelect = (size) => {
+    setSelectedSize(size);
+
+    const matched = product.variations.find(
+      (v) =>
+        v.attributes.color === selectedVariation.attributes.color &&
+        v.attributes.size === size
+    );
+
+    if (matched) {
+      setSelectedVariation(matched);
+    }
+  };
 
   const handleColorSelect = (variation) => {
     setSelectedColor(variation.attributes.color);
@@ -253,75 +265,75 @@ const ProductDetails = () => {
               </div>
 
               {/* Price */}
+              {/* ✅ PRICE SECTION */}
               {selectedVariation && (
-                <div className="price-container">
-                  <span className="current-price">
-                    {formatPrice(selectedVariation.productPrice.discountedPrice)}
-                  </span>
-                  {selectedVariation.productPrice.originalPrice >
-                    selectedVariation.productPrice.discountedPrice && (
-                      <>
-                        <span className="original-price">
-                          {formatPrice(selectedVariation.productPrice.originalPrice)}
-                        </span>
-                        <span className="discount">
-                          {Math.round(
-                            ((selectedVariation.productPrice.originalPrice -
-                              selectedVariation.productPrice.discountedPrice) /
-                              selectedVariation.productPrice.originalPrice) * 100
-                          )}% OFF
-                        </span>
-                      </>
-                    )}
-                </div>
-              )}
+                <div className="price-container mt-3">
+                  <div className="price-details">
+                    <span className="current-price">
+                      {formatPrice(selectedVariation.productPrice.discountedPrice)}
+                    </span>
 
-              {/* ✅ Color Variations */}
-              {product.variations?.length > 0 && (
-                <div className="color-variant-selector">
-                  <span className="variant-title">Color:</span>
-                  <div className="variant-options">
-                    {product.variations.map((variation, i) => (
-                      <img
-                        key={i}
-                        src={variation.productImages[i]}
-                        onClick={() => handleColorSelect(variation)}
-                        className={`color-circle ${selectedVariation?.variationName === variation.variationName
-                          ? 'active'
-                          : ''
-                          }`}
-                        style={{
-                          backgroundColor: variation.attributes.color.toLowerCase(),
-                          width: '70px',
-                          height: '80px',
-                          objectFit: 'cover',
-                          borderRadius: '10%',
-                          border: '1px solid #ccc',
-                          marginRight: '8px'
-                        }}
-                        title={variation.attributes.color}
-                      />
-                    ))}
+                    {selectedVariation.productPrice.originalPrice >
+                      selectedVariation.productPrice.discountedPrice && (
+                        <>
+                          <span className="original-price">
+                            {formatPrice(selectedVariation.productPrice.originalPrice)}
+                          </span>
+                          <span className="discount">
+                            {Math.round(
+                              ((selectedVariation.productPrice.originalPrice -
+                                selectedVariation.productPrice.discountedPrice) /
+                                selectedVariation.productPrice.originalPrice) *
+                              100
+                            )}% OFF
+                          </span>
+                        </>
+                      )}
+                  </div>
+
+                  {/* ✅ SIZE SELECTOR */}
+                  <div className="size-variant-selector">
+                    <span className="variant-title">Size:</span>
+                    <div className="variant-options">
+                      {[...new Set(
+                        product.variations
+                          .filter(v => v.attributes.color === selectedVariation.attributes.color)
+                          .map(v => v.attributes.size)
+                      )].map(size => (
+                        <div
+                          key={size}
+                          className={`variant-option ${selectedSize === size ? 'selected' : ''}`}
+                          onClick={() => handleSizeSelect(size)}
+                        >
+                          {size}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
 
-              {/* ✅ Sizes */}
-              <div className="variant-selector">
-                <div className="variant-options pt-2">
-                  {selectedVariation.attributes.size.map(size => (
-                    <div
-                      key={size}
-                      className={`variant-option ${selectedSize === size ? 'selected' : ''}`}
-                      onClick={() => handleSizeSelect(size)}
-                    >
-                      {size}
-                    </div>
-                  ))}
+              {/* ✅ COLOR SELECTOR */}
+              {product.variations?.length > 0 && (
+                <div className="color-variant-selector">
+                  <span className="variant-title">Color:</span>
+                  <div className="variant-options">
+                    {[...new Map(product.variations.map(v => [v.attributes.color, v])).values()]
+                      .map((variation, i) => (
+                        <img
+                          key={i}
+                          src={variation.productImages[0]} // thumbnail for color
+                          onClick={() => handleColorSelect(variation)}
+                          className={`color-circle ${selectedVariation?.attributes?.color === variation.attributes.color
+                            ? 'active'
+                            : ''
+                            }`}
+                          title={variation.attributes.color}
+                        />
+                      ))}
+                  </div>
                 </div>
-                <br />
-                <SizeChartOverlay />
-              </div>
+              )}
 
               {/* Quantity */}
               <div className="quantity-selector">

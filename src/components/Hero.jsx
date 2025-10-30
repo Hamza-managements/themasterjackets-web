@@ -10,9 +10,9 @@ const Hero = () => {
       link: "/category/men",
     },
     {
-      desktop: "https://res.cloudinary.com/dekf5dyng/image/upload/v1758802036/Banner_tznhye.jpg",
-      tablet: "https://res.cloudinary.com/dvmpyh0hj/image/upload/v1760615184/hilkmru9zutcneybpwwc.png",
-      mobile: "https://res.cloudinary.com/dvmpyh0hj/image/upload/v1760615184/hilkmru9zutcneybpwwc.png",
+      desktop: "https://res.cloudinary.com/dekf5dyng/image/upload/v1761814159/1920X900_WOMEN_oyo4zj.jpg",
+      tablet: "https://res.cloudinary.com/dekf5dyng/image/upload/v1761814159/1200X1000_WOMEN_etvlil.jpg",
+      mobile: "https://res.cloudinary.com/dekf5dyng/image/upload/v1761814159/750X1200_jhwgyg.jpg",
       link: "/category/women",
     },
     {

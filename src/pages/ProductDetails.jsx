@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import Aos from 'aos';
 import StatsSection from '../components/StatsSection';
 import "./styles/ProductDetails.css";
-import Aos from 'aos';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import SizeChartOverlay from '../components/SizeChart';
 import { getProductBySubCategoryId, getSingleProduct } from '../utils/ProductServices';
-import { toast } from 'react-toastify';
 import { openCart } from '../components/Cart';
+import { useToast } from '../context/ToastProvider';
 
 const ProductDetails = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [product, setProduct] = useState(null);
   const [selectedVariation, setSelectedVariation] = useState(null);
@@ -154,7 +153,6 @@ const ProductDetails = () => {
 
   const addToCart = (selectedVariation) => {
     if (!validateForm(selectedVariation)) {
-      toast.error("Please fix errors before adding to cart!");
       return;
     }
 
@@ -169,7 +167,7 @@ const ProductDetails = () => {
 
     if (existingItemIndex !== -1) {
       cartItems[existingItemIndex].quantity += quantity;
-      toast.info("Quantity updated in your cart!");
+      showToast({ type: "info", message: `${product.productName} item already in the cart, Quantity increased` });
     } else {
       cartItems.push({
         id: product._id,
@@ -183,12 +181,8 @@ const ProductDetails = () => {
         price: selectedVariation.productPrice.discountedPrice,
         addedAt: new Date().toISOString()
       });
-      toast.success(`${selectedVariation.variationName} added to cart!`, {
-        position: "bottom-right",
-        autoClose: 2000
-      });
+      showToast({ type: "success", message: `${product.productName} added to cart!` });
     };
-
     localStorage.setItem('cartsItems', JSON.stringify(cartItems));
 
     window.dispatchEvent(new Event("cartUpdated"));

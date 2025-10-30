@@ -498,3 +498,19 @@ body {
         transform: rotate(360deg);
     }
 }
+
+.global-toast-container {
+    visibility: hidden;
+}
+
+.global-toast-container:not(:empty) {
+    visibility: visible;
+}
+
+.Toastify__toast-container {
+    visibility: hidden;
+}
+
+.Toastify__toast-container .Toastify__toast {
+    visibility: visible;
+}

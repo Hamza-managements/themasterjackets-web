@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from 'react-toastify'
 import "./styles/Cart.css";
 
 export default function CartSidebar() {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
+  const [showToastContainer, setShowToastContainer] = useState(false)
 
   useEffect(() => {
-  const loadCart = () => {
-    const storedCart = JSON.parse(localStorage.getItem("cartsItems")) || [];
-    setCartItems(storedCart);
-  };
+    const loadCart = () => {
+      const storedCart = JSON.parse(localStorage.getItem("cartsItems")) || [];
+      setCartItems(storedCart);
+    };
 
-  loadCart();
+    loadCart();
 
-  const handleCartUpdate = () => loadCart();
-  window.addEventListener("cartUpdated", handleCartUpdate);
+    const handleCartUpdate = () => loadCart();
+    window.addEventListener("cartUpdated", handleCartUpdate);
 
-  // ✅ Cleanup
-  return () => window.removeEventListener("cartUpdated", handleCartUpdate);
-}, []);
+    // ✅ Cleanup
+    return () => window.removeEventListener("cartUpdated", handleCartUpdate);
+  }, []);
 
 
   const updateCart = (newCart) => {
@@ -40,6 +40,7 @@ export default function CartSidebar() {
 
     updateCart(updatedCart);
     window.dispatchEvent(new Event("cartUpdated"));
+    setShowToastContainer(true);
     toast.info("Quantity updated");
   };
 
@@ -51,6 +52,7 @@ export default function CartSidebar() {
 
     updateCart(updatedCart);
     window.dispatchEvent(new Event("cartUpdated"));
+    setShowToastContainer(true);
     toast.warn("Item removed from cart");
   };
 
@@ -169,6 +171,19 @@ export default function CartSidebar() {
               </div>
             ))
           )}
+          {showToastContainer && (
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            pauseOnHover
+            draggable
+            theme="dark"
+            onClose={() => setShowToastContainer(false)}
+          />
+        )}
         </div>
 
         {/* Footer */}

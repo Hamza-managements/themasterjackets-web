@@ -18,7 +18,7 @@ export async function fetchAllUsers() {
     const response = await api.get("/api/user/fetch-all/68762589a469c496106e01d4");
     return response.data.data;
   } catch (error) {
-    console.error("Error fetching categories:", error);
+    console.error("Error fetching users:", error);
     throw error;
   }
 }
@@ -35,7 +35,7 @@ export async function deleteUser(userId) {
     const response = await api.delete(`/api/user/delete/68762589a469c496106e01d4?uid=${userId}`);
     return response.data.data;
   } catch (error) {
-    console.error("Error fetching categories:", error);
+    console.error("Error deleting users:", error);
     throw error;
   }
 }
@@ -70,7 +70,7 @@ export const fetchCategoriesById = async (categoryId) => {
     const response = await api.get(`/api/category/fetchById?categoryId=${categoryId}`);
     return [response.data.data];
   } catch (error) {
-    console.error("Error fetching categories:", error);
+    console.error("Error fetching category by Id:", error);
   }
 };
 
@@ -79,7 +79,7 @@ export const addCategory = async (formData) => {
     const response = await api.post('/api/category/add/68762589a469c496106e01d4', formData);
     return response.data;
   } catch (err) {
-    console.error("Error fetching categories:", err);
+    console.error("Error adding categories:", err);
   }
 };
 
@@ -88,7 +88,7 @@ export const updateCategory = async (updatedData) => {
     const response = await api.put(`/api/category/update/main-category/68762589a469c496106e01d4`, updatedData);
     return response.data;
   } catch (err) {
-    console.error("Error fetching categories:", err);
+    console.error("Error updating categories:", err);
   }
 };
 
@@ -96,7 +96,7 @@ export const updateSingleSubcategory = async (updatedData) => {
   try {
     const response = await api.put(`/api/category/add/sub-category/68762589a469c496106e01d4`, updatedData);
   } catch (err) {
-    console.error("Error fetching categories:", err);
+    console.error("Error updating Single Subcategory:", err);
   }
 };
 
@@ -106,7 +106,7 @@ export const deleteCategory = async (currentCategory) => {
       `/api/category/delete/main-category/68762589a469c496106e01d4?mainCategoryId=${currentCategory}`
     );
   } catch (err) {
-    console.error("Error fetching categories:", err);
+    console.error("Error deleting categories:", err);
   }
 };
 
@@ -114,7 +114,7 @@ export const addSubCategory = async (data) => {
   try {
     await api.put(`/api/category/add/sub-category/68762589a469c496106e01d4`, data);
   } catch (err) {
-    console.error("Error fetching categories:", err);
+    console.error("Error adding Subcategory:", err);
   }
 };
 
@@ -124,6 +124,6 @@ export const deleteSubCategory = async (categoryId, subcategoryId) => {
       `/api/category/delete/sub-category/68762589a469c496106e01d4?mainCategoryId=${categoryId}&subCategoryId=${subcategoryId}`
     );
   } catch (err) {
-    console.error("Error fetching categories:", err);
+    console.error("Error deleting Subcategory:", err);
   }
 };

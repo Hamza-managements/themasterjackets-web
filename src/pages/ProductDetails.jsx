@@ -7,6 +7,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import SizeChartOverlay from '../components/SizeChart';
 import { getProductBySubCategoryId, getSingleProduct } from '../utils/ProductServices';
+import { toast } from 'react-toastify';
+import { openCart } from '../components/Cart';
 
 const ProductDetails = () => {
   const { productId } = useParams();
@@ -23,6 +25,13 @@ const ProductDetails = () => {
   const [activeImage, setActiveImage] = useState('');
   const [isZoomActive, setIsZoomActive] = useState(false);
 
+  const [cartErrors, setCartErrors] = useState({
+    variation: '',
+    color: '',
+    size: '',
+    quantity: null,
+  });
+
   const imageContainerRef = useRef(null);
   const mainImageRef = useRef(null);
   const zoomPreviewRef = useRef(null);
@@ -37,6 +46,7 @@ const ProductDetails = () => {
         const res = await getProductBySubCategoryId(fetchedProduct.categoryId._id, fetchedProduct.subCategoryId)
         setRelatedProducts(res?.data);
         setSelectedVariation(fetchedProduct.variations?.[0] || null);
+        setSelectedColor(fetchedProduct.variations?.[0].attributes.color || null)
         setActiveImage(
           fetchedProduct.variations?.[0]?.productImages?.[0] ||
           fetchedProduct.productImages?.[0] ||
@@ -55,10 +65,6 @@ const ProductDetails = () => {
   }, [navigate]);
 
   const formatPrice = (price) => `$${price.toFixed(2)}`;
-
-  const fetchRelatedProducts = (categoryId) => {
-    console.log("fetchID" + categoryId);
-  };
 
   const handleQuantityChange = (amount) => {
     setQuantity(prev => Math.max(1, prev + amount));
@@ -113,19 +119,61 @@ const ProductDetails = () => {
     }
   };
 
-  const addToCart = () => {
-    if (!product || !selectedVariation || !selectedVariation.attributes.color) return;
+  const validateForm = (selectedVariation) => {
+    const newErrors = {
+      variation: '',
+      color: '',
+      size: '',
+      quantity: ''
+    };
+    let isValid = true;
+
+    if (!selectedVariation || !selectedVariation._id) {
+      newErrors.variation = 'Please select a variation first';
+      isValid = false;
+    }
+
+    if (!selectedColor) {
+      newErrors.color = 'Please select a color';
+      isValid = false;
+    }
+
+    if (!selectedSize) {
+      newErrors.size = 'Please select a size';
+      isValid = false;
+    }
+
+    if (!quantity || quantity < 1) {
+      newErrors.quantity = 'Please select at least 1 quantity';
+      isValid = false;
+    }
+
+    setCartErrors(newErrors);
+    return isValid;
+  };
+
+  const addToCart = (selectedVariation) => {
+    if (!validateForm(selectedVariation)) {
+      toast.error("Please fix errors before adding to cart!");
+      return;
+    }
 
     const cartItems = JSON.parse(localStorage.getItem('cartsItems')) || [];
-    const productIndex = cartItems.findIndex(
-      item => item.id === product._id && item.variation === selectedVariation.variationName
+
+    const existingItemIndex = cartItems.findIndex(
+      item =>
+        item.variationId === selectedVariation._id &&
+        item.size === selectedSize &&
+        item.color === selectedColor
     );
 
-    if (productIndex !== -1) {
-      cartItems[productIndex].quantity += quantity;
+    if (existingItemIndex !== -1) {
+      cartItems[existingItemIndex].quantity += quantity;
+      toast.info("Quantity updated in your cart!");
     } else {
       cartItems.push({
         id: product._id,
+        variationId: selectedVariation._id,
         name: product.productName,
         variation: selectedVariation.variationName,
         color: selectedColor,
@@ -133,14 +181,24 @@ const ProductDetails = () => {
         quantity,
         image: selectedVariation.productImages?.[0],
         price: selectedVariation.productPrice.discountedPrice,
+        addedAt: new Date().toISOString()
       });
-    }
+      toast.success(`${selectedVariation.variationName} added to cart!`, {
+        position: "bottom-right",
+        autoClose: 2000
+      });
+    };
 
     localStorage.setItem('cartsItems', JSON.stringify(cartItems));
+
+    window.dispatchEvent(new Event("cartUpdated"));
+
+    openCart();
   };
 
+
   const directCheckout = () => {
-    addToCart();
+    addToCart(selectedVariation);
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
@@ -266,7 +324,7 @@ const ProductDetails = () => {
 
               {/* Price */}
               {/* ✅ PRICE SECTION */}
-              {selectedVariation && (
+              {selectedVariation && selectedColor && (
                 <div className="price-container mt-3">
                   <div className="price-details">
                     <span className="current-price">
@@ -352,8 +410,29 @@ const ProductDetails = () => {
               </div>
 
               {/* Buttons */}
+              {cartErrors.variation && (
+                <div className="alert alert-danger py-1 my-1" role="alert">
+                  {cartErrors.variation}
+                </div>
+              )}
+              {cartErrors.color && (
+                <div className="alert alert-danger py-1 my-1" role="alert">
+                  {cartErrors.color}
+                </div>
+              )}
+              {cartErrors.size && (
+                <div className="alert alert-danger py-1 my-1" role="alert">
+                  {cartErrors.size}
+                </div>
+              )}
+              {cartErrors.quantity && (
+                <div className="alert alert-danger py-1 my-1" role="alert">
+                  {cartErrors.quantity}
+                </div>
+              )}
+
               <div className="action-buttons">
-                <button className="detail-btn btn-addtocart" onClick={addToCart}>
+                <button className="detail-btn btn-addtocart" onClick={() => addToCart(selectedVariation)}>
                   <i className="fas fa-shopping-cart"></i>
                   Add to Cart
                 </button>

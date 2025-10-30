@@ -388,11 +388,8 @@ const SubCategoryProductPage = () => {
                             <div className="filter-options">
                                 {[
                                     { value: 'all', label: 'All Colors' },
-                                    { value: 'red', label: 'Red' },
                                     { value: 'black', label: 'Black' },
-                                    { value: 'blue', label: 'Blue' },
                                     { value: 'brown', label: 'Brown' },
-                                    { value: 'white', label: 'White' }
                                 ].map(option => (
                                     <div key={option.value} className="product-filter-option">
                                         <label className="filter-label">
@@ -886,20 +883,20 @@ const SubCategoryProductPage = () => {
 /* Products Grid */
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
     align-items: start;
 }
 
 .product-card {
     background: white;
-    border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     transition: all 0.3s ease;
     cursor: pointer;
     border: 1px solid #f0f0f0;
     height: fit-content;
+    background: var(--white);
 }
 
 .product-card:hover {
@@ -910,7 +907,6 @@ const SubCategoryProductPage = () => {
 
 .product-image {
     position: relative;
-    aspect-ratio: 1;
     overflow: hidden;
     background: #f8fafc;
     height: 42vh;
@@ -921,7 +917,7 @@ const SubCategoryProductPage = () => {
 .product-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     transition: transform 0.3s ease;
 }
 

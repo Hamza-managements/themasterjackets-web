@@ -29,6 +29,9 @@ import MainLayout from './layouts/MainLayout';
 import ScrollToTop from './components/ScrollToTop';
 import SearchResults from './pages/SearchResults';
 // import AccountSettings from './components/AccountsSettings';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 function App() {
   return (
@@ -71,7 +74,20 @@ function App() {
             <Route path="/manage-single-product/:productId" element={<ProductManagementPage />} />
 
             <Route path="*" element={<NotFound />} />
+
           </Routes>
+          <>
+            {/* Your routes or components */}
+            <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              pauseOnHover
+              theme="dark" // you can use "light" or "colored" too
+            />
+          </>
         </ProductProvider>
       </AuthProvider>
     </Router>

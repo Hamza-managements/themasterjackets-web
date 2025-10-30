@@ -80,7 +80,7 @@
     height: 2px;
     bottom: 0;
     left: 0;
-    background: var(--tan);
+    background: var(--light-red);
     transition: width 0.3s ease;
 }
 

@@ -11,26 +11,6 @@ import BlogSlider from '../components/BlogSlider';
 import FeaturedProductsCarousel from '../components/FeaturedProductsCarousel';
 
 export default function Home() {
-  const cartItems = [
-    {
-      id: 1,
-      name: 'Premium Headphones',
-      size: 'Large',
-      price: 199.99,
-      quantity: 1,
-      image: 'https://example.com/headphones.jpg'
-    },
-    {
-      id: 2,
-      name: 'Wireless Mouse',
-      size: 'Medium',
-      price: 29.99,
-      quantity: 2,
-      image: 'https://example.com/mouse.jpg'
-    }
-  ];
-  localStorage.setItem('cartsItems', JSON.stringify(cartItems));
-
   useEffect(() => {
     AOS.init({
       duration: 800,
@@ -43,9 +23,9 @@ export default function Home() {
       <main>
         <Hero />
         <CategoriesSection />
-        <FeaturedProducts title = "Best Sellers" />
+        <FeaturedProducts title="Best Sellers" />
         <StatsSection />
-        <FeaturedProductsCarousel title = "New Arrivals" />
+        <FeaturedProductsCarousel title="New Arrivals" />
         <DualHeroSection />
         <CustomerGallery />
         <BlogSlider />

@@ -111,7 +111,7 @@ export default function ForgotPassword() {
               transition={{ delay: 0.2 }}
             >
               <div className="logo-container">
-                <img src="https://res.cloudinary.com/dekf5dyng/image/upload/v1752742536/official_tmj_logo_jygsft.png" alt="Company Logo" className="logo" />
+                <img src="https://res.cloudinary.com/dvmpyh0hj/image/upload/v1760615184/hilkmru9zutcneybpwwc.png" alt="Company Logo" className="logo" />
               </div>
               <h1 className="title">Forgot Password?</h1>
               <p className="subtitle">
@@ -125,7 +125,7 @@ export default function ForgotPassword() {
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.4 }}
             >
-              <div className={`input-group ${errors.email ? 'error' : ''}`}>
+              <div className={`forgot-password-input-group ${errors.email ? 'error' : ''}`}>
                 <div className="input-icon">
                   <FiMail />
                 </div>
@@ -137,7 +137,7 @@ export default function ForgotPassword() {
                     setEmail(e.target.value);
                     if (errors.email) setErrors({ ...errors, email: null });
                   }}
-                  className={errors.email ? 'error' : ''}
+                  className={errors.email ? 'error' : 'forgot-password-input'}
                   autoFocus
                 />
                 {errors.email && <span className="error-message">{errors.email}</span>}

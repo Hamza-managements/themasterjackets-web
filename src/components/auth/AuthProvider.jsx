@@ -26,10 +26,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
     setUser(null);
-    navigate('/');
+    navigate("/");
   };
 
   useEffect(() => {
@@ -39,7 +39,9 @@ export const AuthProvider = ({ children }) => {
     if (storedUser && storedToken && !isTokenExpired(storedToken)) {
       setUser(storedUser);
     } else {
-      logout();
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      setUser(null);
     }
     setLoading(false);
   }, []);

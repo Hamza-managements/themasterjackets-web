@@ -109,7 +109,7 @@ const ManageProducts = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
-       <Link to='/' target="_blank" className="hover:underline"><h3 className="text-center text-3xl font-bold text-gray-700 mt-2">The Master Jackets</h3></Link>
+       <Link to='/' target="_blank" className="text-decoration-none hover:underline"><h3 className="text-center text-3xl font-bold text-gray-700 mt-2">The Master Jackets</h3></Link>
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Manage Products</h1>
@@ -258,7 +258,7 @@ const ManageProducts = () => {
                           className="w-12 h-12 object-cover rounded-md"
                         />
                         <div>
-                          <Link target="_blank" to={`/products-details/${product._id}`} className="hover:underline"><p className="font-medium text-gray-900">{product.productName}</p></Link>
+                          <Link target="_blank" to={`/products-details/${product._id}`} className="text-decoration-none hover:underline"><p className="font-medium text-gray-900">{product.productName}</p></Link>
                           <p className="text-sm text-gray-500">{product.parentStockKeepingUnit}</p>
                         </div>
                       </div>

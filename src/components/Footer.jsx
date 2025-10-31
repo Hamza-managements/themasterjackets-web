@@ -66,10 +66,9 @@ export default function Footer() {
             </span>
             <p>Premium quality products crafted with care for the discerning customer.</p>
             <div className="social-icons">
-              <a href="#"><i className="fab fa-facebook-f"></i></a>
-              <a href="#"><i className="fab fa-instagram"></i></a>
-              <a href="#"><i className="fab fa-pinterest-p"></i></a>
-              <a href="#"><i className="fab fa-twitter"></i></a>
+              <a href="www.facebook.com"><i className="fab fa-facebook-f"></i></a>
+              <a href="www.instagram.com"><i className="fab fa-instagram"></i></a>
+              <a href="www.pinterest.com"><i className="fab fa-pinterest-p"></i></a>
             </div>
             <div className='mt-4' >
               <h5 className="footer-heading mb-1">Information</h5>

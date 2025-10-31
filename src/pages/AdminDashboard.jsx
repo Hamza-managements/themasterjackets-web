@@ -7,13 +7,13 @@ import {
     LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement
 } from 'chart.js';
 import { Bar, Line, Pie } from 'react-chartjs-2';
-import { FiHome, FiUsers, FiSettings, FiPieChart, FiShoppingCart, FiMail, FiBell, FiMenu, FiSun, FiMoon } from 'react-icons/fi';
+import { FiHome, FiUsers, FiSettings, FiShoppingCart, FiMail, FiBell, FiMenu, FiSun, FiMoon } from 'react-icons/fi';
 import { RiRefund2Fill } from "react-icons/ri";
+import Swal from 'sweetalert2';
 import { AuthContext } from '../components/auth/AuthProvider';
 import { Link, useNavigate } from 'react-router-dom';
 import AdminSettings from '../components/AdminDashboardSettings';
 import { deleteUser, fetchAllUsers } from '../utils/CartUtils';
-import Swal from 'sweetalert2';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement);
 
 const AdminDashboard = () => {
@@ -651,7 +651,7 @@ const AdminDashboard = () => {
                                         <Link
                                             to="/manage-all-products"
                                             target='_blank'
-                                            className="inline-flex items-center gap-2 px-4 py-3 rounded-3xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
+                                            className="inline-flex text-decoration-none items-center gap-2 px-4 py-3 rounded-3xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
                                         >
                                             <FiSettings className="text-lg" />
                                             Manage Product
@@ -663,7 +663,7 @@ const AdminDashboard = () => {
                                         {/* Add Product Button */}
                                         <Link to="/add-product"
                                             target='_blank'
-                                            className="px-4 py-3 rounded-3xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
+                                            className="px-4 py-3 text-decoration-none rounded-3xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
                                         >
                                             ➕ Add Product
                                         </Link>
@@ -678,7 +678,7 @@ const AdminDashboard = () => {
                                     to="/api-categories"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className={`${darkMode ? 'bg-gray-900 my-4' : 'bg-gray-700 hover:bg-gray-900'} text-white px-3 py-3 font-medium shadow-md rounded-lg transition`}
+                                    className={`${darkMode ? 'bg-gray-900 my-4' : 'bg-gray-700 hover:bg-gray-900'} text-decoration-none text-white px-3 py-3 font-medium shadow-md rounded-lg transition`}
                                 >
                                     See Categories Table
                                 </Link>

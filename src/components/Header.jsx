@@ -88,7 +88,7 @@ export default function Header() {
 
           <div className="fs-main-header">
             <div className={`${isMobileMenuOpen ? '' : 'mobile-header-content'}`}>
-              <Link to="/" ><img className="fs-logo" src='https://res.cloudinary.com/dvmpyh0hj/image/upload/v1760615184/hilkmru9zutcneybpwwc.png'></img></Link>
+              <Link to="/" ><img className="fs-logo" alt='TheMasterJacketsLOGO' src='https://res.cloudinary.com/dvmpyh0hj/image/upload/v1760615184/hilkmru9zutcneybpwwc.png'></img></Link>
               <button className="fs-mobile-menu-btn" onClick={toggleMobileMenu}>
                 <i className={`fas ${isMobileMenuOpen ? '' : 'fa-bars'}`}></i>
               </button>

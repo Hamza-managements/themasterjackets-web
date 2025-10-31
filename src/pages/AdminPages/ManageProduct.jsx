@@ -79,7 +79,7 @@ const AllProductManagementPage = () => {
       setShowErrors(true);
       return;
     }
-    const res = await addProductVariation(productId, v);
+    await addProductVariation(productId, v);
     refreshProducts();
 
     Swal.fire({
@@ -106,7 +106,7 @@ const AllProductManagementPage = () => {
       variationId: _id,
       ...rest
     };
-    const res = await updateProductVariation(body);
+    await updateProductVariation(body);
 
     refreshProducts();
 
@@ -133,7 +133,7 @@ const AllProductManagementPage = () => {
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const delres = await deleteProductVariation(productId, variationId);
+        await deleteProductVariation(productId, variationId);
         Swal.fire("Deleted!", "Your variation has been deleted.", "success");
         setProducts(prev => prev.map(product => product._id === productId
           ? {

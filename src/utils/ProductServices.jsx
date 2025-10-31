@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { useProducts } from '../context/ProductContext';
 
 export const getALLProducts = async () => {
   try {

@@ -34,41 +34,6 @@ const SubCategoryProductPage = () => {
         delivery: true
     });
 
-    const fetchProducts = async () => {
-        try {
-            setLoading(true);
-            const categoryRes = await fetchCategoriesAll();
-            const categories = categoryRes || [];
-
-            let matchedCategory = null;
-            let matchedSubCategory = null;
-
-            for (const category of categories) {
-                const sub = category.subCategories.find(
-                    (subCat) => subCat.slug === slug
-                );
-                if (sub) {
-                    matchedCategory = category;
-                    matchedSubCategory = sub;
-                    break;
-                }
-            }
-
-            if (!matchedSubCategory) {
-                Swal.fire("Not Found", "No subcategory found for this URL.", "warning");
-                setProducts([]);
-                return;
-            }
-
-            const res = await getProductBySubCategoryId(matchedCategory._id, matchedSubCategory._id);
-            setProducts(res.data || []);
-        } catch (error) {
-            Swal.fire("Not Found", "No subcategory found for this URL.", "warning");
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const applyFiltersAndSort = useCallback(() => {
         let filtered = [...products];
 
@@ -234,6 +199,41 @@ const SubCategoryProductPage = () => {
     };
 
     useEffect(() => {
+
+        const fetchProducts = async () => {
+            try {
+                setLoading(true);
+                const categoryRes = await fetchCategoriesAll();
+                const categories = categoryRes || [];
+
+                let matchedCategory = null;
+                let matchedSubCategory = null;
+
+                for (const category of categories) {
+                    const sub = category.subCategories.find(
+                        (subCat) => subCat.slug === slug
+                    );
+                    if (sub) {
+                        matchedCategory = category;
+                        matchedSubCategory = sub;
+                        break;
+                    }
+                }
+
+                if (!matchedSubCategory) {
+                    Swal.fire("Not Found", "No subcategory found for this URL.", "warning");
+                    setProducts([]);
+                    return;
+                }
+
+                const res = await getProductBySubCategoryId(matchedCategory._id, matchedSubCategory._id);
+                setProducts(res.data || []);
+            } catch (error) {
+                Swal.fire("Not Found", "No subcategory found for this URL.", "warning");
+            } finally {
+                setLoading(false);
+            }
+        };
         fetchProducts();
     }, [slug]);
 
@@ -490,7 +490,6 @@ const SubCategoryProductPage = () => {
                             filteredProducts.map(product => {
                                 const mainImage = product.productImages?.[0];
                                 const rating = Math.max(...product.variations.map(v => v.ratings?.count || 0));
-                                const isExpress = product.variations.some(v => v.shipping?.estimatedDeliveryDays <= 3);
 
                                 return (
                                     <div key={product._id} className="product-card" >

@@ -1,6 +1,5 @@
-// src/components/ToastProvider.jsx
-import React, { createContext, useContext, useState, useEffect } from "react";
-import "./Toast.css"; // custom styles
+import React, { createContext, useContext, useState} from "react";
+import "./Toast.css"; 
 
 const ToastContext = createContext();
 

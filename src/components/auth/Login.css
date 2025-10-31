@@ -18,12 +18,12 @@
 .auth-header h1 {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #A06D33;
+  color: var(--black);
   margin-bottom: 0.5rem;
 }
 
 .auth-header p {
-  color: #666;
+  color: var(--dark-gray);
   font-size: 0.95rem;
 }
 
@@ -75,8 +75,7 @@
 
 .login-form-group input:focus {
   outline: none;
-  border-color: #A06D33
-;
+  border-color: var(--dark-gray);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
@@ -133,19 +132,16 @@
 .remember-me input {
   width: 1rem;
   height: 1rem;
-  accent-color: #A06D33
-;
+  accent-color: var(--black);
 }
 
 .remember-me label {
-    margin-top: 8px;
   color: #374151;
   font-weight: 500;
 }
 
 .forgot-password {
-  color: #A06D33
-;
+  color: var(--dark-brown);
   text-decoration: none;
   font-weight: 500;
 }
@@ -196,8 +192,13 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Auth Footer */
@@ -208,17 +209,15 @@
 }
 
 .auth-footer a {
-  color: #A06D33
-;
+  color: var(--dark-gray);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .auth-footer a:hover {
   text-decoration: underline;
+  color: var(--black);
 }
-
-
 
 /* Responsive Design */
 @media (max-width: 480px) {
@@ -227,11 +226,12 @@
     box-shadow: none;
     border-radius: 0;
   }
-  
+
   .auth-header h1 {
     font-size: 1.5rem;
   }
+
   .password-toggle-login {
-  width: 30px;
-}
+    width: 30px;
+  }
 }

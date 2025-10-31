@@ -16,12 +16,6 @@ export default function ProductListingPage() {
         price: "",
         category: "",
     });
-    const categoryMap = {
-        "men": "68ac23c0146f4993994f41b2",
-        "women": "68ad7a27010f07c1100d3e56",
-        "new-in": "68ad9ab6010f07c1100d3f1e",
-        "halloween": "68da47a52dd010a7a0b6cf3f",
-    };
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -38,6 +32,12 @@ export default function ProductListingPage() {
     }, []);
 
     useEffect(() => {
+        const categoryMap = {
+            "men": "68ac23c0146f4993994f41b2",
+            "women": "68ad7a27010f07c1100d3e56",
+            "new-in": "68ad9ab6010f07c1100d3f1e",
+            "halloween": "68da47a52dd010a7a0b6cf3f",
+        };
         let updated = [...products];
 
         if (filters.category || slug) {
@@ -147,7 +147,7 @@ export default function ProductListingPage() {
                                             alt={`${product.productName} - hover`}
                                             className="hover-image"
                                         />
-                                        {product.attributes.badge && product.attributes.badge != "None" ? (
+                                        {product.attributes.badge && product.attributes.badge !== "None" ? (
                                             <span className="product-page-badge badge-bestseller">
                                                 {product.attributes.badge}
                                             </span>

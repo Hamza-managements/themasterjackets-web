@@ -9,7 +9,7 @@ const AuthLayout = () => {
           <div className="logo-wrap">
             <Link to="/">
               <img
-                src="https://res.cloudinary.com/dekf5dyng/image/upload/v1752742536/official_tmj_logo_jygsft.png"
+                src="https://res.cloudinary.com/dvmpyh0hj/image/upload/v1760615184/hilkmru9zutcneybpwwc.png"
                 alt="Master Jackets"
                 className="logo-img"
               />

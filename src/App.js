@@ -34,7 +34,6 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
-      {/* Your routes or components */}
       <AuthProvider>
         <ProductProvider>
           <Routes>

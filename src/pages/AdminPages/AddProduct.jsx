@@ -9,16 +9,15 @@ import {
   Info,
   Layers,
   Search,
-  Hash,
   Key,
   Globe,
   Ruler,
   Scissors,
-  Badge,
   Trash,
 } from 'lucide-react';
 import { AuthContext } from '../../components/auth/AuthProvider';
 import Swal from "sweetalert2";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { useNavigate } from 'react-router-dom';
 import { fetchCategoriesAll } from '../../utils/CartUtils';
 
@@ -60,11 +59,9 @@ const AmazonStyleProductPage = () => {
     subCategoryId: ''
   });
 
-
   const [categories, setCategories] = useState([]);
   const [activeTab, setActiveTab] = useState('basic');
   const [imagePreviews, setImagePreviews] = useState([]);
-  const [newKeyword, setNewKeyword] = useState('');
   const [newTag, setNewTag] = useState('');
   const [newFaq, setNewFaq] = useState({ question: '', answer: '' });
 
@@ -133,14 +130,6 @@ const AmazonStyleProductPage = () => {
     }));
   };
 
-  const handleSpecChange = (e) => {
-    const lines = e.target.value.split("\n").filter(line => line.trim() !== "");
-    setFormData((prev) => ({
-      ...prev,
-      specifications: lines
-    }));
-  };
-
   // Upload a single file to Cloudinary and return its URL
   const uploadToCloudinary = async (file) => {
     const formData = new FormData();
@@ -203,18 +192,12 @@ const AmazonStyleProductPage = () => {
     }
   };
 
-
-  const addKeyword = () => {
-    if (newKeyword.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        meta: {
-          ...prev.meta,
-          keywords: [...prev.meta.keywords, newKeyword.trim()]
-        }
-      }));
-      setNewKeyword('');
-    }
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+    const items = Array.from(imagePreviews);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    setImagePreviews(items);
   };
 
   const removeKeyword = (index) => {
@@ -517,60 +500,70 @@ const AmazonStyleProductPage = () => {
                 {/* Main Product Images */}
                 <div className="mb-8">
                   <h3 className="text-lg font-medium text-gray-900 mb-4">Main Product Images</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {imagePreviews.map((preview, index) => (
-                      // <div key={index} className="relative group">
-                      //   <img
-                      //     src={preview}
-                      //     alt={`Product ${index + 1}`}
-                      //     className="w-full h-48 object-cover rounded-lg border"
-                      //   />
-                      //   <button
-                      //     onClick={() => removeImage(index)}
-                      //     className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                      //   >
-                      //     <Trash2 size={14} />
-                      //   </button>
-                      // </div>
-                      <div
-                        key={index}
-                        className="relative group overflow-visible"
-                        style={{ position: "relative", zIndex: 10 }}
-                      >
-                        <img
-                          src={preview}
-                          alt={`Product ${index + 1}`}
-                          className="w-full h-48 object-cover rounded-lg border z-0"
-                        />
 
-                        {/* Delete Button */}
-                        <button
-                          onClick={() => removeImage(index)}
-                          className="absolute top-2 right-2 bg-red-500 px-1 py-1 rounded text-xs z-40 cusor-pointer"
+                  <DragDropContext onDragEnd={handleDragEnd}>
+                    <Droppable droppableId="images" direction="horizontal">
+                      {(provided) => (
+                        <div
+                          className="grid grid-cols-2 md:grid-cols-4 gap-4"
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
                         >
-                          <Trash size={16} color="white" />
-                        </button>
-                        {/* Main Badge */}
-                        {index === 0 && (
-                          <span className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded text-xs z-40">
-                            Main
-                          </span>
-                        )}
-                      </div>
-                    ))}
+                          {imagePreviews.map((preview, index) => (
+                            <Draggable key={index} draggableId={`image-${index}`} index={index}>
+                              {(provided) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  className="relative group overflow-visible"
+                                  style={{
+                                    position: "relative",
+                                    zIndex: 10,
+                                    ...provided.draggableProps.style,
+                                  }}
+                                >
+                                  <img
+                                    src={preview}
+                                    alt={`Product ${index + 1}`}
+                                    className="w-full h-full object-cover rounded-lg border z-0"
+                                  />
 
-                    <label className="flex flex-col items-center justify-center w-full h-48 rounded-lg cursor-pointer transition-colors label-border">
-                      <Upload size={24} className="text-gray-400 mb-2" />
-                      <span className="text-sm text-gray-500">Upload Image</span>
-                      <input
-                        type="file"
-                        multiple
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="hidden"
-                      />
-                    </label>
-                  </div>
+                                  <button
+                                    onClick={() => removeImage(index)}
+                                    className="absolute top-2 right-2 bg-red-500 px-1 py-1 rounded text-xs z-40 cursor-pointer"
+                                  >
+                                    <Trash size={16} color="white" />
+                                  </button>
+
+                                  {index === 0 && (
+                                    <span className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded text-xs z-40">
+                                      Main
+                                    </span>
+                                  )}
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+
+                          {provided.placeholder}
+
+                          {/* Upload button stays static */}
+                          <label className="flex flex-col items-center justify-center w-full h-48 rounded-lg cursor-pointer transition-colors label-border">
+                            <Upload size={24} className="text-gray-400 mb-2" />
+                            <span className="text-sm text-gray-500">Upload Image</span>
+                            <input
+                              type="file"
+                              multiple
+                              accept="image/*"
+                              onChange={handleImageUpload}
+                              className="hidden"
+                            />
+                          </label>
+                        </div>
+                      )}
+                    </Droppable>
+                  </DragDropContext>
                 </div>
               </div>
             )}

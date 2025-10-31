@@ -99,7 +99,7 @@ export default function ResetPassword() {
     };
 
     const getStrengthColor = () => {
-        const colors = ['#ff4d4f', '#faad14', '#a0d911', '#52c41a'];
+        const colors = ['#ff4d4f', '#fa8c16', '#faad14', '#a0d911', '#52c41a']; 
         return colors[passwordStrength] || colors[0];
     };
 
@@ -117,7 +117,7 @@ export default function ResetPassword() {
 
                 <form onSubmit={handleSubmit}>
                     {/* Password Field */}
-                    <div className={`input-group ${errors.newPassword ? 'has-error' : ''}`}>
+                    <div className={`reset-password-input-group ${errors.newPassword ? 'has-error' : ''}`}>
                         <div className="input-wrapper">
                             <div className="input-icon">
                                 <FiLock />
@@ -126,6 +126,7 @@ export default function ResetPassword() {
                                 type={showPassword ? "text" : "password"}
                                 placeholder="New Password"
                                 value={newPassword}
+                                className='reset-password-input'
                                 onChange={(e) => {
                                     setNewPassword(e.target.value);
                                     if (errors.newPassword) setErrors({ ...errors, newPassword: '' });
@@ -146,12 +147,12 @@ export default function ResetPassword() {
 
                     {/* Password Strength Meter */}
                     {newPassword && (
-                        <div className="password-strength">
-                            <div className="strength-bars">
+                        <div className="reset-password-strength">
+                            <div className="reset-strength-bars">
                                 {[1, 2, 3, 4].map((i) => (
                                     <div
                                         key={i}
-                                        className={`strength-bar ${passwordStrength >= i ? 'active' : ''}`}
+                                        className={`reset-strength-bar ${passwordStrength >= i ? 'active' : ''}`}
                                         style={{ backgroundColor: passwordStrength >= i ? getStrengthColor() : '#f0f0f0' }}
                                     />
                                 ))}

@@ -11,13 +11,13 @@ import {
     Eye,
     X,
     HelpCircle,
-    Package,
     Ruler,
     Scissors,
     FileText,
     Search,
 } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { getSingleProduct, updateProduct } from '../../utils/ProductServices';
 
 const UpdateProductPage = () => {
@@ -167,6 +167,14 @@ const UpdateProductPage = () => {
         setHasChanges(true);
     };
 
+    const handleDragEnd = (result) => {
+        if (!result.destination) return;
+        const items = Array.from(imagePreviews);
+        const [reorderedItem] = items.splice(result.source.index, 1);
+        items.splice(result.destination.index, 0, reorderedItem);
+        setImagePreviews(items);
+    };
+
     const removeImage = (index) => {
         setEditableFormData(prev => ({
             ...prev,
@@ -252,7 +260,6 @@ const UpdateProductPage = () => {
             console.log("🟢 Update Response:", res);
             if (res.status !== true) {
                 throw new Error(res.message || "Update failed");
-                return;
             }
             setHasChanges(false);
 
@@ -527,7 +534,7 @@ const UpdateProductPage = () => {
                             <div className="bg-white rounded-lg shadow-sm p-6">
                                 <h2 className="text-xl font-semibold text-gray-900 mb-6">Product Images</h2>
 
-                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+                                {/* <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
                                     {imagePreviews.map((preview, index) => (
                                         <div
                                             key={index}
@@ -540,14 +547,14 @@ const UpdateProductPage = () => {
                                                 className="w-full h-48 object-cover rounded-lg border z-0"
                                             />
 
-                                            {/* Delete Button */}
+                 
                                             <button
                                                 onClick={() => removeImage(index)}
                                                 className="absolute top-2 right-2 bg-red-500 px-1 py-1 rounded text-xs z-40 cusor-pointer"
                                             >
                                                 <Trash size={16} color="white" />
                                             </button>
-                                            {/* Main Badge */}
+                         
                                             {index === 0 && (
                                                 <span className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded text-xs z-40">
                                                     Main
@@ -568,6 +575,73 @@ const UpdateProductPage = () => {
                                             className="hidden"
                                         />
                                     </label>
+                                </div> */}
+                                <div className="mb-8">
+                                    <h3 className="text-lg font-medium text-gray-900 mb-4">Main Product Images</h3>
+
+                                    <DragDropContext onDragEnd={handleDragEnd}>
+                                        <Droppable droppableId="images" direction="horizontal">
+                                            {(provided) => (
+                                                <div
+                                                    className="grid grid-cols-2 md:grid-cols-4 gap-4"
+                                                    ref={provided.innerRef}
+                                                    {...provided.droppableProps}
+                                                >
+                                                    {imagePreviews.map((preview, index) => (
+                                                        <Draggable key={index} draggableId={`image-${index}`} index={index}>
+                                                            {(provided) => (
+                                                                <div
+                                                                    ref={provided.innerRef}
+                                                                    {...provided.draggableProps}
+                                                                    {...provided.dragHandleProps}
+                                                                    className="relative group overflow-visible"
+                                                                    style={{
+                                                                        position: "relative",
+                                                                        zIndex: 10,
+                                                                        ...provided.draggableProps.style,
+                                                                    }}
+                                                                >
+                                                                    <img
+                                                                        src={preview}
+                                                                        alt={`Product ${index + 1}`}
+                                                                        className="w-full h-full object-cover rounded-lg border z-0"
+                                                                    />
+
+                                                                    <button
+                                                                        onClick={() => removeImage(index)}
+                                                                        className="absolute top-2 right-2 bg-red-500 px-1 py-1 rounded text-xs z-40 cursor-pointer"
+                                                                    >
+                                                                        <Trash size={16} color="white" />
+                                                                    </button>
+
+                                                                    {index === 0 && (
+                                                                        <span className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded text-xs z-40">
+                                                                            Main
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                            )}
+                                                        </Draggable>
+                                                    ))}
+
+                                                    {provided.placeholder}
+
+                                                    {/* Upload button stays static */}
+                                                    <label className="flex flex-col items-center justify-center w-full h-48 rounded-lg cursor-pointer transition-colors label-border">
+                                                        <Upload size={24} className="text-gray-400 mb-2" />
+                                                        <span className="text-sm text-gray-500">Upload Image</span>
+                                                        <input
+                                                            type="file"
+                                                            multiple
+                                                            accept="image/*"
+                                                            onChange={handleImageUpload}
+                                                            className="hidden"
+                                                        />
+                                                    </label>
+                                                </div>
+                                            )}
+                                        </Droppable>
+                                    </DragDropContext>
                                 </div>
 
                                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -1088,11 +1162,21 @@ const UpdateProductPage = () => {
                 </div>
             </div>
             <style>
-                {`
+            {`
                 input, textarea {
                     border: 1px solid #2564eb7e;
                 }
-                `}
+                .label-border{
+                    padding: 30px;
+                    border: 1px dashed #2564ebae;  
+                    border-radius: 8px;
+                    cursor: pointer;
+                    transition: border-color 0.3s ease;
+                }
+                .label-border:hover{
+                    border: 2px dashed #2564eb;
+                }
+            `}
             </style>
         </div>
     );

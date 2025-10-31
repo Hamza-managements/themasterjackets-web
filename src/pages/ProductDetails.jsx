@@ -361,6 +361,8 @@ const ProductDetails = () => {
                         </div>
                       ))}
                     </div>
+                    <br />
+                    <SizeChartOverlay />
                   </div>
                 </div>
               )}
@@ -374,7 +376,8 @@ const ProductDetails = () => {
                       .map((variation, i) => (
                         <img
                           key={i}
-                          src={variation.productImages[0]} // thumbnail for color
+                          src={variation.productImages[0]} 
+                          alt={variation.variationName}
                           onClick={() => handleColorSelect(variation)}
                           className={`color-circle ${selectedVariation?.attributes?.color === variation.attributes.color
                             ? 'active'

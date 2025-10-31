@@ -94,7 +94,7 @@ export const updateCategory = async (updatedData) => {
 
 export const updateSingleSubcategory = async (updatedData) => {
   try {
-    const response = await api.put(`/api/category/add/sub-category/68762589a469c496106e01d4`, updatedData);
+    await api.put(`/api/category/add/sub-category/68762589a469c496106e01d4`, updatedData);
   } catch (err) {
     console.error("Error updating Single Subcategory:", err);
   }

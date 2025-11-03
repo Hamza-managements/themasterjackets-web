@@ -71,8 +71,8 @@ export default function Footer() {
               <a href="www.pinterest.com"><i className="fab fa-pinterest-p"></i></a>
             </div>
             <div className='mt-4' >
-              <h5 className="footer-heading mb-1">Information</h5>
-              <ul className="footer-links-main">
+              <h5 className="website-footer-heading mb-1">Information</h5>
+              <ul className="website-footer-links-main">
                 <li><Link to="/about">About Us</Link></li>
                 <li><Link to="/contact-us">Contact Us</Link></li>
                 <li><Link to="/return-exchange">Return & Policy</Link></li>
@@ -85,8 +85,8 @@ export default function Footer() {
           {categories?.filter(cat => cat.mainCategoryName === "Men" || cat.mainCategoryName === "Women")
             .map(category => (
               <div key={category._id} className="col-lg-3 col-md-6 footer-col">
-                <h5 className="footer-heading"> {category.mainCategoryName}</h5>
-                <ul className="footer-links-main">
+                <h5 className="website-footer-heading"> {category.mainCategoryName}</h5>
+                <ul className="website-footer-links-main">
                   {category.subCategories?.map((sub) => (
                     <li key={sub._id}><Link to={`/products/${sub._id}`}>{sub.categoryName}</Link></li>
                   ))}

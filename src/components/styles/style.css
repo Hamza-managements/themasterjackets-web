@@ -45,6 +45,10 @@ h2 {
     font-weight: bold;
 }
 
+a{
+    text-decoration: none !important;
+}
+
 .hero {
     background: url('https://res.cloudinary.com/dekf5dyng/image/upload/v1761566404/Men_Leather_Jacket_siekxq.jpg') no-repeat center center / cover;
     height: 80vh;

@@ -5,13 +5,13 @@ import './styles/CategoriesSection.css';
 const categories = [
   {
     title: 'Men',
-    image: 'https://res.cloudinary.com/dekf5dyng/image/upload/v1749721392/download_gol87o.webp', // Put inside public/ or adjust import path
+    image: 'https://res.cloudinary.com/dekf5dyng/image/upload/v1762170209/800X800_hvyrfm.jpg',
     count: 42,
     link: 'men'
   },
   {
     title: 'Women',
-    image: 'https://res.cloudinary.com/dekf5dyng/image/upload/v1751527118/Leather-Jaxcket-Women_9ed03401-9be1-43e0-8dcd-eaaf09912f2a_1350x1350_f73rhr.webp',
+    image: 'https://res.cloudinary.com/dekf5dyng/image/upload/v1762171039/2400x2400_emliwd.jpg',
     count: 156,
     link: 'women'
   }

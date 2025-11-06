@@ -1,18 +1,18 @@
 .about-h {
     font-weight: 600;
     font-size: clamp(1.5rem, 4vw, 2.2rem);
-    color: var(--dark-brown);
+    color: var(--black);
 }
 
 .about-h1 {
     font-weight: 600;
     font-size: clamp(2rem, 5vw, 3rem);
-    color: var(--dark-brown);
+    color: var(--black);
 }
 
 .about-p {
     font-size: clamp(1rem, 3vw, 1.1rem);
-    color: var(--dark-brown);
+    color: var(--black);
     opacity: 0.9;
 }
 
@@ -52,7 +52,7 @@ section {
 
 /* === Mission Section === */
 .mission {
-    background-color: var(--white);
+    background-color: var(--beige);
     text-align: center;
 }
 
@@ -77,7 +77,7 @@ section {
     position: absolute;
     width: 50px;
     height: 3px;
-    background: var(--tan);
+    background: var(--red);
     bottom: -10px;
     left: 50%;
     transform: translateX(-50%);
@@ -123,14 +123,14 @@ section {
 }
 
 .member-info p.position {
-    color: var(--tan);
+    color: var(--red);
     font-style: italic;
     margin-bottom: 15px;
 }
 
 /* === Values Section === */
 .values {
-    background-color: var(--white);
+    background-color: var(--beige);
 }
 
 .values-grid {
@@ -149,27 +149,32 @@ section {
 
 .value-icon {
     font-size: 2.5rem;
-    color: var(--tan);
+    color: var(--red);
     margin-bottom: 20px;
 }
 
 /* === CTA Section === */
-.cta {
-    background-color: var(--tan);
+.cta-about-us {
+    background-color: var(--red);
     color: var(--beige);
     text-align: center;
     padding: 80px 20px;
 }
 
-.cta h2 {
+.cta-about-us h2 {
     color: var(--beige);
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
-.cta-btn {
+.cta-about-us p {
+    color: var(--beige);
+    margin-bottom: 1px;
+}
+
+.cta-about-us-btn {
     display: inline-block;
     padding: 12px 30px;
-    background: var(--dark-brown);
+    background: var(--black);
     color: var(--beige);
     text-decoration: none;
     border-radius: 50px;
@@ -178,9 +183,9 @@ section {
     transition: all 0.3s ease;
 }
 
-.cta-btn:hover {
+.cta-about-us-btn:hover {
     background: var(--beige);
-    color: var(--dark-brown);
+    color: var(--black);
 }
 
 /* === Responsive Design === */
@@ -222,7 +227,7 @@ section {
 
 .section-heading h2 {
     font-size: clamp(1.8rem, 4vw, 2.5rem);
-    color: var(--dark-brown);
+    color: var(--black);
     margin-bottom: 15px;
     position: relative;
     display: inline-block;
@@ -233,7 +238,7 @@ section {
     position: absolute;
     width: 60px;
     height: 3px;
-    background: var(--tan);
+    background: var(--red);
     bottom: -10px;
     left: 50%;
     transform: translateX(-50%);
@@ -243,7 +248,7 @@ section {
     max-width: 700px;
     margin: 0 auto;
     font-size: clamp(1rem, 3vw, 1.1rem);
-    color: var(--dark-brown);
+    color: var(--black);
     opacity: 0.9;
 }
 
@@ -263,28 +268,28 @@ section {
 }
 
 .banner-delivery {
-    background: linear-gradient(rgba(62, 44, 28, 0.60), rgba(62, 44, 28, 0.85)),
+    background: linear-gradient(rgba(31, 23, 17, 0.6), rgba(27, 19, 12, 0.85)),
         url('https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
     background-size: cover;
     background-position: center;
 }
 
 .banner-craftsmanship {
-    background: linear-gradient(rgba(160, 109, 51, 0.6), rgba(160, 109, 51, 0.6)),
+    background: linear-gradient(rgba(31, 23, 17, 0.6), rgba(27, 19, 12, 0.85)),
         url('https://images.unsplash.com/photo-1605000797499-95a51c5269ae?ixlib=rb-4.0.3&auto=format&fit=crop&w=1351&q=80');
     background-size: cover;
     background-position: center;
 }
 
 .banner-sustainability {
-    background: linear-gradient(rgba(175, 111, 55, 0.5), rgba(146, 87, 35, 0.4)),
+    background: linear-gradient(rgba(31, 23, 17, 0.6), rgba(27, 19, 12, 0.85)),
         url('https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
     background-size: cover;
     background-position: center;
 }
 
 .banner-community {
-    background: linear-gradient(rgba(160, 109, 51, 0.6), rgba(214, 147, 70, 0.5)),
+    background: linear-gradient(rgba(31, 23, 17, 0.6), rgba(27, 19, 12, 0.85)),
         url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
     background-size: cover;
     background-position: center;
@@ -299,7 +304,7 @@ section {
 .banner-icon {
     font-size: 2.5rem;
     margin-bottom: 20px;
-    color: var(--gold);
+    color: var(--light);
 }
 
 .banner-title {
@@ -318,8 +323,8 @@ section {
 .banner-btn {
     display: inline-block;
     padding: 10px 25px;
-    background: var(--gold);
-    color: var(--dark-brown);
+    background: var(--black);
+    color: var(--light);
     text-decoration: none;
     border-radius: 50px;
     font-weight: 600;
@@ -328,6 +333,7 @@ section {
 
 .banner-btn:hover {
     background: var(--beige);
+    color: var(--black);
     transform: translateY(-2px);
 }
 

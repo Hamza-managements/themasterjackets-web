@@ -122,7 +122,7 @@ body {
 .step-number {
     width: 40px;
     height: 40px;
-    background: var(--black);
+    background: var(--red);
     color: var(--beige);
     border-radius: 50%;
     display: flex;
@@ -140,7 +140,7 @@ body {
 
 /* === CTA Section === */
 .cta-section {
-    background: var(--gray);
+    background: var(--black);
     padding: 60px 20px;
     text-align: center;
     border-radius: 10px;
@@ -148,22 +148,22 @@ body {
 }
 
 .cta-section h2 {
-    color: var(--black);
-    margin-bottom: 20px;
+    color: var(--light);
+    margin-bottom: 10px;
 }
 
 .cta-section p {
-    color: var(--black);
+    color: var(--gray);
     opacity: 0.9;
     max-width: 700px;
-    margin: 0 auto 30px;
+    margin: 0 auto 20px;
 }
 
 .cta-btn-return {
     display: inline-block;
     padding: 12px 30px;
-    background: var(--black);
-    color: var(--beige);
+    background: var(--light);
+    color: var(--darker);
     text-decoration: none;
     border-radius: 50px;
     font-weight: 600;

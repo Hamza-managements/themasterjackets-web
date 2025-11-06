@@ -84,11 +84,11 @@ export default function AboutPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="cta">
+      <section className="cta-about-us">
         <div className="about-container">
           <h2 className='about-h'>Ready to Experience Our Craft?</h2>
           <p className='about-p'>Discover our collection and join our story</p>
-          <Link to="/products" className="cta-btn">Explore Our Products</Link>
+          <Link to="/products" className="cta-about-us-btn">Explore Our Products</Link>
         </div>
       </section>
 

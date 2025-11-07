@@ -15,6 +15,13 @@ const api = axios.create({
 
 export async function fetchAllUsers() {
   try {
+    api.interceptors.request.use((config) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    });
     const response = await api.get("/api/user/fetch-all/68762589a469c496106e01d4");
     return response.data.data;
   } catch (error) {

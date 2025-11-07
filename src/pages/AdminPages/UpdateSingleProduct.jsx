@@ -758,7 +758,6 @@ const UpdateProductPage = () => {
                                                     {badgeOptions.map(option => (
                                                         <option key={option} value={option}>{option}</option>
                                                     ))}
-
                                                 </select>
                                             </div>
                                         </div>
@@ -1162,7 +1161,7 @@ const UpdateProductPage = () => {
                 </div>
             </div>
             <style>
-            {`
+                {`
                 input, textarea {
                     border: 1px solid #2564eb7e;
                 }

@@ -306,57 +306,9 @@ a{
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
-.bj-product-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: var(--red);
-    color: white;
-    padding: 3px 8px;
-    font-size: 12px;
-    z-index: 2;
-}
-
-.bj-product-image {
-    position: relative;
-    overflow: hidden;
-    margin-bottom: 15px;
-}
-
-.bj-product-image img {
-    width: 100%;
-    height: auto;
-    transition: transform 0.3s;
-}
-
 .bj-product:hover .bj-product-image img {
     transform: scale(1.03);
 }
-
-.bj-product:hover .bj-product-title {
-    color: var(--black);
-}
-
-.bj-product-title {
-    font-size: 16px;
-    margin-bottom: 5px;
-}
-
-.bj-product-price {
-    display: flex;
-    gap: 10px;
-}
-
-.bj-product-price .original {
-    text-decoration: line-through;
-    color: #999;
-}
-
-.bj-product-price .sale {
-    color: var(--dark-gray);
-    font-weight: bold;
-}
-
 
 @media (max-width: 768px) {
     .bj-hero h1 {

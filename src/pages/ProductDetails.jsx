@@ -80,6 +80,7 @@ const ProductDetails = () => {
 
     if (matched) {
       setSelectedVariation(matched);
+      setActiveImage(matched.productImages?.[0]);
     }
   };
 
@@ -376,7 +377,7 @@ const ProductDetails = () => {
                       .map((variation, i) => (
                         <img
                           key={i}
-                          src={variation.productImages[0]} 
+                          src={variation.productImages[0]}
                           alt={variation.variationName}
                           onClick={() => handleColorSelect(variation)}
                           className={`color-circle ${selectedVariation?.attributes?.color === variation.attributes.color

@@ -13,18 +13,25 @@ export default function Footer() {
 
   const [toastMessage, setToastMessage] = useState('');
 
-  // Validation
   const isValidEmail = (email) => /^[^ ]+@[^ ]+\.[a-z]{2,6}$/i.test(email);
 
   useEffect(() => {
     const fetchCategories = async () => {
+      const cached = localStorage.getItem("categories");
+      if (cached) {
+        setCategories(JSON.parse(cached));
+        return;
+      }
+
       try {
-        const data = await fetchCategoriesAll()
+        const data = await fetchCategoriesAll();
         setCategories(data);
+        localStorage.setItem("categories", JSON.stringify(data));
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
     };
+
     fetchCategories();
   }, []);
 
@@ -158,7 +165,7 @@ export default function Footer() {
       <div className="footer-brand">
         <h2>THE MASTER JACKETS</h2>
       </div>
-      
+
       <div className="footer-bottom">
         <div className="row align-items-center">
           <div className="col-md-6">

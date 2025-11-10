@@ -71,7 +71,7 @@ const CustomerGallery = () => {
       container.removeEventListener('mouseenter', pauseAutoScroll);
       container.removeEventListener('mouseleave', resumeAutoScroll);
     };
-  }, [galleryItems, visibleItems]);
+  }, [visibleItems]);
 
   // Handle slide movement
   useEffect(() => {

@@ -17,10 +17,8 @@ import {
   FaEdit,
   FaTrash,
   FaPlus,
-  FaCheckCircle,
   FaTruck,
   FaClock,
-  FaCreditCard,
   FaQuestionCircle,
   FaHeart,
   FaSyncAlt
@@ -37,7 +35,7 @@ const Dashboard = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
 
   const { user, logout } = useContext(AuthContext);
-  const { uid, userName, contactNo, token, userEmail } = user;
+  const { uid, userName, userEmail } = user;
 
   // Initialize AOS animations
   useEffect(() => {
@@ -59,7 +57,7 @@ const Dashboard = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const [notifications, setNotifications] = useState([
+  const [notifications,] = useState([
     {
       id: 1,
       type: 'order',
@@ -99,7 +97,7 @@ const Dashboard = () => {
 
   const [showNotifications, setShowNotifications] = useState(false);
 
-  const [orders, setOrders] = useState([
+  const [orders,] = useState([
     {
       id: 'ORD-78945',
       date: '2023-06-15',
@@ -137,7 +135,7 @@ const Dashboard = () => {
     }
   ]);
 
-  const [returns, setReturns] = useState([
+  const [returns,] = useState([
     {
       id: 'RET-12345',
       date: '2023-07-15',
@@ -160,7 +158,7 @@ const Dashboard = () => {
     }
   ]);
 
-  const [stats, setStats] = useState({
+  const [stats,] = useState({
     totalOrders: 12,
     checkedOutOrders: 2,
     wishlistItems: 5,
@@ -198,13 +196,13 @@ const Dashboard = () => {
   });
 
   const [showAddressForm, setShowAddressForm] = useState(false);
-  const [securitySettings, setSecuritySettings] = useState({
-    twoFactorEnabled: false,
-    securityQuestions: [
-      { question: 'What was your first pet\'s name?', answer: '••••••' },
-      { question: 'In what city were you born?', answer: '••••••' }
-    ]
-  });
+  // const [securitySettings, setSecuritySettings] = useState({
+  //   twoFactorEnabled: false,
+  //   securityQuestions: [
+  //     { question: 'What was your first pet\'s name?', answer: '••••••' },
+  //     { question: 'In what city were you born?', answer: '••••••' }
+  //   ]
+  // });
 
   // Toggle mobile menu
   const toggleMobileMenu = () => {
@@ -316,14 +314,6 @@ const Dashboard = () => {
 
     setAddresses(addresses.filter(a => a.id !== id));
     localStorage.setItem('addresses', JSON.stringify(addresses.filter(a => a.id !== id)));
-  };
-
-  // Toggle two-factor authentication
-  const toggleTwoFactor = () => {
-    setSecuritySettings({
-      ...securitySettings,
-      twoFactorEnabled: !securitySettings.twoFactorEnabled
-    });
   };
 
   // Format date
@@ -520,12 +510,12 @@ const Dashboard = () => {
 
           <div className="sidebar-footer">
             <div className="help-card">
-            <Link to="/contact-us" className="help-card">
-              <FaQuestionCircle />
-              <div>
-                <h4>Need Help?</h4>
-                <p>Contact our support team</p>
-              </div>
+              <Link to="/contact-us" className="help-card">
+                <FaQuestionCircle />
+                <div>
+                  <h4>Need Help?</h4>
+                  <p>Contact our support team</p>
+                </div>
               </Link>
             </div>
           </div>

@@ -1309,17 +1309,6 @@ const Dashboard = () => {
         </main>
       </div>
       <style>{`
-body {
-    line-height: 1.6;
-    color: var(--dark-brown);
-    background-color: #f5f7fa;
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
 button {
     cursor: pointer;
     border: none;

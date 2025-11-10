@@ -32,6 +32,7 @@ body {
     padding: 0;
     overflow-x: hidden;
     position: relative;
+    line-height: 1.6;
 }
 
 .container {

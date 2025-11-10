@@ -1,9 +1,3 @@
-body {
-  line-height: 1.6;
-  color: var(--dark-gray);
-  background-color: #f9f9f9;
-}
-
 /* Signup Container */
 .signup-container {
   display: flex;

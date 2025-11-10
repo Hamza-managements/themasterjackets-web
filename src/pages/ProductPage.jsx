@@ -278,17 +278,6 @@ export default function ProductListingPage() {
                 </div>
             </div>
             <style>{`
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background-color: var(--beige);
-            line-height: 1.6;
-        }
-
         /* === Layout === */
         .plp-container {
             display: flex;

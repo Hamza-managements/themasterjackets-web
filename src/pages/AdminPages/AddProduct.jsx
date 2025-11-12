@@ -770,14 +770,18 @@ const AmazonStyleProductPage = () => {
                           <label className="block text-sm font-medium text-gray-700 mb-2">
                             Material
                           </label>
-                          <input
-                            type="text"
+                          <select
+                            style={{ border: '1px solid #2564eb7e' }}
                             value={variation.attributes.material}
                             onChange={(e) => updateNestedVariation(index, 'attributes', 'material', e.target.value)}
                             className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500"
-                            placeholder="Leather, Cotton, etc."
-                            style={{ border: '1px solid #2564eb7e' }}
-                          />
+                          >
+                            <option value="" disabled>Select Material</option>
+                            <option value="Leather">Leather</option>
+                            <option value="Denim">Denim</option>
+                            <option value="Cotton">Cotton</option>
+                            <option value="Suede">Suede</option>
+                          </select>
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -995,6 +999,7 @@ const AmazonStyleProductPage = () => {
                         onChange={(e) => updateAttribute('material', e.target.value)}
                         className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500"
                       >
+                        <option value="" disabled>Select Material</option>
                         <option value="Leather">Leather</option>
                         <option value="Denim">Denim</option>
                         <option value="Cotton">Cotton</option>
@@ -1011,6 +1016,7 @@ const AmazonStyleProductPage = () => {
                         onChange={(e) => updateAttribute('lining', e.target.value)}
                         className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500"
                       >
+                        <option value="" disabled>Select Lining</option>
                         <option value="Viscose">Viscose</option>
                         <option value="Silk">Silk</option>
                         <option value="Polyester">Polyester</option>

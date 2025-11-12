@@ -169,10 +169,18 @@ const UpdateProductPage = () => {
 
     const handleDragEnd = (result) => {
         if (!result.destination) return;
-        const items = Array.from(imagePreviews);
-        const [reorderedItem] = items.splice(result.source.index, 1);
-        items.splice(result.destination.index, 0, reorderedItem);
-        setImagePreviews(items);
+
+        // Update preview array for UI
+        const reorderedPreviews = Array.from(imagePreviews);
+        const [removed] = reorderedPreviews.splice(result.source.index, 1);
+        reorderedPreviews.splice(result.destination.index, 0, removed);
+        setImagePreviews(reorderedPreviews);
+
+        // Update formData.images for backend
+        setEditableFormData((prev) => ({
+            ...prev,
+            productImages: reorderedPreviews,
+        }));
     };
 
     const removeImage = (index) => {

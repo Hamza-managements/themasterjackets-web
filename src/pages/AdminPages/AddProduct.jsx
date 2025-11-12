@@ -202,6 +202,29 @@ const AmazonStyleProductPage = () => {
     setImagePreviews(items);
   };
 
+  const handleVariationDragEnd = (result, variationIndex) => {
+    if (!result.destination) return;
+
+    setFormData((prev) => {
+      const updatedVariations = [...prev.variations];
+      const reorderedImages = Array.from(updatedVariations[variationIndex].productImages);
+      const [movedImage] = reorderedImages.splice(result.source.index, 1);
+      reorderedImages.splice(result.destination.index, 0, movedImage);
+
+      updatedVariations[variationIndex] = {
+        ...updatedVariations[variationIndex],
+        productImages: reorderedImages,
+      };
+
+      return {
+        ...prev,
+        variations: updatedVariations,
+      };
+    });
+  };
+
+
+
   const removeKeyword = (index) => {
     setFormData(prev => ({
       ...prev,
@@ -866,36 +889,76 @@ const AmazonStyleProductPage = () => {
                         <label className="block text-sm font-medium text-gray-700 mb-4">
                           Variation Images
                         </label>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                          {variation.productImages.map((image, imgIndex) => (
-                            <div key={imgIndex} className="relative group overflow-visible">
-                              <img
-                                src={image}
-                                alt={`Variation ${index + 1} - ${imgIndex + 1}`}
-                                className="w-full h-48 object-cover rounded-lg border z-0"
-                              />
-                              <button
-                                onClick={() => removeImage(imgIndex, index)}
-                                className="absolute top-2 right-2 bg-red-500 px-1 py-1 rounded text-xs z-40 cusor-pointer"
-                              >
-                                <Trash2 size={12} color={"#fafbfbff"} />
-                              </button>
-                            </div>
-                          ))}
 
-                          <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
-                            <Upload size={20} className="text-gray-400 mb-1" />
-                            <span className="text-xs text-gray-500">Add Image</span>
-                            <input
-                              type="file"
-                              multiple
-                              accept="image/*"
-                              onChange={(e) => handleImageUpload(e, index)}
-                              className="hidden"
-                            />
-                          </label>
-                        </div>
+                        <DragDropContext onDragEnd={(result) => handleVariationDragEnd(result, index)}>
+                          <Droppable droppableId={`variation-${index}`} direction="horizontal">
+                            {(provided) => (
+                              <div
+                                className="grid grid-cols-2 md:grid-cols-4 gap-4"
+                                ref={provided.innerRef}
+                                {...provided.droppableProps}
+                              >
+                                {variation.productImages.map((image, imgIndex) => (
+                                  <Draggable
+                                    key={imgIndex}
+                                    draggableId={`variation-${index}-image-${imgIndex}`}
+                                    index={imgIndex}
+                                  >
+                                    {(provided) => (
+                                      <div
+                                        ref={provided.innerRef}
+                                        {...provided.draggableProps}
+                                        {...provided.dragHandleProps}
+                                        className="relative group overflow-visible"
+                                        style={{
+                                          position: "relative",
+                                          zIndex: 10,
+                                          ...provided.draggableProps.style,
+                                        }}
+                                      >
+                                        <img
+                                          src={image}
+                                          alt={`Variation ${index + 1} - ${imgIndex + 1}`}
+                                          className="w-full h-48 object-cover rounded-lg border z-0"
+                                        />
+
+                                        <button
+                                          onClick={() => removeImage(imgIndex, index)}
+                                          className="absolute top-2 right-2 bg-red-500 px-1 py-1 rounded text-xs z-40 cursor-pointer"
+                                        >
+                                          <Trash2 size={12} color="#fafbfbff" />
+                                        </button>
+
+                                        {imgIndex === 0 && (
+                                          <span className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded text-xs z-40">
+                                            Main
+                                          </span>
+                                        )}
+                                      </div>
+                                    )}
+                                  </Draggable>
+                                ))}
+
+                                {provided.placeholder}
+
+                                {/* Upload button stays static */}
+                                <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
+                                  <Upload size={20} className="text-gray-400 mb-1" />
+                                  <span className="text-xs text-gray-500">Add Image</span>
+                                  <input
+                                    type="file"
+                                    multiple
+                                    accept="image/*"
+                                    onChange={(e) => handleImageUpload(e, index)}
+                                    className="hidden"
+                                  />
+                                </label>
+                              </div>
+                            )}
+                          </Droppable>
+                        </DragDropContext>
                       </div>
+
                     </div>
                   ))}
 
@@ -927,30 +990,33 @@ const AmazonStyleProductPage = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Material
                       </label>
-                      <input
-                        style={{ border: '1px solid #2564eb7e' }}
-                        type="text"
+                      <select
                         value={formData.attributes.material}
                         onChange={(e) => updateAttribute('material', e.target.value)}
                         className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500"
-                        placeholder="e.g., Cotton, Polyester, Leather"
-                      />
+                      >
+                        <option value="Leather">Leather</option>
+                        <option value="Denim">Denim</option>
+                        <option value="Cotton">Cotton</option>
+                        <option value="Suede">Suede</option>
+                      </select>
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Lining
                       </label>
-                      <input
-                        style={{ border: '1px solid #2564eb7e' }}
-                        type="text"
+                      <select
                         value={formData.attributes.lining}
                         onChange={(e) => updateAttribute('lining', e.target.value)}
                         className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500"
-                        placeholder="e.g., Silk, Polyester"
-                      />
+                      >
+                        <option value="Viscose">Viscose</option>
+                        <option value="Silk">Silk</option>
+                        <option value="Polyester">Polyester</option>
+                        <option value="Cotton">Cotton</option>
+                      </select>
                     </div>
-
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Weight

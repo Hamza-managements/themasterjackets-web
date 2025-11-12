@@ -52,7 +52,7 @@ export default function FeaturedProducts({ title }) {
         let sorted = [...products];
         switch (sortOption) {
             case 'Best Selling':
-                sorted.sort((a, b) => b.sales - a.sales); 
+                sorted.sort((a, b) => b.sales - a.sales);
                 break;
             case 'Price: Low to High':
                 sorted.sort((a, b) => a.price - b.price);
@@ -61,7 +61,7 @@ export default function FeaturedProducts({ title }) {
                 sorted.sort((a, b) => b.price - a.price);
                 break;
             case 'Newest':
-                sorted.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded)); 
+                sorted.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
                 break;
             default:
                 break;
@@ -91,37 +91,53 @@ export default function FeaturedProducts({ title }) {
 
 
             <div className="bj-products">
-                {sortedProducts.map(product => (
-                    <div className="bj-product" key={product._id || product.id} onClick={() => navigateToProductDetail(product._id)}>
+                {sortedProducts?.map((product) => (
+                    <div
+                        className="bj-product"
+                        key={product?._id || product?.id}
+                        onClick={() => product?._id && navigateToProductDetail(product._id)}
+                    >
                         <div className="featured-product-image">
-                            {product.attributes.badge && (
-                                <div className="featured-product-badge">{product.attributes.badge}</div>
+                            {product?.attributes?.badge && (
+                                <div className="featured-product-badge">
+                                    {product.attributes.badge}
+                                </div>
                             )}
+
                             <img
                                 src={
-                                    product.productImages?.[0] ||
-                                    product.variations?.[0]?.productImages?.[0]
+                                    product?.productImages?.[0] ||
+                                    product?.variations?.[0]?.productImages?.[0]
                                 }
-                                alt={product.productName}
+                                alt={product?.productName || "Product image"}
                                 className="main-image"
                             />
+
                             <img
                                 src={
-                                    product.productImages?.[1] ||
-                                    product.variations?.[0]?.productImages?.[1] ||
-                                    product.productImages?.[0]
+                                    product?.productImages?.[1] ||
+                                    product?.variations?.[0]?.productImages?.[1] ||
+                                    product?.productImages?.[0]
                                 }
-                                alt={`${product.productName} - hover`}
+                                alt={`${product?.productName || "Product"} - hover`}
                                 className="hover-image"
                             />
                         </div>
+
                         <div className="featured-product-info">
-                            <h3>{product.productName}</h3>
+                            <h3>{product?.productName || "Unnamed Product"}</h3>
                             <div className="featured-product-price">
-                                ${Number(product.variations[0].productPrice.discountedPrice).toFixed(2)}
-                                {product.variations[0].productPrice.originalPrice && (
+                                $
+                                {Number(
+                                    product?.variations?.[0]?.productPrice?.discountedPrice || 0
+                                ).toFixed(2)}
+
+                                {product?.variations?.[0]?.productPrice?.originalPrice && (
                                     <span className="featured-product-original-price">
-                                        ${Number(product.variations[0].productPrice.originalPrice).toFixed(2)}
+                                        $
+                                        {Number(
+                                            product?.variations?.[0]?.productPrice?.originalPrice || 0
+                                        ).toFixed(2)}
                                     </span>
                                 )}
                             </div>
@@ -129,6 +145,7 @@ export default function FeaturedProducts({ title }) {
                     </div>
                 ))}
             </div>
+
 
         </div>
     );

@@ -255,7 +255,7 @@ const ManageProducts = () => {
                         <img
                           src={product.productImages?.[0]}
                           alt={product.productName}
-                          className="w-12 h-12 object-cover rounded-md"
+                          className="w-12 h-18 object-cover rounded-md"
                         />
                         <div>
                           <Link target="_blank" to={`/products-details/${product._id}`} className="text-decoration-none hover:underline"><p className="font-medium text-gray-900">{product.productName}</p></Link>

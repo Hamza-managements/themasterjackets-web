@@ -122,54 +122,6 @@ const CategoryPage = () => {
               </div>
             ))}
           </div>
-
-          {/* Subcategory Content */}
-          {/* <div className="subcategories-container">
-            {cat.subCategories?.map((sub, subIndex) => (
-              <div
-                key={sub._id}
-                className={`subcategory-content ${activeSubcategory && activeSubcategory !== sub._id ? 'hidden' : ''}`}
-                data-aos="fade-up"
-                data-aos-delay={subIndex * 100}
-              >
-                <div className={`subcategory-card ${subIndex % 2 === 0 ? '' : 'reverse'}`}>
-                  <div className="subcategory-image">
-                    <div
-                      className="image-container"
-                      style={{
-                        backgroundImage: `url(/images/${cat.mainCategoryName.replace(/\s+/g, "-").toLowerCase()}/${sub.categoryName.replace(/\s+/g, "-").toLowerCase()}.jpg)`,
-                      }}
-                    >
-                      <div className="image-overlay">
-                        <Link to={`/products/${sub._id}`} className="quick-view-btn">
-                          Quick View
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="subcategory-info">
-                    <h2>{sub.categoryName}</h2>
-                    <p>
-                      Discover the best of {sub.categoryName}. Limited edition pieces
-                      designed for comfort and style. Each piece is crafted with attention to detail
-                      and premium materials.
-                    </p>
-                    <ul className="feature-list">
-                      <li>Premium Materials</li>
-                      <li>Expert Craftsmanship</li>
-                      <li>Exclusive Designs</li>
-                    </ul>
-                    <div className="subcategory-actions">
-                      <Link to={`/products/${sub._id}`} className="category-primary-btn">
-                        Shop Collection
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div> */}
         </div>
       ))}
     </div>

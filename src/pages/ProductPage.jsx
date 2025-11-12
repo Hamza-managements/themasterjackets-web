@@ -126,49 +126,68 @@ export default function ProductListingPage() {
                     </div>
 
                     <div className="products">
-                        {filtered.length > 0 ? (
+                        {filtered?.length > 0 ? (
                             filtered.map((product) => (
-                                <div key={product._id} className="product-card" onClick={() => navigateToProductDetail(product._id)} >
-                                    <div className="product-image" >
+                                <div
+                                    key={product?._id || product?.id}
+                                    className="product-card"
+                                    onClick={() => product?._id && navigateToProductDetail(product._id)}
+                                >
+                                    <div className="product-image">
                                         <img
                                             src={
-                                                product.productImages?.[0] ||
-                                                product.variations?.[0]?.productImages?.[0]
+                                                product?.productImages?.[0] ||
+                                                product?.variations?.[0]?.productImages?.[0] ||
+                                                "/placeholder.png"
                                             }
-                                            alt={product.productName}
+                                            alt={product?.productName || "Product image"}
                                             className="main-image"
                                         />
+
                                         <img
                                             src={
-                                                product.productImages?.[1] ||
-                                                product.variations?.[0]?.productImages?.[1] ||
-                                                product.productImages?.[0]
+                                                product?.productImages?.[1] ||
+                                                product?.variations?.[0]?.productImages?.[1] ||
+                                                product?.productImages?.[0] ||
+                                                "/placeholder.png"
                                             }
-                                            alt={`${product.productName} - hover`}
+                                            alt={`${product?.productName || "Product"} - hover`}
                                             className="hover-image"
                                         />
-                                        {product.attributes.badge && product.attributes.badge !== "None" ? (
-                                            <span className="product-page-badge badge-bestseller">
-                                                {product.attributes.badge}
-                                            </span>
-                                        ) : null}
+
+                                        {product?.attributes?.badge &&
+                                            product?.attributes?.badge !== "None" && (
+                                                <span className="product-page-badge badge-bestseller">
+                                                    {product.attributes.badge}
+                                                </span>
+                                            )}
                                     </div>
 
                                     <div className="product-page-details" style={{ padding: "15px" }}>
                                         <h3 className="product-page-title">
-                                            {product.productName}
+                                            {product?.productName || "Unnamed Product"}
                                         </h3>
+
                                         <div className="product-page-price">
-                                            ${product.variations[0]?.productPrice?.discountedPrice}.00
+                                            $
+                                            {Number(
+                                                product?.variations?.[0]?.productPrice?.discountedPrice || 0
+                                            ).toFixed(2)}
                                             <span className="product-page-original-price">
-                                                ${product.variations[0]?.productPrice?.originalPrice}
+                                                $
+                                                {Number(
+                                                    product?.variations?.[0]?.productPrice?.originalPrice || 0
+                                                ).toFixed(2)}
                                             </span>
                                         </div>
-                                        <div className="product-page-rating"><div className="flex space-x-1 text-orange-700">
-                                            {[...Array(5)].map((_, i) => (
-                                                <FaStar key={i} />
-                                            ))}
-                                        </div></div>
+
+                                        <div className="product-page-rating">
+                                            <div className="flex space-x-1 text-orange-700">
+                                                {[...Array(5)].map((_, i) => (
+                                                    <FaStar key={i} />
+                                                ))}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             ))
@@ -176,6 +195,7 @@ export default function ProductListingPage() {
                             <p className="no-products">No products found</p>
                         )}
                     </div>
+
                 </div>
 
                 {/* === Filters Sidebar === */}

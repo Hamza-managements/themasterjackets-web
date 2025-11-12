@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import { AuthContext } from './auth/AuthProvider';
+import { AuthContext } from '../components/auth/AuthProvider';
 import {
   FaBars,
   FaTimes,
@@ -103,8 +103,8 @@ const Dashboard = () => {
       date: '2023-06-15',
       status: 'Delivered',
       items: [
-        { name: 'Premium Leather Jacket', quantity: 1, price: 99.99 },
-        { name: 'Denim Jeans', quantity: 2, price: 25.00 }
+        { name: 'Premium Leather Jacket', image: "https://res.cloudinary.com/dekf5dyng/image/upload/v1761909389/vhdfj9s2ont2f1fzwscp.jpg", quantity: 1, price: 99.99 },
+        { name: 'Denim Jeans', image: "https://res.cloudinary.com/dekf5dyng/image/upload/v1761909389/vhdfj9s2ont2f1fzwscp.jpg", quantity: 2, price: 25.00 }
       ],
       total: 149.99,
       tracking: 'SH-784512369',
@@ -115,8 +115,8 @@ const Dashboard = () => {
       date: '2023-07-02',
       status: 'Shipped',
       items: [
-        { name: 'Casual T-Shirt', quantity: 1, price: 19.99 },
-        { name: 'Baseball Cap', quantity: 1, price: 15.00 }
+        { name: 'Casual T-Shirt', image: "https://res.cloudinary.com/dekf5dyng/image/upload/v1762517297/rttzoursxhmy1p14hfjk.jpg", quantity: 1, price: 19.99 },
+        { name: 'Baseball Cap', image: "https://res.cloudinary.com/dekf5dyng/image/upload/v1762517297/rttzoursxhmy1p14hfjk.jpg", quantity: 1, price: 15.00 }
       ],
       total: 89.99,
       tracking: 'SH-451236987',
@@ -127,7 +127,7 @@ const Dashboard = () => {
       date: '2023-07-10',
       status: 'In-Process',
       items: [
-        { name: 'Winter Coat', quantity: 1, price: 149.99 }
+        { name: 'Winter Coat', image: "https://res.cloudinary.com/dekf5dyng/image/upload/v1762517297/rttzoursxhmy1p14hfjk.jpg", quantity: 1, price: 149.99 }
       ],
       total: 149.99,
       tracking: 'SH-123456789',
@@ -141,7 +141,7 @@ const Dashboard = () => {
       date: '2023-07-15',
       status: 'Pending',
       items: [
-        { name: 'Leather Jacket', quantity: 1, price: 99.99 }
+        { name: 'Leather Jacket', image: "https://res.cloudinary.com/dekf5dyng/image/upload/v1762517297/rttzoursxhmy1p14hfjk.jpg", quantity: 1, price: 99.99 }
       ],
       reason: 'Size too large',
       refundAmount: 99.99
@@ -151,7 +151,7 @@ const Dashboard = () => {
       date: '2023-07-20',
       status: 'Approved',
       items: [
-        { name: 'Denim Jeans', quantity: 1, price: 25.00 }
+        { name: 'Denim Jeans', image: "https://res.cloudinary.com/dekf5dyng/image/upload/v1762517297/rttzoursxhmy1p14hfjk.jpg", quantity: 1, price: 25.00 }
       ],
       reason: 'Defective item',
       refundAmount: 25.00
@@ -706,9 +706,9 @@ const Dashboard = () => {
                           <span className={`status-badge ${order.status.toLowerCase()}`}>
                             {order.status}
                           </span>
-                          <span className="payment-method">
+                          {/* <span className="payment-method">
                             {order.paymentMethod}
-                          </span>
+                          </span> */}
                         </div>
                       </div>
 
@@ -716,8 +716,7 @@ const Dashboard = () => {
                         {order.items.map((item, index) => (
                           <div key={index} className="order-item">
                             <div className="item-image">
-                              {/* Placeholder for product image */}
-                              <div className="image-placeholder"></div>
+                              <img src={item.image} alt="" />
                             </div>
                             <div className="item-details">
                               <h4>{item.name}</h4>
@@ -812,8 +811,9 @@ const Dashboard = () => {
                         {ret.items.map((item, index) => (
                           <div key={index} className="order-item">
                             <div className="item-image">
-                              {/* Placeholder for product image */}
-                              <div className="image-placeholder"></div>
+                              <div className="image-placeholder">
+                                <img src={item.image} alt="" />
+                              </div>
                             </div>
                             <div className="item-details">
                               <h4>{item.name}</h4>
@@ -1335,7 +1335,7 @@ button {
     background: none;
     border: none;
     font-size: 1.25rem;
-    color: var(--gray);
+    color: var(--dark-gray);
 }
 
 .search-bar {
@@ -1348,13 +1348,13 @@ button {
     left: 1rem;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--gray);
+    color: var(--dark-gray);
 }
 
 .search-bar input {
     width: 100%;
     padding: 0.75rem 1rem 0.75rem 2.5rem;
-    border: 1px solid var(--light-gray);
+    border: 1px solid var(--gray);
     border-radius: var(--border-radius);
     font-size: 0.9rem;
     transition: var(--transition);
@@ -1377,7 +1377,7 @@ button {
     background: none;
     border: none;
     font-size: 1.25rem;
-    color: var(--gray);
+    color: var(--dark-gray);
 }
 
 .notification-badge {
@@ -1452,7 +1452,7 @@ button {
     display: flex;
     gap: 1rem;
     padding: 0 1rem 1rem;
-    border-bottom: 1px solid var(--light-gray);
+    border-bottom: 1px solid var(--gray);
 }
 
 .dropdown-menu button {
@@ -1471,7 +1471,7 @@ button {
 
 .dropdown-divider {
     height: 1px;
-    background-color: var(--light-gray);
+    background-color: var(--gray);
     margin: 0.5rem 0;
 }
 
@@ -1498,7 +1498,7 @@ button {
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    border-bottom: 1px solid var(--light-gray);
+    border-bottom: 1px solid var(--gray);
 }
 
 .notifications-header button {
@@ -1532,7 +1532,7 @@ button {
 }
 
 .notification-content small {
-    color: var(--gray);
+    color: var(--dark-gray);
     font-size: 0.8rem;
 }
 
@@ -1543,7 +1543,7 @@ button {
     justify-content: center;
     padding: 2rem;
     text-align: center;
-    color: var(--gray);
+    color: var(--dark-gray);
 }
 
 .empty-notifications svg {
@@ -1573,7 +1573,7 @@ button {
 .user-profile-card {
     text-align: center;
     padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--light-gray);
+    border-bottom: 1px solid var(--gray);
     margin-bottom: 1.5rem;
 }
 
@@ -1597,7 +1597,7 @@ button {
 }
 
 .user-profile-card p {
-    color: var(--gray);
+    color: var(--dark-gray);
     font-size: 0.9rem;
     margin-bottom: 1rem;
 }
@@ -1619,7 +1619,7 @@ button {
 }
 
 .user-stats small {
-    color: var(--gray);
+    color: var(--dark-gray);
     font-size: 0.8rem;
 }
 
@@ -1636,7 +1636,7 @@ button {
     gap: 0.75rem;
     padding: 0.75rem 1rem;
     border-radius: var(--border-radius);
-    color: var(--gray);
+    color: var(--dark-gray);
     transition: var(--transition);
     position: relative;
 }
@@ -1658,7 +1658,7 @@ button {
 
 .nav-icon {
     font-size: 1.1rem;
-    color: var(--gray);
+    color: var(--dark-gray);
 }
 
 .nav-badge {
@@ -1678,7 +1678,7 @@ button {
 .sidebar-footer {
     margin-top: auto;
     padding-top: 1.5rem;
-    border-top: 1px solid var(--light-gray);
+    border-top: 1px solid var(--gray);
 }
 
 .help-card {
@@ -1702,7 +1702,7 @@ button {
 
 .help-card p {
     font-size: 0.85rem;
-    color: var(--gray);
+    color: var(--dark-gray);
 }
 
 /* Main Content */
@@ -1723,7 +1723,7 @@ button {
 }
 
 .content-header p {
-    color: var(--gray);
+    color: var(--dark-gray);
 }
 
 /* Stats Grid */
@@ -1796,7 +1796,7 @@ button {
 }
 
 .stat-info p {
-    color: var(--gray);
+    color: var(--dark-gray);
     font-size: 0.9rem;
     margin-bottom: 0.25rem;
 }
@@ -1864,12 +1864,12 @@ th,
 td {
     padding: 1rem;
     text-align: left;
-    border-bottom: 1px solid var(--light-gray);
+    border-bottom: 1px solid var(--gray);
 }
 
 th {
     font-weight: 500;
-    color: var(--gray);
+    color: var(--dark-gray);
     font-size: 0.9rem;
     text-transform: uppercase;
 }
@@ -1914,7 +1914,7 @@ th {
 
 .return-reason {
     font-size: 0.85rem;
-    color: var(--gray);
+    color: var(--dark-gray);
     margin-left: 0.5rem;
 }
 
@@ -1936,7 +1936,7 @@ th {
     align-items: center;
     justify-content: center;
     background-color: var(--light);
-    color: var(--gray);
+    color: var(--dark-gray);
     transition: var(--transition);
 }
 
@@ -1962,7 +1962,7 @@ th {
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
     transition: var(--transition);
-    border: 1px solid var(--light-gray);
+    border: 1px solid var(--gray);
 }
 
 .action-card:hover {
@@ -1997,13 +1997,13 @@ th {
     left: 1rem;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--gray);
+    color: var(--dark-gray);
 }
 
 .search-box input {
     width: 100%;
     padding: 0.75rem 1rem 0.75rem 2.5rem;
-    border: 1px solid var(--light-gray);
+    border: 1px solid var(--gray);
     border-radius: var(--border-radius);
     font-size: 0.9rem;
 }
@@ -2015,7 +2015,7 @@ th {
 
 .filter-options select {
     padding: 0.75rem 1rem;
-    border: 1px solid var(--light-gray);
+    border: 1px solid var(--gray);
     border-radius: var(--border-radius);
     font-size: 0.9rem;
     background-color: white;
@@ -2039,7 +2039,7 @@ th {
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--light-gray);
+    border-bottom: 1px solid var(--gray);
 }
 
 .order-id {
@@ -2047,7 +2047,7 @@ th {
 }
 
 .order-header small {
-    color: var(--gray);
+    color: var(--dark-gray);
     font-size: 0.85rem;
 }
 
@@ -2059,7 +2059,7 @@ th {
 
 .payment-method {
     font-size: 0.85rem;
-    color: var(--gray);
+    color: var(--dark-gray);
 }
 
 .order-items {
@@ -2073,21 +2073,23 @@ th {
 }
 
 .order-item:not(:last-child) {
-    border-bottom: 1px solid var(--light-gray);
+    border-bottom: 1px solid var(--gray);
 }
 
 .item-image {
     width: 60px;
     height: 60px;
+    overflow: hidden;
     border-radius: var(--border-radius);
-    background-color: var(--light-gray);
+    background-color: transparent;
     flex-shrink: 0;
 }
 
-.image-placeholder {
+.item-image img {
     width: 100%;
     height: 100%;
-    background-color: var(--light-gray);
+    object-fit: contain;
+    background-color: transparent;
     border-radius: var(--border-radius);
 }
 
@@ -2098,7 +2100,7 @@ th {
 
 .item-details p {
     font-size: 0.85rem;
-    color: var(--gray);
+    color: var(--dark-gray);
 }
 
 .order-footer {
@@ -2106,7 +2108,7 @@ th {
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    border-top: 1px solid var(--light-gray);
+    border-top: 1px solid var(--gray);
 }
 
 .order-total {
@@ -2116,7 +2118,7 @@ th {
 }
 
 .order-total span {
-    color: var(--gray);
+    color: var(--dark-gray);
 }
 
 .order-total strong {
@@ -2130,7 +2132,7 @@ th {
 
 .btn-outline {
     padding: 0.5rem 1rem;
-    border: 1px solid var(--light-gray);
+    border: 1px solid var(--gray);
     border-radius: var(--border-radius);
     background-color: white;
     color: var(--dark-brown);
@@ -2185,7 +2187,7 @@ th {
 
 .empty-state svg {
     font-size: 3rem;
-    color: var(--light-gray);
+    color: var(--gray);
     margin-bottom: 1.5rem;
 }
 
@@ -2195,7 +2197,7 @@ th {
 }
 
 .empty-state p {
-    color: var(--gray);
+    color: var(--dark-dark-gray);
     margin-bottom: 1.5rem;
     max-width: 400px;
 }
@@ -2248,7 +2250,7 @@ th {
 
 .detail-row label {
     display: block;
-    color: var(--gray);
+    color: var(--dark-gray);
     font-size: 0.9rem;
     margin-bottom: 0.25rem;
 }
@@ -2284,7 +2286,7 @@ th {
 .form-group textarea {
     width: 100%;
     padding: 0.75rem 1rem;
-    border: 1px solid var(--light-gray);
+    border: 1px solid var(--gray);
     border-radius: var(--border-radius);
     font-size: 1rem;
     transition: var(--transition);
@@ -2342,12 +2344,12 @@ th {
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
     padding: 1.5rem;
-    border: 1px solid var(--light-gray);
+    border: 1px solid var(--dark-gray);
     transition: var(--transition);
 }
 
 .address-card.default {
-    border-color: var(--tan);
+    border-color: var(--gray);
     border-width: 2px;
 }
 
@@ -2391,7 +2393,7 @@ th {
     align-items: center;
     justify-content: center;
     background-color: var(--light);
-    color: var(--gray);
+    color: var(--dark-gray);
     transition: var(--transition);
 }
 
@@ -2404,7 +2406,7 @@ th {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px dashed var(--light-gray);
+    border: 2px dashed var(--gray);
     cursor: pointer;
     background-color: transparent;
 }
@@ -2419,7 +2421,7 @@ th {
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
-    color: var(--gray);
+    color: var(--dark-gray);
 }
 
 .address-card.add-new:hover .add-new-content {
@@ -2450,7 +2452,7 @@ th {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 1px solid var(--light-gray);
+    border: 1px solid var(--gray);
 }
 
 .security-header {
@@ -2477,7 +2479,7 @@ th {
 }
 
 .security-info p {
-    color: var(--gray);
+    color: var(--dark-gray);
     font-size: 0.9rem;
 }
 
@@ -2492,7 +2494,7 @@ th {
 }
 
 .status-disabled {
-    color: var(--gray);
+    color: var(--dark-gray);
     font-size: 0.85rem;
     font-weight: 500;
 }
@@ -2515,7 +2517,7 @@ th {
     justify-content: space-between;
     align-items: center;
     padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--light-gray);
+    border-bottom: 1px solid var(--gray);
 }
 
 .option-row:last-child {
@@ -2528,7 +2530,7 @@ th {
 }
 
 .option-row p {
-    color: var(--gray);
+    color: var(--dark-gray);
     font-size: 0.9rem;
 }
 

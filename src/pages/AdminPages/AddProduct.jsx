@@ -21,7 +21,6 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { useNavigate } from 'react-router-dom';
 import { fetchCategoriesAll } from '../../utils/CartUtils';
 
-
 const AmazonStyleProductPage = () => {
   const { user } = useContext(AuthContext)
   const navigate = useNavigate();
@@ -60,6 +59,7 @@ const AmazonStyleProductPage = () => {
   });
 
   const [categories, setCategories] = useState([]);
+  const [showPublishBtn, setShowPublishBtn] = useState(false);
   const [activeTab, setActiveTab] = useState('basic');
   const [imagePreviews, setImagePreviews] = useState([]);
   const [newTag, setNewTag] = useState('');
@@ -145,6 +145,7 @@ const AmazonStyleProductPage = () => {
     return data.secure_url;
   };
 
+  //Handle image upload (works for both main & variation images)
   const handleImageUpload = async (e, variationIndex = null) => {
     const files = Array.from(e.target.files);
 
@@ -192,6 +193,7 @@ const AmazonStyleProductPage = () => {
     }
   };
 
+  // Handle drag and drop reordering of images
   const handleDragEnd = (result) => {
     if (!result.destination) return;
     const items = Array.from(imagePreviews);
@@ -294,12 +296,50 @@ const AmazonStyleProductPage = () => {
     </button>
   );
 
+  // --- Validate Form ---
+  const validateForm = (showErrors = false) => {
+    const errors = [];
+
+    if (!formData.productName.trim()) errors.push("Product Name is required.");
+    if (!formData.productDescription.trim()) errors.push("Product Description is required.");
+    if (!formData.categoryId) errors.push("Category is required.");
+    if (!formData.subCategoryId) errors.push("Sub Category is required.");
+    if (formData.productImages.length === 0) errors.push("At least one product image is required.");
+    if (formData.variations.length === 0) errors.push("At least one product variation is required.");
+    if (!formData.attributes.material.trim()) errors.push("Material is required.");
+    if (!formData.attributes.lining.trim()) errors.push("Lining is required.");
+    if (!formData.attributes.closure.trim()) errors.push("Closure type is required.");
+    if (!formData.attributes.fit.trim()) errors.push("Fit is required.");
+    if (formData.attributes.style.length === 0) errors.push("Select at least one Style.");
+    if (formData.attributes.season.length === 0) errors.push("Select at least one Season.");
+    if (!formData.meta.title.trim()) errors.push("Meta Title is required.");
+    if (!formData.meta.description.trim()) errors.push("Meta Description is required.");
+
+    if (showErrors && errors.length > 0) {
+      Swal.fire({
+        title: "Validation Error",
+        html: `<ul style="text-align:left;line-height:1.6;color:#333;">${errors
+          .map((err) => `<li>• ${err}</li>`)
+          .join("")}</ul>`,
+        icon: "error",
+        confirmButtonColor: "#111827",
+      });
+    }
+
+    return errors.length === 0; // ✅ returns true only if valid
+  };
+
+  // --- Submit Handler ---
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setShowPublishBtn(true); // disable button
     try {
-      // const isValid = validateForm(true);
-      // if (!isValid) return;
+      const isValid = validateForm(true);
+      if (!isValid) {
+        setShowPublishBtn(false);
+        return;
+      }
 
       const res = await fetch(
         `https://themasterjacketsbackend-production.up.railway.app/api/product/save/${user.uid}`,
@@ -309,7 +349,7 @@ const AmazonStyleProductPage = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${user.token}`,
           },
-          body: JSON.stringify(formData)
+          body: JSON.stringify(formData),
         }
       );
 
@@ -323,17 +363,16 @@ const AmazonStyleProductPage = () => {
       if (!res.ok) {
         console.error("❌ API Error:", data);
         console.error("❌ Sent Data:", formData);
-        console.error("❌ Response Status:", res.status);
         throw new Error(data.message || "Server error");
       }
 
       Swal.fire({
         title: "🎉 Product Added Successfully!",
         html: `
-    <p style="font-size: 15px; margin-top: 6px; color: #555;">
-      Your product has been saved and is now visible in your inventory.
-    </p>
-  `,
+        <p style="font-size: 15px; margin-top: 6px; color: #555;">
+          Your product has been saved and is now visible in your inventory.
+        </p>
+      `,
         icon: "success",
         showConfirmButton: false,
         timer: 2500,
@@ -345,10 +384,10 @@ const AmazonStyleProductPage = () => {
           title: "fw-semibold",
         },
       });
+
       setTimeout(() => {
         navigate("/manage-all-products");
       }, 2500);
-
     } catch (e) {
       console.error("Error adding product:", e.message);
       Swal.fire({
@@ -356,8 +395,11 @@ const AmazonStyleProductPage = () => {
         text: e.message || "Failed to add product. Please try again.",
         icon: "error",
       });
+    } finally {
+      setShowPublishBtn(false); // enable button again
     }
   };
+
 
   const seasonOptions = ['Spring', 'Summer', 'Fall', 'Winter', 'All'];
   const [styleOptions, setStyleOptions] = useState(['Casual', 'Formal', 'Sport', 'Business', 'Vintage', 'Modern']);
@@ -1406,8 +1448,15 @@ const AmazonStyleProductPage = () => {
                   <button className="px-6 py-2 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
                     Save as Draft
                   </button>
-                  <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" onClick={handleSubmit}>
-                    Publish Product
+                  <button
+                    className={`px-6 py-2 rounded-lg transition-colors 
+                        ${showPublishBtn
+                        ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+                        : "bg-blue-600 text-white hover:bg-blue-700"}`}
+                    onClick={handleSubmit}
+                    disabled={showPublishBtn}
+                  >
+                    {showPublishBtn ? "Publishing..." : "Publish Product"}
                   </button>
                 </div>
               </div>

@@ -298,9 +298,9 @@ const SubCategoryProductPage = () => {
                     <div className="product-filter-section">
                         <div className="section-header" onClick={() => toggleSection('category')}>
                             <h3>Categories</h3>
-                            {expandedSections.category ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                            {expandedSections?.category ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                         </div>
-                        {expandedSections.category && (
+                        {expandedSections?.category && (
                             <div className="filter-options">
                                 <div className="product-filter-option">
                                     <label className="filter-label">
@@ -308,7 +308,7 @@ const SubCategoryProductPage = () => {
                                             type="checkbox"
                                             name="category"
                                             value="all"
-                                            checked={filters.category.includes('all')}
+                                            checked={filters?.category.includes('all')}
                                             onChange={(e) => handleFilterChange('category', e.target.value, true)}
                                         />
                                         <span className="checkmark"></span>
@@ -321,7 +321,7 @@ const SubCategoryProductPage = () => {
                                             type="checkbox"
                                             name="category"
                                             value="jacket"
-                                            checked={filters.category.includes('jacket')}
+                                            checked={filters?.category.includes('jacket')}
                                             onChange={(e) => handleFilterChange('category', e.target.value, true)}
                                         />
                                         <span className="checkmark"></span>
@@ -334,7 +334,7 @@ const SubCategoryProductPage = () => {
                                             type="checkbox"
                                             name="category"
                                             value="clothing"
-                                            checked={filters.category.includes('clothing')}
+                                            checked={filters?.category.includes('clothing')}
                                             onChange={(e) => handleFilterChange('category', e.target.value, true)}
                                         />
                                         <span className="checkmark"></span>
@@ -349,9 +349,9 @@ const SubCategoryProductPage = () => {
                     <div className="product-filter-section">
                         <div className="section-header" onClick={() => toggleSection('price')}>
                             <h3>Price Range</h3>
-                            {expandedSections.price ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                            {expandedSections?.price ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                         </div>
-                        {expandedSections.price && (
+                        {expandedSections?.price && (
                             <div className="filter-options">
                                 {[
                                     { value: 'all', label: 'All Prices' },
@@ -384,24 +384,24 @@ const SubCategoryProductPage = () => {
                             <h3>Colors</h3>
                             {expandedSections.color ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                         </div>
-                        {expandedSections.color && (
+                        {expandedSections?.color && (
                             <div className="filter-options">
                                 {[
                                     { value: 'all', label: 'All Colors' },
                                     { value: 'black', label: 'Black' },
                                     { value: 'brown', label: 'Brown' },
                                 ].map(option => (
-                                    <div key={option.value} className="product-filter-option">
+                                    <div key={option?.value} className="product-filter-option">
                                         <label className="filter-label">
                                             <input
                                                 type="radio"
                                                 name="color"
-                                                value={option.value}
-                                                checked={filters.color === option.value}
+                                                value={option?.value}
+                                                checked={filters?.color === option?.value}
                                                 onChange={(e) => handleFilterChange('color', e.target.value)}
                                             />
                                             <span className="radiomark"></span>
-                                            {option.label}
+                                            {option?.label}
                                         </label>
                                     </div>
                                 ))}
@@ -413,29 +413,29 @@ const SubCategoryProductPage = () => {
                     <div className="product-filter-section">
                         <div className="section-header" onClick={() => toggleSection('delivery')}>
                             <h3>Delivery Options</h3>
-                            {expandedSections.delivery ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                            {expandedSections?.delivery ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                         </div>
-                        {expandedSections.delivery && (
+                        {expandedSections?.delivery && (
                             <div className="filter-options">
                                 {[
                                     { value: 'all', label: 'All Options', icon: null },
                                     { value: 'prime', label: 'Prime', icon: Crown },
                                     { value: 'express', label: 'Express', icon: Zap }
-                                ].map(option => {
-                                    const IconComponent = option.icon;
+                                ]?.map(option => {
+                                    const IconComponent = option?.icon;
                                     return (
-                                        <div key={option.value} className="product-filter-option">
+                                        <div key={option?.value} className="product-filter-option">
                                             <label className="filter-label">
                                                 <input
                                                     type="radio"
                                                     name="delivery"
-                                                    value={option.value}
-                                                    checked={filters.delivery === option.value}
+                                                    value={option?.value}
+                                                    checked={filters?.delivery === option?.value}
                                                     onChange={(e) => handleFilterChange('delivery', e.target.value)}
                                                 />
                                                 <span className="radiomark"></span>
                                                 {IconComponent && <IconComponent size={16} className="icon" />}
-                                                {option.label}
+                                                {option?.label}
                                             </label>
                                         </div>
                                     );
@@ -450,7 +450,7 @@ const SubCategoryProductPage = () => {
                     <div className="toolbar">
                         <div className="toolbar-left">
                             <h1 className="page-title">
-                                {slug.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())}
+                                {slug?.replace(/-/g, " ").replace(/\b\w/g, (char) => char?.toUpperCase())}
                             </h1>
                             <div className="results-count">
                                 {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'}
@@ -476,7 +476,7 @@ const SubCategoryProductPage = () => {
                     </div>
 
                     <div className="products-grid">
-                        {filteredProducts.length === 0 ? (
+                        {filteredProducts?.length === 0 ? (
                             <div className="no-products">
                                 <div className="no-products-content">
                                     <h3>No products found</h3>
@@ -487,19 +487,18 @@ const SubCategoryProductPage = () => {
                                 </div>
                             </div>
                         ) : (
-                            filteredProducts.map(product => {
+                            filteredProducts?.map(product => {
                                 const mainImage = product.productImages?.[0];
-                                const rating = Math.max(...product.variations.map(v => v.ratings?.count || 0));
-
+                                const rating = Math?.max(...product?.variations.map(v => v?.ratings?.count || 0));
                                 return (
-                                    <div key={product._id} className="product-card" >
+                                    <div key={product?._id} className="product-card" >
                                         <div
                                             className="product-image"
-                                            onClick={() => navigateToProductDetail(product._id)}
+                                            onClick={() => navigateToProductDetail(product?._id)}
                                         >
                                             <img
                                                 src={mainImage}
-                                                alt={product.productName}
+                                                alt={product?.productName}
                                                 onError={(e) => {
                                                     e.target.src = '/api/placeholder/300/300';
                                                 }}
@@ -507,21 +506,21 @@ const SubCategoryProductPage = () => {
                                             <div className="product-badges">
                                                 <span className={`badge badge-prime`}>
                                                     {/* <Truck size={12} /> */}
-                                                    {product.variations.badge}
+                                                    {product?.variations?.badge}
                                                 </span>
                                             </div>
                                         </div>
                                         <div className="product-details">
                                             <h3
                                                 className="product-title"
-                                                onClick={() => navigateToProductDetail(product._id)}
+                                                onClick={() => navigateToProductDetail(product?._id)}
                                             >
-                                                {product.productName}
+                                                {product?.productName}
                                             </h3>
                                             <div className="product-price">
                                                 {getProductPriceRange(product)}
                                                 <span className="product-page-original-price">
-                                                    ${product.variations[0]?.productPrice?.originalPrice}
+                                                    ${product?.variations[0]?.productPrice?.originalPrice}
                                                 </span>
                                             </div>
                                             <div className="product-rating">
@@ -531,13 +530,13 @@ const SubCategoryProductPage = () => {
                                                 <span className="rating-count">({rating})</span>
                                             </div>
                                             <div className="product-colors">
-                                                {getProductColors(product).map(color => (
+                                                {getProductColors(product)?.map(color => (
                                                     <span
                                                         key={color}
                                                         className="color-chip"
                                                         style={{
-                                                            backgroundColor: color.toLowerCase(),
-                                                            border: color.toLowerCase() === 'white' ? '1px solid #e5e5e5' : 'none'
+                                                            backgroundColor: color?.toLowerCase(),
+                                                            border: color?.toLowerCase() === 'white' ? '1px solid #e5e5e5' : 'none'
                                                         }}
                                                         title={color}
                                                     />

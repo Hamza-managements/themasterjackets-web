@@ -37,7 +37,7 @@ const AccountSettings = () => {
 
     try {
       const response = await fetch('https://themasterjacketsbackend-production.up.railway.app/api/user/update', {
-        method: 'POST', // or PUT based on your backend
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Button, Modal, Form, Spinner, Alert, Card, Badge, Row, Col } from 'react-bootstrap';
+import { Button, Modal, Form, Spinner, Alert, Card, Badge, Row, Col, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-import { FaEdit, FaTrash, FaPlus, FaFolder, FaFolderOpen, FaSearch } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaPlus, FaFolder, FaFolderOpen, FaSearch, FaInfoCircle, FaBox, FaFilter, FaSort } from 'react-icons/fa';
 import { addCategory, addSubCategory, deleteCategory, deleteSubCategory, fetchCategoriesAll, updateCategory, updateSingleSubcategory } from '../../utils/CartUtils';
 
 const CategoryListPage = () => {
@@ -17,10 +17,12 @@ const CategoryListPage = () => {
   const [showSubcategoryModal, setShowSubcategoryModal] = useState(false);
   const [parentCategoryId, setParentCategoryId] = useState(null);
   const [showEditSubcategoryModal, setShowEditSubcategoryModal] = useState(false);
-  const [, setSubcategoryToEdit] = useState(null);
+  const [subcategoryToEdit, setSubcategoryToEdit] = useState(null);
   const [parentCategoryForEdit, setParentCategoryForEdit] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedCategories, setExpandedCategories] = useState(new Set());
+  const [filterStatus, setFilterStatus] = useState('all'); // all, with-products, without-products
+  const [sortBy, setSortBy] = useState('name'); // name, productCount, date
 
   // Form state
   const [formData, setFormData] = useState({
@@ -29,6 +31,39 @@ const CategoryListPage = () => {
     image: '',
     subCategories: [{ categoryName: '' }],
   });
+
+  // Mock product data - replace with actual API call
+  const mockProducts = [
+    { _id: '1', name: 'Product 1', category: 'cat1', subcategory: 'sub1' },
+    { _id: '2', name: 'Product 2', category: 'cat1', subcategory: 'sub2' },
+    { _id: '3', name: 'Product 3', category: 'cat2', subcategory: 'sub3' },
+    { _id: '4', name: 'Product 4', category: 'cat1', subcategory: 'sub1' },
+  ];
+
+  // Calculate product counts
+  const calculateProductCounts = useCallback((categories) => {
+    return categories.map(category => {
+      const categoryProducts = mockProducts.filter(product => 
+        product.category === category._id
+      );
+      
+      const subcategoryProducts = category.subCategories?.map(sub => {
+        const subProducts = mockProducts.filter(product => 
+          product.subcategory === sub._id
+        );
+        return {
+          ...sub,
+          productCount: subProducts.length
+        };
+      }) || [];
+
+      return {
+        ...category,
+        productCount: categoryProducts.length,
+        subCategories: subcategoryProducts
+      };
+    });
+  }, []);
 
   // Clear messages after 5 seconds
   useEffect(() => {
@@ -67,8 +102,8 @@ const CategoryListPage = () => {
       setLoading(true);
       setError(null);
       const data = await fetchCategoriesAll();
-      console.log(data)
-      setCategories(data);
+      const categoriesWithCounts = calculateProductCounts(data);
+      setCategories(categoriesWithCounts);
     } catch (err) {
       const errorMsg = err.response?.data?.message || err.message || 'Failed to fetch categories';
       setError(errorMsg);
@@ -76,7 +111,7 @@ const CategoryListPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [showToast]);
+  }, [showToast, calculateProductCounts]);
 
   useEffect(() => {
     getAllCategories();
@@ -93,6 +128,15 @@ const CategoryListPage = () => {
     setExpandedCategories(newExpanded);
   };
 
+  // Expand/Collapse all
+  const toggleExpandAll = () => {
+    if (expandedCategories.size === filteredCategories.length) {
+      setExpandedCategories(new Set());
+    } else {
+      setExpandedCategories(new Set(filteredCategories.map(cat => cat._id)));
+    }
+  };
+
   // Reset form
   const resetForm = () => {
     setFormData({
@@ -103,7 +147,7 @@ const CategoryListPage = () => {
     });
   };
 
-  // Input change (mainCategoryName only)
+  // Input change handlers
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -180,7 +224,7 @@ const CategoryListPage = () => {
   };
 
   // API calls
-  const addCategoryHandler = async (formData) => {
+  const addCategoryHandler = async () => {
     try {
       setLoading(true);
       await addCategory(formData);
@@ -204,7 +248,7 @@ const CategoryListPage = () => {
         description: formData.description,
         image: formData.image,
         mainCategoryName: formData.mainCategoryName,
-      }
+      };
       await updateCategory(updatedData);
       showToast('success', 'Category updated successfully!');
       setShowModal(false);
@@ -223,8 +267,9 @@ const CategoryListPage = () => {
       setLoading(true);
       const updatedData = {
         categoryId: parentCategoryForEdit._id,
-        subCategories: [{ categoryName: formData.subCategories[0].categoryName }]
-      }
+        subCategoryId: subcategoryToEdit._id,
+        categoryName: formData.subCategories[0].categoryName
+      };
       await updateSingleSubcategory(updatedData);
       showToast('success', 'Subcategory updated successfully!');
       setShowEditSubcategoryModal(false);
@@ -260,7 +305,7 @@ const CategoryListPage = () => {
       const data = {
         categoryId: parentCategoryId,
         subCategories: formData.subCategories,
-      }
+      };
       await addSubCategory(data);
       showToast('success', 'Subcategory added successfully!');
       setShowSubcategoryModal(false);
@@ -303,13 +348,39 @@ const CategoryListPage = () => {
     }
   };
 
-  // Filter categories based on search term
-  const filteredCategories = categories.filter(category =>
-    category.mainCategoryName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    category.subCategories?.some(sub =>
-      sub.categoryName.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
+  // Filter and sort categories
+  const filteredCategories = categories
+    .filter(category => {
+      const matchesSearch = category.mainCategoryName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        category.subCategories?.some(sub =>
+          sub.categoryName.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      
+      const matchesFilter = filterStatus === 'all' ? true :
+        filterStatus === 'with-products' ? category.productCount > 0 :
+        category.productCount === 0;
+
+      return matchesSearch && matchesFilter;
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'productCount':
+          return b.productCount - a.productCount;
+        case 'name':
+          return a.mainCategoryName.localeCompare(b.mainCategoryName);
+        case 'date':
+        default:
+          return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+      }
+    });
+
+  // Stats calculation
+  const stats = {
+    totalCategories: categories.length,
+    totalProducts: categories.reduce((sum, cat) => sum + cat.productCount, 0),
+    categoriesWithProducts: categories.filter(cat => cat.productCount > 0).length,
+    totalSubcategories: categories.reduce((sum, cat) => sum + (cat.subCategories?.length || 0), 0)
+  };
 
   // Submit form
   const handleSubmit = async (e) => {
@@ -325,88 +396,189 @@ const CategoryListPage = () => {
     }
   };
 
+  // Tooltip components
+  const ProductCountTooltip = (props) => (
+    <Tooltip id="product-count-tooltip" {...props}>
+      Number of products in this category
+    </Tooltip>
+  );
+
   return (
     <div className="cm-fixed-container">
       <div className="cm-fixed-header">
         <Row className="justify-content-center">
-          <Col lg={10}>
+          <Col lg={12} xl={10}>
             <Card className="glass-card">
-              <Card.Header className="card-header-custom d-flex justify-content-between align-items-center">
-                <div className='cm-fixed-title-section'>
-                  <h4 className="mb-0"><FaFolder className="me-2" />Category Manager</h4>
-                  <p className="mb-0">Manage your product categories and subcategories</p>
+              <Card.Header className="card-header-custom">
+                <div className="d-flex justify-content-between align-items-center flex-wrap">
+                  <div className="cm-fixed-title-section">
+                    <h4 className="mb-1"><FaFolder className="me-2" />Category Manager</h4>
+                    <p className="mb-0 text-light opacity-75">Manage your product categories and subcategories</p>
+                  </div>
+                  <Button variant="primary" className="btn-add" onClick={openAddModal}>
+                    <FaPlus className="me-2" />Add Category
+                  </Button>
                 </div>
-                <Button variant="primary" className="btn-add" onClick={openAddModal}>
-                  <FaPlus className="me-2" />Add Category
-                </Button>
+
+                {/* Statistics Cards */}
+                <Row className="mt-4 g-3">
+                  <Col xs={6} md={3}>
+                    <div className="stat-card">
+                      <div className="stat-icon total-categories">
+                        <FaFolder />
+                      </div>
+                      <div className="stat-content">
+                        <h5>{stats.totalCategories}</h5>
+                        <span>Total Categories</span>
+                      </div>
+                    </div>
+                  </Col>
+                  <Col xs={6} md={3}>
+                    <div className="stat-card">
+                      <div className="stat-icon total-products">
+                        <FaBox />
+                      </div>
+                      <div className="stat-content">
+                        <h5>{stats.totalProducts}</h5>
+                        <span>Total Products</span>
+                      </div>
+                    </div>
+                  </Col>
+                  <Col xs={6} md={3}>
+                    <div className="stat-card">
+                      <div className="stat-icon active-categories">
+                        <FaFolderOpen />
+                      </div>
+                      <div className="stat-content">
+                        <h5>{stats.categoriesWithProducts}</h5>
+                        <span>Active Categories</span>
+                      </div>
+                    </div>
+                  </Col>
+                  <Col xs={6} md={3}>
+                    <div className="stat-card">
+                      <div className="stat-icon total-subcategories">
+                        <FaFolder />
+                      </div>
+                      <div className="stat-content">
+                        <h5>{stats.totalSubcategories}</h5>
+                        <span>Subcategories</span>
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
               </Card.Header>
+              
               <Card.Body>
                 {error && <Alert variant="danger" className="alert-custom">{error}</Alert>}
                 {success && <Alert variant="success" className="alert-custom">{success}</Alert>}
 
-                {/* Search and Filter Bar */}
+                {/* Enhanced Search and Filter Bar */}
                 <div className="search-filter-bar mb-4">
                   <div className="search-box">
                     <FaSearch className="search-icon" />
                     <input
                       type="text"
-                      placeholder="Search categories..."
+                      placeholder="Search categories or subcategories..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="search-input"
                     />
                   </div>
-                  {/* <div className="filter-section">
-                    <button className="btn-filter">
-                      <FaFilter className="me-2" /> Filter
-                    </button>
-                    <button className="btn-sort">
-                      <FaSort className="me-2" /> Sort
-                    </button>
-                  </div> */}
+                  <div className="filter-controls">
+                    <select 
+                      value={filterStatus} 
+                      onChange={(e) => setFilterStatus(e.target.value)}
+                      className="form-select filter-select"
+                    >
+                      <option value="all">All Categories</option>
+                      <option value="with-products">With Products</option>
+                      <option value="without-products">Without Products</option>
+                    </select>
+                    
+                    <select 
+                      value={sortBy} 
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="form-select sort-select"
+                    >
+                      <option value="name">Sort by Name</option>
+                      <option value="productCount">Sort by Product Count</option>
+                      <option value="date">Sort by Date</option>
+                    </select>
+
+                    <Button 
+                      variant="outline-secondary" 
+                      onClick={toggleExpandAll}
+                      className="btn-expand-all"
+                    >
+                      {expandedCategories.size === filteredCategories.length ? 'Collapse All' : 'Expand All'}
+                    </Button>
+                  </div>
                 </div>
 
                 {loading ? (
                   <div className="text-center py-5">
                     <div className="loading-spinner"></div>
-                    <p className="mt-3">Loading categories...</p>
+                    <p className="mt-3 text-muted">Loading categories...</p>
                   </div>
                 ) : filteredCategories.length === 0 ? (
-                  <div className="py-5 empty-state-found">
+                  <div className="py-5 empty-state-found text-center">
                     <div className="empty-icon-found">
                       <FaFolderOpen />
                     </div>
                     <h5 className='mb-2'>No categories found</h5>
-                    <p className="text-muted mb-2">Get started by adding your first category.</p>
+                    <p className="text-muted mb-4">Try adjusting your search or filter criteria</p>
                     <button onClick={openAddModal} className="btn-add-no-found">
-                      Add Category
+                      <FaPlus className="me-2" />Add Your First Category
                     </button>
                   </div>
                 ) : (
                   <div className="categories-container">
                     {filteredCategories.map((category) => (
-                      <div key={category._id} className="category-card">
+                      <div key={category._id} className="admin-category-card">
                         <div className="category-header">
                           <div
                             className="category-title"
                             onClick={() => toggleCategoryExpansion(category._id)}
                           >
-                            <div className="d-flex align-items-center">
-                              {expandedCategories.has(category._id) ? <FaFolderOpen className="me-2" /> : <FaFolder className="me-2" />}
-                              <h5 className="mb-0 me-2"> {category.mainCategoryName} </h5>
-                              <h5 className="mb-0 me-2"> {category.slug} </h5>
-                              <h5 className="mb-0 me-2"> {category._id} </h5>
+                            <div className="d-flex align-items-center flex-wrap">
+                              <div className="category-icon">
+                                {expandedCategories.has(category._id) ? 
+                                  <FaFolderOpen className="text-primary" /> : 
+                                  <FaFolder className="text-primary" />
+                                }
+                              </div>
+                              <div className="category-info">
+                                <h5 className="category-name">{category.mainCategoryName}</h5>
+                                <div className="category-meta">
+                                  <Badge bg="outline-primary" className="me-2">
+                                    ID: {category._id}
+                                  </Badge>
+                                  <Badge bg="outline-secondary">
+                                    Slug: {category.slug}
+                                  </Badge>
+                                </div>
+                              </div>
                             </div>
-                            <img src={category.image || "https://image.pngaaa.com/700/5273700-middle.png"} className='image-category-admin' alt="" />
-                            <Badge bg="primary" className='p-2 me-2' pill>
-                              {category.subCategories?.length || 0} subcategories
-                            </Badge>
+                            
+                            <div className="category-stats">
+                              <OverlayTrigger placement="top" overlay={ProductCountTooltip}>
+                                <Badge bg="success" className="product-count-badge">
+                                  <FaBox className="me-1" />
+                                  {category.productCount} Products
+                                </Badge>
+                              </OverlayTrigger>
+                              <Badge bg="primary" className="subcategory-count">
+                                {category.subCategories?.length || 0} Subcategories
+                              </Badge>
+                            </div>
                           </div>
+                          
                           <div className="category-actions">
                             <Button
                               variant="outline-primary"
                               size="sm"
-                              className="me-2 p-3"
+                              className="me-2 action-btn"
                               onClick={() => openEditModal(category)}
                             >
                               <FaEdit className="me-1" />Edit
@@ -414,14 +586,15 @@ const CategoryListPage = () => {
                             <Button
                               variant="outline-success"
                               size="sm"
-                              className="me-2"
+                              className="me-2 action-btn"
                               onClick={() => openAddSubcategoryModal(category._id)}
                             >
-                              <FaPlus className="me-1" />Add Subcategory
+                              <FaPlus className="me-1" />Add Sub
                             </Button>
                             <Button
                               variant="outline-danger"
                               size="sm"
+                              className="action-btn"
                               onClick={() => {
                                 setCurrentCategory(category);
                                 setShowDeleteConfirm(true);
@@ -433,36 +606,69 @@ const CategoryListPage = () => {
                         </div>
 
                         {/* Subcategories */}
-                        {expandedCategories.has(category._id) && category.subCategories?.length > 0 && (
-                          <div className="subcategories-list">
-                            <p className="mb-3">Description: {category.description}</p>
-                            <h6 className="subcategories-title">Subcategories:</h6>
-                            {category.subCategories.map((sub, index) => (
-                              <div key={sub._id || `${category._id}-${index}`} className="subcategory-item">
-                                <div className="subcategory-info">
-                                  <h4 className="subcategory-name">{sub.categoryName}</h4>
-                                  <br />
-                                  <span className="subcategory-id">ID: {sub._id}</span>
-                                </div>
-                                <div className="subcategory-actions">
-                                  <Button
-                                    variant="outline-primary"
-                                    size="sm"
-                                    className="me-2"
-                                    onClick={() => openEditSubcategoryModal(category, sub)}
-                                  >
-                                    <FaEdit className="me-1" />Edit
-                                  </Button>
-                                  <Button
-                                    variant="outline-danger"
-                                    size="sm"
-                                    onClick={() => deleteSubCategoryHandler(category._id, sub._id, sub.categoryName)}
-                                  >
-                                    <FaTrash className="me-1" />Delete
-                                  </Button>
+                        {expandedCategories.has(category._id) && (
+                          <div className="category-details">
+                            <div className="category-description">
+                              <p><strong>Description:</strong> {category.description || 'No description provided'}</p>
+                            </div>
+                            
+                            {category.image && (
+                              <div className="category-image-section">
+                                <img 
+                                  src={category.image} 
+                                  className="image-category-admin" 
+                                  alt={category.mainCategoryName}
+                                  onError={(e) => {
+                                    e.target.src = "https://image.pngaaa.com/700/5273700-middle.png";
+                                  }}
+                                />
+                              </div>
+                            )}
+
+                            {category.subCategories?.length > 0 && (
+                              <div className="subcategories-section">
+                                <h6 className="subcategories-title">
+                                  <FaFolderOpen className="me-2" />
+                                  Subcategories ({category.subCategories.length})
+                                </h6>
+                                <div className="subcategories-list">
+                                  {category.subCategories.map((sub, index) => (
+                                    <div key={sub._id || `${category._id}-${index}`} className="subcategory-item">
+                                      <div className="subcategory-info">
+                                        <div className="subcategory-main">
+                                          <h6 className="subcategory-name">{sub.categoryName}</h6>
+                                          <OverlayTrigger placement="top" overlay={ProductCountTooltip}>
+                                            <Badge bg="outline-success" className="sub-product-count">
+                                              <FaBox className="me-1" />
+                                              {sub.productCount || 0} Products
+                                            </Badge>
+                                          </OverlayTrigger>
+                                        </div>
+                                        <span className="subcategory-id">ID: {sub._id}</span>
+                                      </div>
+                                      <div className="subcategory-actions">
+                                        <Button
+                                          variant="outline-primary"
+                                          size="sm"
+                                          className="me-2 action-btn"
+                                          onClick={() => openEditSubcategoryModal(category, sub)}
+                                        >
+                                          <FaEdit className="me-1" />Edit
+                                        </Button>
+                                        <Button
+                                          variant="outline-danger"
+                                          size="sm"
+                                          className="action-btn"
+                                          onClick={() => deleteSubCategoryHandler(category._id, sub._id, sub.categoryName)}
+                                        >
+                                          <FaTrash className="me-1" />Delete
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  ))}
                                 </div>
                               </div>
-                            ))}
+                            )}
                           </div>
                         )}
                       </div>
@@ -506,8 +712,9 @@ const CategoryListPage = () => {
                   placeholder="Enter category description"
                   className="form-control-custom"
                 />
-              </Form.Group><Form.Group className="mb-4">
-                <Form.Label>Category Image</Form.Label>
+              </Form.Group>
+              <Form.Group className="mb-4">
+                <Form.Label>Category Image URL</Form.Label>
                 <Form.Control
                   type="text"
                   name="image"
@@ -667,7 +874,7 @@ const CategoryListPage = () => {
                     Updating...
                   </>
                 ) : (
-                  'Update'
+                  'Update Subcategory'
                 )}
               </Button>
             </Modal.Footer>
@@ -707,413 +914,503 @@ const CategoryListPage = () => {
           </Modal.Footer>
         </Modal>
       </div>
-      <style>{`
-        .category-manager {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  min-height: 100vh;
-}
 
-.glass-card {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(10px);F
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  overflow: hidden;
-}
+      <style jsx>{`
+        .cm-fixed-container {
+          background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+          min-height: 100vh;
+          padding: 20px 0;
+        }
 
-.card-header-custom {
-  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-  color: white;
-  border-bottom: none;
-  padding: 1.5rem 2rem;
-}
+        .glass-card {
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(20px);
+          border-radius: 20px;
+          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          overflow: hidden;
+        }
 
-.alert-custom {
-  border-radius: 12px;
-  border: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
+        .card-header-custom {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          border-bottom: none;
+          padding: 2rem;
+        }
 
-.search-filter-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 12px;
-  margin-bottom: 1.5rem;
-}
+        /* Statistics Cards */
+        .stat-card {
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 15px;
+          padding: 1.5rem 1rem;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+        }
 
-.search-box {
-  position: relative;
-  flex: 1;
-  max-width: 400px;
-}
+        .stat-icon {
+          width: 60px;
+          height: 60px;
+          border-radius: 15px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.5rem;
+          color: white;
+        }
 
-.search-icon {
-  position: absolute;
-  left: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #6c757d;
-}
+        .stat-icon.total-categories { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .stat-icon.total-products { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .stat-icon.active-categories { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .stat-icon.total-subcategories { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #666; }
 
-.search-input {
-  width: 100%;
-  padding: 12px 20px 12px 45px;
-  border: none;
-  border-radius: 50px;
-  background: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-}
+        .stat-content h5 {
+          margin: 0;
+          font-size: 1.8rem;
+          font-weight: 700;
+        }
 
-.search-input:focus {
-  outline: none;
-  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
-  background: white;
-}
+        .stat-content span {
+          font-size: 0.85rem;
+          opacity: 0.9;
+        }
 
-.filter-section {
-  display: flex;
-  gap: 10px;
-}
+        /* Enhanced Search and Filter */
+        .search-filter-bar {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 1rem;
+          flex-wrap: wrap;
+        }
 
-.btn-filter, .btn-sort {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 50px;
-  background: rgba(255, 255, 255, 0.8);
-  color: #495057;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-}
+        .search-box {
+          position: relative;
+          flex: 1;
+          min-width: 300px;
+        }
 
-.btn-filter:hover, .btn-sort:hover {
-  background: white;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
+        .search-icon {
+          position: absolute;
+          left: 15px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: #6c757d;
+          z-index: 2;
+        }
 
-.loading-spinner {
-  width: 50px;
-  height: 50px;
-  border: 5px solid rgba(0, 123, 255, 0.2);
-  border-radius: 50%;
-  border-top: 5px solid #007bff;
-  animation: spin 1s linear infinite;
-  margin: 0 auto;
-}
+        .search-input {
+          width: 100%;
+          padding: 12px 20px 12px 45px;
+          border: 2px solid #e9ecef;
+          border-radius: 50px;
+          background: white;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+          transition: all 0.3s ease;
+          font-size: 0.95rem;
+        }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
+        .search-input:focus {
+          outline: none;
+          border-color: #667eea;
+          box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+        }
 
-.empty-state-found {
-  display: flex;
-  flex-direction: column; 
-  justify-content: center;
-  align-items: center;
-  padding: 4rem;
-}
+        .filter-controls {
+          display: flex;
+          gap: 0.75rem;
+          align-items: center;
+          flex-wrap: wrap;
+        }
 
-.empty-icon-found {
-  font-size: 4rem;
-  color: #656262;
-  margin-bottom: 1rem;
-}
+        .filter-select, .sort-select {
+          border-radius: 25px;
+          border: 2px solid #e9ecef;
+          padding: 8px 15px;
+          background: white;
+          min-width: 160px;
+        }
 
-.btn-add-no-found{
-  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-  color: #ffffff;
-  border: none;
-  border-radius: 50px;
-  padding: 10px 24px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
+        .btn-expand-all {
+          border-radius: 25px;
+          padding: 8px 20px;
+          font-weight: 500;
+        }
 
-.btn-add, .btn-add-lg {
-  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-  border: none;
-  border-radius: 50px;
-  padding: 10px 20px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(37, 117, 252, 0.3);
-}
+        /* Enhanced Category Cards */
+        .categories-container {
+          display: flex;
+          flex-direction: column;
+          gap: 1.25rem;
+        }
 
-.btn-add:hover, .btn-add-lg:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(37, 117, 252, 0.4);
-}
+        .admin-category-card {
+          background: white;
+          border-radius: 16px;
+          box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+          overflow: hidden;
+          transition: all 0.3s ease;
+          border: 1px solid rgba(0, 0, 0, 0.05);
+        }
 
-.categories-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
+        .admin-category-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
 
-.category-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
+        .category-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1.5rem;
+          cursor: pointer;
+          background: linear-gradient(to right, rgba(245, 247, 250, 0.8), rgba(255, 255, 255, 0.9));
+          transition: all 0.3s ease;
+        }
 
-.category-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-}
+        .category-header:hover {
+          background: linear-gradient(to right, rgba(102, 126, 234, 0.05), rgba(255, 255, 255, 0.95));
+        }
 
-.category-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem;
-  cursor: pointer;
-  background: linear-gradient(to right, rgba(245, 247, 250, 0.5), rgba(255, 255, 255, 0.8));
-}
+        .category-title {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex: 1;
+          gap: 1rem;
+        }
 
-.category-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex: 1;
-}
+        .category-icon {
+          font-size: 1.8rem;
+          margin-right: 1rem;
+        }
 
-.category-title h5 {
-  color: #2c3e50;
-  margin: 0;
-}
+        .category-info {
+          flex: 1;
+        }
 
-.category-title img {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-left: 15px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
+        .category-name {
+          color: #2c3e50;
+          margin: 0 0 0.5rem 0;
+          font-weight: 600;
+          font-size: 1.3rem;
+        }
 
-.category-actions {
-  display: flex;
-  gap: 0.5rem;
-}
+        .category-meta {
+          display: flex;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+        }
 
-.category-actions .btn {
-  display: flex;
-  align-items: center;
-  border-radius: 8px;
-  font-size: 0.8rem;
-  padding: 8px 16px;
-  transition: all 0.2s ease;
-  font-weight: 500;
-}
+        .category-stats {
+          display: flex;
+          gap: 0.75rem;
+          align-items: center;
+        }
 
-.subcategories-list {
-  padding: 0 1.5rem 1.5rem;
-  background: rgba(245, 247, 250, 0.5);
-}
+        .product-count-badge, .subcategory-count {
+          padding: 8px 12px;
+          border-radius: 20px;
+          font-weight: 600;
+          font-size: 0.85rem;
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+        }
 
-.subcategory-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 15px;
-  margin-top: 10px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  transition: all 0.2s ease;
-}
+        .category-actions {
+          display: flex;
+          gap: 0.5rem;
+        }
 
-.subcategory-item:hover {
-  transform: translateX(5px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
+        .action-btn {
+          display: flex;
+          align-items: center;
+          border-radius: 10px;
+          font-size: 0.8rem;
+          padding: 8px 16px;
+          transition: all 0.2s ease;
+          font-weight: 500;
+          border: 2px solid;
+        }
 
-.subcategory-name {
-  font-weight: 500;
-  color: #34393dff;
-}
- 
-.subcategory-id {
-  font-size: 0.85rem;
-  color: #676a6eff; 
-  }  
+        .action-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
 
-.subcategory-actions {
-  display: flex;
-  gap: 0.5rem;
-}
+        /* Category Details */
+        .category-details {
+          padding: 0 1.5rem 1.5rem;
+          background: rgba(245, 247, 250, 0.5);
+        }
 
-.subcategory-actions .btn {
-  display: flex;
-  align-items: center;
-  border-radius: 8px;
-  font-size: 0.8rem;
-  padding: 8px 16px;
-  transition: all 0.2s ease;
-}
+        .category-description {
+          padding: 1rem 0;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+          margin-bottom: 1rem;
+        }
 
-.custom-modal .modal-content {
-  border-radius: 16px;
-  border: none;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-}
+        .category-description p {
+          margin: 0;
+          color: #555;
+          line-height: 1.6;
+        }
 
-.modal-header-custom {
-  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-  color: white;
-  border-bottom: none;
-  border-radius: 16px 16px 0 0;
-}
+        .category-image-section {
+          text-align: center;
+          margin: 1rem 0;
+        }
 
-.modal-footer-custom {
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
-  border-radius: 0 0 16px 16px;
-}
+        .image-category-admin {
+          max-width: 200px;
+          height: 120px;
+          object-fit: cover;
+          border-radius: 12px;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
 
-.form-control-custom {
-  border-radius: 10px;
-  padding: 12px 15px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
+        /* Subcategories Section */
+        .subcategories-section {
+          margin-top: 1.5rem;
+        }
 
-.form-control-custom:focus {
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
-  border-color: #007bff;
-}
+        .subcategories-title {
+          font-weight: 600;
+          color: #2c3e50;
+          margin-bottom: 1rem;
+          font-size: 1.1rem;
+          display: flex;
+          align-items: center;
+        }
 
-.btn-add-sub {
-  border-radius: 20px;
-  font-size: 0.85rem;
-  padding: 5px 12px;
-}
+        .subcategories-list {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
 
-.btn-remove {
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-}
+        .subcategory-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1rem 1.25rem;
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+          transition: all 0.2s ease;
+          border-left: 4px solid #667eea;
+        }
 
-.btn-save {
-  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-  border: none;
-  border-radius: 50px;
-  padding: 10px 25px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
+        .subcategory-item:hover {
+          transform: translateX(5px);
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
 
-.btn-save:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(37, 117, 252, 0.4);
-}
+        .subcategory-info {
+          flex: 1;
+        }
 
-.delete-confirmation {
-  text-align: center;
-  padding: 1rem;
-}
+        .subcategory-main {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          margin-bottom: 0.5rem;
+          flex-wrap: wrap;
+        }
 
-.delete-icon {
-  width: 70px;
-  height: 70px;
-  margin: 0 auto 1.5rem;
-  background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.8rem;
-  color: white;
-}
+        .subcategory-name {
+          font-weight: 600;
+          color: #34495e;
+          margin: 0;
+          font-size: 1rem;
+        }
 
-.btn-delete-confirm {
-   background: white;
-  color: #dc3545;
-  border: 1px solid #dc3545;
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
+        .sub-product-count {
+          padding: 4px 8px;
+          border-radius: 12px;
+          font-size: 0.75rem;
+          font-weight: 500;
+        }
 
-.btn-delete-confirm:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(255, 75, 43, 0.4);
-}
+        .subcategory-id {
+          font-size: 0.8rem;
+          color: #7f8c8d;
+          font-family: 'Courier New', monospace;
+        }
 
-/* Animation for expanding categories */
-.subcategories-list {
-  animation: slideDown 0.3s ease-out;
-}
+        .subcategory-actions {
+          display: flex;
+          gap: 0.5rem;
+        }
 
-.subcategories-list p {
-  margin: 0;
-  color: #313232;
-  font-size: 1rem;
-  opacity: 0.9;
-}
+        /* Badge Styles */
+        .badge.bg-outline-primary, .badge.bg-outline-secondary, .badge.bg-outline-success {
+          background: transparent !important;
+          border: 1px solid;
+          color: inherit;
+        }
 
-.subcategories-title {
-  font-weight: 600;
-  color: #343a40;
-  margin-bottom: 10px;
-  font-size: 1.1rem;
-  border-bottom: 2px solid #dee2e6;
-  padding-bottom: 5px;
-}
+        .badge.bg-outline-primary { border-color: #007bff; color: #007bff; }
+        .badge.bg-outline-secondary { border-color: #6c757d; color: #6c757d; }
+        .badge.bg-outline-success { border-color: #28a745; color: #28a745; }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+        /* Buttons */
+        .btn-add {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border: none;
+          border-radius: 50px;
+          padding: 12px 24px;
+          font-weight: 600;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+          display: flex;
+          align-items: center;
+        }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .category-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-  
-  .category-actions {
-    width: 100%;
-    justify-content: flex-end;
-  }
-  
-  .search-filter-bar {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .search-box {
-    max-width: 100%;
-  }
-`}</style>
+        .btn-add:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-add-no-found {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          border: none;
+          border-radius: 50px;
+          padding: 12px 24px;
+          font-weight: 600;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          margin: 0 auto;
+        }
+
+        .btn-add-no-found:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Empty State */
+        .empty-state-found {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          padding: 4rem 2rem;
+        }
+
+        .empty-icon-found {
+          font-size: 4rem;
+          color: #bdc3c7;
+          margin-bottom: 1.5rem;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+          width: 50px;
+          height: 50px;
+          border: 4px solid rgba(102, 126, 234, 0.2);
+          border-radius: 50%;
+          border-top: 4px solid #667eea;
+          animation: spin 1s linear infinite;
+          margin: 0 auto;
+        }
+
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+          .category-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+          }
+          
+          .category-title {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+          }
+          
+          .category-stats {
+            width: 100%;
+            justify-content: flex-start;
+          }
+          
+          .category-actions {
+            width: 100%;
+            justify-content: flex-end;
+          }
+          
+          .search-filter-bar {
+            flex-direction: column;
+            gap: 1rem;
+          }
+          
+          .search-box {
+            min-width: 100%;
+          }
+          
+          .filter-controls {
+            width: 100%;
+            justify-content: space-between;
+          }
+          
+          .filter-select, .sort-select {
+            flex: 1;
+          }
+          
+          .subcategory-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+          }
+          
+          .subcategory-actions {
+            width: 100%;
+            justify-content: flex-end;
+          }
+          
+          .stat-card {
+            padding: 1rem;
+          }
+          
+          .stat-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+          }
+        }
+
+        @media (max-width: 576px) {
+          .card-header-custom {
+            padding: 1.5rem 1rem;
+          }
+          
+          .category-header {
+            padding: 1rem;
+          }
+          
+          .category-details {
+            padding: 0 1rem 1rem;
+          }
+          
+          .filter-controls {
+            flex-direction: column;
+          }
+          
+          .filter-select, .sort-select, .btn-expand-all {
+            width: 100%;
+          }
+        }
+      `}</style>
     </div>
-
   );
 };
 

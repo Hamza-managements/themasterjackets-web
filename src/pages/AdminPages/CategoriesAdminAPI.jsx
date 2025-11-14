@@ -43,12 +43,12 @@ const CategoryListPage = () => {
   // Calculate product counts
   const calculateProductCounts = useCallback((categories) => {
     return categories.map(category => {
-      const categoryProducts = mockProducts.filter(product => 
+      const categoryProducts = mockProducts.filter(product =>
         product.category === category._id
       );
-      
+
       const subcategoryProducts = category.subCategories?.map(sub => {
-        const subProducts = mockProducts.filter(product => 
+        const subProducts = mockProducts.filter(product =>
           product.subcategory === sub._id
         );
         return {
@@ -355,10 +355,10 @@ const CategoryListPage = () => {
         category.subCategories?.some(sub =>
           sub.categoryName.toLowerCase().includes(searchTerm.toLowerCase())
         );
-      
+
       const matchesFilter = filterStatus === 'all' ? true :
         filterStatus === 'with-products' ? category.productCount > 0 :
-        category.productCount === 0;
+          category.productCount === 0;
 
       return matchesSearch && matchesFilter;
     })
@@ -468,7 +468,7 @@ const CategoryListPage = () => {
                   </Col>
                 </Row>
               </Card.Header>
-              
+
               <Card.Body>
                 {error && <Alert variant="danger" className="alert-custom">{error}</Alert>}
                 {success && <Alert variant="success" className="alert-custom">{success}</Alert>}
@@ -485,34 +485,41 @@ const CategoryListPage = () => {
                       className="search-input"
                     />
                   </div>
-                  <div className="filter-controls">
-                    <select 
-                      value={filterStatus} 
-                      onChange={(e) => setFilterStatus(e.target.value)}
-                      className="form-select filter-select"
-                    >
-                      <option value="all">All Categories</option>
-                      <option value="with-products">With Products</option>
-                      <option value="without-products">Without Products</option>
-                    </select>
-                    
-                    <select 
-                      value={sortBy} 
-                      onChange={(e) => setSortBy(e.target.value)}
-                      className="form-select sort-select"
-                    >
-                      <option value="name">Sort by Name</option>
-                      <option value="productCount">Sort by Product Count</option>
-                      <option value="date">Sort by Date</option>
-                    </select>
+                  <div className="admin-filter-controls">
+                    <div>
+                      <select
+                        value={filterStatus}
+                        onChange={(e) => setFilterStatus(e.target.value)}
+                        className="form-select filter-select"
+                      >
+                        <option value="all">All Categories</option>
+                        <option value="with-products">With Products</option>
+                        <option value="without-products">Without Products</option>
+                      </select>
 
-                    <Button 
-                      variant="outline-secondary" 
-                      onClick={toggleExpandAll}
-                      className="btn-expand-all"
-                    >
-                      {expandedCategories.size === filteredCategories.length ? 'Collapse All' : 'Expand All'}
-                    </Button>
+                    </div>
+                    <div>
+
+                      <select
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        className="form-select sort-select"
+                      >
+                        <option value="name">Sort by Name</option>
+                        <option value="productCount">Sort by Product Count</option>
+                        <option value="date">Sort by Date</option>
+                      </select>
+                    </div>
+                    <div>
+
+                      <Button
+                        variant="outline-secondary"
+                        onClick={toggleExpandAll}
+                        className="btn-expand-all"
+                      >
+                        {expandedCategories.size === filteredCategories.length ? 'Collapse All' : 'Expand All'}
+                      </Button>
+                    </div>
                   </div>
                 </div>
 
@@ -543,8 +550,8 @@ const CategoryListPage = () => {
                           >
                             <div className="d-flex align-items-center flex-wrap">
                               <div className="category-icon">
-                                {expandedCategories.has(category._id) ? 
-                                  <FaFolderOpen className="text-primary" /> : 
+                                {expandedCategories.has(category._id) ?
+                                  <FaFolderOpen className="text-primary" /> :
                                   <FaFolder className="text-primary" />
                                 }
                               </div>
@@ -560,7 +567,7 @@ const CategoryListPage = () => {
                                 </div>
                               </div>
                             </div>
-                            
+
                             <div className="category-stats">
                               <OverlayTrigger placement="top" overlay={ProductCountTooltip}>
                                 <Badge bg="success" className="product-count-badge">
@@ -573,7 +580,7 @@ const CategoryListPage = () => {
                               </Badge>
                             </div>
                           </div>
-                          
+
                           <div className="category-actions">
                             <Button
                               variant="outline-primary"
@@ -611,12 +618,12 @@ const CategoryListPage = () => {
                             <div className="category-description">
                               <p><strong>Description:</strong> {category.description || 'No description provided'}</p>
                             </div>
-                            
+
                             {category.image && (
                               <div className="category-image-section">
-                                <img 
-                                  src={category.image} 
-                                  className="image-category-admin" 
+                                <img
+                                  src={category.image}
+                                  className="image-category-admin"
                                   alt={category.mainCategoryName}
                                   onError={(e) => {
                                     e.target.src = "https://image.pngaaa.com/700/5273700-middle.png";
@@ -1018,7 +1025,7 @@ const CategoryListPage = () => {
           box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
         }
 
-        .filter-controls {
+        .admin-filter-controls {
           display: flex;
           gap: 0.75rem;
           align-items: center;
@@ -1355,7 +1362,7 @@ const CategoryListPage = () => {
             min-width: 100%;
           }
           
-          .filter-controls {
+          .admin-filter-controls {
             width: 100%;
             justify-content: space-between;
           }
@@ -1399,7 +1406,7 @@ const CategoryListPage = () => {
             padding: 0 1rem 1rem;
           }
           
-          .filter-controls {
+          .admin-filter-controls {
             flex-direction: column;
           }
           

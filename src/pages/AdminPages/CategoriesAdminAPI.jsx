@@ -917,7 +917,7 @@ const CategoryListPage = () => {
 
       <style jsx>{`
         .cm-fixed-container {
-          background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+          background: linear-gradient(135deg, #dadadaff 0%, #c6c6c6ff 100%);
           min-height: 100vh;
           padding: 20px 0;
         }
@@ -932,7 +932,7 @@ const CategoryListPage = () => {
         }
 
         .card-header-custom {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: linear-gradient(135deg, #373738ff 0%, #0d0d0dff 100%);
           color: white;
           border-bottom: none;
           padding: 2rem;
@@ -961,10 +961,10 @@ const CategoryListPage = () => {
           color: white;
         }
 
-        .stat-icon.total-categories { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-        .stat-icon.total-products { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
-        .stat-icon.active-categories { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
-        .stat-icon.total-subcategories { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #666; }
+        .stat-icon.total-categories { background: #1d1d1dff; }
+        .stat-icon.total-products { background: #1d1d1dff; }
+        .stat-icon.active-categories { background: #1d1d1dff; }
+        .stat-icon.total-subcategories { background: #1d1d1dff; }
 
         .stat-content h5 {
           margin: 0;
@@ -1014,7 +1014,7 @@ const CategoryListPage = () => {
 
         .search-input:focus {
           outline: none;
-          border-color: #667eea;
+          border-color: #171717ff;
           box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
         }
 
@@ -1259,20 +1259,18 @@ const CategoryListPage = () => {
 
         /* Buttons */
         .btn-add {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: #007bff;
           border: none;
           border-radius: 50px;
           padding: 12px 24px;
           font-weight: 600;
           transition: all 0.3s ease;
-          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
           display: flex;
           align-items: center;
         }
 
         .btn-add:hover {
           transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
         }
 
         .btn-add-no-found {

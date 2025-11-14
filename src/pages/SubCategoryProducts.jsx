@@ -491,9 +491,9 @@ const SubCategoryProductPage = () => {
                                 const mainImage = product.productImages?.[0];
                                 const rating = Math?.max(...product?.variations.map(v => v?.ratings?.count || 0));
                                 return (
-                                    <div key={product?._id} className="product-card" >
+                                    <div key={product?._id} className="subcategory-product-card" >
                                         <div
-                                            className="product-image"
+                                            className="subcategory-product-image"
                                             onClick={() => navigateToProductDetail(product?._id)}
                                         >
                                             <img
@@ -886,7 +886,7 @@ const SubCategoryProductPage = () => {
     align-items: start;
 }
 
-.product-card {
+.subcategory-product-card {
     background: white;
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -897,29 +897,29 @@ const SubCategoryProductPage = () => {
     background: var(--white);
 }
 
-.product-card:hover {
+.subcategory-product-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(0,0,0,0.15);
     border-color: #e5e5e5;
 }
 
-.product-image {
+.subcategory-product-image {
     position: relative;
     overflow: hidden;
     background: #f8fafc;
-    height: 42vh;
+    height: 40vh;
     background: var(--beige);
     cursor: pointer;
 }
 
-.product-image img {
+.subcategory-product-image img {
     width: 100%;
     height: 100%;
     object-fit: contain;
     transition: transform 0.3s ease;
 }
 
-.product-card:hover .product-image img {
+.subcategory-product-card:hover .subcategory-product-image img {
     transform: scale(1.05);
 }
 

@@ -291,7 +291,7 @@ const UpdateProductPage = () => {
             });
 
             setTimeout(() => {
-                navigate("/manage-all-products");
+                navigate("/admin/manage-all-products");
             }, 2500);
         } catch (error) {
             console.error("Error updating product:", error);

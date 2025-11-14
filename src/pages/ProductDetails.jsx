@@ -371,7 +371,7 @@ const ProductDetails = () => {
               {/* ✅ COLOR SELECTOR */}
               {product.variations?.length > 0 && (
                 <div className="color-variant-selector">
-                  <span className="variant-title">Color:</span>
+                  <span className="variant-title">Color: {selectedVariation?.attributes?.color}</span>
                   <div className="variant-options">
                     {[...new Map(product.variations.map(v => [v.attributes.color, v])).values()]
                       .map((variation, i) => (

@@ -123,7 +123,7 @@ const ManageProducts = () => {
           <div className="flex items-center gap-4">
             <button onClick={refreshProducts} className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"><RotateCw size={18} /></button>
             <button
-              onClick={() => navigate("/add-product")}
+              onClick={() => navigate("/admin/add-product")}
               className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
               <Plus size={18} />
@@ -286,7 +286,7 @@ const ManageProducts = () => {
                     <td className="px-4 py-3 flex items-center gap-3">
                       {/* Edit */}
                       <button
-                        onClick={() => navigate(`/edit-product/${product._id}`)}
+                        onClick={() => navigate(`/admin/edit-product/${product._id}`)}
                         className="text-blue-600 hover:text-blue-800 transition"
                         title="Edit Product"
                       >
@@ -296,7 +296,7 @@ const ManageProducts = () => {
                       {/* Manage Variations */}
                       <button
                         onClick={() =>
-                          navigate(`/manage-single-product/${product._id}`)
+                          navigate(`/admin/manage-single-product/${product._id}`)
                         }
                         className="text-purple-600 hover:text-purple-800 transition"
                         title="Manage Variations"
@@ -327,7 +327,7 @@ const ManageProducts = () => {
                 Try adjusting your search or filters
               </p>
               <button
-                onClick={() => navigate("/add-product")}
+                onClick={() => navigate("/admin/add-product")}
                 className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
                 <Plus size={18} className="inline mr-2" />

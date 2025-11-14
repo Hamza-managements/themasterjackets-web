@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Home from './pages/Home';
 import ContactForm from './pages/Contact';
 import ReturnPolicy from './pages/Return-exchange';
@@ -29,11 +29,22 @@ import AuthLayout from './layouts/AuthLayout';
 import MainLayout from './layouts/MainLayout';
 import ScrollToTop from './components/ScrollToTop';
 import SearchResults from './pages/SearchResults';
+import { useEffect } from 'react';
+import { setFullFaviconSet } from './utils/setFullFaviconSet';
 // import AccountSettings from './components/AccountsSettings';
 
 function App() {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname.startsWith("/admin")) {
+      setFullFaviconSet("/favicons-admin");
+    } else {
+      setFullFaviconSet("/favicons-user");
+    }
+  }, [location.pathname]);
   return (
-    <Router>
+    <>
       <ScrollToTop />
       <AuthProvider>
         <ProductProvider>
@@ -51,7 +62,6 @@ function App() {
               <Route path="/products-details/:productId" element={<ProductDetails />} />
             </Route>
 
-
             <Route path="auth" element={<AuthLayout />}>
               <Route path="login" element={<Login />} />
               <Route path="signup" element={<SignUp />} />
@@ -63,19 +73,18 @@ function App() {
 
             {/* admin routes */}
             {/* <Route path="/account/settings" element={<PrivateRoute> <AccountSettings /> </PrivateRoute> } /> */}
-            <Route path="/api-testing" element={<APITestingPage />} />
-            <Route path="/admin-dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
-            <Route path="/api-categories" element={<CategoryListPage />} />
-            <Route path="/add-product" element={<AmazonStyleProductPage />} />
-            <Route path="/manage-all-products" element={<AllProductManagementPage />} />
-            <Route path="/edit-product/:productId" element={<UpdateProductPage />} />
-            <Route path="/manage-single-product/:productId" element={<ProductManagementPage />} />
-
+            <Route path="/admin/api-testing" element={<APITestingPage />} />
+            <Route path="/admin/dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
+            <Route path="/admin/categories" element={<CategoryListPage />} />
+            <Route path="/admin/add-product" element={<AmazonStyleProductPage />} />
+            <Route path="/admin/manage-all-products" element={<AllProductManagementPage />} />
+            <Route path="/admin/edit-product/:productId" element={<UpdateProductPage />} />
+            <Route path="/admin/manage-single-product/:productId" element={<ProductManagementPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </ProductProvider>
       </AuthProvider>
-    </Router>
+    </>
   );
 }
 

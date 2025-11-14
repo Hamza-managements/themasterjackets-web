@@ -165,7 +165,7 @@ const AllProductManagementPage = () => {
       <div className="management-header">
         <h1>Product Management</h1>
         <div className="header-actions">
-          <button className="btn-primary" onClick={() => navigate('/add-product')}>
+          <button className="btn-primary" onClick={() => navigate('/admin/add-product')}>
             + Add New Product
           </button>
         </div>

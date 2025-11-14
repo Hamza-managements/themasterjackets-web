@@ -409,7 +409,7 @@ const AmazonStyleProductPage = () => {
       });
 
       setTimeout(() => {
-        navigate("/manage-all-products");
+        navigate("/admin/manage-all-products");
       }, 2500);
     } catch (e) {
       console.error("Error adding product:", e.message);

@@ -13,6 +13,7 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSubmenu, setActiveSubmenu] = useState(null);
   const [categories, setCategories] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
   const navRef = useRef();
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(prev => !prev);
@@ -41,6 +42,18 @@ export default function Header() {
     };
 
     fetchCategories();
+
+    const loadCart = () => {
+      const storedCart = JSON.parse(localStorage.getItem("cartsItems")) || [];
+      setCartItems(storedCart);
+    };
+
+    loadCart();
+
+    const handleCartUpdate = () => loadCart();
+    window.addEventListener("cartUpdated", handleCartUpdate);
+
+    return () => window.removeEventListener("cartUpdated", handleCartUpdate);
   }, []);
 
   const [input, setInput] = useState("");
@@ -300,7 +313,7 @@ export default function Header() {
                   {user ? (
                     <>
                       <Link
-                        to={user?.role === "admin" ? "/admin-dashboard" : "/dashboard"}
+                        to={user?.role === "admin" ? "/admin/dashboard" : "/dashboard"}
                         className="fs-dropdown-link"
                       >
                         <i className="fas fa-user-circle"></i>{" "}
@@ -335,7 +348,7 @@ export default function Header() {
               {/* Cart */}
               <Link onClick={() => openCart()} className="fs-cart-link">
                 <i className="fas fa-shopping-bag"></i>
-                <span className="fs-cart-count">0</span>
+                <span className="fs-cart-count">{cartItems.length}</span>
               </Link>
             </div>
           </div>

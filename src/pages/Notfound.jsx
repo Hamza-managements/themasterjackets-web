@@ -16,7 +16,7 @@ const NotFound = () => {
       { path: '/about', name: 'About Us' },
       { path: '/contact-us', name: 'Contact' },
       { path: '/dashboard', name: 'Dashboard' },
-      { path: '/admin-dashboard', name: 'Admin Dashboard' },
+      { path: '/admin/dashboard', name: 'Admin Dashboard' },
       { path: '/auth/signup', name: 'Sign up' },
       { path: '/auth/login', name: 'Log in' },
       { path: '/forgot-password', name: 'Forgot password' },

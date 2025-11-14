@@ -19,7 +19,6 @@ export default function CartSidebar() {
     const handleCartUpdate = () => loadCart();
     window.addEventListener("cartUpdated", handleCartUpdate);
 
-    // ✅ Cleanup
     return () => window.removeEventListener("cartUpdated", handleCartUpdate);
   }, []);
 

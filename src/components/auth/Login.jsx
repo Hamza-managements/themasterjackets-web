@@ -84,7 +84,7 @@ const Login = () => {
             timer: 3000,
             showConfirmButton: false,
             willClose: () => {
-              navigate('/admin-dashboard');
+              navigate('/admin/dashboard');
             }
           });
         } else {

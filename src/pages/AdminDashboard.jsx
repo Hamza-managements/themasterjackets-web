@@ -649,7 +649,7 @@ const AdminDashboard = () => {
                                     <div className="flex flex-wrap gap-3">
                                         {/* Manage Product Button */}
                                         <Link
-                                            to="/manage-all-products"
+                                            to="/admin/manage-all-products"
                                             target='_blank'
                                             className="inline-flex text-decoration-none items-center gap-2 px-4 py-3 rounded-3xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
                                         >
@@ -661,7 +661,7 @@ const AdminDashboard = () => {
 
                                     <div className="flex flex-wrap gap-3">
                                         {/* Add Product Button */}
-                                        <Link to="/add-product"
+                                        <Link to="/admin/add-product"
                                             target='_blank'
                                             className="px-4 py-3 text-decoration-none rounded-3xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
                                         >
@@ -675,7 +675,7 @@ const AdminDashboard = () => {
                                     Categories Management
                                 </h3>
                                 <Link
-                                    to="/api-categories"
+                                    to="/admin/categories"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className={`${darkMode ? 'bg-gray-900 my-4' : 'bg-gray-700 hover:bg-gray-900'} text-decoration-none text-white px-3 py-3 font-medium shadow-md rounded-lg transition`}

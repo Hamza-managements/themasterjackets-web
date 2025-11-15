@@ -206,6 +206,22 @@ const FeaturedProductsCarousel = ({ title = "Featured Products" }) => {
   font-size: 0.9rem;
 }
 
+.swiper-button-next,
+.swiper-button-prev {
+  color: #f60a0aff !important;   /* change arrow color */
+}
+
+.swiper-pagination-bullet {
+  background: #727272ff !important;   
+  opacity: 0.5;                      
+}
+
+/* Active dot color */
+.swiper-pagination-bullet-active {
+  background: #1a1a1aff !important;   /* active color */
+  opacity: 1;                        /* optional */
+}
+
       `}</style>
     </div>
   );

@@ -443,6 +443,7 @@ const SubCategoryProductPage = () => {
                             </div>
                         )}
                     </div>
+                    <br /><br /><br />
                 </aside>
 
                 {/* Main Product Grid */}
@@ -746,10 +747,9 @@ const SubCategoryProductPage = () => {
 }
 
 .filter-label input:checked + .checkmark {
-    background: #2563eb;
-    border-color: #2563eb;
+    background: var(--red);
+    border-color: var(--red);
 }
-
 .filter-label input:checked + .checkmark::after {
     content: '✓';
     color: white;
@@ -758,14 +758,14 @@ const SubCategoryProductPage = () => {
 }
 
 .filter-label input:checked + .radiomark {
-    border-color: #2563eb;
+    border-color: var(--red);
 }
 
 .filter-label input:checked + .radiomark::after {
     content: '';
     width: 8px;
     height: 8px;
-    background: #2563eb;
+    background: var(--red);
     border-radius: 50%;
 }
 
@@ -833,7 +833,7 @@ const SubCategoryProductPage = () => {
 
 .sorting select:focus {
     outline: none;
-    border-color: #2563eb;
+    border-color: #eb2525ff;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
@@ -1243,7 +1243,7 @@ const SubCategoryProductPage = () => {
 button:focus-visible,
 select:focus-visible,
 .filter-label:focus-visible {
-    outline: 2px solid #2563eb;
+    outline: 2px solid #eb2c25ff;
     outline-offset: 2px;
 }
 

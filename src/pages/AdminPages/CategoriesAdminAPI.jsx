@@ -3,10 +3,12 @@ import { Button, Modal, Form, Spinner, Alert, Card, Badge, Row, Col, Tooltip, Ov
 import Swal from 'sweetalert2';
 import { FaEdit, FaTrash, FaPlus, FaFolder, FaFolderOpen, FaSearch, FaInfoCircle, FaBox, FaFilter, FaSort } from 'react-icons/fa';
 import { addCategory, addSubCategory, deleteCategory, deleteSubCategory, fetchCategoriesAll, updateCategory, updateSingleSubcategory } from '../../utils/CartUtils';
+import { getProducts } from '../../utils/ProductServices';
 
 const CategoryListPage = () => {
   // State
   const [categories, setCategories] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -116,6 +118,37 @@ const CategoryListPage = () => {
   useEffect(() => {
     getAllCategories();
   }, [getAllCategories]);
+
+  // Fetch All Products
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const data = await getProducts();
+        setAllProducts(data);
+      } catch (err) {
+        console.error("Failed to load products", err);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  const productsByCategory = {};
+  const productsBySubCategory = {};
+
+  allProducts.forEach((p) => {
+    // Group by main category
+    if (!productsByCategory[p.categoryId]) {
+      productsByCategory[p.categoryId] = [];
+    }
+    productsByCategory[p.categoryId].push(p);
+
+    // Group by subcategory
+    if (!productsBySubCategory[p.subCategoryId]) {
+      productsBySubCategory[p.subCategoryId] = [];
+    }
+    productsBySubCategory[p.subCategoryId].push(p);
+  });
 
   // Toggle category expansion
   const toggleCategoryExpansion = (categoryId) => {
@@ -572,7 +605,7 @@ const CategoryListPage = () => {
                               <OverlayTrigger placement="top" overlay={ProductCountTooltip}>
                                 <Badge bg="success" className="product-count-badge">
                                   <FaBox className="me-1" />
-                                  {category.productCount} Products
+                                  {productsByCategory[category._id]?.length || 0} Products
                                 </Badge>
                               </OverlayTrigger>
                               <Badge bg="primary" className="subcategory-count">
@@ -647,7 +680,7 @@ const CategoryListPage = () => {
                                           <OverlayTrigger placement="top" overlay={ProductCountTooltip}>
                                             <Badge bg="outline-success" className="sub-product-count">
                                               <FaBox className="me-1" />
-                                              {sub.productCount || 0} Products
+                                              {productsBySubCategory[sub._id]?.length || 0} Products
                                             </Badge>
                                           </OverlayTrigger>
                                         </div>
@@ -1236,6 +1269,7 @@ const CategoryListPage = () => {
         }
 
         .sub-product-count {
+          display: flex;
           padding: 4px 8px;
           border-radius: 12px;
           font-size: 0.75rem;

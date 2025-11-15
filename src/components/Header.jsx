@@ -140,6 +140,7 @@ export default function Header() {
                     </div>
                     <div className={`fs-mobile-submenu ${activeSubmenu === 0 ? 'fs-active' : ''}`}>
                       <div className="fs-dropdown-title">Categories</div>
+                      <Link to={`/products/${cat.slug}/all`}>View All</Link>
                       {cat.subCategories?.map((sub) => (
                         <Link key={sub._id} to={`/products/${cat.slug}/${sub.slug}`}>{sub.categoryName}</Link>
                       ))}

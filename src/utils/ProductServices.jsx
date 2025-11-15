@@ -47,7 +47,6 @@ export const getProducts = async () => {
       return config;
     });
     const response = await api.get('/api/product/fetch-all');
-
     return response.data.data;
   } catch (error) {
     console.warn("Error fetching categories:", error);

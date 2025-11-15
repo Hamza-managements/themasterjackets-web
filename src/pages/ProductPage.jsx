@@ -107,9 +107,6 @@ export default function ProductListingPage() {
 
     return (
         <div className="plp-container">
-            <button onClick={toggleFilterPanel} className="product-filter-toggle-btn">
-                {showFilters ? "Hide Filters" : "Show Filters"}
-            </button>
 
             <div className="plp-content">
                 {/* === Main Products Section === */}
@@ -123,6 +120,9 @@ export default function ProductListingPage() {
                                 <option value="high">Price: High to Low</option>
                             </select>
                         </div>
+                        <button onClick={toggleFilterPanel} className="product-filter-toggle-btn">
+                            {showFilters ? "Hide Filters" : "Show Filters"}
+                        </button>
                     </div>
 
                     <div className="products">
@@ -314,8 +314,8 @@ export default function ProductListingPage() {
         /* === Filters Sidebar (Now on the Right) === */
         .product-filter-toggle-btn {
             display: none;
-            background: var(--tan);
-            color: var(--white);
+            background: var(--dark-gray);
+            color: var(--black);
             border: none;
             padding: 10px 15px;
             border-radius: 4px;
@@ -595,15 +595,24 @@ export default function ProductListingPage() {
                 height: 270px !important;
                 ;
             }
+            .product-image img {
+                object-fit: cover;
+            }
 
             .product-filter-toggle-btn {
                 display: inline-block;
             }
 
+            .product-page-title{
+                margin:0;
+            }
+
             .toolbar {
                 flex-direction: column;
-                gap: 15px;
                 align-items: flex-start;
+                gap: 8px;
+                margin-bottom: 1px;
+                padding: 0 15px;
             }
 
             .toolbar h2 {

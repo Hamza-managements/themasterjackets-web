@@ -573,7 +573,7 @@
         }
 
         .accordion-toggle:checked~.accordion-content {
-            max-height: 60vh;
+            max-height: 80vh;
             padding: 1rem 1.5rem;
         }
 

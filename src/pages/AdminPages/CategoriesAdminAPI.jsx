@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import { FaEdit, FaTrash, FaPlus, FaFolder, FaFolderOpen, FaSearch, FaInfoCircle, FaBox, FaFilter, FaSort } from 'react-icons/fa';
 import { addCategory, addSubCategory, deleteCategory, deleteSubCategory, fetchCategoriesAll, updateCategory, updateSingleSubcategory } from '../../utils/CartUtils';
 import { getProducts } from '../../utils/ProductServices';
+import { Link } from 'react-router-dom';
 
 const CategoryListPage = () => {
   // State
@@ -410,7 +411,7 @@ const CategoryListPage = () => {
   // Stats calculation
   const stats = {
     totalCategories: categories.length,
-    totalProducts: categories.reduce((sum, cat) => sum + cat.productCount, 0),
+    totalProducts: allProducts.length,
     categoriesWithProducts: categories.filter(cat => cat.productCount > 0).length,
     totalSubcategories: categories.reduce((sum, cat) => sum + (cat.subCategories?.length || 0), 0)
   };
@@ -479,23 +480,23 @@ const CategoryListPage = () => {
                   </Col>
                   <Col xs={6} md={3}>
                     <div className="stat-card">
-                      <div className="stat-icon active-categories">
-                        <FaFolderOpen />
-                      </div>
-                      <div className="stat-content">
-                        <h5>{stats.categoriesWithProducts}</h5>
-                        <span>Active Categories</span>
-                      </div>
-                    </div>
-                  </Col>
-                  <Col xs={6} md={3}>
-                    <div className="stat-card">
                       <div className="stat-icon total-subcategories">
                         <FaFolder />
                       </div>
                       <div className="stat-content">
                         <h5>{stats.totalSubcategories}</h5>
                         <span>Subcategories</span>
+                      </div>
+                    </div>
+                  </Col>
+                  <Col xs={6} md={3}>
+                    <div className="stat-card">
+                      <div className="stat-icon active-categories">
+                        <FaFolderOpen />
+                      </div>
+                      <div className="stat-content">
+                        <h5>{stats.categoriesWithProducts}</h5>
+                        <span>Active Categories</span>
                       </div>
                     </div>
                   </Col>
@@ -676,7 +677,7 @@ const CategoryListPage = () => {
                                     <div key={sub._id || `${category._id}-${index}`} className="subcategory-item">
                                       <div className="subcategory-info">
                                         <div className="subcategory-main">
-                                          <h6 className="subcategory-name">{sub.categoryName}</h6>
+                                          <Link to={`/products/${category.slug}/${sub.slug}`}><h6 className="subcategory-name">{sub.categoryName}</h6></Link>
                                           <OverlayTrigger placement="top" overlay={ProductCountTooltip}>
                                             <Badge bg="outline-success" className="sub-product-count">
                                               <FaBox className="me-1" />
@@ -1259,6 +1260,10 @@ const CategoryListPage = () => {
           gap: 1rem;
           margin-bottom: 0.5rem;
           flex-wrap: wrap;
+        }
+        
+        .subcategory-main a:hover{
+          text-decoration: underline !important;
         }
 
         .subcategory-name {

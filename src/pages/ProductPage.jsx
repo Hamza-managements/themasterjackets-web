@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { getProducts } from "../utils/ProductServices";
 import { FaStar } from "react-icons/fa";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { message } from "antd";
 
 export default function ProductListingPage() {
     const { slug } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const colorFilter = params.get("color");
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filtered, setFiltered] = useState([]);
@@ -15,6 +18,7 @@ export default function ProductListingPage() {
     const [filters, setFilters] = useState({
         price: "",
         category: "",
+        color: colorFilter || "",
     });
 
     useEffect(() => {
@@ -38,10 +42,12 @@ export default function ProductListingPage() {
             "new-in": "68ad9ab6010f07c1100d3f1e",
             "halloween": "68da47a52dd010a7a0b6cf3f",
         };
+
         let updated = [...products];
 
+        // Filter by category or slug
         if (filters.category || slug) {
-            const selectedCategoryId = categoryMap[filters.category.toLowerCase()] || categoryMap[slug?.toLowerCase()];
+            const selectedCategoryId = categoryMap[filters.category?.toLowerCase()] || categoryMap[slug?.toLowerCase()];
 
             if (selectedCategoryId) {
                 updated = updated.filter(
@@ -52,6 +58,16 @@ export default function ProductListingPage() {
             }
         }
 
+        // Filter by color
+        if (filters.color) {
+            updated = updated.filter((p) =>
+                p.variations?.some(
+                    (v) => v.attributes?.color?.toLowerCase() === filters.color.toLowerCase()
+                )
+            );
+        }
+
+        // Sort by price
         if (filters.price === "low") {
             updated.sort(
                 (a, b) =>
@@ -255,6 +271,52 @@ export default function ProductListingPage() {
                                     }
                                 />
                                 Halloween
+                            </label>
+                        </div>
+                    </div>
+
+                    <div className="product-filter-section">
+                        <h3>Color</h3>
+                        <div className="product-filter-option">
+                            <label>
+                                <input
+                                    type="radio"
+                                    name="color"
+                                    value="black"
+                                    checked={filters.color === "black"}
+                                    onChange={(e) =>
+                                        setFilters({ ...filters, color: e.target.value })
+                                    }
+                                />
+                                Black
+                            </label>
+                        </div>
+                        <div className="product-filter-option">
+                            <label>
+                                <input
+                                    type="radio"
+                                    name="color"
+                                    value="brown"
+                                    checked={filters.color === "brown"}
+                                    onChange={(e) =>
+                                        setFilters({ ...filters, color: e.target.value })
+                                    }
+                                />
+                                Brown
+                            </label>
+                        </div>
+                        <div className="product-filter-option">
+                            <label>
+                                <input
+                                    type="radio"
+                                    name="color"
+                                    value="washed up"
+                                    checked={filters.color === "washed up"}
+                                    onChange={(e) =>
+                                        setFilters({ ...filters, color: e.target.value })
+                                    }
+                                />
+                                Washed Up
                             </label>
                         </div>
                     </div>

@@ -132,10 +132,10 @@ export default function Header() {
                       </div>
                       <div className="fs-mega-menu-column">
                         <h4 className="fs-dropdown-title">Colors</h4>
-                        <Link to="#">Black</Link>
-                        <Link to="#">Brown</Link>
-                        <Link to="#">Tan</Link>
-                        <Link to="#">Cognac</Link>
+                        <Link to={`/products/${cat.slug}/all?color=black`}>Black</Link>
+                        <Link to={`/products/${cat.slug}/all?color=brown`}>Brown</Link>
+                        <Link to={`/products/${cat.slug}/all?color=washed up`}>Washed Up</Link>
+                        <Link to={`/products/${cat.slug}/all?color=cognac`}>Cognac</Link>
                       </div>
                     </div>
                     <div className={`fs-mobile-submenu ${activeSubmenu === 0 ? 'fs-active' : ''}`}>
@@ -147,128 +147,6 @@ export default function Header() {
                     </div>
                   </div>
                 )}
-
-                {/* <div className="fs-nav-item">
-                  <Link to="/men"
-                    className="fs-main-link"
-                    onClick={(e) => handleMainLinkClick(0, true, e)}>
-                    Men <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i>
-                  </Link>
-                  <div className="fs-mega-menu fs-dropdown-menu">
-                    <div className="fs-mega-menu-column">
-                      <h4 className="fs-dropdown-title">Men Leather Jacket</h4>
-                      <Link to="/product">Biker Leather Jackets</Link>
-                      <Link to="#">Bomber Leather Jackets</Link>
-                      <Link to="#">Field Leather Jackets</Link>
-                      <Link to="#">Trucker Leather Jackets</Link>
-                      <Link to="#">Quilted Nylon Jackets</Link>
-                    </div>
-                    <div className="fs-mega-menu-column">
-                      <h4 className="fs-dropdown-title">Colors</h4>
-                      <Link to="#">Black</Link>
-                      <Link to="#">Brown</Link>
-                      <Link to="#">Tan</Link>
-                      <Link to="#">Cognac</Link>
-                    </div>
-                    <div className="fs-mega-menu-column">
-                      <h4 className="fs-dropdown-title">Bags & Purses</h4>
-                      <Link to="#">Handbags</Link>
-                      <Link to="#">Backpacks</Link>
-                      <Link to="#">Wallets</Link>
-                      <Link to="#">Clutches</Link>
-                    </div>
-                  </div>
-                  <div className={`fs-mobile-submenu ${activeSubmenu === 0 ? 'fs-active' : ''}`}>
-                    <div className="fs-dropdown-title">Categories</div>
-                    <Link to="#">Dresses</Link>
-                    <Link to="#">Tops & Tees</Link>
-                    <Link to="#">Sweaters</Link>
-                    <Link to="#">Jeans</Link>
-                    <Link to="#">Jackets</Link>
-                    <div className="fs-dropdown-divider"></div>
-                    <div className="fs-dropdown-title">Shop By</div>
-                    <Link to="#">New Arrivals</Link>
-                    <Link to="#">Best Sellers</Link>
-                    <Link to="#">Sale</Link>
-                  </div>
-                </div>
-
-                <div className="fs-nav-item">
-                  <Link to="/women" className="fs-main-link" onClick={(e) => handleMainLinkClick(1, true, e)} >
-                    Women <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i>
-                  </Link>
-                  <div className="fs-mega-menu fs-dropdown-menu">
-                    <div className="fs-mega-menu-column">
-                      <h4 className="fs-dropdown-title">Categories</h4>
-                      <Link to="/product">Biker Leather Jackets</Link>
-                      <Link to="#">Bomber Leather Jackets</Link>
-                      <Link to="#">Field Leather Jackets</Link>
-                      <Link to="#">Trucker Leather Jackets</Link>
-                      <Link to="#">Quilted Nylon Jackets</Link>
-                    </div>
-                    <div className="fs-mega-menu-column">
-                      <h4 className="fs-dropdown-title">Colors</h4>
-                      <Link to="#">Black</Link>
-                      <Link to="#">Brown</Link>
-                      <Link to="#">Tan</Link>
-                      <Link to="#">Cognac</Link>
-                    </div>
-                  </div>
-                  <div className={`fs-mobile-submenu ${activeSubmenu === 1 ? 'fs-active' : ''}`}>
-                    <div className="fs-dropdown-title">Categories</div>
-                    <Link to="/product">Biker Leather Jackets</Link>
-                    <Link to="#">Bomber Leather Jackets</Link>
-                    <Link to="#">Field Leather Jackets</Link>
-                    <Link to="#">Trucker Leather Jackets</Link>
-                    <Link to="#">Quilted Nylon Jackets</Link>
-                  </div>
-                </div>
-
-                <div className="fs-nav-item">
-                  <Link to="#" className="fs-main-link">
-                    New In <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i>
-                  </Link>
-                  <div className="fs-mega-menu fs-dropdown-menu">
-                    <div className="fs-mega-menu-column">
-                      <h4 className="fs-dropdown-title">Bags & Purses</h4>
-                      <Link to="#">Handbags</Link>
-                      <Link to="#">Backpacks</Link>
-                      <Link to="#">Wallets</Link>
-                      <Link to="#">Clutches</Link>
-                    </div>
-                    <div className="fs-mega-menu-column">
-                      <h4 className="fs-dropdown-title">Jewelry</h4>
-                      <Link to="#">Necklaces</Link>
-                      <Link to="#">Earrings</Link>
-                      <Link to="#">Bracelets</Link>
-                      <Link to="#">Watches</Link>
-                    </div>
-                    <div className="fs-mega-menu-column">
-                      <h4 className="fs-dropdown-title">Sunglasses</h4>
-                      <Link to="#">Aviator</Link>
-                      <Link to="#">Wayfarer</Link>
-                      <Link to="#">Round</Link>
-                      <Link to="#">Sports</Link>
-                    </div>
-                  </div>
-                  <div className="fs-mobile-submenu">
-                    <div className="fs-dropdown-title">Bags & Purses</div>
-                    <Link to="#">Handbags</Link>
-                    <Link to="#">Backpacks</Link>
-                    <Link to="#">Wallets</Link>
-                    <Link to="#">Clutches</Link>
-                    <div className="fs-dropdown-title">Jewelry</div>
-                    <Link to="#">Necklaces</Link>
-                    <Link to="#">Earrings</Link>
-                    <Link to="#">Bracelets</Link>
-                    <Link to="#">Watches</Link>
-                    <div className="fs-dropdown-title">Sunglasses</div>
-                    <Link to="#">Aviator</Link>
-                    <Link to="#">Wayfarer</Link>
-                    <Link to="#">Round</Link>
-                    <Link to="#">Sports</Link>
-                  </div>
-                </div> */}
 
                 <div className="fs-nav-item">
                   <Link to="#" className="fs-main-link">Brand <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i></Link>

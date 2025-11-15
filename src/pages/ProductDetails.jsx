@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useContext } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Aos from 'aos';
 import StatsSection from '../components/StatsSection';
@@ -7,11 +7,13 @@ import SizeChartOverlay from '../components/SizeChart';
 import { getProductBySubCategoryId, getSingleProduct } from '../utils/ProductServices';
 import { openCart } from '../components/Cart';
 import { useToast } from '../context/ToastProvider';
+import { AuthContext } from '../components/auth/AuthProvider';
 
 const ProductDetails = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const { user } = useContext(AuthContext);
 
   const [product, setProduct] = useState(null);
   const [selectedVariation, setSelectedVariation] = useState(null);
@@ -285,6 +287,24 @@ const ProductDetails = () => {
 
             {/* ✅ Product Details */}
             <div className="product-details">
+              {user?.role === "admin" && (
+                <div className="flex items-center gap-4 mb-2">
+                  <Link
+                    to={`/admin/manage-all-products`}
+                    className="text-purple-600 hover:text-purple-400 text-sm font-medium underline underline-offset-4"
+                  >
+                    📦 Manage Products
+                  </Link>
+                  <span className="text-gray-500">|</span>
+                  <Link
+                    to={`/admin/edit-product/${product._id}`}
+                    className="text-blue-600 hover:text-blue-400 text-sm font-medium underline underline-offset-4"
+                  >
+                    ✏️ Edit Product
+                  </Link>
+                </div>
+              )}
+
               <h1 className="product-title">{product.productName}</h1>
 
               <div className="rating">

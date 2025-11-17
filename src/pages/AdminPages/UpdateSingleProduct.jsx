@@ -851,7 +851,7 @@ const UpdateProductPage = () => {
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
                                             Meta Title *
                                             <span className="text-xs text-gray-500 ml-2">
-                                                {editableFormData.meta.title.length}/60 characters
+                                                {editableFormData.meta.title.length}/65 characters
                                             </span>
                                         </label>
                                         <input
@@ -860,7 +860,7 @@ const UpdateProductPage = () => {
                                             onChange={(e) => handleInputChange('meta.title', e.target.value)}
                                             className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500"
                                             placeholder="Optimized meta title for search engines"
-                                            maxLength={60}
+                                            maxLength={65}
                                         />
                                     </div>
 

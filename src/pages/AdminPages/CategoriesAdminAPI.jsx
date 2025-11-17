@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Button, Modal, Form, Spinner, Alert, Card, Badge, Row, Col, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Button, Modal, Form, Spinner, Alert, Card, Badge, Row, Col, Tooltip, OverlayTrigger, Table } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-import { FaEdit, FaTrash, FaPlus, FaFolder, FaFolderOpen, FaSearch, FaInfoCircle, FaBox, FaFilter, FaSort } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaPlus, FaFolder, FaFolderOpen, FaSearch, FaBox, FaEye, FaEyeSlash, FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
 import { addCategory, addSubCategory, deleteCategory, deleteSubCategory, fetchCategoriesAll, updateCategory, updateSingleSubcategory } from '../../utils/CartUtils';
 import { getProducts } from '../../utils/ProductServices';
 import { Link } from 'react-router-dom';
@@ -24,8 +24,8 @@ const CategoryListPage = () => {
   const [parentCategoryForEdit, setParentCategoryForEdit] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedCategories, setExpandedCategories] = useState(new Set());
-  const [filterStatus, setFilterStatus] = useState('all'); // all, with-products, without-products
-  const [sortBy, setSortBy] = useState('name'); // name, productCount, date
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
 
   // Form state
   const [formData, setFormData] = useState({
@@ -34,39 +34,6 @@ const CategoryListPage = () => {
     image: '',
     subCategories: [{ categoryName: '' }],
   });
-
-  // Mock product data - replace with actual API call
-  const mockProducts = [
-    { _id: '1', name: 'Product 1', category: 'cat1', subcategory: 'sub1' },
-    { _id: '2', name: 'Product 2', category: 'cat1', subcategory: 'sub2' },
-    { _id: '3', name: 'Product 3', category: 'cat2', subcategory: 'sub3' },
-    { _id: '4', name: 'Product 4', category: 'cat1', subcategory: 'sub1' },
-  ];
-
-  // Calculate product counts
-  const calculateProductCounts = useCallback((categories) => {
-    return categories.map(category => {
-      const categoryProducts = mockProducts.filter(product =>
-        product.category === category._id
-      );
-
-      const subcategoryProducts = category.subCategories?.map(sub => {
-        const subProducts = mockProducts.filter(product =>
-          product.subcategory === sub._id
-        );
-        return {
-          ...sub,
-          productCount: subProducts.length
-        };
-      }) || [];
-
-      return {
-        ...category,
-        productCount: categoryProducts.length,
-        subCategories: subcategoryProducts
-      };
-    });
-  }, []);
 
   // Clear messages after 5 seconds
   useEffect(() => {
@@ -105,8 +72,7 @@ const CategoryListPage = () => {
       setLoading(true);
       setError(null);
       const data = await fetchCategoriesAll();
-      const categoriesWithCounts = calculateProductCounts(data);
-      setCategories(categoriesWithCounts);
+      setCategories(data);
     } catch (err) {
       const errorMsg = err.response?.data?.message || err.message || 'Failed to fetch categories';
       setError(errorMsg);
@@ -114,7 +80,7 @@ const CategoryListPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [showToast, calculateProductCounts]);
+  }, [showToast]);
 
   useEffect(() => {
     getAllCategories();
@@ -134,6 +100,7 @@ const CategoryListPage = () => {
     fetchProducts();
   }, []);
 
+  // Calculate product counts
   const productsByCategory = {};
   const productsBySubCategory = {};
 
@@ -150,6 +117,70 @@ const CategoryListPage = () => {
     }
     productsBySubCategory[p.subCategoryId].push(p);
   });
+
+  // Sorting function
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortIcon = (key) => {
+    if (sortConfig.key !== key) return <FaSort className="text-muted" />;
+    return sortConfig.direction === 'asc' ? <FaSortUp /> : <FaSortDown />;
+  };
+
+  // Filter and sort categories
+  const filteredCategories = categories
+    .filter(category => {
+      const matchesSearch = category.mainCategoryName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        category.subCategories?.some(sub =>
+          sub.categoryName.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
+      const categoryProductCount = productsByCategory[category._id]?.length || 0;
+      const matchesFilter = filterStatus === 'all' ? true :
+        filterStatus === 'with-products' ? categoryProductCount > 0 :
+          categoryProductCount === 0;
+
+      return matchesSearch && matchesFilter;
+    })
+    .sort((a, b) => {
+      const aProductCount = productsByCategory[a._id]?.length || 0;
+      const bProductCount = productsByCategory[b._id]?.length || 0;
+
+      switch (sortConfig.key) {
+        case 'name':
+          return sortConfig.direction === 'asc'
+            ? a.mainCategoryName.localeCompare(b.mainCategoryName)
+            : b.mainCategoryName.localeCompare(a.mainCategoryName);
+        case 'products':
+          return sortConfig.direction === 'asc'
+            ? aProductCount - bProductCount
+            : bProductCount - aProductCount;
+        case 'subcategories':
+          const aSubCount = a.subCategories?.length || 0;
+          const bSubCount = b.subCategories?.length || 0;
+          return sortConfig.direction === 'asc'
+            ? aSubCount - bSubCount
+            : bSubCount - aSubCount;
+        case 'date':
+        default:
+          const aDate = new Date(a.createdAt || 0);
+          const bDate = new Date(b.createdAt || 0);
+          return sortConfig.direction === 'asc' ? aDate - bDate : bDate - aDate;
+      }
+    });
+
+  // Stats calculation
+  const stats = {
+    totalCategories: categories.length,
+    totalProducts: allProducts.length,
+    categoriesWithProducts: categories.filter(cat => productsByCategory[cat._id]?.length > 0).length,
+    totalSubcategories: categories.reduce((sum, cat) => sum + (cat.subCategories?.length || 0), 0)
+  };
 
   // Toggle category expansion
   const toggleCategoryExpansion = (categoryId) => {
@@ -382,40 +413,6 @@ const CategoryListPage = () => {
     }
   };
 
-  // Filter and sort categories
-  const filteredCategories = categories
-    .filter(category => {
-      const matchesSearch = category.mainCategoryName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        category.subCategories?.some(sub =>
-          sub.categoryName.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-
-      const matchesFilter = filterStatus === 'all' ? true :
-        filterStatus === 'with-products' ? category.productCount > 0 :
-          category.productCount === 0;
-
-      return matchesSearch && matchesFilter;
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case 'productCount':
-          return b.productCount - a.productCount;
-        case 'name':
-          return a.mainCategoryName.localeCompare(b.mainCategoryName);
-        case 'date':
-        default:
-          return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
-      }
-    });
-
-  // Stats calculation
-  const stats = {
-    totalCategories: categories.length,
-    totalProducts: allProducts.length,
-    categoriesWithProducts: categories.filter(cat => cat.productCount > 0).length,
-    totalSubcategories: categories.reduce((sum, cat) => sum + (cat.subCategories?.length || 0), 0)
-  };
-
   // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -438,63 +435,69 @@ const CategoryListPage = () => {
   );
 
   return (
-    <div className="cm-fixed-container">
-      <div className="cm-fixed-header">
+    <div className="category-table-container">
+      <div className="category-table-header">
         <Row className="justify-content-center">
           <Col lg={12} xl={10}>
-            <Card className="glass-card">
-              <Card.Header className="card-header-custom">
+            <Card className="table-glass-card">
+              <Card.Header className="table-card-header-custom">
                 <div className="d-flex justify-content-between align-items-center flex-wrap">
-                  <div className="cm-fixed-title-section">
-                    <h4 className="mb-1"><FaFolder className="me-2" />Category Manager</h4>
-                    <p className="mb-0 text-light opacity-75">Manage your product categories and subcategories</p>
+                  <div className="table-title-section">
+                    <h4 className="mb-1"><FaFolder className="me-2" />Category Management</h4>
+                    <p className="mb-0 text-light opacity-75">Manage your product categories and subcategories in table format</p>
                   </div>
-                  <Button variant="primary" className="btn-add" onClick={openAddModal}>
-                    <FaPlus className="me-2" />Add Category
-                  </Button>
+                  <div>
+                    <Button variant="primary" className="btn-add-table" onClick={openAddModal}>
+                      <FaPlus className="me-2" />Add Category
+                    </Button>
+                    <br />
+                    <Link variant="primary" className="btn-add-table" target='_blank' style={{ "color": "white" }} to={'/admin/add-product'}>
+                      <FaPlus className="me-2" />Add Product
+                    </Link>
+                  </div>
                 </div>
 
                 {/* Statistics Cards */}
                 <Row className="mt-4 g-3">
                   <Col xs={6} md={3}>
-                    <div className="stat-card">
-                      <div className="stat-icon total-categories">
+                    <div className="table-stat-card">
+                      <div className="table-stat-icon total-categories">
                         <FaFolder />
                       </div>
-                      <div className="stat-content">
+                      <div className="table-stat-content">
                         <h5>{stats.totalCategories}</h5>
                         <span>Total Categories</span>
                       </div>
                     </div>
                   </Col>
                   <Col xs={6} md={3}>
-                    <div className="stat-card">
-                      <div className="stat-icon total-products">
+                    <div className="table-stat-card">
+                      <div className="table-stat-icon total-products">
                         <FaBox />
                       </div>
-                      <div className="stat-content">
+                      <div className="table-stat-content">
                         <h5>{stats.totalProducts}</h5>
                         <span>Total Products</span>
                       </div>
                     </div>
                   </Col>
                   <Col xs={6} md={3}>
-                    <div className="stat-card">
-                      <div className="stat-icon total-subcategories">
+                    <div className="table-stat-card">
+                      <div className="table-stat-icon total-subcategories">
                         <FaFolder />
                       </div>
-                      <div className="stat-content">
+                      <div className="table-stat-content">
                         <h5>{stats.totalSubcategories}</h5>
                         <span>Subcategories</span>
                       </div>
                     </div>
                   </Col>
                   <Col xs={6} md={3}>
-                    <div className="stat-card">
-                      <div className="stat-icon active-categories">
+                    <div className="table-stat-card">
+                      <div className="table-stat-icon active-categories">
                         <FaFolderOpen />
                       </div>
-                      <div className="stat-content">
+                      <div className="table-stat-content">
                         <h5>{stats.categoriesWithProducts}</h5>
                         <span>Active Categories</span>
                       </div>
@@ -503,57 +506,43 @@ const CategoryListPage = () => {
                 </Row>
               </Card.Header>
 
-              <Card.Body>
-                {error && <Alert variant="danger" className="alert-custom">{error}</Alert>}
-                {success && <Alert variant="success" className="alert-custom">{success}</Alert>}
+              <Card.Body className="p-0">
+                {error && <Alert variant="danger" className="alert-custom m-3">{error}</Alert>}
+                {success && <Alert variant="success" className="alert-custom m-3">{success}</Alert>}
 
                 {/* Enhanced Search and Filter Bar */}
-                <div className="search-filter-bar mb-4">
-                  <div className="search-box">
-                    <FaSearch className="search-icon" />
+                <div className="table-controls-bar">
+                  <div className="table-search-box">
+                    <FaSearch className="table-search-icon" />
                     <input
                       type="text"
                       placeholder="Search categories or subcategories..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="search-input"
+                      className="table-search-input"
                     />
                   </div>
-                  <div className="admin-filter-controls">
-                    <div>
-                      <select
-                        value={filterStatus}
-                        onChange={(e) => setFilterStatus(e.target.value)}
-                        className="form-select filter-select"
-                      >
-                        <option value="all">All Categories</option>
-                        <option value="with-products">With Products</option>
-                        <option value="without-products">Without Products</option>
-                      </select>
+                  <div className="table-filter-controls">
+                    <select
+                      value={filterStatus}
+                      onChange={(e) => setFilterStatus(e.target.value)}
+                      className="form-select table-filter-select"
+                    >
+                      <option value="all">All Categories</option>
+                      <option value="with-products">With Products</option>
+                      <option value="without-products">Without Products</option>
+                    </select>
 
-                    </div>
-                    <div>
-
-                      <select
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value)}
-                        className="form-select sort-select"
-                      >
-                        <option value="name">Sort by Name</option>
-                        <option value="productCount">Sort by Product Count</option>
-                        <option value="date">Sort by Date</option>
-                      </select>
-                    </div>
-                    <div>
-
-                      <Button
-                        variant="outline-secondary"
-                        onClick={toggleExpandAll}
-                        className="btn-expand-all"
-                      >
-                        {expandedCategories.size === filteredCategories.length ? 'Collapse All' : 'Expand All'}
-                      </Button>
-                    </div>
+                    <Button
+                      variant="outline-secondary"
+                      onClick={toggleExpandAll}
+                      className="table-btn-expand-all"
+                    >
+                      {expandedCategories.size === filteredCategories.length ?
+                        <><FaEyeSlash className="me-1" />Collapse All</> :
+                        <><FaEye className="me-1" />Expand All</>
+                      }
+                    </Button>
                   </div>
                 </div>
 
@@ -563,157 +552,203 @@ const CategoryListPage = () => {
                     <p className="mt-3 text-muted">Loading categories...</p>
                   </div>
                 ) : filteredCategories.length === 0 ? (
-                  <div className="py-5 empty-state-found text-center">
-                    <div className="empty-icon-found">
+                  <div className="py-5 empty-state-table text-center">
+                    <div className="empty-icon-table">
                       <FaFolderOpen />
                     </div>
                     <h5 className='mb-2'>No categories found</h5>
                     <p className="text-muted mb-4">Try adjusting your search or filter criteria</p>
-                    <button onClick={openAddModal} className="btn-add-no-found">
+                    <button onClick={openAddModal} className="btn-add-table-empty">
                       <FaPlus className="me-2" />Add Your First Category
                     </button>
                   </div>
                 ) : (
-                  <div className="categories-container">
-                    {filteredCategories.map((category) => (
-                      <div key={category._id} className="admin-category-card">
-                        <div className="category-header">
-                          <div
-                            className="category-title"
-                            onClick={() => toggleCategoryExpansion(category._id)}
-                          >
-                            <div className="d-flex align-items-center flex-wrap">
-                              <div className="category-icon">
-                                {expandedCategories.has(category._id) ?
-                                  <FaFolderOpen className="text-primary" /> :
-                                  <FaFolder className="text-primary" />
-                                }
-                              </div>
-                              <div className="category-info">
-                                <h5 className="category-name">{category.mainCategoryName}</h5>
-                                <div className="category-meta">
-                                  <Badge bg="outline-primary" className="me-2">
-                                    ID: {category._id}
-                                  </Badge>
-                                  <Badge bg="outline-secondary">
-                                    Slug: {category.slug}
-                                  </Badge>
-                                </div>
-                              </div>
+                  <div className="table-responsive">
+                    <Table hover className="category-table">
+                      <thead className="table-header-custom">
+                        <tr>
+                          <th width="5%"></th>
+                          <th width="25%" onClick={() => handleSort('name')} className="sortable-header">
+                            <div className="d-flex align-items-center">
+                              Category Name
+                              <span className="sort-icon ms-1">{getSortIcon('name')}</span>
                             </div>
-
-                            <div className="category-stats">
-                              <OverlayTrigger placement="top" overlay={ProductCountTooltip}>
-                                <Badge bg="success" className="product-count-badge">
-                                  <FaBox className="me-1" />
-                                  {productsByCategory[category._id]?.length || 0} Products
-                                </Badge>
-                              </OverlayTrigger>
-                              <Badge bg="primary" className="subcategory-count">
-                                {category.subCategories?.length || 0} Subcategories
-                              </Badge>
+                          </th>
+                          <th width="20%">Description</th>
+                          <th width="15%" onClick={() => handleSort('products')} className="sortable-header">
+                            <div className="d-flex align-items-center">
+                              Products
+                              <span className="sort-icon ms-1">{getSortIcon('products')}</span>
                             </div>
-                          </div>
-
-                          <div className="category-actions">
-                            <Button
-                              variant="outline-primary"
-                              size="sm"
-                              className="me-2 action-btn"
-                              onClick={() => openEditModal(category)}
-                            >
-                              <FaEdit className="me-1" />Edit
-                            </Button>
-                            <Button
-                              variant="outline-success"
-                              size="sm"
-                              className="me-2 action-btn"
-                              onClick={() => openAddSubcategoryModal(category._id)}
-                            >
-                              <FaPlus className="me-1" />Add Sub
-                            </Button>
-                            <Button
-                              variant="outline-danger"
-                              size="sm"
-                              className="action-btn"
-                              onClick={() => {
-                                setCurrentCategory(category);
-                                setShowDeleteConfirm(true);
-                              }}
-                            >
-                              <FaTrash className="me-1" />Delete
-                            </Button>
-                          </div>
-                        </div>
-
-                        {/* Subcategories */}
-                        {expandedCategories.has(category._id) && (
-                          <div className="category-details">
-                            <div className="category-description">
-                              <p><strong>Description:</strong> {category.description || 'No description provided'}</p>
+                          </th>
+                          <th width="15%" onClick={() => handleSort('subcategories')} className="sortable-header">
+                            <div className="d-flex align-items-center">
+                              Subcategories
+                              <span className="sort-icon ms-1">{getSortIcon('subcategories')}</span>
                             </div>
-
-                            {category.image && (
-                              <div className="category-image-section">
-                                <img
-                                  src={category.image}
-                                  className="image-category-admin"
-                                  alt={category.mainCategoryName}
-                                  onError={(e) => {
-                                    e.target.src = "https://image.pngaaa.com/700/5273700-middle.png";
-                                  }}
-                                />
-                              </div>
-                            )}
-
-                            {category.subCategories?.length > 0 && (
-                              <div className="subcategories-section">
-                                <h6 className="subcategories-title">
-                                  <FaFolderOpen className="me-2" />
-                                  Subcategories ({category.subCategories.length})
-                                </h6>
-                                <div className="subcategories-list">
-                                  {category.subCategories.map((sub, index) => (
-                                    <div key={sub._id || `${category._id}-${index}`} className="subcategory-item">
-                                      <div className="subcategory-info">
-                                        <div className="subcategory-main">
-                                          <Link to={`/products/${category.slug}/${sub.slug}`}><h6 className="subcategory-name">{sub.categoryName}</h6></Link>
-                                          <OverlayTrigger placement="top" overlay={ProductCountTooltip}>
-                                            <Badge bg="outline-success" className="sub-product-count">
-                                              <FaBox className="me-1" />
-                                              {productsBySubCategory[sub._id]?.length || 0} Products
-                                            </Badge>
-                                          </OverlayTrigger>
-                                        </div>
-                                        <span className="subcategory-id">ID: {sub._id}</span>
-                                      </div>
-                                      <div className="subcategory-actions">
-                                        <Button
-                                          variant="outline-primary"
-                                          size="sm"
-                                          className="me-2 action-btn"
-                                          onClick={() => openEditSubcategoryModal(category, sub)}
-                                        >
-                                          <FaEdit className="me-1" />Edit
-                                        </Button>
-                                        <Button
-                                          variant="outline-danger"
-                                          size="sm"
-                                          className="action-btn"
-                                          onClick={() => deleteSubCategoryHandler(category._id, sub._id, sub.categoryName)}
-                                        >
-                                          <FaTrash className="me-1" />Delete
-                                        </Button>
-                                      </div>
+                          </th>
+                          <th width="20%" className="text-center">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredCategories.map((category) => (
+                          <>
+                            <tr key={category._id} className="category-main-row">
+                              <td>
+                                <Button
+                                  variant="link"
+                                  className="expand-btn p-0"
+                                  onClick={() => toggleCategoryExpansion(category._id)}
+                                >
+                                  {expandedCategories.has(category._id) ?
+                                    <FaFolderOpen className="text-primary" /> :
+                                    <FaFolder className="text-primary" />
+                                  }
+                                </Button>
+                              </td>
+                              <td>
+                                <div className="d-flex align-items-center">
+                                  {category.image && (
+                                    <img
+                                      src={category.image}
+                                      className="table-category-image me-2"
+                                      alt={category.mainCategoryName}
+                                      onError={(e) => {
+                                        e.target.src = "https://image.pngaaa.com/700/5273700-middle.png";
+                                      }}
+                                    />
+                                  )}
+                                  <div>
+                                    <div className="category-name-table fw-semibold">
+                                      {category.mainCategoryName}
                                     </div>
-                                  ))}
+                                    <div className="category-meta-table">
+                                      <small className="text-muted">ID: {category._id}</small>
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
+                              </td>
+                              <td>
+                                <div className="category-description-table">
+                                  {category.description || 'No description'}
+                                </div>
+                              </td>
+                              <td>
+                                <OverlayTrigger placement="top" overlay={ProductCountTooltip}>
+                                  <Badge bg="success" className="table-product-count">
+                                    <FaBox className="me-1" />
+                                    {productsByCategory[category._id]?.length || 0}
+                                  </Badge>
+                                </OverlayTrigger>
+                              </td>
+                              <td>
+                                <Badge bg="primary" className="table-subcategory-count">
+                                  {category.subCategories?.length || 0}
+                                </Badge>
+                              </td>
+                              <td>
+                                <div className="d-flex justify-content-center gap-2">
+                                  <Button
+                                    variant="outline-primary"
+                                    size="sm"
+                                    className="table-action-btn"
+                                    onClick={() => openEditModal(category)}
+                                  >
+                                    <FaEdit />
+                                  </Button>
+                                  <Button
+                                    variant="outline-success"
+                                    size="sm"
+                                    className="table-action-btn"
+                                    onClick={() => openAddSubcategoryModal(category._id)}
+                                  >
+                                    <FaPlus />
+                                  </Button>
+                                  <Button
+                                    variant="outline-danger"
+                                    size="sm"
+                                    className="table-action-btn"
+                                    onClick={() => {
+                                      setCurrentCategory(category);
+                                      setShowDeleteConfirm(true);
+                                    }}
+                                  >
+                                    <FaTrash />
+                                  </Button>
+                                </div>
+                              </td>
+                            </tr>
+                            {expandedCategories.has(category._id) && category.subCategories?.length > 0 && (
+                              <tr className="subcategory-row">
+                                <td colSpan={6}>
+                                  <div className="subcategories-table-section">
+                                    <h6 className="subcategories-table-title mb-3">
+                                      <FaFolderOpen className="me-2" />
+                                      Subcategories ({category.subCategories.length})
+                                    </h6>
+                                    <Table size="sm" className="subcategories-table">
+                                      <thead>
+                                        <tr>
+                                          <th width="40%">Subcategory Name</th>
+                                          <th width="20%">Products</th>
+                                          <th width="20%">ID</th>
+                                          <th width="20%" className="text-center">Actions</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {category.subCategories.map((sub, index) => (
+                                          <tr key={sub._id || `${category._id}-${index}`} className="subcategory-table-row">
+                                            <td>
+                                              <Link
+                                                to={`/products/${category.slug}/${sub.slug}`}
+                                                className="subcategory-name-link"
+                                              >
+                                                {sub.categoryName}
+                                              </Link>
+                                            </td>
+                                            <td>
+                                              <OverlayTrigger placement="top" overlay={ProductCountTooltip}>
+                                                <Badge bg="outline-success" className="table-sub-product-count">
+                                                  <FaBox className="me-1" />
+                                                  {productsBySubCategory[sub._id]?.length || 0}
+                                                </Badge>
+                                              </OverlayTrigger>
+                                            </td>
+                                            <td>
+                                              <code className="subcategory-id-table">{sub._id}</code>
+                                            </td>
+                                            <td>
+                                              <div className="d-flex justify-content-center gap-2">
+                                                <Button
+                                                  variant="outline-primary"
+                                                  size="sm"
+                                                  className="table-sub-action-btn"
+                                                  onClick={() => openEditSubcategoryModal(category, sub)}
+                                                >
+                                                  <FaEdit />
+                                                </Button>
+                                                <Button
+                                                  variant="outline-danger"
+                                                  size="sm"
+                                                  className="table-sub-action-btn"
+                                                  onClick={() => deleteSubCategoryHandler(category._id, sub._id, sub.categoryName)}
+                                                >
+                                                  <FaTrash />
+                                                </Button>
+                                              </div>
+                                            </td>
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </Table>
+                                  </div>
+                                </td>
+                              </tr>
                             )}
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                          </>
+                        ))}
+                      </tbody>
+                    </Table>
                   </div>
                 )}
               </Card.Body>
@@ -721,6 +756,7 @@ const CategoryListPage = () => {
           </Col>
         </Row>
 
+        {/* Keep all your existing modals here */}
         {/* Add/Edit Category Modal */}
         <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" centered className="custom-modal">
           <Modal.Header closeButton className="modal-header-custom">
@@ -957,83 +993,86 @@ const CategoryListPage = () => {
       </div>
 
       <style jsx>{`
-        .cm-fixed-container {
-          background: linear-gradient(135deg, #dadadaff 0%, #c6c6c6ff 100%);
+        .category-table-container {
+          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
           min-height: 100vh;
           padding: 20px 0;
         }
 
-        .glass-card {
-          background: rgba(255, 255, 255, 0.95);
+        .table-glass-card {
+          background: rgba(255, 255, 255, 0.98);
           backdrop-filter: blur(20px);
-          border-radius: 20px;
-          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+          border-radius: 12px;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
           border: 1px solid rgba(255, 255, 255, 0.2);
           overflow: hidden;
         }
 
-        .card-header-custom {
-          background: linear-gradient(135deg, #373738ff 0%, #0d0d0dff 100%);
+        .table-card-header-custom {
+          background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
           color: white;
           border-bottom: none;
-          padding: 2rem;
+          padding: 1.5rem;
         }
 
         /* Statistics Cards */
-        .stat-card {
-          background: rgba(255, 255, 255, 0.2);
-          border-radius: 15px;
-          padding: 1.5rem 1rem;
+        .table-stat-card {
+          background: rgba(255, 255, 255, 0.15);
+          border-radius: 10px;
+          padding: 1rem;
           display: flex;
           align-items: center;
-          gap: 1rem;
+          gap: 0.75rem;
           backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.3);
+          border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .stat-icon {
-          width: 60px;
-          height: 60px;
-          border-radius: 15px;
+        .table-stat-icon {
+          width: 50px;
+          height: 50px;
+          border-radius: 10px;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 1.5rem;
+          font-size: 1.2rem;
           color: white;
         }
 
-        .stat-icon.total-categories { background: #1d1d1dff; }
-        .stat-icon.total-products { background: #1d1d1dff; }
-        .stat-icon.active-categories { background: #1d1d1dff; }
-        .stat-icon.total-subcategories { background: #1d1d1dff; }
+        .table-stat-icon.total-categories { background: #3498db; }
+        .table-stat-icon.total-products { background: #2ecc71; }
+        .table-stat-icon.active-categories { background: #e74c3c; }
+        .table-stat-icon.total-subcategories { background: #9b59b6; }
 
-        .stat-content h5 {
+        .table-stat-content h5 {
           margin: 0;
-          font-size: 1.8rem;
+          font-size: 1.5rem;
           font-weight: 700;
         }
 
-        .stat-content span {
-          font-size: 0.85rem;
+        .table-stat-content span {
+          font-size: 0.8rem;
           opacity: 0.9;
         }
 
-        /* Enhanced Search and Filter */
-        .search-filter-bar {
+        /* Table Controls */
+        .table-controls-bar {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          gap: 1rem;
+          padding: 1rem 1.5rem;
+          background: #f8f9fa;
+          border-bottom: 1px solid #dee2e6;
           flex-wrap: wrap;
+          gap: 1rem;
         }
 
-        .search-box {
+        .table-search-box {
           position: relative;
+          width: 70%;
           flex: 1;
-          min-width: 300px;
         }
 
-        .search-icon {
+        .table-search-icon {
           position: absolute;
           left: 15px;
           top: 50%;
@@ -1042,289 +1081,262 @@ const CategoryListPage = () => {
           z-index: 2;
         }
 
-        .search-input {
+        .table-search-input {
           width: 100%;
-          padding: 12px 20px 12px 45px;
-          border: 2px solid #e9ecef;
-          border-radius: 50px;
+          padding: 10px 10px 10px 40px;
+          border: 1px solid #ced4da;
+          border-radius: 6px;
           background: white;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
           transition: all 0.3s ease;
+          font-size: 0.9rem;
+        }
+
+        .table-search-input:focus {
+          outline: none;
+          border-color: #3498db;
+          box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        .table-filter-controls {
+          width: 30%;
+          display: flex;
+          flex-direction: row !important;
+          gap: 0.75rem;
+          align-items: center;
+        }
+
+        .table-filter-select {
+          width: 60%;
+          border-radius: 6px;
+          border: 1px solid #ced4da;
+          padding: 8px 12px;
+          background: white;
+        }
+
+        .table-btn-expand-all {
+         display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 40%;
+          border-radius: 6px;
+          padding: 8px 16px;
+          font-weight: 500;
+          font-size: 0.875rem;
+        }
+
+        /* Main Table */
+        .category-table {
+          margin: 0;
+          border-collapse: separate;
+          border-spacing: 0;
+        }
+
+        .table-header-custom {
+          background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+          color: white;
+        }
+
+        .table-header-custom th {
+          border: none;
+          padding: 1rem 0.75rem;
+          font-weight: 600;
+          font-size: 0.9rem;
+          vertical-align: middle;
+        }
+
+        .sortable-header {
+          cursor: pointer;
+          user-select: none;
+          transition: background-color 0.2s ease;
+        }
+
+        .sortable-header:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sort-icon {
+          font-size: 0.8rem;
+        }
+
+        /* Table Rows */
+        .category-main-row {
+          background: white;
+          transition: all 0.2s ease;
+        }
+
+        .category-main-row:hover {
+          background: #f8f9fa;
+          transform: translateY(-1px);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-main-row td {
+          padding: 1rem 0.75rem;
+          border-bottom: 1px solid #e9ecef;
+          vertical-align: middle;
+        }
+
+        .expand-btn {
+          color: #3498db;
+          transition: all 0.2s ease;
+        }
+
+        .expand-btn:hover {
+          color: #2980b9;
+          transform: scale(1.1);
+        }
+
+        .table-category-image {
+          width: 40px;
+          height: 40px;
+          object-fit: cover;
+          border-radius: 6px;
+          border: 2px solid #e9ecef;
+        }
+
+        .category-name-table {
+          color: #2c3e50;
           font-size: 0.95rem;
         }
 
-        .search-input:focus {
-          outline: none;
-          border-color: #171717ff;
-          box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+        .category-meta-table {
+          font-size: 0.8rem;
         }
 
-        .admin-filter-controls {
-          display: flex;
-          gap: 0.75rem;
-          align-items: center;
-          flex-wrap: wrap;
+        .category-description-table {
+          font-size: 0.875rem;
+          color: #6c757d;
+          line-height: 1.4;
         }
 
-        .filter-select, .sort-select {
-          border-radius: 25px;
-          border: 2px solid #e9ecef;
-          padding: 8px 15px;
-          background: white;
-          min-width: 160px;
-        }
-
-        .btn-expand-all {
-          border-radius: 25px;
-          padding: 8px 20px;
-          font-weight: 500;
-        }
-
-        /* Enhanced Category Cards */
-        .categories-container {
-          display: flex;
-          flex-direction: column;
-          gap: 1.25rem;
-        }
-
-        .admin-category-card {
-          background: white;
-          border-radius: 16px;
-          box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-          overflow: hidden;
-          transition: all 0.3s ease;
-          border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .admin-category-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-        }
-
-        .category-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 1.5rem;
-          cursor: pointer;
-          background: linear-gradient(to right, rgba(245, 247, 250, 0.8), rgba(255, 255, 255, 0.9));
-          transition: all 0.3s ease;
-        }
-
-        .category-header:hover {
-          background: linear-gradient(to right, rgba(102, 126, 234, 0.05), rgba(255, 255, 255, 0.95));
-        }
-
-        .category-title {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          flex: 1;
-          gap: 1rem;
-        }
-
-        .category-icon {
-          font-size: 1.8rem;
-          margin-right: 1rem;
-        }
-
-        .category-info {
-          flex: 1;
-        }
-
-        .category-name {
-          color: #2c3e50;
-          margin: 0 0 0.5rem 0;
+        .table-product-count, .table-subcategory-count, .table-sub-product-count {
+          padding: 6px 10px;
+          border-radius: 15px;
           font-weight: 600;
-          font-size: 1.3rem;
-        }
-
-        .category-meta {
-          display: flex;
-          gap: 0.5rem;
-          flex-wrap: wrap;
-        }
-
-        .category-stats {
-          display: flex;
-          gap: 0.75rem;
-          align-items: center;
-        }
-
-        .product-count-badge, .subcategory-count {
-          padding: 8px 12px;
-          border-radius: 20px;
-          font-weight: 600;
-          font-size: 0.85rem;
-          display: flex;
+          font-size: 0.8rem;
+          display: inline-flex;
           align-items: center;
           gap: 0.25rem;
-        }
+          }
+          
+          .table-sub-product-count {
+            color: #6c757d;
+          }
 
-        .category-actions {
-          display: flex;
-          gap: 0.5rem;
-        }
-
-        .action-btn {
-          display: flex;
-          align-items: center;
-          border-radius: 10px;
-          font-size: 0.8rem;
-          padding: 8px 16px;
+        .table-action-btn, .table-sub-action-btn {
+          border-radius: 6px;
+          padding: 6px 10px;
           transition: all 0.2s ease;
-          font-weight: 500;
-          border: 2px solid;
+          border-width: 1px;
         }
 
-        .action-btn:hover {
+        .table-action-btn:hover, .table-sub-action-btn:hover {
           transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Category Details */
-        .category-details {
-          padding: 0 1.5rem 1.5rem;
-          background: rgba(245, 247, 250, 0.5);
-        }
-
-        .category-description {
-          padding: 1rem 0;
-          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-          margin-bottom: 1rem;
-        }
-
-        .category-description p {
-          margin: 0;
-          color: #555;
-          line-height: 1.6;
-        }
-
-        .category-image-section {
-          text-align: center;
-          margin: 1rem 0;
-        }
-
-        .image-category-admin {
-          max-width: 200px;
-          height: 120px;
-          object-fit: cover;
-          border-radius: 12px;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
         /* Subcategories Section */
-        .subcategories-section {
-          margin-top: 1.5rem;
+        .subcategory-row {
+          background: #f8f9fa;
         }
 
-        .subcategories-title {
-          font-weight: 600;
+        .subcategory-row td {
+          padding: 0;
+          border-bottom: 2px solid #dee2e6;
+        }
+
+        .subcategories-table-section {
+          padding: 1.5rem;
+          background: linear-gradient(to right, #f8f9fa, #ffffff);
+        }
+
+        .subcategories-table-title {
           color: #2c3e50;
-          margin-bottom: 1rem;
-          font-size: 1.1rem;
-          display: flex;
-          align-items: center;
-        }
-
-        .subcategories-list {
-          display: flex;
-          flex-direction: column;
-          gap: 0.75rem;
-        }
-
-        .subcategory-item {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 1rem 1.25rem;
-          background: white;
-          border-radius: 12px;
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-          transition: all 0.2s ease;
-          border-left: 4px solid #667eea;
-        }
-
-        .subcategory-item:hover {
-          transform: translateX(5px);
-          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .subcategory-info {
-          flex: 1;
-        }
-
-        .subcategory-main {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          margin-bottom: 0.5rem;
-          flex-wrap: wrap;
-        }
-        
-        .subcategory-main a:hover{
-          text-decoration: underline !important;
-        }
-
-        .subcategory-name {
           font-weight: 600;
-          color: #34495e;
-          margin: 0;
           font-size: 1rem;
-        }
-
-        .sub-product-count {
           display: flex;
-          padding: 4px 8px;
-          border-radius: 12px;
-          font-size: 0.75rem;
-          font-weight: 500;
+          align-items: center;
         }
 
-        .subcategory-id {
+        .subcategories-table {
+          background: white;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .subcategories-table thead {
+          background: #e9ecef;
+        }
+
+        .subcategories-table th {
+          padding: 0.75rem;
+          font-weight: 600;
+          font-size: 0.85rem;
+          color: #495057;
+          border-bottom: 1px solid #dee2e6;
+        }
+
+        .subcategory-table-row {
+          transition: all 0.2s ease;
+        }
+
+        .subcategory-table-row:hover {
+          background: #f8f9fa;
+        }
+
+        .subcategory-table-row td {
+          padding: 0.75rem;
+          border-bottom: 1px solid #e9ecef;
+          vertical-align: middle;
+        }
+
+        .subcategory-name-link {
+          color: #3498db;
+          text-decoration: none;
+          font-weight: 500;
+          font-size: 0.9rem;
+          transition: color 0.2s ease;
+        }
+
+        .subcategory-name-link:hover {
+          color: #2980b9;
+          text-decoration: underline;
+        }
+
+        .subcategory-id-table {
           font-size: 0.8rem;
-          color: #7f8c8d;
+          color: #6c757d;
+          background: #f8f9fa;
+          padding: 2px 6px;
+          border-radius: 4px;
           font-family: 'Courier New', monospace;
         }
 
-        .subcategory-actions {
-          display: flex;
-          gap: 0.5rem;
-        }
-
-        /* Badge Styles */
-        .badge.bg-outline-primary, .badge.bg-outline-secondary, .badge.bg-outline-success {
-          background: transparent !important;
-          border: 1px solid;
-          color: inherit;
-        }
-
-        .badge.bg-outline-primary { border-color: #007bff; color: #007bff; }
-        .badge.bg-outline-secondary { border-color: #6c757d; color: #6c757d; }
-        .badge.bg-outline-success { border-color: #28a745; color: #28a745; }
-
         /* Buttons */
-        .btn-add {
-          background: #007bff;
+        .btn-add-table {
+          background: #3498db;
           border: none;
-          border-radius: 50px;
-          padding: 12px 24px;
+          border-radius: 6px;
+          padding: 10px 20px;
           font-weight: 600;
           transition: all 0.3s ease;
           display: flex;
           align-items: center;
         }
 
-        .btn-add:hover {
+        .btn-add-table:hover {
+          background: #2980b9;
           transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
         }
 
-        .btn-add-no-found {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .btn-add-table-empty {
+          background: #3498db;
           color: white;
           border: none;
-          border-radius: 50px;
-          padding: 12px 24px;
+          border-radius: 6px;
+          padding: 10px 20px;
           font-weight: 600;
           transition: all 0.3s ease;
           display: flex;
@@ -1332,33 +1344,34 @@ const CategoryListPage = () => {
           margin: 0 auto;
         }
 
-        .btn-add-no-found:hover {
+        .btn-add-table-empty:hover {
+          background: #2980b9;
           transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+          box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
         }
 
         /* Empty State */
-        .empty-state-found {
+        .empty-state-table {
           display: flex;
           flex-direction: column;
           justify-content: center;
           align-items: center;
-          padding: 4rem 2rem;
+          padding: 3rem 2rem;
         }
 
-        .empty-icon-found {
-          font-size: 4rem;
+        .empty-icon-table {
+          font-size: 3rem;
           color: #bdc3c7;
-          margin-bottom: 1.5rem;
+          margin-bottom: 1rem;
         }
 
         /* Loading Spinner */
         .loading-spinner {
-          width: 50px;
-          height: 50px;
-          border: 4px solid rgba(102, 126, 234, 0.2);
+          width: 40px;
+          height: 40px;
+          border: 3px solid rgba(52, 152, 219, 0.2);
           border-radius: 50%;
-          border-top: 4px solid #667eea;
+          border-top: 3px solid #3498db;
           animation: spin 1s linear infinite;
           margin: 0 auto;
         }
@@ -1370,86 +1383,62 @@ const CategoryListPage = () => {
 
         /* Responsive Design */
         @media (max-width: 768px) {
-          .category-header {
+          .table-controls-bar {
             flex-direction: column;
-            align-items: flex-start;
-            gap: 1rem;
+            align-items: stretch;
           }
           
-          .category-title {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 1rem;
-          }
-          
-          .category-stats {
-            width: 100%;
-            justify-content: flex-start;
-          }
-          
-          .category-actions {
-            width: 100%;
-            justify-content: flex-end;
-          }
-          
-          .search-filter-bar {
-            flex-direction: column;
-            gap: 1rem;
-          }
-          
-          .search-box {
+          .table-search-box {
             min-width: 100%;
           }
           
-          .admin-filter-controls {
+          .table-filter-controls {
             width: 100%;
             justify-content: space-between;
           }
           
-          .filter-select, .sort-select {
-            flex: 1;
+          .category-table {
+            font-size: 0.875rem;
           }
           
-          .subcategory-item {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 1rem;
+          .table-action-btn, .table-sub-action-btn {
+            padding: 4px 8px;
+            font-size: 0.8rem;
           }
           
-          .subcategory-actions {
-            width: 100%;
-            justify-content: flex-end;
+          .table-stat-card {
+            padding: 0.75rem;
           }
           
-          .stat-card {
-            padding: 1rem;
-          }
-          
-          .stat-icon {
-            width: 50px;
-            height: 50px;
-            font-size: 1.2rem;
+          .table-stat-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
           }
         }
 
         @media (max-width: 576px) {
-          .card-header-custom {
-            padding: 1.5rem 1rem;
-          }
-          
-          .category-header {
+          .table-card-header-custom {
             padding: 1rem;
           }
           
-          .category-details {
-            padding: 0 1rem 1rem;
+          .table-controls-bar {
+            padding: 0.75rem 1rem;
           }
           
-          .admin-filter-controls {
+          .category-main-row td {
+            padding: 0.75rem 0.5rem;
+          }
+          
+          .subcategories-table-section {
+            padding: 1rem;
+          }
+          
+          .table-filter-controls {
             flex-direction: column;
           }
           
-          .filter-select, .sort-select, .btn-expand-all {
+          .table-filter-select, .table-btn-expand-all {
             width: 100%;
           }
         }

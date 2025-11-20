@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getProducts } from "../utils/ProductServices";
-import { FaStar } from "react-icons/fa";
+import { FaStar, FaFilter } from "react-icons/fa";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { message } from "antd";
 
@@ -128,7 +128,7 @@ export default function ProductListingPage() {
                 {/* === Main Products Section === */}
                 <div className="product-grid">
                     <div className="toolbar">
-                        <h2>Our Collection</h2>
+                        <h2 className="collection-title">Our Collection</h2>
                         <div className="sorting">
                             <select value={sortOption} onChange={handleSort}>
                                 <option value="latest">Latest</option>
@@ -137,7 +137,13 @@ export default function ProductListingPage() {
                             </select>
                         </div>
                         <button onClick={toggleFilterPanel} className="product-filter-toggle-btn">
-                            {showFilters ? "Hide Filters" : "Show Filters"}
+                            {showFilters ? (
+                                "Hide Filters"
+                            ) : (
+                                <>
+                                    <FaFilter /> Show Filters
+                                </>
+                            )}
                         </button>
                     </div>
 
@@ -183,7 +189,6 @@ export default function ProductListingPage() {
                                         <h3 className="product-page-title">
                                             {product?.productName || "Unnamed Product"}
                                         </h3>
-
                                         <div className="product-page-price">
                                             $
                                             {Number(
@@ -376,14 +381,14 @@ export default function ProductListingPage() {
         /* === Filters Sidebar (Now on the Right) === */
         .product-filter-toggle-btn {
             display: none;
-            background: var(--dark-gray);
-            color: var(--black);
+            background: var(--light-red);
+            color: white;
             border: none;
             padding: 10px 15px;
             border-radius: 4px;
             margin-bottom: 15px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 500;
             align-self: flex-start;
         }
 
@@ -633,6 +638,10 @@ export default function ProductListingPage() {
                 flex-direction: column;
             }
 
+            .collection-title , .sorting{
+            display:none;
+            }
+
             .product-filters {
                 width: 100% !important;
                 display: none;
@@ -662,7 +671,10 @@ export default function ProductListingPage() {
             }
 
             .product-filter-toggle-btn {
-                display: inline-block;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                width: auto;
             }
 
             .product-page-title{

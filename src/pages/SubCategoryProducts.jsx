@@ -907,7 +907,7 @@ const SubCategoryProductPage = () => {
     position: relative;
     overflow: hidden;
     background: #f8fafc;
-    height: 40vh;
+    height: 45vh;
     background: var(--beige);
     cursor: pointer;
 }
@@ -915,7 +915,7 @@ const SubCategoryProductPage = () => {
 .subcategory-product-image img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     transition: transform 0.3s ease;
 }
 
@@ -1147,7 +1147,7 @@ const SubCategoryProductPage = () => {
     }
 
     .product-title {
-        font-size: 14px;
+        font-size: 20px;
     }
 
     .product-price {
@@ -1179,6 +1179,15 @@ const SubCategoryProductPage = () => {
 
     .plp-container {
         padding: 12px;
+    }
+
+    .subcategory-product-image {
+        height: 50vh !important;
+    } 
+
+    .subcategory-product-image img {
+    object-fit: contain;
+    transition: transform 0.3s ease;
     }
 }
 

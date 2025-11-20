@@ -543,11 +543,11 @@ export default function ProductListingPage() {
             position: absolute;
             top: 10px;
             left: 10px;
-            color: var(--white);
+            color: var(--light);
             padding: 4px 10px;
             font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
+            font-weight: 500;
+            text-transform: lowercase;
             letter-spacing: 0.5px;
             z-index: 2;
         }
@@ -563,13 +563,13 @@ export default function ProductListingPage() {
         }
 
         .badge-bestseller {
-            background: rgba(46, 134, 193, 0.693);
-            color: var(--black);
+            background: rgba(61, 61, 61, 0.69);
+            color: var(--light);
         }
 
         .badge-prime {
-            background: #1399ffab;
-            color: var(--black);
+            background: rgba(61, 61, 61, 0.69);
+            color: var(--light);
         }
 
         .product-page-title {

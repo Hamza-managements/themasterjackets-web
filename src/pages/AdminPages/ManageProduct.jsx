@@ -282,7 +282,7 @@ const AllProductManagementPage = () => {
                   placeholder='E.g., "Black Leather Jacket"'
                   value={currentVariation.variationName}
                   onChange={(e) =>
-                    setCurrentVariation((prev) => ({ ...prev, variationName: e.target.value }))
+                    setCurrentVariation((prev) => ({ ...prev, variationName: e.target.value.toUpperCase(), }))
                   }
                 />
               </div>
@@ -344,11 +344,11 @@ const AllProductManagementPage = () => {
                 <input
                   type="text"
                   value={currentVariation.attributes.color}
-                  placeholder='E.g., "Black"'
+                  placeholder='E.g., "BLACK"'
                   onChange={(e) =>
                     setCurrentVariation((prev) => ({
                       ...prev,
-                      attributes: { ...prev.attributes, color: e.target.value },
+                      attributes: { ...prev.attributes, color: e.target.value.toUpperCase(), },
                     }))
                   }
                 />
@@ -370,7 +370,6 @@ const AllProductManagementPage = () => {
                   ))}
                 </select>
               </div>
-
               {/* Sizes */}
               {/* <div
                 className={`checkbox-group sizes  ${showErrors &&

@@ -7,7 +7,6 @@ import { fetchCategoriesAll } from '../utils/CartUtils';
 import Aos from 'aos';
 import { useProducts } from '../context/ProductContext';
 
-
 export default function Header() {
   const { user, logout } = useContext(AuthContext);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -92,7 +91,6 @@ export default function Header() {
     document.addEventListener('click', handleDocumentClick);
     return () => document.removeEventListener('click', handleDocumentClick);
   }, []);
-  // {console.log('Mobile open?', isMobileMenuOpen)}
 
   return (
     <>
@@ -104,24 +102,28 @@ export default function Header() {
             data-aos-duration="500"
           >
             Summer Sale! Up to 50% off{' '}
-            <Link to="/products/68aec39c010f07c1100d40d6">Shop Now</Link>
+            <Link to="/products/men/all">Shop Now</Link>
           </div>
 
           <div className="fs-main-header">
             <div className={`${isMobileMenuOpen ? '' : 'mobile-header-content'}`}>
-              <Link to="/" ><img className="fs-logo" alt='TheMasterJacketsLOGO' src='https://res.cloudinary.com/dvmpyh0hj/image/upload/v1760615184/hilkmru9zutcneybpwwc.png'></img></Link>
+              <Link onClick={() => openCart()} className={`fs-cart-link-mobile ${isMobileMenuOpen ? '' : ''}`}>
+                <i className="fas fa-shopping-bag"></i>
+                <span className="fs-cart-count">{cartItems.length}</span>
+              </Link>
               <button className="fs-mobile-menu-btn" onClick={toggleMobileMenu}>
                 <i className={`fas ${isMobileMenuOpen ? '' : 'fa-bars'}`}></i>
               </button>
+              <Link to="/" ><img className="fs-logo" alt='TheMasterJacketsLOGO' src='https://res.cloudinary.com/dvmpyh0hj/image/upload/v1760615184/hilkmru9zutcneybpwwc.png'></img></Link>
             </div>
             <nav className="fs-nav-container">
               <nav ref={navRef} className={`fs-nav-links ${isMobileMenuOpen ? 'fs-mobile-active' : ''}`}>
                 <button className="fs-mobile-menu-btn" onClick={toggleMobileMenu}>
                   <i className={`fas ${isMobileMenuOpen ? 'fa-times' : ''}`}></i>
                 </button>
-                {categories?.map((cat) =>
+                {categories?.map((cat, index) =>
                   <div className="fs-nav-item" key={cat._id}>
-                    <Link to={`/category/${cat.slug}`} className="fs-main-link" onClick={(e) => handleMainLinkClick(0, true, e)} >{cat.mainCategoryName} <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i></Link>
+                    <Link to={`/category/${cat.slug}`} className="fs-main-link" onClick={(e) => handleMainLinkClick(index, true, e)} >{cat.mainCategoryName} <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i></Link>
                     <div className="fs-mega-menu fs-dropdown-menu">
                       <div className="fs-mega-menu-column">
                         <h4 className="fs-dropdown-title">{cat.mainCategoryName} Leather Jacket</h4>
@@ -138,33 +140,33 @@ export default function Header() {
                         <Link to={`/products/${cat.slug}/all?color=cognac`}>Cognac</Link>
                       </div>
                     </div>
-                    <div className={`fs-mobile-submenu ${activeSubmenu === 0 ? 'fs-active' : ''}`}>
+                    <div className={`fs-mobile-submenu ${activeSubmenu === index ? 'fs-active' : ''}`}>
                       <div className="fs-dropdown-title">Categories</div>
-                      <Link to={`/products/${cat.slug}/all`}>View All</Link>
+                      <Link target="_blank" to={`/products/${cat.slug}/all`}>View All</Link>
                       {cat.subCategories?.map((sub) => (
-                        <Link key={sub._id} to={`/products/${cat.slug}/${sub.slug}`}>{sub.categoryName}</Link>
+                        <Link target="_blank" key={sub._id} to={`/products/${cat.slug}/${sub.slug}`}>{sub.categoryName}</Link>
                       ))}
                     </div>
                   </div>
                 )}
 
                 <div className="fs-nav-item">
-                  <Link to="#" className="fs-main-link">Brand <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i></Link>
+                  <Link target="_blank" to="#" className="fs-main-link" onClick={(e) => handleMainLinkClick(4, true, e)}>Brand <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i></Link>
                   <div className="fs-dropdown-menu">
                     <Link to="/about">About us</Link>
                     <Link to="/contact-us">Contact us</Link>
                     <Link to="/return-exchange">Return & Exchange</Link>
                   </div>
-                  <div className="fs-mobile-submenu">
-                    <Link to="/about">About us</Link>
-                    <Link to="/contact-us">Contact us</Link>
-                    <Link to="/return-exchange">Return & Exchange</Link>
+                  <div className={`fs-mobile-submenu ${activeSubmenu === 4 ? 'fs-active' : ''}`}>
+                    <Link target="_blank" to="/about">About us</Link>
+                    <Link target="_blank" to="/contact-us">Contact us</Link>
+                    <Link target="_blank" to="/return-exchange">Return & Exchange</Link>
                   </div>
                 </div>
               </nav>
             </nav>
 
-            <div className={`${isMobileMenuOpen ? 'd-none' : 'fs-header-actions '}`}>
+            <div className={`${isMobileMenuOpen ? 'd-none' : 'fs-header-actions'}`}>
               {/* Search Bar */}
               <div className="fs-search-bar">
                 <i
@@ -198,10 +200,10 @@ export default function Header() {
                         <i className="fas fa-user-circle"></i>{" "}
                         {user?.role === "admin" ? "Admin Dashboard" : "My Account"}
                       </Link>
-                      <Link to="/orders" className="fs-dropdown-link">
+                      <Link target="_blank" to="/orders" className="fs-dropdown-link">
                         <i className="fas fa-box-open"></i> My Orders
                       </Link>
-                      <Link to="/wishlist" className="fs-dropdown-link">
+                      <Link target="_blank" to="/wishlist" className="fs-dropdown-link">
                         <i className="fas fa-heart"></i> Wishlist
                       </Link>
                       <button
@@ -225,7 +227,7 @@ export default function Header() {
               </div>
 
               {/* Cart */}
-              <Link onClick={() => openCart()} className="fs-cart-link">
+              <Link  onClick={() => openCart()} className={`${isMobileMenuOpen ? 'd-none' : 'fs-cart-link'}`}>
                 <i className="fas fa-shopping-bag"></i>
                 <span className="fs-cart-count">{cartItems.length}</span>
               </Link>
@@ -233,7 +235,6 @@ export default function Header() {
           </div>
         </div>
       </header>
-
       {/* Toast (optional dynamic alerts) */}
       <div
         id="toast"

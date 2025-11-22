@@ -747,6 +747,15 @@
             .related-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+
+
+            .related-product-image {
+                height: 50vh;
+            }
+
+            .related-product-image img {
+                object-fit: contain;
+            }
         }
 
         @media (max-width: 480px) {
@@ -845,10 +854,6 @@
             .related-grid {
                 grid-template-columns: 1fr;
                 gap: 16px;
-            }
-
-            .related-product-image img {
-                height: 220px;
             }
 
             .related-title {

@@ -78,7 +78,7 @@ export default function BlogGallery() {
 
   return (
     <section className="blog-gallery-section" data-aos="fade-in" data-aos-duration="500">
-      <div className="container">
+      <div className="blog-gallery-main-container">
         <div className="blog-gallery-title">
           <h2>Blog Section</h2>
           <p>How to Store Your Leather Jacket (So It Lasts Forever)</p>

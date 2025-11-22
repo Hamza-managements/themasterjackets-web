@@ -25,10 +25,11 @@ const ManageProducts = () => {
   const filteredProducts = useMemo(() => {
     let result = [...products];
 
-    // Search filter
     if (searchTerm) {
-      result = result.filter((p) =>
-        p.productTitle?.toLowerCase().includes(searchTerm.toLowerCase())
+      const term = searchTerm.toLowerCase();
+      result = result.filter(p =>
+        p.productName?.toLowerCase().includes(term) ||
+        p.parentStockKeepingUnit?.toLowerCase().includes(term)
       );
     }
 
@@ -109,7 +110,7 @@ const ManageProducts = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
-       <Link to='/' target="_blank" className="text-decoration-none hover:underline"><h3 className="text-center text-3xl font-bold text-gray-700 mt-2">The Master Jackets</h3></Link>
+        <Link to='/' target="_blank" className="text-decoration-none hover:underline"><h3 className="text-center text-3xl font-bold text-gray-700 mt-2">The Master Jackets</h3></Link>
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Manage Products</h1>

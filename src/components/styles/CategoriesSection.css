@@ -32,8 +32,8 @@
 /* ⚡ Main Grid - Two Equal Columns */
 .categories-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* always two columns */
-  gap: 0; /* remove space between to make it seamless 50/50 */
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
   width: 100%;
 }
 
@@ -76,7 +76,6 @@
   width: 100%;
   text-align: center;
   color: var(--beige);
-  background: rgba(0, 0, 0, 0.45);
   padding: 2rem 1rem;
 }
 

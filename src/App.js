@@ -54,7 +54,6 @@ function App() {
               <Route path="/about" element={<AboutPage />} />
               <Route path="/return-exchange" element={<ReturnPolicy />} />
               <Route path="/contact-us" element={<ContactForm />} />
-              <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
               <Route path="/category/:slug" element={<CategoryPage />} />
               <Route path="/search" element={<SearchResults />} />
               <Route path="/products/:slug/all" element={<ProductListingPage />} />
@@ -62,6 +61,7 @@ function App() {
               <Route path="/products-details/:productId" element={<ProductDetails />} />
             </Route>
 
+            <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
             <Route path="auth" element={<AuthLayout />}>
               <Route path="login" element={<Login />} />
               <Route path="signup" element={<SignUp />} />

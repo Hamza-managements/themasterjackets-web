@@ -338,12 +338,14 @@ const Dashboard = () => {
     <div className="dashboard-container">
       {/* Top Navigation Bar */}
       <header className="dashboard-topbar">
+        {isMobileView && (
+          <button className="mobile-menu-toggle" onClick={toggleMobileMenu}>
+            <FaBars />
+          </button>
+        )}
+        <Link to="/" ><img className="fs-logo" alt='TheMasterJacketsLOGO' src='https://res.cloudinary.com/dvmpyh0hj/image/upload/v1760615184/hilkmru9zutcneybpwwc.png'></img></Link>
         <div className="topbar-left">
-          {isMobileView && (
-            <button className="mobile-menu-toggle" onClick={toggleMobileMenu}>
-              <FaBars />
-            </button>
-          )}
+
           <div className="search-bar">
             <FaSearch className="search-icon" />
             <input
@@ -356,7 +358,7 @@ const Dashboard = () => {
         </div>
 
         <div className="topbar-right">
-          <button
+          {/* <button
             className="notification-btn"
             onClick={() => setShowNotifications(!showNotifications)}
           >
@@ -364,7 +366,49 @@ const Dashboard = () => {
             {notifications.length > 0 && (
               <span className="notification-badge">{notifications.length}</span>
             )}
-          </button>
+          </button> */}
+          <div className="notification-wrapper">
+            {!isMobileView && (
+              <button
+                className="notification-btn"
+                onClick={() => setShowNotifications(!showNotifications)}
+              >
+                <FaBell />
+                {notifications.length > 0 && (
+                  <span className="notification-badge">{notifications.length}</span>
+                )}
+              </button>
+            )}
+
+            {showNotifications && (
+              <div className="notifications-panel">
+                <div className="notifications-header">
+                  <h4>Notifications</h4>
+                  <button>Mark all as read</button>
+                </div>
+                <div className="notification-list">
+                  {notifications.length > 0 ? (
+                    notifications.map(notification => (
+                      <div key={notification.id} className="notification-item">
+                        <div className="notification-icon">
+                          {notification.type === 'order' ? <FaShoppingBag /> : <FaBell />}
+                        </div>
+                        <div className="notification-content">
+                          <p>{notification.message}</p>
+                          <small>{notification.time}</small>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="empty-notifications">
+                      <FaBell />
+                      <p>No new notifications</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
 
           <div
             className={`user-menu ${showUserMenu ? 'active' : ''}`}
@@ -402,35 +446,6 @@ const Dashboard = () => {
             )}
           </div>
         </div>
-
-        {showNotifications && (
-          <div className="notifications-panel">
-            <div className="notifications-header">
-              <h4>Notifications</h4>
-              <button>Mark all as read</button>
-            </div>
-            <div className="notification-list">
-              {notifications.length > 0 ? (
-                notifications.map(notification => (
-                  <div key={notification.id} className="notification-item">
-                    <div className="notification-icon">
-                      {notification.type === 'order' ? <FaShoppingBag /> : <FaBell />}
-                    </div>
-                    <div className="notification-content">
-                      <p>{notification.message}</p>
-                      <small>{notification.time}</small>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="empty-notifications">
-                  <FaBell />
-                  <p>No new notifications</p>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
       </header>
 
       <div className="dashboard-grid">
@@ -454,6 +469,15 @@ const Dashboard = () => {
                 <small>Total Spent</small>
               </div> */}
             </div>
+          </div>
+
+          <div className="sidebar-header-mobile">
+            <h3>Menu</h3>
+            {isMobileView && (
+              <button className="mobile-menu-toggle" onClick={toggleMobileMenu}>
+                <FaTimes />
+              </button>
+            )}
           </div>
 
           <nav className="dashboard-nav">
@@ -501,11 +525,6 @@ const Dashboard = () => {
               <FaLock className="nav-icon" />
               <span>Security</span>
             </button>
-            {isMobileView && (
-              <button className="mobile-menu-toggle" onClick={toggleMobileMenu}>
-                <FaTimes />
-              </button>
-            )}
           </nav>
 
           <div className="sidebar-footer">
@@ -1320,7 +1339,6 @@ button {
     padding: 1rem 2rem;
     background-color: white;
     box-shadow: var(--box-shadow);
-    position: sticky;
     top: 0;
 }
 
@@ -1362,7 +1380,7 @@ button {
 
 .search-bar input:focus {
     outline: none;
-    border-color: var(--tan);
+    border-color: var(--black);
     box-shadow: 0 0 0 2px var(--beige);
 }
 
@@ -1375,6 +1393,7 @@ button {
 .notification-btn {
     position: relative;
     background: none;
+    padding-top: 8px;
     border: none;
     font-size: 1.25rem;
     color: var(--dark-gray);
@@ -1382,7 +1401,7 @@ button {
 
 .notification-badge {
     position: absolute;
-    top: -5px;
+    top: -1px;
     right: -5px;
     background-color: var(--dark-brown);
     color: white;
@@ -1408,7 +1427,7 @@ button {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background-color: var(--tan);
+    background-color: var(--black);
     color: white;
     display: flex;
     align-items: center;
@@ -1451,8 +1470,7 @@ button {
 .dropdown-header {
     display: flex;
     gap: 1rem;
-    padding: 0 1rem 1rem;
-    border-bottom: 1px solid var(--gray);
+    padding: 0 1rem;
 }
 
 .dropdown-menu button {
@@ -1472,25 +1490,25 @@ button {
 .dropdown-divider {
     height: 1px;
     background-color: var(--gray);
-    margin: 0.5rem 0;
+}
+
+.notification-wrapper {
+  position: relative;
 }
 
 .notifications-panel {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    width: 350px;
-    max-height: 500px;
-    overflow-y: auto;
-    color: black;
-    background-color: rgb(230, 227, 227);
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-}
-
-.notification-btn:hover .notifications-panel,
-.notification-btn:focus-within .notifications-panel {
-    display: block;
+  position: absolute;
+  top: 110%;
+  right: 0;
+  width: 350px;
+  max-height: 500px;
+  overflow-y: auto;
+  color: black;
+  background-color: rgba(220, 217, 217, 1);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--gray);
+  z-index: 999;
 }
 
 .notifications-header {
@@ -1502,7 +1520,7 @@ button {
 }
 
 .notifications-header button {
-    color: var(--tan);
+    color: var(--black);
     font-size: 0.9rem;
     font-weight: 500;
 }
@@ -1524,7 +1542,7 @@ button {
 
 .notification-icon {
     font-size: 1.25rem;
-    color: var(--tan);
+    color: var(--black);
 }
 
 .notification-content {
@@ -1549,7 +1567,7 @@ button {
 .empty-notifications svg {
     font-size: 2rem;
     margin-bottom: 1rem;
-    color: var(--tan);
+    color: var(--black);
 }
 
 /* Dashboard Grid Layout */
@@ -1581,7 +1599,7 @@ button {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background-color: var(--tan);
+    background-color: var(--black);
     color: white;
     display: flex;
     align-items: center;
@@ -1643,17 +1661,17 @@ button {
 
 .dashboard-nav button:hover {
     background-color: var(--light);
-    color: var(--tan);
+    color: var(--black);
 }
 
 .dashboard-nav button.active {
     background-color: var(--beige);
-    color: var(--tan);
+    color: var(--black);
     font-weight: 500;
 }
 
 .dashboard-nav button.active .nav-icon {
-    color: var(--tan);
+    color: var(--black);
 }
 
 .nav-icon {
@@ -1664,7 +1682,7 @@ button {
 .nav-badge {
     position: absolute;
     right: 1rem;
-    background-color: var(--tan);
+    background-color: var(--black);
     color: white;
     border-radius: 50%;
     width: 22px;
@@ -1692,7 +1710,7 @@ button {
 
 .help-card svg {
     font-size: 1.5rem;
-    color: var(--tan);
+    color: var(--black);
 }
 
 .help-card h4 {
@@ -1745,7 +1763,7 @@ button {
 }
 
 /* .stat-card.primary {
-  border-left: 4px solid var(--tan);
+  border-left: 4px solid var(--black);
 }
 
 .stat-card.success {
@@ -1757,7 +1775,7 @@ button {
 }
 
 .stat-card.info {
-  border-left: 4px solid var(--gold);
+  border-left: 4px solid var(--red);
 } */
 
 .stat-icon {
@@ -1772,7 +1790,7 @@ button {
 
 .stat-card.primary .stat-icon {
     background-color: var(--beige);
-    color: var(--tan);
+    color: var(--black);
 }
 
 .stat-card.success .stat-icon {
@@ -1787,7 +1805,7 @@ button {
 
 .stat-card.info .stat-icon {
     background-color: rgba(63, 55, 201, 0.1);
-    color: var(--gold);
+    color: var(--red);
 }
 
 .stat-info h3 {
@@ -1835,7 +1853,7 @@ button {
 }
 
 .btn-text {
-    color: var(--tan);
+    color: var(--black);
     font-weight: 500;
     background: none;
     border: none;
@@ -1942,7 +1960,7 @@ th {
 
 .btn-icon:hover {
     background-color: var(--beige);
-    color: var(--tan);
+    color: var(--black);
 }
 
 /* Quick Actions */
@@ -1974,7 +1992,7 @@ th {
 .action-card svg {
     font-size: 1.5rem;
     margin-bottom: 0.75rem;
-    color: var(--tan);
+    color: var(--black);
 }
 
 /* Orders List */
@@ -2144,8 +2162,8 @@ th {
 }
 
 .btn-outline:hover {
-    border-color: var(--tan);
-    color: var(--tan);
+    border-color: var(--black);
+    color: var(--black);
 }
 
 .btn-outline.danger {
@@ -2160,7 +2178,7 @@ th {
 .btn-primary {
     padding: 0.5rem 1rem;
     border-radius: var(--border-radius);
-    background-color: var(--tan);
+    background-color: var(--black);
     color: white;
     font-size: 0.9rem;
     display: flex;
@@ -2170,7 +2188,7 @@ th {
 }
 
 .btn-primary:hover {
-    background-color: var(--gold);
+    background-color: var(--red);
 }
 
 .empty-state {
@@ -2296,7 +2314,7 @@ th {
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: var(--tan);
+    border-color: var(--black);
     box-shadow: 0 0 0 2px var(--beige);
 }
 
@@ -2362,7 +2380,7 @@ th {
 
 .default-badge {
     background-color: var(--beige);
-    color: var(--tan);
+    color: var(--black);
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
     font-size: 0.8rem;
@@ -2399,7 +2417,7 @@ th {
 
 .icon-btn:hover {
     background-color: var(--beige);
-    color: var(--tan);
+    color: var(--black);
 }
 
 .address-card.add-new {
@@ -2412,7 +2430,7 @@ th {
 }
 
 .address-card.add-new:hover {
-    border-color: var(--tan);
+    border-color: var(--black);
     background-color: var(--beige);
 }
 
@@ -2425,7 +2443,7 @@ th {
 }
 
 .address-card.add-new:hover .add-new-content {
-    color: var(--tan);
+    color: var(--black);
 }
 
 .address-card.add-new svg {
@@ -2466,7 +2484,7 @@ th {
     height: 48px;
     border-radius: 50%;
     background-color: var(--beige);
-    color: var(--tan);
+    color: var(--black);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2653,6 +2671,20 @@ th {
     .profile-actions {
         width: 100%;
         justify-content: flex-end;
+    }
+
+    .user-profile-card {
+      display: none;
+    }
+
+    .sidebar-header-mobile {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .sidebar-header-mobile button {
+      padding-bottom: 15px;
     }
 }
 

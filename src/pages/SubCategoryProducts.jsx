@@ -20,7 +20,7 @@ const SubCategoryProductPage = () => {
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filters, setFilters] = useState({
-        category: ['all'],
+        style: 'all',
         price: 'all',
         color: 'all',
         delivery: 'all'
@@ -28,20 +28,21 @@ const SubCategoryProductPage = () => {
     const [sortOption, setSortOption] = useState('featured');
     const [showFilters, setShowFilters] = useState(false);
     const [expandedSections, setExpandedSections] = useState({
-        category: true,
+        style: true,
         price: true,
         color: true,
         delivery: true
     });
 
+    console.log("ACTIVE FILTERS:", filters.style);
+
     const applyFiltersAndSort = useCallback(() => {
         let filtered = [...products];
 
-        if (!filters.category.includes('all')) {
+        if (filters.style && filters.style !== "all") {
             filtered = filtered.filter(product =>
-                filters.category.some(category =>
-                    (product.category || "").toLowerCase().includes(category.toLowerCase())
-                )
+                Array.isArray(product.attributes?.style) &&
+                product.attributes.style.map(s => s.toLowerCase()).includes(filters.style.toLowerCase())
             );
         }
 
@@ -109,27 +110,11 @@ const SubCategoryProductPage = () => {
         setShowFilters(false);
     }, [products, filters, sortOption]);
 
-    const handleFilterChange = (filterType, value, isCheckbox = false) => {
-        if (isCheckbox) {
-            setFilters(prev => {
-                if (value === 'all') {
-                    return { ...prev, [filterType]: ['all'] };
-                } else {
-                    const newValues = prev[filterType].includes(value)
-                        ? prev[filterType].filter(v => v !== value)
-                        : [...prev[filterType], value];
-
-                    // Remove 'all' if other options are selected
-                    const filteredValues = newValues.filter(v => v !== 'all');
-                    return {
-                        ...prev,
-                        [filterType]: filteredValues.length > 0 ? filteredValues : ['all']
-                    };
-                }
-            });
-        } else {
-            setFilters(prev => ({ ...prev, [filterType]: value }));
-        }
+    const handleFilterChange = (filterType, value) => {
+        setFilters(prev => ({
+            ...prev,
+            [filterType]: value
+        }));
     };
 
     const handleSortChange = (e) => {
@@ -149,7 +134,7 @@ const SubCategoryProductPage = () => {
 
     const clearAllFilters = () => {
         setFilters({
-            category: ['all'],
+            style: 'all',
             price: 'all',
             color: 'all',
             delivery: 'all'
@@ -192,7 +177,7 @@ const SubCategoryProductPage = () => {
     };
 
     const hasActiveFilters = () => {
-        return filters.category.some(cat => cat !== 'all') ||
+        return filters.style !== 'all' ||
             filters.price !== 'all' ||
             filters.color !== 'all' ||
             filters.delivery !== 'all';
@@ -296,49 +281,88 @@ const SubCategoryProductPage = () => {
 
                     {/* Categories Filter */}
                     <div className="product-filter-section">
-                        <div className="section-header" onClick={() => toggleSection('category')}>
-                            <h3>Categories</h3>
-                            {expandedSections?.category ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                        <div className="section-header" onClick={() => toggleSection('style')}>
+                            <h3>Style</h3>
+                            {expandedSections?.style ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                         </div>
-                        {expandedSections?.category && (
+                        {expandedSections?.style && (
                             <div className="filter-options">
                                 <div className="product-filter-option">
                                     <label className="filter-label">
                                         <input
-                                            type="checkbox"
-                                            name="category"
+                                            type="radio"
+                                            name="style"
                                             value="all"
-                                            checked={filters?.category.includes('all')}
-                                            onChange={(e) => handleFilterChange('category', e.target.value, true)}
+                                            checked={filters?.style.includes('all')}
+                                            onChange={(e) => handleFilterChange('style', e.target.value, true)}
                                         />
                                         <span className="checkmark"></span>
-                                        All Products
+                                        All
                                     </label>
                                 </div>
                                 <div className="product-filter-option">
                                     <label className="filter-label">
                                         <input
-                                            type="checkbox"
-                                            name="category"
-                                            value="jacket"
-                                            checked={filters?.category.includes('jacket')}
-                                            onChange={(e) => handleFilterChange('category', e.target.value, true)}
+                                            type="radio"
+                                            name="style"
+                                            value="casual"
+                                            checked={filters?.style.includes('casual')}
+                                            onChange={(e) => handleFilterChange('style', e.target.value, true)}
                                         />
                                         <span className="checkmark"></span>
-                                        Jackets
+                                        Casual
                                     </label>
                                 </div>
                                 <div className="product-filter-option">
                                     <label className="filter-label">
                                         <input
-                                            type="checkbox"
-                                            name="category"
-                                            value="clothing"
-                                            checked={filters?.category.includes('clothing')}
-                                            onChange={(e) => handleFilterChange('category', e.target.value, true)}
+                                            type="radio"
+                                            name="style"
+                                            value="formal"
+                                            checked={filters?.style.includes('formal')}
+                                            onChange={(e) => handleFilterChange('style', e.target.value, true)}
                                         />
                                         <span className="checkmark"></span>
-                                        Clothing
+                                        Formal
+                                    </label>
+                                </div>
+                                <div className="product-filter-option">
+                                    <label className="filter-label">
+                                        <input
+                                            type="radio"
+                                            name="style"
+                                            value="sport"
+                                            checked={filters?.style.includes('sport')}
+                                            onChange={(e) => handleFilterChange('style', e.target.value, true)}
+                                        />
+                                        <span className="checkmark"></span>
+                                        Sport
+                                    </label>
+                                </div>
+                                <div className="product-filter-option">
+                                    <label className="filter-label">
+                                        <input
+                                            type="radio"
+                                            name="style"
+                                            value="business"
+                                            checked={filters?.style.includes('business')}
+                                            onChange={(e) => handleFilterChange('style', e.target.value, true)}
+                                        />
+                                        <span className="checkmark"></span>
+                                        Business
+                                    </label>
+                                </div>
+                                <div className="product-filter-option">
+                                    <label className="filter-label">
+                                        <input
+                                            type="radio"
+                                            name="style"
+                                            value="vintage"
+                                            checked={filters?.style.includes('vintage')}
+                                            onChange={(e) => handleFilterChange('style', e.target.value, true)}
+                                        />
+                                        <span className="checkmark"></span>
+                                        Vintage
                                     </label>
                                 </div>
                             </div>

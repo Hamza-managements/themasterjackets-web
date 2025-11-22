@@ -20,7 +20,7 @@ export default function FeaturedProducts({ title }) {
                             product?.attributes?.badge?.toLowerCase() === "best seller" ||
                             product?.attributes?.badge?.toLowerCase() === "bestseller"
                     );
-                    const featuredFromCache = cachedBestSellers.slice(0, 8);
+                    const featuredFromCache = cachedBestSellers.slice(0, 12);
                     setProducts(featuredFromCache);
                     setSortedProducts(featuredFromCache);
                 }
@@ -78,7 +78,7 @@ export default function FeaturedProducts({ title }) {
         <div className="bj-collection">
             <div className="bj-collection-header" data-aos="fade-up">
                 <h2>{title}</h2>
-                <div>
+                <div className='bj-sort-container'>
                     <select className="bj-sort" onChange={(e) => setSortOption(e.target.value)} value={sortOption}>
                         <option>Sort by</option>
                         <option>Best Selling</option>

@@ -519,7 +519,7 @@ const AllProductPage = () => {
                                     { value: 'maroon', label: 'Maroon' },
                                     { value: 'blue', label: 'Blue' },
                                     { value: 'distressed', label: 'Distressed' },
-                                    { value: 'washed-up', label: 'Washed Up' },
+                                    { value: 'washed up', label: 'Washed Up' },
                                     { value: 'white', label: 'White' }
                                 ].map(option => (
                                     <div key={option?.value} className="product-filter-option">

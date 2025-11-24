@@ -121,6 +121,9 @@ export default function Header() {
                 <button className="fs-mobile-menu-btn" onClick={toggleMobileMenu}>
                   <i className={`fas ${isMobileMenuOpen ? 'fa-times' : ''}`}></i>
                 </button>
+                <div className="fs-nav-item">
+                  <Link target="_blank" to="/products/new-in/new-arrivals" className="fs-main-link" onClick={(e) => handleMainLinkClick(3, true, e)}>New IN </Link>
+                </div>
                 {categories
                   ?.filter(category =>
                     ["Men", "Women", "Halloween"].includes(category.mainCategoryName)
@@ -153,10 +156,6 @@ export default function Header() {
                       </div>
                     </div>
                   )}
-
-                <div className="fs-nav-item">
-                  <Link target="_blank" to="/products/new-in/new-arrivals" className="fs-main-link" onClick={(e) => handleMainLinkClick(3, true, e)}>New IN </Link>
-                </div>
 
                 <div className="fs-nav-item">
                   <Link target="_blank" to="/about" className="fs-main-link" onClick={(e) => handleMainLinkClick(4, true, e)}>Brand <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i></Link>

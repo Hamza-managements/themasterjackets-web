@@ -94,8 +94,9 @@ export default function Footer() {
               <div key={category._id} className="col-lg-3 col-md-6 footer-col">
                 <h5 className="website-footer-heading"> {category.mainCategoryName}</h5>
                 <ul className="website-footer-links-main">
+                <Link to={`/products/${category.slug}/all`}>View All</Link>
                   {category.subCategories?.map((sub) => (
-                    <li key={sub._id}><Link to={`/products/${sub._id}`}>{sub.categoryName}</Link></li>
+                    <li key={sub._id}><Link to={`/products/${category.slug}/${sub.slug}`}>{sub.categoryName}</Link></li>
                   ))}
                 </ul>
               </div>

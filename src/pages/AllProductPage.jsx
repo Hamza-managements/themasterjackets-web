@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import Swal from "sweetalert2";
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
     Filter,
     X,
@@ -9,14 +9,15 @@ import {
     ChevronDown,
     ChevronUp
 } from 'lucide-react';
-import { getProductBySubCategoryId, getProducts } from '../utils/ProductServices';
-import { fetchCategoriesAll } from '../utils/CartUtils';
+import { getProducts } from '../utils/ProductServices';
 import { FaStar } from 'react-icons/fa';
 
-const SubCategoryProductPage = () => {
+const AllProductPage = () => {
     const navigate = useNavigate();
     const { slug } = useParams();
-    console.log("SUBCATEGORY SLUG:", slug);
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const colorFilter = params.get("color");
     const [products, setProducts] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -36,8 +37,45 @@ const SubCategoryProductPage = () => {
         delivery: true
     });
 
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                setLoading(true);
+                const res = await getProducts();
+                setLoading(false);
+                setProducts(res || []);
+            } catch (error) {
+                Swal.fire("Not Found", "No subcategory found for this URL.", "warning");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProducts();
+    }, [slug]);
+
     const applyFiltersAndSort = useCallback(() => {
         let filtered = [...products];
+
+        const categoryMap = {
+            "men": "68ac23c0146f4993994f41b2",
+            "women": "68ad7a27010f07c1100d3e56",
+            "new-in": "68ad9ab6010f07c1100d3f1e",
+            "halloween": "68da47a52dd010a7a0b6cf3f",
+        };
+
+        // Filter by category or slug
+        if (filters.category || slug) {
+            const selectedCategoryId = categoryMap[filters.category?.toLowerCase()] || categoryMap[slug?.toLowerCase()];
+
+            if (selectedCategoryId) {
+                filtered = filtered.filter(
+                    (p) => p.categoryId === selectedCategoryId
+                );
+            } else {
+                Swal.warning("⚠️ No matching category ID found for:", filters.category);
+            }
+        }
 
         if (filters.style && filters.style !== "all") {
             filtered = filtered.filter(product =>
@@ -184,57 +222,10 @@ const SubCategoryProductPage = () => {
     };
 
     useEffect(() => {
-
-        const fetchProducts = async () => {
-            try {
-                setLoading(true);
-                if (slug == "new-arrivals") {
-                    let filtered = await getProducts();
-                    filtered = filtered.filter(
-                        product =>
-                            product.attributes?.badge &&
-                            product.attributes.badge.toLowerCase() === "new arrival"
-                    );
-                    console.log("NEW ARRIVALS PRODUCTS:", filtered);
-                    setProducts(filtered);
-                    return;
-                }
-                const categoryRes = await fetchCategoriesAll();
-                const categories = categoryRes || [];
-
-                let matchedCategory = null;
-                let matchedSubCategory = null;
-
-                for (const category of categories) {
-                    const sub = category.subCategories.find(
-                        (subCat) => subCat.slug === slug
-                    );
-                    if (sub) {
-                        matchedCategory = category;
-                        matchedSubCategory = sub;
-                        break;
-                    }
-                }
-
-                if (!matchedSubCategory) {
-                    Swal.fire("Not Found", "No subcategory found for this URL.", "warning");
-                    setProducts([]);
-                    return;
-                }
-
-                const res = await getProductBySubCategoryId(matchedCategory._id, matchedSubCategory._id);
-                setProducts(res.data || []);
-            } catch (error) {
-                Swal.fire("Not Found", "No subcategory found for this URL.", "warning");
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchProducts();
-
-        const filteredTags = CATEGORY_TAG_MAP[slug] || CATEGORY_TAG_MAP["default"];
-        setAvailableFilters(filteredTags);
-    }, [slug]);
+        if (products.length > 0) {
+            applyFiltersAndSort();
+        }
+    }, [applyFiltersAndSort, products]);
 
     const CATEGORY_TAG_MAP = {
         "biker-jackets": [
@@ -391,12 +382,10 @@ const SubCategoryProductPage = () => {
         ]
     };
 
-
     useEffect(() => {
-        if (products.length > 0) {
-            applyFiltersAndSort();
-        }
-    }, [applyFiltersAndSort, products]);
+        const filteredTags = CATEGORY_TAG_MAP[slug] || CATEGORY_TAG_MAP["default"];
+        setAvailableFilters(filteredTags);
+    }, [slug]);
 
     if (loading) {
         return (
@@ -449,7 +438,6 @@ const SubCategoryProductPage = () => {
                         </div>
                     </div>
 
-                    {/* Categories Filter */}
                     {/* Categories Filter */}
                     <div className="product-filter-section">
                         <div className="section-header" onClick={() => toggleSection('style')}>
@@ -659,6 +647,12 @@ const SubCategoryProductPage = () => {
                                                 alt={`${product?.productName || "Product"} - hover`}
                                                 className="hover-image"
                                             />
+                                            <div className="product-badges">
+                                                <span className={`badge badge-sale`}>
+                                                    {/* <Truck size={12} /> */}
+                                                    {product?.attributes?.badge}
+                                                </span>
+                                            </div>
                                         </div>
                                         <div className="product-details">
                                             <h3
@@ -1459,4 +1453,4 @@ select:focus-visible,
     );
 };
 
-export default SubCategoryProductPage;
+export default AllProductPage;

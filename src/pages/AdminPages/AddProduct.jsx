@@ -423,9 +423,60 @@ const AmazonStyleProductPage = () => {
     }
   };
 
-
   const seasonOptions = ['Spring', 'Summer', 'Fall', 'Winter', 'All'];
-  const [styleOptions, setStyleOptions] = useState(['Casual', 'Formal', 'Sport', 'Business', 'Vintage', 'Modern']);
+  const [styleOptions, setStyleOptions] = useState([
+    "Leather",
+    "Lambskin",
+    "Cowhide",
+    "Sheepskin",
+    "Cotton",
+    "Denim",
+    "Satin",
+    "Cafe racer",
+    "Biker",
+    "Motorcycle",
+    "Moto",
+    "Quilted",
+    "Diamond",
+    "Classic",
+    "Asymmetrical",
+    "Long Coat",
+    "3/4th Length",
+    "Car Coat",
+    "Trench Coat",
+    "Duster",
+    "Blazer",
+    "Fur",
+    "Shearling",
+    "Winter",
+    "Bomber",
+    "Coat",
+    "Casual",
+    "Vintage",
+    "Distressed",
+    "Hood",
+    "Hooded",
+    "Removable Hood",
+    "Zipper",
+    "Buttoned",
+    "Fur Collar",
+    "Belted",
+    "Studded",
+    "Spikes",
+    "Trucker",
+    "Shirt Collar",
+    "Lapel Collar",
+    "Snap Tab Collar",
+    "Stand Collar",
+    "Wing Collar",
+    "Ribbed Hem",
+    "Formal",
+    "Varsity",
+    "Leather Sleeves",
+    "Insulated",
+    "Warm",
+    "Sports"
+  ]);
   const fitOptions = ['Slim', 'Regular', 'Relaxed', 'Oversized'];
   const closureOptions = ['Zipper', 'Buttons', 'Velcro', 'Snap', 'Elastic'];
   const genderOptions = ['Men', 'Women'];
@@ -1208,7 +1259,7 @@ const AmazonStyleProductPage = () => {
                       </label>
 
                       {/* Checkboxes for existing style options */}
-                      <div className="flex flex-col items-start space-y-2 mb-3">
+                      <div className="grid grid-cols-2 gap-x-6 gap-y-2 mb-3">
                         {styleOptions.map((style) => (
                           <label key={style} className="flex items-center space-x-2 cursor-pointer">
                             <input
@@ -1235,9 +1286,10 @@ const AmazonStyleProductPage = () => {
                         <button
                           type="button"
                           onClick={() => {
-                            if (customStyle.trim() && !formData.attributes.style.includes(customStyle.trim())) {
-                              updateStyle(customStyle.trim(), true);
-                              setStyleOptions((prev) => [...prev, customStyle.trim()]);
+                            const trimmedStyle = customStyle.trim();
+                            if (trimmedStyle && !formData.attributes.style.includes(trimmedStyle)) {
+                              updateStyle(trimmedStyle, true);
+                              setStyleOptions((prev) => [...prev, trimmedStyle]);
                               setCustomStyle("");
                             }
                           }}
@@ -1247,7 +1299,7 @@ const AmazonStyleProductPage = () => {
                         </button>
                       </div>
                     </div>
-
+                    
                   </div>
                 </div>
               </div>

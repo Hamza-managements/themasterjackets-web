@@ -121,43 +121,51 @@ export default function Header() {
                 <button className="fs-mobile-menu-btn" onClick={toggleMobileMenu}>
                   <i className={`fas ${isMobileMenuOpen ? 'fa-times' : ''}`}></i>
                 </button>
-                {categories?.map((cat, index) =>
-                  <div className="fs-nav-item" key={cat._id}>
-                    <Link to={`/category/${cat.slug}`} className="fs-main-link" onClick={(e) => handleMainLinkClick(index, true, e)} >{cat.mainCategoryName} <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i></Link>
-                    <div className="fs-mega-menu fs-dropdown-menu">
-                      <div className="fs-mega-menu-column">
-                        <h4 className="fs-dropdown-title">{cat.mainCategoryName} Leather Jacket</h4>
-                        <Link to={`/products/${cat.slug}/all`}>View All</Link>
+                {categories
+                  ?.filter(category =>
+                    ["Men", "Women", "Halloween"].includes(category.mainCategoryName)
+                  )
+                  .map((cat, index) =>
+                    <div className="fs-nav-item" key={cat._id}>
+                      <Link to={`/category/${cat.slug}`} className="fs-main-link" onClick={(e) => handleMainLinkClick(index, true, e)} >{cat.mainCategoryName} <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i></Link>
+                      <div className="fs-mega-menu fs-dropdown-menu">
+                        <div className="fs-mega-menu-column">
+                          <h4 className="fs-dropdown-title">{cat.mainCategoryName} Leather Jacket</h4>
+                          <Link to={`/products/${cat.slug}/all`}>View All</Link>
+                          {cat.subCategories?.map((sub) => (
+                            <Link key={sub._id} to={`/products/${cat.slug}/${sub.slug}`}>{sub.categoryName}</Link>
+                          ))}
+                        </div>
+                        <div className="fs-mega-menu-column">
+                          <h4 className="fs-dropdown-title">Colors</h4>
+                          <Link to={`/products/${cat.slug}/all?color=black`}>Black</Link>
+                          <Link to={`/products/${cat.slug}/all?color=brown`}>Brown</Link>
+                          <Link to={`/products/${cat.slug}/all?color=washed up`}>Washed Up</Link>
+                          <Link to={`/products/${cat.slug}/all?color=cognac`}>Cognac</Link>
+                        </div>
+                      </div>
+                      <div className={`fs-mobile-submenu ${activeSubmenu === index ? 'fs-active' : ''}`}>
+                        <div className="fs-dropdown-title">Categories</div>
+                        <Link target="_blank" to={`/products/${cat.slug}/all`}>View All</Link>
                         {cat.subCategories?.map((sub) => (
-                          <Link key={sub._id} to={`/products/${cat.slug}/${sub.slug}`}>{sub.categoryName}</Link>
+                          <Link target="_blank" key={sub._id} to={`/products/${cat.slug}/${sub.slug}`}>{sub.categoryName}</Link>
                         ))}
                       </div>
-                      <div className="fs-mega-menu-column">
-                        <h4 className="fs-dropdown-title">Colors</h4>
-                        <Link to={`/products/${cat.slug}/all?color=black`}>Black</Link>
-                        <Link to={`/products/${cat.slug}/all?color=brown`}>Brown</Link>
-                        <Link to={`/products/${cat.slug}/all?color=washed up`}>Washed Up</Link>
-                        <Link to={`/products/${cat.slug}/all?color=cognac`}>Cognac</Link>
-                      </div>
                     </div>
-                    <div className={`fs-mobile-submenu ${activeSubmenu === index ? 'fs-active' : ''}`}>
-                      <div className="fs-dropdown-title">Categories</div>
-                      <Link target="_blank" to={`/products/${cat.slug}/all`}>View All</Link>
-                      {cat.subCategories?.map((sub) => (
-                        <Link target="_blank" key={sub._id} to={`/products/${cat.slug}/${sub.slug}`}>{sub.categoryName}</Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                  )}
 
                 <div className="fs-nav-item">
-                  <Link target="_blank" to="#" className="fs-main-link" onClick={(e) => handleMainLinkClick(4, true, e)}>Brand <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i></Link>
+                  <Link target="_blank" to="/products/new-in/new-arrivals" className="fs-main-link" onClick={(e) => handleMainLinkClick(3, true, e)}>New IN </Link>
+                </div>
+
+                <div className="fs-nav-item">
+                  <Link target="_blank" to="/about" className="fs-main-link" onClick={(e) => handleMainLinkClick(4, true, e)}>Brand <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i></Link>
                   <div className="fs-dropdown-menu">
                     <Link to="/about">About us</Link>
                     <Link to="/contact-us">Contact us</Link>
                     <Link to="/return-exchange">Return & Exchange</Link>
                   </div>
-                  <div className={`fs-mobile-submenu ${activeSubmenu === 4 ? 'fs-active' : ''}`}>
+                  <div className={`fs-mobile-submenu ${activeSubmenu === 3 ? 'fs-active' : ''}`}>
                     <Link target="_blank" to="/about">About us</Link>
                     <Link target="_blank" to="/contact-us">Contact us</Link>
                     <Link target="_blank" to="/return-exchange">Return & Exchange</Link>
@@ -227,7 +235,7 @@ export default function Header() {
               </div>
 
               {/* Cart */}
-              <Link  onClick={() => openCart()} className={`${isMobileMenuOpen ? 'd-none' : 'fs-cart-link'}`}>
+              <Link onClick={() => openCart()} className={`${isMobileMenuOpen ? 'd-none' : 'fs-cart-link'}`}>
                 <i className="fas fa-shopping-bag"></i>
                 <span className="fs-cart-count">{cartItems.length}</span>
               </Link>

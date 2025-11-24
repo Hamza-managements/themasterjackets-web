@@ -326,7 +326,59 @@ const UpdateProductPage = () => {
     );
 
     const seasonOptions = ['Spring', 'Summer', 'Fall', 'Winter', 'All'];
-    const styleOptions = ['Casual', 'Formal', 'Sport', 'Business', 'Outdoor', 'Vintage', 'Modern'];
+    const [styleOptions, setStyleOptions] = useState([
+        "Leather",
+        "Lambskin",
+        "Cowhide",
+        "Sheepskin",
+        "Cotton",
+        "Denim",
+        "Satin",
+        "Cafe racer",
+        "Biker",
+        "Motorcycle",
+        "Moto",
+        "Quilted",
+        "Diamond",
+        "Classic",
+        "Asymmetrical",
+        "Long Coat",
+        "3/4th Length",
+        "Car Coat",
+        "Trench Coat",
+        "Duster",
+        "Blazer",
+        "Fur",
+        "Shearling",
+        "Winter",
+        "Bomber",
+        "Coat",
+        "Casual",
+        "Vintage",
+        "Distressed",
+        "Hood",
+        "Hooded",
+        "Removable Hood",
+        "Zipper",
+        "Buttoned",
+        "Fur Collar",
+        "Belted",
+        "Studded",
+        "Spikes",
+        "Trucker",
+        "Shirt Collar",
+        "Lapel Collar",
+        "Snap Tab Collar",
+        "Stand Collar",
+        "Wing Collar",
+        "Ribbed Hem",
+        "Formal",
+        "Varsity",
+        "Leather Sleeves",
+        "Insulated",
+        "Warm",
+        "Sports"
+    ]);
     const genderOptions = ['Men', 'Women'];
     const badgeOptions = ['None', 'New Arrival', 'Best Seller', 'Limited Edition', 'Exclusive', 'Sale']
 
@@ -821,7 +873,7 @@ const UpdateProductPage = () => {
                                             <label className="block text-sm font-medium text-gray-700 mb-3">
                                                 Style
                                             </label>
-                                            <div className="flex flex-col items-start space-y-2">
+                                            <div className="grid grid-cols-2 gap-x-6 gap-y-2 mb-3">
                                                 {styleOptions.map(style => (
                                                     <label key={style} className="flex items-center space-x-2">
                                                         <input

@@ -3,7 +3,7 @@ import Home from './pages/Home';
 import ContactForm from './pages/Contact';
 import ReturnPolicy from './pages/Return-exchange';
 import AboutPage from './pages/About';
-import ProductListingPage from './pages/ProductPage';
+import AllProductPage from './pages/AllProductPage';
 import SubCategoryProductPage from './pages/SubCategoryProducts';
 import ProductDetails from './pages/ProductDetails';
 // import CheckoutPage from './pages/CheckoutPage';
@@ -56,7 +56,7 @@ function App() {
               <Route path="/contact-us" element={<ContactForm />} />
               <Route path="/category/:slug" element={<CategoryPage />} />
               <Route path="/search" element={<SearchResults />} />
-              <Route path="/products/:slug/all" element={<ProductListingPage />} />
+              <Route path="/products/:slug/all" element={<AllProductPage />} />
               <Route path="/products/:categorySlug/:slug" element={<SubCategoryProductPage />} />
               <Route path="/products-details/:productId" element={<ProductDetails />} />
             </Route>

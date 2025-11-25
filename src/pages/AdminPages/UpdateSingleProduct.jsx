@@ -1111,7 +1111,7 @@ const UpdateProductPage = () => {
                                                                 src={img}
                                                                 alt={`Product ${i + 1}`}
                                                                 className="d-block w-100"
-                                                                style={{ objectFit: "cover", maxHeight: "500px" }}
+                                                                style={{ objectFit: "contain", maxHeight: "500px" }}
                                                             />
                                                         </div>
                                                     ))}

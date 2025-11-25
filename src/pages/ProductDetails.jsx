@@ -25,6 +25,8 @@ const ProductDetails = () => {
   const [error, setError] = useState(null);
   const [activeImage, setActiveImage] = useState('');
   const [isZoomActive, setIsZoomActive] = useState(false);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const [cartErrors, setCartErrors] = useState({
     variation: '',
@@ -203,6 +205,11 @@ const ProductDetails = () => {
     }, 2000);
   };
 
+  const openLightbox = (index) => {
+    setCurrentImageIndex(index);
+    setIsLightboxOpen(true);
+  };
+
   useEffect(() => {
     Aos.init({
       duration: 1000,
@@ -242,7 +249,7 @@ const ProductDetails = () => {
     : product.productImages;
 
   return (
-    <div className="product-main-container">
+    <div>
       <main className="product-main-container">
         <section className="product-section">
           <div className="product-container">
@@ -268,6 +275,7 @@ const ProductDetails = () => {
               >
                 <img
                   src={activeImage}
+                  onClick={() => openLightbox(0)}
                   alt={product.productName}
                   className="main-image"
                   ref={mainImageRef}
@@ -284,6 +292,44 @@ const ProductDetails = () => {
                 }}
               />
             </div>
+
+            {isLightboxOpen && (
+              <div
+                className="lightbox-overlay"
+                onClick={() => setIsLightboxOpen(false)}
+              >
+                <img
+                  src={selectedVariation.productImages[currentImageIndex]}
+                  className="lightbox-image"
+                />
+
+                {/* Next Button */}
+                {currentImageIndex < selectedVariation.productImages.length - 1 && (
+                  <button
+                    className="lightbox-next"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentImageIndex(prev => prev + 1);
+                    }}
+                  >
+                    ❯
+                  </button>
+                )}
+
+                {/* Previous Button */}
+                {currentImageIndex > 0 && (
+                  <button
+                    className="lightbox-prev"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentImageIndex(prev => prev - 1);
+                    }}
+                  >
+                    ❮
+                  </button>
+                )}
+              </div>
+            )}
 
             {/* ✅ Product Details */}
             <div className="product-details">

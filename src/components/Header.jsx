@@ -122,7 +122,7 @@ export default function Header() {
                   <i className={`fas ${isMobileMenuOpen ? 'fa-times' : ''}`}></i>
                 </button>
                 <div className="fs-nav-item">
-                  <Link target="_blank" to="/products/new-in/new-arrivals" className="fs-main-link" onClick={(e) => handleMainLinkClick(3, true, e)}>New IN </Link>
+                  <Link target="_blank" to="/products/new-in/new-arrivals" className="fs-main-link">New IN </Link>
                 </div>
                 {categories
                   ?.filter(category =>
@@ -158,7 +158,7 @@ export default function Header() {
                   )}
 
                 <div className="fs-nav-item">
-                  <Link target="_blank" to="/about" className="fs-main-link" onClick={(e) => handleMainLinkClick(4, true, e)}>Brand <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i></Link>
+                  <Link target="_blank" to="/about" className="fs-main-link" onClick={(e) => handleMainLinkClick(3, true, e)}>Brand <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i></Link>
                   <div className="fs-dropdown-menu">
                     <Link to="/about">About us</Link>
                     <Link to="/contact-us">Contact us</Link>

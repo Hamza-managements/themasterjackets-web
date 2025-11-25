@@ -1,13 +1,11 @@
 #mainHeader {
     top: 0;
-    z-index: 1001;
     background-color: #fff;
 }
 
 .fs-header-container {
     width: 100%;
     top: 0;
-    z-index: 1001;
     background: white;
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
     max-width: 100vw;
@@ -185,7 +183,6 @@
 
 .fs-mega-menu .fs-mega-menu-column {
     flex: 1;
-    /* padding: 0 15px; */
 }
 
 .fs-header-actions {
@@ -194,7 +191,6 @@
     align-items: center;
     justify-content: space-between;
     position: relative;
-    /* z-index: 1001; */
 }
 
 .fs-header-actions a {
@@ -257,7 +253,6 @@
     font-size: 24px;
     cursor: pointer;
     color: var(--dark-brown);
-    z-index: 1001;
 }
 
 .fs-mobile-submenu {

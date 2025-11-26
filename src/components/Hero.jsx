@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 const Hero = () => {
   const slides = [
     {
-      desktop: "https://res.cloudinary.com/dekf5dyng/image/upload/v1761633364/1920X900_dpvh6j.jpg",
-      tablet: "https://res.cloudinary.com/dekf5dyng/image/upload/v1761633364/1000X12000_x0s51z.jpg",
-      mobile: "https://res.cloudinary.com/dekf5dyng/image/upload/v1761633364/800X1200_wge46p.jpg",
+      desktop: "https://res.cloudinary.com/dekf5dyng/image/upload/v1764147068/1920X900_-_MEN_NEW_BANNER_u9z07x.jpg",
+      tablet: "https://res.cloudinary.com/dekf5dyng/image/upload/v1764156653/1200x1000_men_hrhwk9.jpg",
+      mobile: "https://res.cloudinary.com/dekf5dyng/image/upload/v1764147068/800X1200_-_MEN_JACKET_BANNER_zezsxc.jpg",
       link: "/category/men",
     },
     {
@@ -16,9 +16,9 @@ const Hero = () => {
       link: "/category/women",
     },
     {
-      desktop: "https://res.cloudinary.com/dekf5dyng/image/upload/v1749721392/web_page_frrcxu.jpg",
-      tablet: "https://res.cloudinary.com/dekf5dyng/image/upload/v1761633364/1000X12000_x0s51z.jpg",
-      mobile: "https://res.cloudinary.com/dekf5dyng/image/upload/v1761633364/800X1200_wge46p.jpg",
+      desktop: "https://res.cloudinary.com/dekf5dyng/image/upload/v1764155897/WINTER_BANNER_1920X900_hdi7ov.jpg",
+      tablet: "https://res.cloudinary.com/dekf5dyng/image/upload/v1764147086/WINTER_1200X1000_v9futh.jpg",
+      mobile: "https://res.cloudinary.com/dekf5dyng/image/upload/v1764147086/WINTER_BANNER_MOBILE_800X1200_ysqn7b.jpg",
       link: "/category/new-in",
     },
   ];

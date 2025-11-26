@@ -24,7 +24,7 @@ const AllProductPage = () => {
     const [filters, setFilters] = useState({
         style: 'all',
         price: 'all',
-        color: 'all',
+        color: colorFilter || "all",
         delivery: 'all'
     });
     const [sortOption, setSortOption] = useState('featured');
@@ -52,7 +52,7 @@ const AllProductPage = () => {
             }
         };
         fetchProducts();
-    }, [slug]);
+    }, [slug,colorFilter]);
 
     const applyFiltersAndSort = useCallback(() => {
         let filtered = [...products];
@@ -146,7 +146,7 @@ const AllProductPage = () => {
 
         setFilteredProducts(filtered);
         setShowFilters(false);
-    }, [products, filters, sortOption]);
+    }, [products, filters, sortOption, colorFilter]);
 
     const handleFilterChange = (filterType, value) => {
         setFilters(prev => ({

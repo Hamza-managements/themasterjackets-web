@@ -34,7 +34,7 @@ export default function FeaturedProducts({ title }) {
                         product?.attributes?.badge?.toLowerCase() === "best seller" ||
                         product?.attributes?.badge?.toLowerCase() === "bestseller"
                 );
-                const featured = bestSellers.slice(0, 12);
+                const featured = bestSellers.slice(0, 16);
                 setProducts(featured);
                 setSortedProducts(featured);
 

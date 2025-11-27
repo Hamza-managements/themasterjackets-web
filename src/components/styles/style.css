@@ -268,8 +268,9 @@ a {
 }
 
 .bj-collection-header {
+    position: relative;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     margin-bottom: 2rem;
     padding-bottom: 1rem;
@@ -277,13 +278,20 @@ a {
 }
 
 .bj-collection-header h2 {
-    font-size: 1.5rem;
+    font-size: 2.5rem;
     font-weight: 600;
     color: #1c1c1c;
     margin: 0;
     line-height: 1.2;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
+.bj-sort-container {
+    position: absolute;
+    right: 0;
+}
 
 .bj-sort {
     border: 1px solid var(--light);
@@ -317,11 +325,6 @@ a {
 
     .bj-collection {
         margin: 30px auto;
-    }
-
-    .bj-collection-header {
-        flex-direction: column;
-        align-items: center;
     }
 
     .bj-collection-header h2 {

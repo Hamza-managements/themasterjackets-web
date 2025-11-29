@@ -475,7 +475,15 @@ const AmazonStyleProductPage = () => {
     "Leather Sleeves",
     "Insulated",
     "Warm",
-    "Sports"
+    "Sports",
+    "Flight",
+    "World War",
+    "Aviator",
+    "German",
+    "G1",
+    "B2",
+    "A2",
+    "B3",
   ]);
   const fitOptions = ['Slim', 'Regular', 'Relaxed', 'Oversized'];
   const closureOptions = ['Zipper', 'Buttons', 'Velcro', 'Snap', 'Elastic'];
@@ -1299,7 +1307,6 @@ const AmazonStyleProductPage = () => {
                         </button>
                       </div>
                     </div>
-                    
                   </div>
                 </div>
               </div>

@@ -326,7 +326,7 @@ const UpdateProductPage = () => {
     );
 
     const seasonOptions = ['Spring', 'Summer', 'Fall', 'Winter', 'All'];
-    const [styleOptions, setStyleOptions] = useState([
+    const [styleOptions,] = useState([
         "Leather",
         "Lambskin",
         "Cowhide",
@@ -377,7 +377,15 @@ const UpdateProductPage = () => {
         "Leather Sleeves",
         "Insulated",
         "Warm",
-        "Sports"
+        "Sports",
+        "Flight",
+        "World War",
+        "Aviator",
+        "German",
+        "G1",
+        "B2",
+        "A2",
+        "B3",
     ]);
     const genderOptions = ['Men', 'Women'];
     const badgeOptions = ['None', 'New Arrival', 'Best Seller', 'Limited Edition', 'Exclusive', 'Sale']

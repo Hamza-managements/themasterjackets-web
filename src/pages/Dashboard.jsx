@@ -512,13 +512,6 @@ const Dashboard = () => {
               <span>Profile</span>
             </button>
             <button
-              className={activeTab === 'addresses' ? 'active' : ''}
-              onClick={() => handleNavClick('addresses')}
-            >
-              <FaMapMarkerAlt className="nav-icon" />
-              <span>Addresses</span>
-            </button>
-            <button
               className={activeTab === 'security' ? 'active' : ''}
               onClick={() => handleNavClick('security')}
             >
@@ -870,14 +863,15 @@ const Dashboard = () => {
             </div>
           )}
 
-          {/* Profile Tab */}
           {activeTab === 'profile' && (
             <div data-aos="fade-up">
+              {/* Profile Header */}
               <div className="content-header">
                 <h1>My Profile</h1>
-                <p>Manage your personal information and account settings</p>
+                <p>Manage your personal information, account settings, and addresses</p>
               </div>
 
+              {/* Profile Section */}
               <div className="profile-section">
                 <div className="profile-header">
                   <div className="profile-avatar">
@@ -885,12 +879,8 @@ const Dashboard = () => {
                       {userName.charAt(0).toUpperCase()}
                     </div>
                     <div className="avatar-actions">
-                      {/* <button className="btn-outline">
-                        <FaEdit /> Change Photo
-                      </button> */}
-                      <button className="btn-text">
-                        Remove
-                      </button>
+                      {/* <button className="btn-outline"><FaEdit /> Change Photo</button> */}
+                      <button className="btn-text">Remove</button>
                     </div>
                   </div>
                   <div className="profile-actions">
@@ -920,6 +910,7 @@ const Dashboard = () => {
                   </div>
                 </div>
 
+                {/* Profile Details */}
                 {!editMode ? (
                   <div className="profile-details">
                     <div className="detail-row">
@@ -933,12 +924,6 @@ const Dashboard = () => {
                     <div className="detail-row">
                       <label>Phone Number</label>
                       <p>{profileData.contactNo || 'Not provided'}</p>
-                    </div>
-                    <div className="detail-row">
-                      <label>Default Address</label>
-                      <p>
-                        {profileData.address.street}, {profileData.address.city}, {profileData.address.state} {profileData.address.zip}, {profileData.address.country}
-                      </p>
                     </div>
                   </div>
                 ) : (
@@ -979,219 +964,172 @@ const Dashboard = () => {
                         />
                       </div>
                     </div>
-
-                    <div className="form-group">
-                      <label>Address</label>
-                      <div className="address-fields">
-                        <input
-                          type="text"
-                          name="street"
-                          value={profileData.address.street}
-                          onChange={handleInputChange}
-                          placeholder="Street Address"
-                        />
-                        <div className="address-row">
-                          <input
-                            type="text"
-                            name="city"
-                            value={profileData.address.city}
-                            onChange={handleInputChange}
-                            placeholder="City"
-                          />
-                          <input
-                            type="text"
-                            name="state"
-                            value={profileData.address.state}
-                            onChange={handleInputChange}
-                            placeholder="State"
-                          />
-                          <input
-                            type="text"
-                            name="zip"
-                            value={profileData.address.zip}
-                            onChange={handleInputChange}
-                            placeholder="ZIP Code"
-                          />
-                        </div>
-                        <input
-                          type="text"
-                          name="country"
-                          value={profileData.address.country}
-                          onChange={handleInputChange}
-                          placeholder="Country"
-                        />
-                      </div>
-                    </div>
                   </form>
                 )}
               </div>
-            </div>
-          )}
 
-          {/* Addresses Tab */}
-          {activeTab === 'addresses' && (
-            <div data-aos="fade-up">
-              <div className="content-header">
-                <h1>My Addresses</h1>
-                <p>Manage your shipping addresses for faster checkout</p>
-              </div>
+              {/* Addresses Section */}
+              <div className="addresses-tab">
+                <div className="content-header">
+                  <h2>My Addresses</h2>
+                  <p>Manage your shipping addresses for faster checkout</p>
+                </div>
 
-              <div className="addresses-grid">
-                {addresses.map(address => (
-                  <div
-                    key={address.id}
-                    className={`address-card ${address.isDefault ? 'default' : ''}`}
-                  >
-                    <div className="address-header">
-                      <h3>{address.type} Address</h3>
-                      {address.isDefault && (
-                        <span className="default-badge">Default</span>
-                      )}
-                    </div>
-                    <div className="address-details">
-                      <p>{address.street}</p>
-                      <p>{address.city}, {address.state} {address.zip}</p>
-                      <p>{address.country}</p>
-                    </div>
-                    <div className="address-actions">
-                      {!address.isDefault && (
-                        <button
-                          className="btn-text"
-                          onClick={() => setDefaultAddress(address.id)}
-                        >
-                          Set as Default
-                        </button>
-                      )}
-                      <div className="action-icons">
-                        <button className="icon-btn" title="Edit">
-                          <FaEdit />
-                        </button>
-                        <button
-                          className="icon-btn"
-                          title="Delete"
-                          onClick={() => deleteAddress(address.id)}
-                        >
-                          <FaTrash />
-                        </button>
+                <div className="addresses-grid">
+                  {addresses.map(address => (
+                    <div
+                      key={address.id}
+                      className={`address-card ${address.isDefault ? 'default' : ''}`}
+                    >
+                      <div className="address-header">
+                        <h3>{address.type} Address</h3>
+                        {address.isDefault && <span className="default-badge">Default</span>}
+                      </div>
+                      <div className="address-details">
+                        <p>{address.street}</p>
+                        <p>{address.city}, {address.state} {address.zip}</p>
+                        <p>{address.country}</p>
+                      </div>
+                      <div className="address-actions">
+                        {!address.isDefault && (
+                          <button
+                            className="btn-text"
+                            onClick={() => setDefaultAddress(address.id)}
+                          >
+                            Set as Default
+                          </button>
+                        )}
+                        <div className="action-icons">
+                          <button className="icon-btn" title="Edit">
+                            <FaEdit />
+                          </button>
+                          <button
+                            className="icon-btn"
+                            title="Delete"
+                            onClick={() => deleteAddress(address.id)}
+                          >
+                            <FaTrash />
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
 
-                {showAddressForm ? (
-                  <div className="address-card add-form">
-                    <form onSubmit={handleAddAddress}>
-                      <div className="form-group">
-                        <label>Address Type</label>
-                        <select
-                          name="type"
-                          value={newAddress.type}
-                          onChange={handleAddressInputChange}
-                          required
-                        >
-                          <option value="">Select type</option>
-                          <option value="Home">Home</option>
-                          <option value="Work">Work</option>
-                          <option value="Other">Other</option>
-                        </select>
-                      </div>
-
-                      <div className="form-group">
-                        <label>Street Address</label>
-                        <input
-                          type="text"
-                          name="street"
-                          value={newAddress.street}
-                          onChange={handleAddressInputChange}
-                          required
-                        />
-                      </div>
-
-                      <div className="form-row">
+                  {showAddressForm ? (
+                    <div className="address-card add-form">
+                      <form onSubmit={handleAddAddress}>
                         <div className="form-group">
-                          <label>City</label>
+                          <label>Address Type</label>
+                          <select
+                            name="type"
+                            value={newAddress.type}
+                            onChange={handleAddressInputChange}
+                            required
+                          >
+                            <option value="">Select type</option>
+                            <option value="Home">Home</option>
+                            <option value="Work">Work</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </div>
+
+                        <div className="form-group">
+                          <label>Street Address</label>
                           <input
                             type="text"
-                            name="city"
-                            value={newAddress.city}
+                            name="street"
+                            value={newAddress.street}
                             onChange={handleAddressInputChange}
                             required
                           />
                         </div>
-                        <div className="form-group">
-                          <label>State/Province</label>
-                          <input
-                            type="text"
-                            name="state"
-                            value={newAddress.state}
-                            onChange={handleAddressInputChange}
-                            required
-                          />
-                        </div>
-                      </div>
 
-                      <div className="form-row">
-                        <div className="form-group">
-                          <label>ZIP/Postal Code</label>
-                          <input
-                            type="text"
-                            name="zip"
-                            value={newAddress.zip}
-                            onChange={handleAddressInputChange}
-                            required
-                          />
+                        <div className="form-row">
+                          <div className="form-group">
+                            <label>City</label>
+                            <input
+                              type="text"
+                              name="city"
+                              value={newAddress.city}
+                              onChange={handleAddressInputChange}
+                              required
+                            />
+                          </div>
+                          <div className="form-group">
+                            <label>State/Province</label>
+                            <input
+                              type="text"
+                              name="state"
+                              value={newAddress.state}
+                              onChange={handleAddressInputChange}
+                              required
+                            />
+                          </div>
                         </div>
-                        <div className="form-group">
-                          <label>Country</label>
-                          <input
-                            type="text"
-                            name="country"
-                            value={newAddress.country}
-                            onChange={handleAddressInputChange}
-                            required
-                          />
+
+                        <div className="form-row">
+                          <div className="form-group">
+                            <label>ZIP/Postal Code</label>
+                            <input
+                              type="text"
+                              name="zip"
+                              value={newAddress.zip}
+                              onChange={handleAddressInputChange}
+                              required
+                            />
+                          </div>
+                          <div className="form-group">
+                            <label>Country</label>
+                            <input
+                              type="text"
+                              name="country"
+                              value={newAddress.country}
+                              onChange={handleAddressInputChange}
+                              required
+                            />
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="form-checkbox">
-                        <input
-                          type="checkbox"
-                          id="defaultAddress"
-                          name="isDefault"
-                          checked={newAddress.isDefault}
-                          onChange={(e) => setNewAddress({
-                            ...newAddress,
-                            isDefault: e.target.checked
-                          })}
-                        />
-                        <label htmlFor="defaultAddress">Set as default address</label>
-                      </div>
+                        <div className="form-checkbox">
+                          <input
+                            type="checkbox"
+                            id="defaultAddress"
+                            name="isDefault"
+                            checked={newAddress.isDefault}
+                            onChange={(e) => setNewAddress({
+                              ...newAddress,
+                              isDefault: e.target.checked
+                            })}
+                          />
+                          <label htmlFor="defaultAddress">Set as default address</label>
+                        </div>
 
-                      <div className="form-actions">
-                        <button
-                          type="button"
-                          className="btn-outline"
-                          onClick={() => setShowAddressForm(false)}
-                        >
-                          Cancel
-                        </button>
-                        <button type="submit" className="btn-primary">
-                          Save Address
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                ) : (
-                  <div
-                    className="address-card add-new"
-                    onClick={() => setShowAddressForm(true)}
-                  >
-                    <div className="add-new-content">
-                      <FaPlus />
-                      <h3>Add New Address</h3>
+                        <div className="form-actions">
+                          <button
+                            type="button"
+                            className="btn-outline"
+                            onClick={() => setShowAddressForm(false)}
+                          >
+                            Cancel
+                          </button>
+                          <button type="submit" className="btn-primary">
+                            Save Address
+                          </button>
+                        </div>
+                      </form>
                     </div>
-                  </div>
-                )}
+                  ) : (
+                    <div
+                      className="address-card add-new"
+                      onClick={() => setShowAddressForm(true)}
+                    >
+                      <div className="add-new-content">
+                        <FaPlus />
+                        <h3>Add New Address</h3>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -2583,6 +2521,7 @@ th {
 
     .mobile-menu-toggle {
         display: block;
+        padding-right: 5px;
     }
 
     .dashboard-content {

@@ -320,12 +320,25 @@ const SubCategoryProductPage = () => {
 
         "bomber-leather-jackets": [
             "Bomber",
-            "Classic",
             "Ribbed Hem",
+            "Classic",
+            "Casual",
             "Vintage",
             "Zipper",
-            "Casual",
-            "Stand Collar"
+            "Buttoned",
+            "Stand Collar",
+            "Wing Collar",
+            "Shirt Collar",
+            "Fur Collar",
+            "Shearling",
+            "G1",
+            "B2",
+            "A2",
+            "B3",
+            "Flight",
+            "World War",
+            "Aviator",
+            "German",
         ],
 
         "real-leather-jackets": [

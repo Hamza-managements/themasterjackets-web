@@ -622,7 +622,7 @@ const ProductDetails = () => {
                     <div className="related-info">
                       <h3 className="related-title">{product.productName}</h3>
                       <div className='related-price-container'>
-                        <p className="related-price">${product.variations[0].productPrice.discountedPrice.toFixed(2)}</p>
+                        <span className="related-price">${product.variations[0].productPrice.discountedPrice.toFixed(2)}</span>
                         <span className="related-original-price">${product.variations[0].productPrice.originalPrice.toFixed(2)}</span>
                       </div>
                     </div>

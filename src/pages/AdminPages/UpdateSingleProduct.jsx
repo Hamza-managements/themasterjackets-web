@@ -370,6 +370,7 @@ const UpdateProductPage = () => {
         "Lapel Collar",
         "Snap Tab Collar",
         "Stand Collar",
+        "Rib Knit Collar",
         "Wing Collar",
         "Ribbed Hem",
         "Formal",
@@ -386,6 +387,10 @@ const UpdateProductPage = () => {
         "B2",
         "A2",
         "B3",
+        "pilot",
+        "maverick",
+        "top gun",
+        "navy",
     ]);
     const genderOptions = ['Men', 'Women'];
     const badgeOptions = ['None', 'New Arrival', 'Best Seller', 'Limited Edition', 'Exclusive', 'Sale']

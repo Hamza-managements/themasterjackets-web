@@ -263,18 +263,14 @@ a {
 /* feauterd products */
 .bj-collection {
     max-width: 1400px;
-    margin: 60px auto;
-    padding: 0 20px;
+    padding: 0 10px;
 }
 
 .bj-collection-header {
-    position: relative;
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #e5e5e5;
+    padding: 2rem;
 }
 
 .bj-collection-header h2 {
@@ -321,10 +317,6 @@ a {
 @media (max-width: 768px) {
     .bj-hero h1 {
         font-size: 32px;
-    }
-
-    .bj-collection {
-        margin: 30px auto;
     }
 
     .bj-collection-header h2 {

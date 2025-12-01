@@ -1,6 +1,9 @@
+/* -----------------------------
+   BASE SECTION STYLES
+------------------------------ */
 .blog-gallery-section {
     margin-top: 15px;
-    padding: 4rem 1rem;
+    padding: 2rem 1rem;
     background-color: var(--light);
     position: relative;
 }
@@ -25,46 +28,54 @@
     font-size: clamp(0.9rem, 2vw, 1.1rem);
 }
 
+/* -----------------------------
+   SLIDER CONTAINER
+------------------------------ */
 .blog-gallery-container {
-    position: relative;
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1rem;
+    position: relative;
 }
 
 .blog-gallery-slider {
-    position: relative;
-    overflow: hidden;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     padding: 1rem 0;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
 }
 
+.blog-gallery-slider::-webkit-scrollbar {
+    display: none;
+}
+
+/* -----------------------------
+   SLIDER TRACK & ITEMS
+------------------------------ */
 .blog-gallery-track {
     display: flex;
-    transition: transform 0.5s ease;
-    will-change: transform;
-    flex-wrap: nowrap;
-    scroll-snap-type: x mandatory;
     gap: 1rem;
-    padding-bottom: 1rem; /* Space for scrollbar */
+    flex-wrap: nowrap;
+    will-change: transform;
+    transition: transform 0.45s ease;
 }
 
 .blog-gallery-item {
-    flex: 0 0 calc(100% - 2rem); /* Mobile-first: 1 item */
-    min-width: 0; /* Fix flexbox overflow */
-    box-sizing: border-box;
+    flex: 0 0 calc(100% - 2rem);
+    /* Default: 1 item on very small screens */
+    min-width: 0;
     padding: 1rem;
     background: white;
     border-radius: 10px;
-    overflow: hidden;
     box-shadow: var(--shadow);
-    transition: all 0.3s ease;
-    scroll-snap-align: start; /* Better scrolling on touch */
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    scroll-snap-align: start;
 }
 
 .blog-gallery-img {
-    aspect-ratio: 16/9; /* Maintain image ratio */
+    aspect-ratio: 16/9;
     overflow: hidden;
     border-radius: 8px;
     margin-bottom: 1rem;
@@ -74,11 +85,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.5s ease;
-}
-
-.blog-gallery-content {
-    padding: 0.5rem 0;
+    transition: transform 0.4s ease;
 }
 
 .blog-gallery-content h4 {
@@ -95,6 +102,7 @@
     line-height: 1.5;
 }
 
+/* Customer avatar row */
 .blog-gallery-customer-info {
     display: flex;
     align-items: center;
@@ -104,7 +112,6 @@
 .blog-gallery-avatar {
     width: 40px;
     height: 40px;
-    min-width: 40px;
     border-radius: 50%;
     overflow: hidden;
 }
@@ -120,13 +127,52 @@
     color: var(--dark-gray);
 }
 
-/* Navigation */
+/* -----------------------------
+   ARROWS
+------------------------------ */
+.blog-gallery-arrows {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    z-index: 10;
+    pointer-events: none;
+}
+
+.blog-gallery-arrow {
+    width: 40px;
+    height: 40px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: 0.3s ease;
+}
+
+.blog-gallery-arrow:hover {
+    background: var(--black);
+    color: white;
+    transform: scale(1.1);
+}
+
+/* -----------------------------
+   DOT NAV
+------------------------------ */
 .blog-gallery-nav {
     display: flex;
     justify-content: center;
     margin-top: 2rem;
-    flex-wrap: wrap;
     gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .blog-gallery-dots {
@@ -137,10 +183,10 @@
 .blog-gallery-dot {
     width: 10px;
     height: 10px;
-    background-color: rgba(0, 0, 0, 0.2);
     border-radius: 50%;
+    background: rgba(0, 0, 0, 0.2);
     cursor: pointer;
-    transition: all 0.3s;
+    transition: 0.3s ease;
 }
 
 .blog-gallery-dot.active {
@@ -148,112 +194,62 @@
     transform: scale(1.2);
 }
 
-/* Touch scrolling enhancements */
-.blog-gallery-slider {
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-    scrollbar-width: none; /* Hide scrollbar */
+/* -----------------------------
+   DEVICE RESPONSIVE BREAKPOINTS
+------------------------------ */
+
+/* 576px → 2 items */
+@media (min-width: 576px) {
+    .blog-gallery-section {
+        padding: 2rem 1rem;
+        margin: 0;
+    }
+
+    .blog-gallery-item {
+        flex: 0 0 calc(50% - 1rem);
+    }
 }
 
-.blog-gallery-slider::-webkit-scrollbar {
-    display: none; /* Hide scrollbar */
+/* 768px → 3 items */
+@media (min-width: 768px) {
+    .blog-gallery-section {
+        padding: 2rem 0;
+    }
+
+    .blog-gallery-item {
+        flex: 0 0 calc(50% - 1rem);
+    }
 }
 
-/* Blog Gallery Arrows - Fixed Version */
-.blog-gallery-arrows {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    transform: translateY(-50%);
-    pointer-events: none;
-    z-index: 10;
-    padding: 0 1rem; /* Add padding to prevent touching edges */
-}
-
-.blog-gallery-arrow {
-    width: 40px;
-    height: 40px;
-    background: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-    font-size: 1.2rem;
-    cursor: pointer;
-    pointer-events: auto; /* Enable clicks */
-    transition: all 0.3s ease;
-    border: none;
-    color: var(--black);
-    opacity: 0.9;
-}
-
-.blog-gallery-arrow:hover {
-    background: var(--black);
-    color: white;
-    opacity: 1;
-    transform: scale(1.1);
-}
-
-.blog-gallery-arrow.prev {
-    margin-left: 0.5rem;
-}
-
-.blog-gallery-arrow.next {
-    margin-right: 0.5rem;
-}
-
-
+/* 992px → hover effects enabled + 4 items */
 @media (min-width: 992px) {
+    .blog-gallery-item {
+        flex: 0 0 calc(50% - 1rem);
+    }
+
     .blog-gallery-item:hover {
         transform: translateY(-10px);
         box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
     }
 
-    .blog-gallery-item:hover .blog-gallery-img img {
+    .blog-gallery-img img:hover {
         transform: scale(1.05);
     }
 }
 
-@media (min-width: 768px) {
-    .blog-gallery-section {
-        padding: 1rem 0;
-    }
-
-    .blog-gallery-item {
-        flex: 0 0 calc(33.33% - 1rem); /* 3 items */
-    }
-    .blog-gallery-arrow {
-        width: 36px;
-        height: 36px;
-        font-size: 1rem;
-    }
-    
-    .blog-gallery-arrows {
-        padding: 0 0.5rem;
-    }
-}
-
-/* Touch device detection */
-@media (hover: none) {
-    .blog-gallery-arrow {
-        background: rgba(255, 255, 255, 0.8);
-    }
-}
-/* Responsive Breakpoints */
-@media (min-width: 576px) {
-    .blog-gallery-item {
-        flex: 0 0 calc(50% - 1rem); /* 2 items */
-    }
-    .blog-gallery-arrow {
-        width: 32px;
-        height: 32px;
-    }
-}
+/* Below 480px → hide arrows */
 @media (max-width: 480px) {
     .blog-gallery-arrows {
         display: none;
+    }
+    .blog-gallery-container{
+        padding: 0;
+    }
+}
+
+/* If device doesn't support hover */
+@media (hover: none) {
+    .blog-gallery-arrow {
+        background: rgba(255, 255, 255, 0.8);
     }
 }

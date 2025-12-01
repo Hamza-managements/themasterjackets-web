@@ -6,6 +6,7 @@ import "swiper/css/pagination";
 import { useEffect, useState } from "react";
 import { getProducts } from "../utils/ProductServices";
 import { useNavigate } from "react-router-dom";
+import { FaStar } from "react-icons/fa";
 
 const FeaturedProductsCarousel = ({ title = "Featured Products" }) => {
   const navigate = useNavigate();
@@ -34,6 +35,15 @@ const FeaturedProductsCarousel = ({ title = "Featured Products" }) => {
     product();
   }, []);
 
+  const generateStarRating = (rating) => {
+    return Array.from({ length: 5 }, (_, index) => (
+      <FaStar
+        key={index}
+        size={14}
+        className={index < Math.floor(rating) ? "text-orange-600 fill-current" : "text-gray-300"}
+      />
+    ));
+  };
 
   const navigateToProductDetail = (productId) => {
     navigate(`/products-details/${productId}`);
@@ -55,45 +65,61 @@ const FeaturedProductsCarousel = ({ title = "Featured Products" }) => {
           1280: { slidesPerView: 4 },
         }}
       >
-        {products?.map((product) => (
-          <SwiperSlide key={product._id || product.id}>
-            <div className="featured-product-card" onClick={() => navigateToProductDetail(product._id)}>
-              <div className="featured-product-image">
-                {product.attributes.badge && (
-                  <div className="featured-product-badge">{product.attributes.badge}</div>
-                )}
-                <img
-                  src={
-                    product.productImages?.[0] ||
-                    product.variations?.[0]?.productImages?.[0]
-                  }
-                  alt={product.productName}
-                  className="main-image"
-                />
-                <img
-                  src={
-                    product.productImages?.[1] ||
-                    product.variations?.[0]?.productImages?.[1] ||
-                    product.productImages?.[0]
-                  }
-                  alt={`${product.productName} - hover`}
-                  className="hover-image"
-                />
-              </div>
-              <div className="featured-product-info">
-                <h3>{product.productName}</h3>
-                <div className="featured-product-price">
-                  ${Number(product.variations[0].productPrice.discountedPrice).toFixed(2)}
-                  {product.variations[0].productPrice.originalPrice && (
-                    <span className="featured-product-original-price">
-                      ${Number(product.variations[0].productPrice.originalPrice).toFixed(2)}
-                    </span>
+        {products?.map((product) => {
+          // Safe max rating
+          const rating = Math.max(
+            ...(product?.variations?.map(v => v?.ratings?.count || 0) || [0])
+          );
+
+          // Safe image fallback
+          const mainImage =
+            product.productImages?.[0] ||
+            product.variations?.[0]?.productImages?.[0] ||
+            '';
+          const hoverImage =
+            product.productImages?.[1] ||
+            product.variations?.[0]?.productImages?.[1] ||
+            mainImage;
+
+          // Safe price
+          const discountedPrice = product.variations?.[0]?.productPrice?.discountedPrice || 0;
+          const originalPrice = product.variations?.[0]?.productPrice?.originalPrice;
+
+          return (
+            <SwiperSlide key={product._id || product.id}>
+              <div
+                className="featured-product-card"
+                onClick={() => navigateToProductDetail(product._id)}
+              >
+                <div className="featured-product-image">
+                  {product.attributes?.badge && (
+                    <div className="featured-product-badge">
+                      {product.attributes.badge}
+                    </div>
                   )}
+                  <img src={mainImage} alt={product.productName} className="main-image" />
+                  <img src={hoverImage} alt={`${product.productName} - hover`} className="hover-image" />
+                </div>
+
+                <div className="featured-product-info">
+                  <h3>{product.productName}</h3>
+                  <div className="featured-product-price">
+                    ${Number(discountedPrice).toFixed(2)}
+                    {originalPrice && (
+                      <span className="featured-product-original-price">
+                        ${Number(originalPrice).toFixed(2)}
+                      </span>
+                    )}
+                  </div>
+                  <div className="product-rating">
+                    <div className="stars">{generateStarRating(rating)}</div>
+                    <span className="rating-count">({rating})</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </SwiperSlide>
-        ))}
+            </SwiperSlide>
+          );
+        })}
       </Swiper>
       <style>{`
         /* Featured Products */
@@ -185,6 +211,7 @@ const FeaturedProductsCarousel = ({ title = "Featured Products" }) => {
 
 .featured-product-info {
   padding: 20px;
+  margin-bottom: 10px;
 }
 
 .featured-product-info h3 {
@@ -200,10 +227,26 @@ const FeaturedProductsCarousel = ({ title = "Featured Products" }) => {
 }
 .featured-product-original-price {
   text-decoration: line-through;
-  color: #999;  
+  color: #ba0101ff;  
   font-weight: 400;
   margin-left: 10px;
   font-size: 0.9rem;
+}
+
+.product-rating {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.stars {
+    display: flex;
+    gap: 1px;
+}
+
+.rating-count {
+    font-size: 14px;
+    color: #6b7280;
 }
 
 .swiper-button-next,

@@ -42,7 +42,7 @@ const blogItems = [
 
 export default function BlogGallery() {
   const trackRef = useRef(null);
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(2);
 
   const slideTo = (index) => {
     const items = trackRef.current?.children;
@@ -54,7 +54,7 @@ export default function BlogGallery() {
 
   const handleNext = () => {
     if (currentSlide < blogItems.length - 1) {
-      slideTo(currentSlide + 1);
+      slideTo(currentSlide + 2);
     } else {
       slideTo(0);
     }
@@ -62,7 +62,7 @@ export default function BlogGallery() {
 
   const handlePrev = () => {
     if (currentSlide > 0) {
-      slideTo(currentSlide - 1);
+      slideTo(currentSlide - 2);
     } else {
       slideTo(blogItems.length - 1);
     }
@@ -77,7 +77,7 @@ export default function BlogGallery() {
   }, [currentSlide]);
 
   return (
-    <section className="blog-gallery-section" data-aos="fade-in" data-aos-duration="500">
+    <div className="blog-gallery-section" data-aos="fade-in" data-aos-duration="500">
       <div className="blog-gallery-main-container">
         <div className="blog-gallery-title">
           <h2>Blog Section</h2>
@@ -117,6 +117,6 @@ export default function BlogGallery() {
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

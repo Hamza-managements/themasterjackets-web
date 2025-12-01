@@ -469,6 +469,7 @@ const AmazonStyleProductPage = () => {
     "Snap Tab Collar",
     "Stand Collar",
     "Wing Collar",
+    "Rib Knit Collar",
     "Ribbed Hem",
     "Formal",
     "Varsity",
@@ -484,6 +485,10 @@ const AmazonStyleProductPage = () => {
     "B2",
     "A2",
     "B3",
+    "pilot",
+    "maverick",
+    "top gun",
+    "navy",
   ]);
   const fitOptions = ['Slim', 'Regular', 'Relaxed', 'Oversized'];
   const closureOptions = ['Zipper', 'Buttons', 'Velcro', 'Snap', 'Elastic'];

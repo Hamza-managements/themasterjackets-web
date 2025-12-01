@@ -16,7 +16,6 @@ import { FaStar } from 'react-icons/fa';
 const SubCategoryProductPage = () => {
     const navigate = useNavigate();
     const { slug } = useParams();
-    console.log("SUBCATEGORY SLUG:", slug);
     const [products, setProducts] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -195,7 +194,6 @@ const SubCategoryProductPage = () => {
                             product.attributes?.badge &&
                             product.attributes.badge.toLowerCase() === "new arrival"
                     );
-                    console.log("NEW ARRIVALS PRODUCTS:", filtered);
                     setProducts(filtered);
                     return;
                 }
@@ -330,6 +328,7 @@ const SubCategoryProductPage = () => {
             "Wing Collar",
             "Shirt Collar",
             "Fur Collar",
+            "Rib Knit Collar",
             "Shearling",
             "G1",
             "B2",
@@ -339,6 +338,10 @@ const SubCategoryProductPage = () => {
             "World War",
             "Aviator",
             "German",
+            "pilot",
+            "maverick",
+            "top gun",
+            "navy",
         ],
 
         "real-leather-jackets": [
@@ -447,7 +450,6 @@ const SubCategoryProductPage = () => {
             <div className="plp-content">
                 {/* Filters Sidebar */}
                 <aside className={`product-filters ${showFilters ? 'active' : ''}`}>
-                    <div className={`${showFilters ? 'product-filters-top-margin' : 'd-none'}`}></div>
                     <div className="filter-header">
                         <h2>Filters</h2>
                         <div className="filter-actions">
@@ -462,7 +464,6 @@ const SubCategoryProductPage = () => {
                         </div>
                     </div>
 
-                    {/* Categories Filter */}
                     {/* Categories Filter */}
                     <div className="product-filter-section">
                         <div className="section-header" onClick={() => toggleSection('style')}>
@@ -672,6 +673,11 @@ const SubCategoryProductPage = () => {
                                                 alt={`${product?.productName || "Product"} - hover`}
                                                 className="hover-image"
                                             />
+                                            <div className="product-badges">
+                                                <span className={`badge badge-sale`}>
+                                                    {product?.attributes?.badge}
+                                                </span>
+                                            </div>
                                         </div>
                                         <div className="product-details">
                                             <h3
@@ -1115,7 +1121,7 @@ const SubCategoryProductPage = () => {
 .product-badges {
     position: absolute;
     top: 12px;
-    left: 12px;
+    right: 12px;
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -1317,11 +1323,6 @@ const SubCategoryProductPage = () => {
     .product-filters {
         width: 100%;
         max-width: none;
-    }
-    
-    .product-filters-top-margin {
-       height: 18vh;
-       bgackground: white;
     }
 }
 

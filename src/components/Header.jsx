@@ -118,11 +118,14 @@ export default function Header() {
             </div>
             <nav className="fs-nav-container">
               <nav ref={navRef} className={`fs-nav-links ${isMobileMenuOpen ? 'fs-mobile-active' : ''}`}>
-                <button className="fs-mobile-menu-btn" onClick={toggleMobileMenu}>
-                  <i className={`fas ${isMobileMenuOpen ? 'fa-times' : ''}`}></i>
-                </button>
+                <div className={`${isMobileMenuOpen ? 'fs-mobile-header-active' : 'd-none'}`}>
+                  <Link to="/" ><img className="fs-logo" alt='TheMasterJacketsLOGO' src='https://res.cloudinary.com/dvmpyh0hj/image/upload/v1760615184/hilkmru9zutcneybpwwc.png'></img></Link>
+                  <button className="fs-mobile-menu-btn" onClick={toggleMobileMenu}>
+                    <i className={`fas ${isMobileMenuOpen ? 'fa-times' : ''}`}></i>
+                  </button>
+                </div>
                 <div className="fs-nav-item">
-                  <Link target="_blank" to="/products/new-in/new-arrivals" className="fs-main-link">New IN </Link>
+                  <Link to="/products/new-in/new-arrivals" className={`${isMobileMenuOpen ? 'fs-main-link mobile-divider' : 'fs-main-link'}`} onClick={() => setIsMobileMenuOpen(false)}>New IN </Link>
                 </div>
                 {categories
                   ?.filter(category =>
@@ -130,7 +133,7 @@ export default function Header() {
                   )
                   .map((cat, index) =>
                     <div className="fs-nav-item" key={cat._id}>
-                      <Link to={`/category/${cat.slug}`} className="fs-main-link" onClick={(e) => handleMainLinkClick(index, true, e)} >{cat.mainCategoryName} <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i></Link>
+                      <Link to={`/category/${cat.slug}`} className={`${isMobileMenuOpen ? 'fs-main-link mobile-divider' : 'fs-main-link'}`} onClick={(e) => handleMainLinkClick(index, true, e)} >{cat.mainCategoryName} <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i></Link>
                       <div className="fs-mega-menu fs-dropdown-menu">
                         <div className="fs-mega-menu-column">
                           <h4 className="fs-dropdown-title">{cat.mainCategoryName} Leather Jacket</h4>
@@ -149,25 +152,46 @@ export default function Header() {
                       </div>
                       <div className={`fs-mobile-submenu ${activeSubmenu === index ? 'fs-active' : ''}`}>
                         <div className="fs-dropdown-title">Categories</div>
-                        <Link target="_blank" to={`/products/${cat.slug}/all`}>View All</Link>
+                        <Link to={`/products/${cat.slug}/all`} onClick={() => setIsMobileMenuOpen(false)}>View All</Link>
                         {cat.subCategories?.map((sub) => (
-                          <Link target="_blank" key={sub._id} to={`/products/${cat.slug}/${sub.slug}`}>{sub.categoryName}</Link>
+                          <Link key={sub._id} to={`/products/${cat.slug}/${sub.slug}`} onClick={() => setIsMobileMenuOpen(false)}>{sub.categoryName}</Link>
                         ))}
                       </div>
                     </div>
                   )}
 
                 <div className="fs-nav-item">
-                  <Link target="_blank" to="/about" className="fs-main-link" onClick={(e) => handleMainLinkClick(3, true, e)}>Brand <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i></Link>
+                  <Link to="/about" className={`${isMobileMenuOpen ? 'fs-main-link mobile-divider' : 'fs-main-link'}`} onClick={(e) => handleMainLinkClick(3, true, e)}>Brand <i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i></Link>
                   <div className="fs-dropdown-menu">
                     <Link to="/about">About us</Link>
                     <Link to="/contact-us">Contact us</Link>
                     <Link to="/return-exchange">Return & Exchange</Link>
                   </div>
                   <div className={`fs-mobile-submenu ${activeSubmenu === 3 ? 'fs-active' : ''}`}>
-                    <Link target="_blank" to="/about">About us</Link>
-                    <Link target="_blank" to="/contact-us">Contact us</Link>
-                    <Link target="_blank" to="/return-exchange">Return & Exchange</Link>
+                    <Link onClick={() => setIsMobileMenuOpen(false)} to="/about">About us</Link>
+                    <Link onClick={() => setIsMobileMenuOpen(false)} to="/contact-us">Contact us</Link>
+                    <Link onClick={() => setIsMobileMenuOpen(false)} to="/return-exchange">Return & Exchange</Link>
+                  </div>
+                </div>
+                <div className={`${isMobileMenuOpen ? 'fs-mobile-bottom-info' : 'd-none'}`}>
+                  <div className="fs-mobile-info-item">
+                    <i className="fa-solid fa-shield-halved"></i>
+                    <span>Free Insured Shipping</span>
+                  </div>
+
+                  <div className="fs-mobile-info-item">
+                    <i className="fa-solid fa-box-open"></i>
+                    <span>Track Your Order</span>
+                  </div>
+
+                  <div className="fs-mobile-info-item">
+                    <i className="fa-solid fa-headset"></i>
+                    <span>Talk To Support</span>
+                  </div>
+
+                  <div className="fs-mobile-info-item">
+                    <i className="fa-solid fa-circle-info"></i>
+                    <span>FAQs & Help Center</span>
                   </div>
                 </div>
               </nav>

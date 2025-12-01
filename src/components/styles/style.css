@@ -263,6 +263,7 @@ a {
 /* feauterd products */
 .bj-collection {
     max-width: 1400px;
+    margin: auto;
     padding: 0 10px;
 }
 

@@ -4,24 +4,24 @@ import { Link } from "react-router-dom";
 const Hero = () => {
   const slides = [
     {
-      desktop: "https://res.cloudinary.com/dekf5dyng/image/upload/v1764147068/1920X900_-_MEN_NEW_BANNER_u9z07x.jpg",
-      tablet: "https://res.cloudinary.com/dekf5dyng/image/upload/v1764156653/1200x1000_men_hrhwk9.jpg",
-      mobile: "https://res.cloudinary.com/dekf5dyng/image/upload/v1764147068/800X1200_-_MEN_JACKET_BANNER_zezsxc.jpg",
-      smallMobile: "https://res.cloudinary.com/dekf5dyng/image/upload/v1764147068/800X1200_-_MEN_JACKET_BANNER_zezsxc.jpg",
+      desktop: "https://res.cloudinary.com/dekf5dyng/image/upload/f_auto,q_auto/v1764147068/1920X900_-_MEN_NEW_BANNER_u9z07x.jpg",
+      tablet: "https://res.cloudinary.com/dekf5dyng/image/upload/f_auto,q_auto/v1764156653/1200x1000_men_hrhwk9.jpg",
+      mobile: "https://res.cloudinary.com/dekf5dyng/image/upload/f_auto,q_auto/v1764147068/800X1200_-_MEN_JACKET_BANNER_zezsxc.jpg",
+      smallMobile: "https://res.cloudinary.com/dekf5dyng/image/upload/f_auto,q_auto/w_400/v1764147068/800X1200_-_MEN_JACKET_BANNER_zezsxc.jpg",
       link: "/category/men",
     },
     {
-      desktop: "https://res.cloudinary.com/dekf5dyng/image/upload/v1761814159/1920X900_WOMEN_oyo4zj.jpg",
-      tablet: "https://res.cloudinary.com/dekf5dyng/image/upload/v1761814159/1200X1000_WOMEN_etvlil.jpg",
-      mobile: "https://res.cloudinary.com/dekf5dyng/image/upload/v1761814159/750X1200_jhwgyg.jpg",
-      smallMobile: "https://res.cloudinary.com/dekf5dyng/image/upload/v1764147068/800X1200_-_MEN_JACKET_BANNER_zezsxc.jpg",
+      desktop: "https://res.cloudinary.com/dekf5dyng/image/upload/f_auto,q_auto/v1761814159/1920X900_WOMEN_oyo4zj.jpg",
+      tablet: "https://res.cloudinary.com/dekf5dyng/image/upload/f_auto,q_auto/v1761814159/1200X1000_WOMEN_etvlil.jpg",
+      mobile: "https://res.cloudinary.com/dekf5dyng/image/upload/f_auto,q_auto/v1761814159/750X1200_jhwgyg.jpg",
+      smallMobile: "https://res.cloudinary.com/dekf5dyng/image/upload/f_auto,q_auto/w_400/v1761814159/750X1200_jhwgyg.jpg",
       link: "/category/women",
     },
     {
-      desktop: "https://res.cloudinary.com/dekf5dyng/image/upload/v1764155897/WINTER_BANNER_1920X900_hdi7ov.jpg",
-      tablet: "https://res.cloudinary.com/dekf5dyng/image/upload/v1764147086/WINTER_1200X1000_v9futh.jpg",
-      mobile: "https://res.cloudinary.com/dekf5dyng/image/upload/v1764147086/WINTER_BANNER_MOBILE_800X1200_ysqn7b.jpg",
-      smallMobile: "https://res.cloudinary.com/dekf5dyng/image/upload/v1764147068/800X1200_-_MEN_JACKET_BANNER_zezsxc.jpg",
+      desktop: "https://res.cloudinary.com/dekf5dyng/image/upload/f_auto,q_auto/v1764155897/WINTER_BANNER_1920X900_hdi7ov.jpg",
+      tablet: "https://res.cloudinary.com/dekf5dyng/image/upload/f_auto,q_auto/v1764147086/WINTER_1200X1000_v9futh.jpg",
+      mobile: "https://res.cloudinary.com/dekf5dyng/image/upload/f_auto,q_auto/v1764147086/WINTER_BANNER_MOBILE_800X1200_ysqn7b.jpg",
+      smallMobile: "https://res.cloudinary.com/dekf5dyng/image/upload/f_auto,q_auto/w_400/v1764147086/WINTER_BANNER_MOBILE_800X1200_ysqn7b.jpg",
       link: "/category/new-in",
     },
   ];
@@ -115,8 +115,8 @@ const Hero = () => {
             key={index}
             onClick={() => setCurrent(index)}
             className={`w-3 h-3 rounded-full transition-all duration-300 ${current === index
-                ? "bg-white scale-110"
-                : "bg-white/50 hover:bg-white/80"
+              ? "bg-white scale-110"
+              : "bg-white/50 hover:bg-white/80"
               }`}
           ></button>
         ))}

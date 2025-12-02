@@ -14,7 +14,7 @@ const AccountSettings = () => {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-  const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+  const storedUser = JSON.parse(localStorage.getItem('user') || JSON.parse(sessionStorage.getItem('user')) || '{}');
   const { uid, userName, contactNo , token } = storedUser;
   console.log('User data from localStorage:', { uid, userName, contactNo });  
 //   if (!uid) {

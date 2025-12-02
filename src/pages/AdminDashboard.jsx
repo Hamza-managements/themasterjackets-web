@@ -278,14 +278,14 @@ const AdminDashboard = () => {
                         {!mobileView && (
                             <div className="flex justify-center items-center h-full">
                                 {darkMode ? (
-                                    <Link to="/" target="_blank" className="inline-block">
+                                    <Link to="/" className="inline-block">
                                         <img
                                             src="https://res.cloudinary.com/dekf5dyng/image/upload/v1761554899/TMJ_logo_dark_kyarf4.png"
                                             alt="Logo"
                                             className="max-w-[180px] h-auto"
                                         />
                                     </Link>) : (
-                                    <Link to="/" target="_blank" className="inline-block">
+                                    <Link to="/" className="inline-block">
                                         <img
                                             src="https://res.cloudinary.com/dvmpyh0hj/image/upload/v1760615184/hilkmru9zutcneybpwwc.png"
                                             alt="Logo"
@@ -649,7 +649,6 @@ const AdminDashboard = () => {
                                         {/* Manage Product Button */}
                                         <Link
                                             to="/admin/manage-all-products"
-                                            target='_blank'
                                             className="inline-flex text-decoration-none items-center gap-2 px-4 py-3 rounded-3xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
                                         >
                                             <FiSettings className="text-lg" />
@@ -661,7 +660,6 @@ const AdminDashboard = () => {
                                     <div className="flex flex-wrap gap-3">
                                         {/* Add Product Button */}
                                         <Link to="/admin/add-product"
-                                            target='_blank'
                                             className="px-4 py-3 text-decoration-none rounded-3xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
                                         >
                                             ➕ Add Product
@@ -675,7 +673,6 @@ const AdminDashboard = () => {
                                 </h3>
                                 <Link
                                     to="/admin/categories"
-                                    target="_blank"
                                     rel="noopener noreferrer"
                                     className={`${darkMode ? 'bg-gray-900 my-4' : 'bg-gray-700 hover:bg-gray-900'} text-decoration-none text-white px-3 py-3 font-medium shadow-md rounded-lg transition`}
                                 >

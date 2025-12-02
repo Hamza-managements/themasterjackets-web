@@ -75,7 +75,7 @@ const Login = () => {
           userName: data.data.user.userName,
           userEmail: data.data.user.email,
         };
-        login(userObj);
+        login(userObj, formData.rememberMe);
         if (data.data.user.role === 'admin') {
           Swal.fire({
             title: 'Login Successful!',

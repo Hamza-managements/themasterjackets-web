@@ -387,10 +387,10 @@ const UpdateProductPage = () => {
         "B2",
         "A2",
         "B3",
-        "pilot",
-        "maverick",
-        "top gun",
-        "navy",
+        "Pilot",
+        "Maverick",
+        "Top gun",
+        "Navy",
     ]);
     const genderOptions = ['Men', 'Women'];
     const badgeOptions = ['None', 'New Arrival', 'Best Seller', 'Limited Edition', 'Exclusive', 'Sale']

@@ -16,7 +16,7 @@ const api = axios.create({
 export async function fetchAllUsers() {
   try {
     api.interceptors.request.use((config) => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -33,7 +33,7 @@ export async function fetchAllUsers() {
 export async function deleteUser(userId) {
   try {
     api.interceptors.request.use((config) => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -50,7 +50,7 @@ export async function deleteUser(userId) {
 export async function fetchCategoriesAll() {
   try {
     api.interceptors.request.use((config) => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -67,7 +67,7 @@ export async function fetchCategoriesAll() {
 export const fetchCategoriesById = async (categoryId) => {
   try {
     api.interceptors.request.use((config) => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }

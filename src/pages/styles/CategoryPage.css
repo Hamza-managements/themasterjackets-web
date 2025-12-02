@@ -218,7 +218,7 @@
   }
 
   .subcategory-image {
-    height: 50vh;
+    height: 60vh;
   }
 }
 
@@ -229,7 +229,7 @@
   }
 
   .subcategory-image {
-    height: 50vh;
+    height: 60vh;
   }
 
   .subcategory-info h2 {
@@ -267,10 +267,6 @@
 @media (max-width: 768px) {
   .category-hero {
     height: 50vh;
-  }
-
-  .parallax-banner {
-    height: 40vh;
   }
 
   .category-hero-content h1 {

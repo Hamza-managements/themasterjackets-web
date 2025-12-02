@@ -19,28 +19,38 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const login = (userData) => {
+  const login = (userData, rememberMe) => {
+    console.log('Logging in user:', userData, 'Remember Me:', rememberMe);
     setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
-    localStorage.setItem('token', userData.token);
+    if (rememberMe) {
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('token', userData.token);
+    } else {
+      sessionStorage.setItem('token', userData.token);
+      sessionStorage.setItem('user', JSON.stringify(userData));
+    }
   };
 
   const logout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    sessionStorage.removeItem("user");
+    sessionStorage.removeItem("token");
     setUser(null);
     navigate("/");
   };
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-    const storedToken = localStorage.getItem('token');
+    const storedUser = JSON.parse(localStorage.getItem('user')) || JSON.parse(sessionStorage.getItem('user'));
+    const storedToken = localStorage.getItem('token') || sessionStorage.getItem('token');
 
     if (storedUser && storedToken && !isTokenExpired(storedToken)) {
       setUser(storedUser);
     } else {
       localStorage.removeItem("user");
       localStorage.removeItem("token");
+      sessionStorage.removeItem("user");
+      sessionStorage.removeItem("token");
       setUser(null);
     }
     setLoading(false);

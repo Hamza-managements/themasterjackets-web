@@ -40,7 +40,7 @@ const api = axios.create({
 export const getProducts = async () => {
   try {
     api.interceptors.request.use((config) => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -67,7 +67,7 @@ export const getSingleProduct = async (productId) => {
 export const deleteProduct = async (productId) => {
   try {
     api.interceptors.request.use((config) => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -84,7 +84,7 @@ export const deleteProduct = async (productId) => {
 export const updateProduct = async (formData) => {
   try {
     api.interceptors.request.use((config) => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -101,7 +101,7 @@ export const updateProduct = async (formData) => {
 export const getProductBySubCategoryId = async (CategoryId, SubCategoryId) => {
   try {
     api.interceptors.request.use((config) => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -118,7 +118,7 @@ export const getProductBySubCategoryId = async (CategoryId, SubCategoryId) => {
 export const addProductVariation = async (productId, currentVariation) => {
   try {
     api.interceptors.request.use((config) => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -142,7 +142,7 @@ export const addProductVariation = async (productId, currentVariation) => {
 export const updateProductVariation = async (currentVariation) => {
   try {
     api.interceptors.request.use((config) => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -160,7 +160,7 @@ export const updateProductVariation = async (currentVariation) => {
 export const deleteProductVariation = async (productId, variationId) => {
   try {
     api.interceptors.request.use((config) => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }

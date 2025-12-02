@@ -485,10 +485,10 @@ const AmazonStyleProductPage = () => {
     "B2",
     "A2",
     "B3",
-    "pilot",
-    "maverick",
-    "top gun",
-    "navy",
+    "Pilot",
+    "Maverick",
+    "Top gun",
+    "Navy",
   ]);
   const fitOptions = ['Slim', 'Regular', 'Relaxed', 'Oversized'];
   const closureOptions = ['Zipper', 'Buttons', 'Velcro', 'Snap', 'Elastic'];

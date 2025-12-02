@@ -338,10 +338,10 @@ const SubCategoryProductPage = () => {
             "World War",
             "Aviator",
             "German",
-            "pilot",
-            "maverick",
-            "top gun",
-            "navy",
+            "Pilot",
+            "Maverick",
+            "Top gun",
+            "Navy",
         ],
 
         "real-leather-jackets": [

@@ -301,6 +301,7 @@ const ProductDetails = () => {
                 <img
                   src={selectedVariation.productImages[currentImageIndex]}
                   className="lightbox-image"
+                  alt={product?.productName || "Product image"}
                 />
 
                 {/* Next Button */}

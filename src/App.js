@@ -61,25 +61,25 @@ function App() {
               <Route path="/products-details/:productId" element={<ProductDetails />} />
             </Route>
 
+            {/* User routes */}
             <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
             <Route path="auth" element={<AuthLayout />}>
               <Route path="login" element={<Login />} />
               <Route path="signup" element={<SignUp />} />
             </Route>
-
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             {/* <Route path="/checkout" element={ <PrivateRoute> <CheckoutPage /> </PrivateRoute>}/>  */}
 
             {/* admin routes */}
             {/* <Route path="/account/settings" element={<PrivateRoute> <AccountSettings /> </PrivateRoute> } /> */}
-            <Route path="/admin/api-testing" element={<APITestingPage />} />
+            <Route path="/admin/api-testing" element={<PrivateRoute><APITestingPage /></PrivateRoute>} />
+            <Route path="/admin/add-product" element={<PrivateRoute><AmazonStyleProductPage /></PrivateRoute>} />
             <Route path="/admin/dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
-            <Route path="/admin/categories" element={<CategoryListPage />} />
-            <Route path="/admin/add-product" element={<AmazonStyleProductPage />} />
-            <Route path="/admin/manage-all-products" element={<AllProductManagementPage />} />
-            <Route path="/admin/edit-product/:productId" element={<UpdateProductPage />} />
-            <Route path="/admin/manage-single-product/:productId" element={<ProductManagementPage />} />
+            <Route path="/admin/categories" element={<PrivateRoute><CategoryListPage /></PrivateRoute>} />
+            <Route path="/admin/manage-all-products" element={<PrivateRoute><AllProductManagementPage /></PrivateRoute>} />
+            <Route path="/admin/edit-product/:productId" element={<PrivateRoute><UpdateProductPage /></PrivateRoute>} />
+            <Route path="/admin/manage-single-product/:productId" element={<PrivateRoute><ProductManagementPage /></PrivateRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </ProductProvider>

@@ -74,6 +74,7 @@ const Login = () => {
           contactNo: data.data.user.contactNo,
           userName: data.data.user.userName,
           userEmail: data.data.user.email,
+          lastLogin: new Date().toISOString()
         };
         login(userObj, formData.rememberMe);
         if (data.data.user.role === 'admin') {

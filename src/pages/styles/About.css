@@ -22,10 +22,6 @@
     padding: 0 20px;
 }
 
-section {
-    padding: 60px 0;
-}
-
 /* === Header === */
 .about-hero {
     background: linear-gradient(rgba(62, 44, 28, 0.7), rgba(62, 44, 28, 0.7)),
@@ -52,6 +48,7 @@ section {
 
 /* === Mission Section === */
 .mission {
+    padding: 60px 0;
     background-color: var(--beige);
     text-align: center;
 }

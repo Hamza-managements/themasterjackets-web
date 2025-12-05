@@ -22,7 +22,7 @@ export default function AboutPage() {
       </div>
 
       {/* Mission Section */}
-      <section className="mission">
+      <div className="mission">
         <div className="about-container">
           <div className="mission-content">
             <h2 className='about-h'>Our Mission</h2>
@@ -35,9 +35,9 @@ export default function AboutPage() {
             </p>
           </div>
         </div>
-      </section>
+      </div>
 
-      <section className="mission">
+      <div className="mission">
         <div className="about-container">
           <div className="mission-content-left" >
             <div style={{ textAlign: 'left' }}>
@@ -57,10 +57,10 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* Core Values */}
-      <section className="values">
+      <div className="values">
         <div className="about-container">
           <h2 className='about-h'>Our Core Values</h2>
           <p className='about-p'>The principles that guide everything we do</p>
@@ -81,16 +81,16 @@ export default function AboutPage() {
             ))}
           </div>
         </div>
-      </section>
+      </div>
 
       {/* CTA Section */}
-      <section className="cta-about-us">
+      <div className="cta-about-us">
         <div className="about-container">
           <h2 className='about-h'>Ready to Experience Our Craft?</h2>
           <p className='about-p'>Discover our collection and join our story</p>
           <Link to="/products" className="cta-about-us-btn">Explore Our Products</Link>
         </div>
-      </section>
+      </div>
 
       {/* Why Choose Us */}
       <div className="section-heading" data-aos="fade-up">
@@ -100,7 +100,7 @@ export default function AboutPage() {
       </div>
 
       {/* Banners */}
-      <section className="banner-section">
+      <div className="banner-section">
         <div className="banner-container">
           {[
             {
@@ -126,7 +126,7 @@ export default function AboutPage() {
             </div>
           ))}
         </div>
-      </section>
+      </div>
     </>
   );
 }

@@ -179,13 +179,12 @@ const AdminDashboard = () => {
         }
     }
 
-
     return (
         <>
-            <div className={`flex h-screen bg-gray-100 ${darkMode ? "dark bg-gray-800" : "bg-white"}`}>
+            <div className={`flex h-screen ${darkMode ? "dark bg-gray-800" : "bg-white"}`}>
                 {/* Sidebar */}
                 <div
-                    className={`${sidebarOpen ? "w-48" : "w-0"} ${darkMode ? "dark bg-gray-800" : "bg-white"} transition-all duration-300 shadow-md md:relative z-10`}>
+                    className={`${sidebarOpen ? "w-64" : "w-0"} ${darkMode ? "dark bg-gray-800" : "bg-white"} transition-all duration-300 shadow-md md:relative z-10`}>
                     {sidebarOpen && (
                         <div className={`p-4 flex justify-between items-center border-b border-gray-200 ${darkMode ? "dark bg-gray-800" : ""}`}   >
                             <h3
@@ -197,7 +196,47 @@ const AdminDashboard = () => {
                         </div>
                     )}
 
-                    <nav className={`mt-0 ${sidebarOpen ? '' : 'd-none'}`}>
+                    <nav className={`mt-0 ${sidebarOpen ? '' : 'd-none'} ${darkMode ? "dark bg-gray-800 text-white" : "bg-gray-100 text-gray-800"}`}>
+                        <div className={`${darkMode ? "dark bg-gray-800 text-white" : "bg-gray-100 text-gray-800"} border-b border-gray-200 p-2 w-full max-w-sm mx-auto md:max-w-md`}>
+                            {/* Profile */}
+                            <div className="flex flex-col items-center py-2">
+                                <div className="w-16 h-16 flex items-center justify-center bg-red-500 text-white rounded-full text-2xl font-semibold mb-2">
+                                    {user.userName.charAt(0).toUpperCase()}
+                                </div>
+
+                                <h3 className="text-xl font-semibold">{user.userName}</h3>
+                                <p className="text-gray-600 text-sm">{user.userEmail}</p>
+                            </div>
+
+                            {/* Last Login */}
+                            <div className={`${darkMode ? "dark bg-gray-800 text-white" : "bg-gray-300 text-gray-800"} p-2 rounded-xl text-center`}>
+                                <span className="text-lg font-semibold block">Last Login</span>
+                                <small className="text-gray-400 block mt-1">
+                                    {user.lastLogin
+                                        ? new Date(user.lastLogin).toLocaleString("en-US", {
+                                            hour: "numeric",
+                                            minute: "numeric",
+                                            hour12: true,
+                                            year: "numeric",
+                                            month: "short",
+                                            day: "numeric",
+                                        })
+                                        : "First time login"}
+                                </small>
+                                {user.lastLogin && (
+                                    <p className="text-xs text-gray-500 mt-2">
+                                        Session will expire in 24 hours after login time
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+
+                        <h3
+                            className="pl-4 pt-4 text-xl font-bold text-gray-800 dark:text-white cursor-pointer"
+                        >
+                            Menu
+                        </h3>
+
                         <NavItem
                             icon={<FiHome />}
                             text="Dashboard"
@@ -244,11 +283,14 @@ const AdminDashboard = () => {
                             onClick={() => { setActiveMenu('settings'); setSidebarOpen(!sidebarOpen) }}
 
                         />
+                    <div className='h-64'>
+
+                    </div>
                     </nav>
                 </div>
 
                 {/* Main Content */}
-                <div className="flex-1 overflow-auto">
+                <div className="flex-1">
                     {/* Header */}
                     <header className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} shadow-sm p-4 flex justify-between items-center top-0 z-10`}>
                         <div className="flex items-center justify-between">
@@ -387,6 +429,10 @@ const AdminDashboard = () => {
                     <main className={`p-4 ${darkMode ? 'dark bg-gray-800' : 'bg-white'}`}>
                         {activeMenu === 'dashboard' && (
                             <>
+                                <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'}`}>
+                                    <h3>Admin Dashboard Overview</h3>
+                                    <p>Welcome back, {user.userName}! Here's what's happening with your account.</p>
+                                </div>
                                 {/* Stats Cards */}
                                 <div
                                     className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 ${darkMode ? 'dark bg-gray-800' : 'bg-white'
@@ -485,6 +531,52 @@ const AdminDashboard = () => {
                                         </table>
                                     </div>
                                 </div>
+                                <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+                                    {/* Manage All Products */}
+                                    <Link
+                                        to="/admin/manage-all-products"
+                                        className={`
+      ${darkMode ? 'dark bg-gray-800 text-white border-2 border-gray-700' : 'bg-white text-gray-900 border-2 border-gray-400'}
+      p-5 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer text-center flex flex-col items-center gap-2
+    `}
+                                    >
+                                        <h4 className="text-lg font-semibold">Manage Products</h4>
+                                        <p className={`${darkMode ? "text-gray-300" : "text-gray-500"} text-sm`}>
+                                            View & update all products
+                                        </p>
+                                    </Link>
+
+                                    {/* Add Product */}
+                                    <Link
+                                        to="/admin/add-product"
+                                        className={`
+      ${darkMode ? 'dark bg-gray-800 text-white border-2 border-gray-700' : 'bg-white text-gray-900 border-2 border-gray-400'}
+      p-5 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer text-center flex flex-col items-center gap-2
+    `}
+                                    >
+                                        <h4 className="text-lg font-semibold">Add Product</h4>
+                                        <p className={`${darkMode ? "text-gray-300" : "text-gray-500"} text-sm`}>
+                                            Create a new product
+                                        </p>
+                                    </Link>
+
+                                    {/* Men's Collection */}
+                                    <Link
+                                        to="/products/men/all"
+                                        className={`
+      ${darkMode ? 'dark bg-gray-800 text-white border-2 border-gray-700' : 'bg-white text-gray-900 border-2 border-gray-400'}
+      p-5 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer text-center flex flex-col items-center gap-2
+    `}
+                                    >
+                                        <h4 className="text-lg font-semibold">Men's Collection</h4>
+                                        <p className={`${darkMode ? "text-gray-300" : "text-gray-500"} text-sm`}>
+                                            Browse all men's products
+                                        </p>
+                                    </Link>
+
+                                </div>
+
                             </>
                         )}
 
@@ -721,7 +813,7 @@ const StatCard = ({ title, value, change, icon, darkMode }) => {
     const isPositive = change.startsWith('+');
 
     return (
-        <div className={`p-4 rounded-lg shadow-sm transition-colors duration-300 ${darkMode ? 'dark bg-gray-700' : 'bg-white'}`}>
+        <div className={`p-4 border-2 border-gray-400 rounded-lg shadow-sm transition-colors duration-300 ${darkMode ? 'dark bg-gray-700' : 'bg-white'}`}>
             <div className="flex justify-between">
                 <div>
                     <p className={`text-sm font-medium text-gray-500 ${darkMode ? 'dark bg-gray-700' : 'bg-white'}`}>{title}</p>

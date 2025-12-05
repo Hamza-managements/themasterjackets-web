@@ -222,8 +222,9 @@ const ProductDetails = () => {
 
   if (isLoading) {
     return (
-      <div className="loading-overlay" id="loading-overlay" style={{ display: 'flex' }}>
-        <div className="spinner"></div>
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+        <span className="ml-3 text-gray-600">Loading product detail...</span>
       </div>
     );
   }
@@ -634,13 +635,13 @@ const ProductDetails = () => {
           </div>
         </section>
 
-        <div
+        {/* <div
           className="loading-overlay"
           id="loading-overlay"
           style={{ display: isLoading ? 'flex' : 'none' }}
         >
           <div className="spinner"></div>
-        </div>
+        </div> */}
       </main>
     </div >
   );

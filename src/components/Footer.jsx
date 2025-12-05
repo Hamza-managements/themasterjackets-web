@@ -117,7 +117,7 @@ export default function Footer() {
                 <p>Join our newsletter to get exclusive updates & offers.</p>
                 <input
                   type="email"
-                  className="newsletter-input form-control mt-3 mb-3"
+                  className="newsletter-input mt-3 mb-3"
                   placeholder="Your email address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -154,7 +154,7 @@ export default function Footer() {
             )}
 
             {toastMessage && (
-              <div class="toast-message-footer">
+              <div className="toast-message-footer">
                 {toastMessage}
               </div>
             )}

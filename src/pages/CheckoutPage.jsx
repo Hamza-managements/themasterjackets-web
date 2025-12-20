@@ -1,13 +1,13 @@
 // pages/CheckoutPage.jsx
 import React, { useEffect, useState } from 'react';
+// import Checkout from '../components/OldCheckout';
 import Checkout from '../components/Checkout';
-import productsData from '/data/products.json';
 
 const CheckoutPage = () => {
   const [cartItems, setCartItems] = useState([]);
 
   useEffect(() => {
-    const storedProducts = JSON.parse(localStorage.getItem('products')) || productsData;
+    const storedProducts = JSON.parse(localStorage.getItem('allProducts')) || [];
     const cartIds = JSON.parse(localStorage.getItem('cartsItems')) || [];
 
     const updatedCart = cartIds

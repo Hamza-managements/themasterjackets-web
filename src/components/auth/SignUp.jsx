@@ -225,7 +225,7 @@ const Signup = () => {
           contactNo: "",
           role: snapshot.role,
         });
-        setMessage("Registered successfully!");
+        setMessage("User Registered successfully!");
         setFormSubmitted(true);
         return;
       }
@@ -267,7 +267,7 @@ const Signup = () => {
     return (
       <div className="signup-success">
         <div className="signup-success-icon">✓</div>
-        <h2 className='signup-success-h2'>This {formData.userName}{message}</h2>
+        <h2 className='signup-success-h2'>{message}</h2>
         <p>Click To <Link to="/auth/login">Go to Login</Link>.</p>
       </div>
     );

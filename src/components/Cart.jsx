@@ -1,67 +1,62 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify'
+import { useCart } from "../context/CartContext";
+import Swal from 'sweetalert2';
 import "./styles/Cart.css";
+import { AuthContext } from "./auth/AuthProvider";
 
 export default function CartSidebar() {
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState([]);
+  const { user } = useContext(AuthContext);
+  const { cartItems, handleRemoveCartItem, handleDeleteAllCartItems, handleQuantityChange } = useCart();
+  const [updatingQuantity, setUpdatingQuantity] = useState(false);
+
   const [showToastContainer, setShowToastContainer] = useState(false)
 
-  useEffect(() => {
-    const loadCart = () => {
-      const storedCart = JSON.parse(localStorage.getItem("cartsItems")) || [];
-      setCartItems(storedCart);
-    };
-
-    loadCart();
-
-    const handleCartUpdate = () => loadCart();
-    window.addEventListener("cartUpdated", handleCartUpdate);
-
-    return () => window.removeEventListener("cartUpdated", handleCartUpdate);
-  }, []);
-
-
-  const updateCart = (newCart) => {
-    localStorage.setItem("cartsItems", JSON.stringify(newCart));
-    setCartItems(newCart);
-  };
-
-  const handleUpdateQuantity = (variationId, newQuantity) => {
-    if (newQuantity < 1) return;
-
-    const updatedCart = cartItems.map((item) =>
-      item.variationId === variationId
-        ? { ...item, quantity: newQuantity }
-        : item
-    );
-
-    updateCart(updatedCart);
-    window.dispatchEvent(new Event("cartUpdated"));
-    setShowToastContainer(true);
-    toast.info("Quantity updated");
-  };
-
-  // ✅ Remove Item
-  const handleRemoveItem = (variationId) => {
-    const updatedCart = cartItems.filter(
-      (item) => item.variationId !== variationId
-    );
-
-    updateCart(updatedCart);
-    window.dispatchEvent(new Event("cartUpdated"));
+  const handleRemoveItem = async (cartId, variationId) => {
+    await handleRemoveCartItem(cartId, variationId);
     setShowToastContainer(true);
     toast.warn("Item removed from cart");
   };
 
+  const handleUpdateQuantity = async (cartId, itemId, quantity) => {
+    if (quantity < 1) return;
+    setUpdatingQuantity(true);
+    const updateData = { cartId, itemId, quantity };
+    await handleQuantityChange(updateData);
+    setUpdatingQuantity(false);
+    setShowToastContainer(true);
+    toast.info("Quantity updated");
+  };
+
+  const handleDeleteAll = async () => {
+    try {
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: `You are about to delete All item from the Cart. This action cannot be undone.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!',
+        background: '#1a1a1a',
+        color: '#fff'
+      });
+      if (result.isConfirmed) {
+        await handleDeleteAllCartItems(cartItems?._id);
+        setShowToastContainer(true);
+        toast.warn("All items removed from cart");
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Error deleting all cart items:", error);
+    }
+  }
+
   // ✅ Calculate subtotal and total quantity
-  const subtotal = cartItems.reduce(
+  const subtotal = cartItems?.items?.reduce(
     (total, item) => total + item.price * item.quantity,
-    0
-  );
-  const totalItems = cartItems.reduce(
-    (sum, item) => sum + item.quantity,
     0
   );
 
@@ -72,9 +67,9 @@ export default function CartSidebar() {
       <h5>Your cart is empty</h5>
       <p className="text-muted mb-4">Add some items to continue shopping.</p>
       <Link
-        to="/"
+        to="/products/men/all"
         className="btn btn-dark px-4"
-        style={{ backgroundColor: "#3E2C1C", color: "#fff" }}
+        style={{ backgroundColor: "#161616ff", color: "#fff" }}
       >
         Continue Shopping
       </Link>
@@ -94,23 +89,23 @@ export default function CartSidebar() {
       <div id="cartSidebar" className="cart-sidebar d-flex flex-column">
         {/* Header */}
         <div className="cart-header d-flex justify-content-between align-items-center p-3 border-bottom bg-light">
-          <h5 className="mb-0">Your Cart ({totalItems})</h5>
+          <h5 className="mb-0">Your Cart ({cartItems?.items?.length})</h5>
           <button className="btn-close" onClick={() => closeCart()}></button>
         </div>
 
         {/* Body */}
         <div className="cart-scroll-area flex-grow-1 overflow-auto p-3">
-          {cartItems.length === 0 ? (
+          {!cartItems?.items?.length ? (
             <EmptyCart />
           ) : (
-            cartItems.map((product) => (
+            cartItems?.items?.map((product) => (
               <div
                 key={product.variationId}
                 className="d-flex align-items-start mb-3 border-bottom pb-3"
               >
                 <img
-                  src={product.image}
-                  alt={product.name}
+                  src={product.productId.productImages[0]}
+                  alt={product.productId.productName}
                   className="img-fluid rounded"
                   style={{
                     width: "90px",
@@ -121,20 +116,20 @@ export default function CartSidebar() {
                 <div className="flex-grow-1 ms-3">
                   <div className="d-flex justify-content-between">
                     <div>
-                      <strong>{product.name}</strong>
+                      <strong>{product.productId.productName}</strong>
                       <div className="text-muted small">
-                        {product.variation}
+                        Size: {product?.selectedAttributes?.size}, Color: {product?.selectedAttributes?.color.toLowerCase()}
                       </div>
-                      <div className="text-muted small">
-                        Size: {product.size}
-                      </div>
+                      {/* <div className="text-muted small">
+                        Color: {product?.selectedAttributes?.color.toLowerCase()}
+                      </div> */}
                       <div className="fw-bold mt-1">
                         ${product.price.toFixed(2)}
                       </div>
                     </div>
                     <button
                       className="btn text-danger"
-                      onClick={() => handleRemoveItem(product.variationId)}
+                      onClick={() => handleRemoveItem(cartItems?._id, product?._id)}
                     >
                       <i className="fas fa-trash-alt"></i>
                     </button>
@@ -146,7 +141,8 @@ export default function CartSidebar() {
                       className="btn btn-sm btn-outline-secondary"
                       onClick={() =>
                         handleUpdateQuantity(
-                          product.variationId,
+                          cartItems?._id,
+                          product?._id,
                           product.quantity - 1
                         )
                       }
@@ -158,35 +154,50 @@ export default function CartSidebar() {
                       className="btn btn-sm btn-outline-secondary"
                       onClick={() =>
                         handleUpdateQuantity(
-                          product.variationId,
+                          cartItems?._id,
+                          product?._id,
                           product.quantity + 1
                         )
                       }
                     >
                       <i className="fas fa-plus"></i>
                     </button>
+                    {updatingQuantity && 
+                    <div className="spinner-border spinner-border-sm text-secondary ms-3" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
+                    }
                   </div>
                 </div>
               </div>
             ))
           )}
+
+          {!user?.uid && cartItems?.items?.length > 0 && (
+            <div className="right-align">
+              <button className="btn text-danger hover:underline" onClick={handleDeleteAll}>
+                Remove All <i className="fas fa-trash-alt"></i>
+              </button>
+            </div>
+          )}
+
           {showToastContainer && (
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            pauseOnHover
-            draggable
-            theme="dark"
-            onClose={() => setShowToastContainer(false)}
-          />
-        )}
+            <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              pauseOnHover
+              draggable
+              theme="dark"
+              onClose={() => setShowToastContainer(false)}
+            />
+          )}
         </div>
 
         {/* Footer */}
-        {cartItems.length > 0 && (
+        {cartItems?.items?.length > 0 && (
           <div className="cart-footer border-top bg-white p-3">
             <div className="d-flex justify-content-between mb-3">
               <span className="fw-semibold fs-5 text-dark">Subtotal:</span>

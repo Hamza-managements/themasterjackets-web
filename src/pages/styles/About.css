@@ -187,10 +187,6 @@
 
 /* === Responsive Design === */
 @media (max-width: 768px) {
-    section {
-        padding: 40px 0;
-    }
-
     .about-hero {
         padding: 80px 20px;
     }

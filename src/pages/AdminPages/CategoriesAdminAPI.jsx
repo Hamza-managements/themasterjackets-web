@@ -230,19 +230,19 @@ const CategoryListPage = () => {
     });
   };
 
-  const addSubCategoryField = () => {
-    if (
-      formData.subCategories.length === 0 ||
-      formData.subCategories[formData.subCategories.length - 1].categoryName.trim() !== ''
-    ) {
-      setFormData((prev) => ({
-        ...prev,
-        subCategories: [...prev.subCategories, { categoryName: '' }],
-      }));
-    } else {
-      showToast('warning', 'Please fill the previous subcategory before adding a new one.');
-    }
-  };
+  // const addSubCategoryField = () => {
+  //   if (
+  //     formData.subCategories.length === 0 ||
+  //     formData.subCategories[formData.subCategories.length - 1].categoryName.trim() !== ''
+  //   ) {
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       subCategories: [...prev.subCategories, { categoryName: '' }],
+  //     }));
+  //   } else {
+  //     showToast('warning', 'Please fill the previous subcategory before adding a new one.');
+  //   }
+  // };
 
   const removeSubCategoryField = (index) => {
     if (formData.subCategories.length > 1) {
@@ -292,7 +292,12 @@ const CategoryListPage = () => {
   const addCategoryHandler = async () => {
     try {
       setLoading(true);
-      await addCategory(formData);
+      const addFormData = {
+        mainCategoryName: formData.mainCategoryName,
+        description: formData.description,
+        image: formData.image,
+      }
+      await addCategory(addFormData);
       showToast('success', 'Category added successfully!');
       setShowModal(false);
       getAllCategories();
@@ -331,9 +336,9 @@ const CategoryListPage = () => {
     try {
       setLoading(true);
       const updatedData = {
-        categoryId: parentCategoryForEdit._id,
+        mainCategoryId: parentCategoryForEdit._id,
         subCategoryId: subcategoryToEdit._id,
-        categoryName: formData.subCategories[0].categoryName
+        subCategoryUpdatedName: formData.subCategories[0].categoryName
       };
       await updateSingleSubcategory(updatedData);
       showToast('success', 'Subcategory updated successfully!');
@@ -369,7 +374,7 @@ const CategoryListPage = () => {
       setLoading(true);
       const data = {
         categoryId: parentCategoryId,
-        subCategories: formData.subCategories,
+        subCategoryName: formData?.subCategories[0]?.categoryName,
       };
       await addSubCategory(data);
       showToast('success', 'Subcategory added successfully!');
@@ -442,9 +447,10 @@ const CategoryListPage = () => {
             <Card className="table-glass-card">
               <Card.Header className="table-card-header-custom">
                 <div className="d-flex justify-content-between align-items-center flex-wrap">
-                  <div className="table-title-section">
-                    <h4 className="mb-1"><FaFolder className="me-2" />Category Management</h4>
-                    <p className="mb-0 text-light opacity-75">Manage your product categories and subcategories in table format</p>
+                  <div className="d-flex flex-col">
+                    <Link className='text-3xl mb-2' target='_blank' to="/" ><img className="fs-logo" alt='TheMasterJacketsLOGO' src='https://res.cloudinary.com/dekf5dyng/image/upload/v1761554899/TMJ_logo_dark_kyarf4.png'></img></Link>
+                    <h5 className="d-flex"><FaFolder className="me-2" />Category Management</h5>
+                    <p className="text-light opacity-75">Manage your product categories and subcategories in table format</p>
                   </div>
                   <div>
                     <Button variant="primary" className="btn-add-table" onClick={openAddModal}>
@@ -458,7 +464,7 @@ const CategoryListPage = () => {
                 </div>
 
                 {/* Statistics Cards */}
-                <Row className="mt-4 g-3">
+                <Row className="mt-2 g-3">
                   <Col xs={6} md={3}>
                     <div className="table-stat-card">
                       <div className="table-stat-icon total-categories">
@@ -590,164 +596,162 @@ const CategoryListPage = () => {
                           <th width="20%" className="text-center">Actions</th>
                         </tr>
                       </thead>
-                      <tbody>
-                        {filteredCategories.map((category) => (
-                          <>
-                            <tr key={category._id} className="category-main-row">
-                              <td>
-                                <Button
-                                  variant="link"
-                                  className="expand-btn p-0"
-                                  onClick={() => toggleCategoryExpansion(category._id)}
-                                >
-                                  {expandedCategories.has(category._id) ?
-                                    <FaFolderOpen className="text-primary" /> :
-                                    <FaFolder className="text-primary" />
-                                  }
-                                </Button>
-                              </td>
-                              <td>
-                                <div className="d-flex align-items-center">
-                                  {category.image && (
-                                    <img
-                                      src={category.image}
-                                      className="table-category-image me-2"
-                                      alt={category.mainCategoryName}
-                                      onError={(e) => {
-                                        e.target.src = "https://image.pngaaa.com/700/5273700-middle.png";
-                                      }}
-                                    />
-                                  )}
-                                  <div>
-                                    <div className="category-name-table fw-semibold">
-                                      {category.mainCategoryName}
-                                    </div>
-                                    <div className="category-meta-table">
-                                      <small className="text-muted">ID: {category._id}</small>
-                                    </div>
+                      {filteredCategories.map((category) => (
+                        <tbody key={category._id} >
+                          <tr className="category-main-row">
+                            <td>
+                              <Button
+                                variant="link"
+                                className="expand-btn p-0"
+                                onClick={() => toggleCategoryExpansion(category._id)}
+                              >
+                                {expandedCategories.has(category._id) ?
+                                  <FaFolderOpen className="text-primary" /> :
+                                  <FaFolder className="text-primary" />
+                                }
+                              </Button>
+                            </td>
+                            <td>
+                              <div className="d-flex align-items-center">
+                                {category.image && (
+                                  <img
+                                    src={category.image}
+                                    className="table-category-image me-2"
+                                    alt={category.mainCategoryName}
+                                    onError={(e) => {
+                                      e.target.src = "https://image.pngaaa.com/700/5273700-middle.png";
+                                    }}
+                                  />
+                                )}
+                                <div>
+                                  <div className="category-name-table fw-semibold">
+                                    {category.mainCategoryName}
+                                  </div>
+                                  <div className="category-meta-table">
+                                    <small className="text-muted">ID: {category._id}</small>
                                   </div>
                                 </div>
-                              </td>
-                              <td>
-                                <div className="category-description-table">
-                                  {category.description || 'No description'}
-                                </div>
-                              </td>
-                              <td>
-                                <OverlayTrigger placement="top" overlay={ProductCountTooltip}>
-                                  <Badge bg="success" className="table-product-count">
-                                    <FaBox className="me-1" />
-                                    {productsByCategory[category._id]?.length || 0}
-                                  </Badge>
-                                </OverlayTrigger>
-                              </td>
-                              <td>
-                                <Badge bg="primary" className="table-subcategory-count">
-                                  {category.subCategories?.length || 0}
+                              </div>
+                            </td>
+                            <td>
+                              <div className="category-description-table">
+                                {category.description || 'No description'}
+                              </div>
+                            </td>
+                            <td>
+                              <OverlayTrigger placement="top" overlay={ProductCountTooltip}>
+                                <Badge bg="success" className="table-product-count">
+                                  <FaBox className="me-1" />
+                                  {productsByCategory[category._id]?.length || 0}
                                 </Badge>
-                              </td>
-                              <td>
-                                <div className="d-flex justify-content-center gap-2">
-                                  <Button
-                                    variant="outline-primary"
-                                    size="sm"
-                                    className="table-action-btn"
-                                    onClick={() => openEditModal(category)}
-                                  >
-                                    <FaEdit />
-                                  </Button>
-                                  <Button
-                                    variant="outline-success"
-                                    size="sm"
-                                    className="table-action-btn"
-                                    onClick={() => openAddSubcategoryModal(category._id)}
-                                  >
-                                    <FaPlus />
-                                  </Button>
-                                  <Button
-                                    variant="outline-danger"
-                                    size="sm"
-                                    className="table-action-btn"
-                                    onClick={() => {
-                                      setCurrentCategory(category);
-                                      setShowDeleteConfirm(true);
-                                    }}
-                                  >
-                                    <FaTrash />
-                                  </Button>
+                              </OverlayTrigger>
+                            </td>
+                            <td>
+                              <Badge bg="primary" className="table-subcategory-count">
+                                {category.subCategories?.length || 0}
+                              </Badge>
+                            </td>
+                            <td>
+                              <div className="d-flex justify-content-center gap-2">
+                                <Button
+                                  variant="outline-primary"
+                                  size="sm"
+                                  className="table-action-btn"
+                                  onClick={() => openEditModal(category)}
+                                >
+                                  <FaEdit />
+                                </Button>
+                                <Button
+                                  variant="outline-success"
+                                  size="sm"
+                                  className="table-action-btn"
+                                  onClick={() => openAddSubcategoryModal(category._id)}
+                                >
+                                  <FaPlus />
+                                </Button>
+                                <Button
+                                  variant="outline-danger"
+                                  size="sm"
+                                  className="table-action-btn"
+                                  onClick={() => {
+                                    setCurrentCategory(category);
+                                    setShowDeleteConfirm(true);
+                                  }}
+                                >
+                                  <FaTrash />
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                          {expandedCategories.has(category._id) && category.subCategories?.length > 0 && (
+                            <tr className="subcategory-row">
+                              <td colSpan={6}>
+                                <div className="subcategories-table-section">
+                                  <h6 className="subcategories-table-title mb-3">
+                                    <FaFolderOpen className="me-2" />
+                                    Subcategories ({category.subCategories.length})
+                                  </h6>
+                                  <Table size="sm" className="subcategories-table">
+                                    <thead>
+                                      <tr>
+                                        <th width="40%">Subcategory Name</th>
+                                        <th width="20%">Products</th>
+                                        <th width="20%">ID</th>
+                                        <th width="20%" className="text-center">Actions</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      {category.subCategories.map((sub, index) => (
+                                        <tr key={sub._id || `${category._id}-${index}`} className="subcategory-table-row">
+                                          <td>
+                                            <Link
+                                              to={`/products/${category.slug}/${sub.slug}`}
+                                              className="subcategory-name-link"
+                                            >
+                                              {sub.categoryName}
+                                            </Link>
+                                          </td>
+                                          <td>
+                                            <OverlayTrigger placement="top" overlay={ProductCountTooltip}>
+                                              <Badge bg="outline-success" className="table-sub-product-count">
+                                                <FaBox className="me-1" />
+                                                {productsBySubCategory[sub._id]?.length || 0}
+                                              </Badge>
+                                            </OverlayTrigger>
+                                          </td>
+                                          <td>
+                                            <code className="subcategory-id-table">{sub._id}</code>
+                                          </td>
+                                          <td>
+                                            <div className="d-flex justify-content-center gap-2">
+                                              <Button
+                                                variant="outline-primary"
+                                                size="sm"
+                                                className="table-sub-action-btn"
+                                                onClick={() => openEditSubcategoryModal(category, sub)}
+                                              >
+                                                <FaEdit />
+                                              </Button>
+                                              <Button
+                                                variant="outline-danger"
+                                                size="sm"
+                                                className="table-sub-action-btn"
+                                                onClick={() => deleteSubCategoryHandler(category._id, sub._id, sub.categoryName)}
+                                              >
+                                                <FaTrash />
+                                              </Button>
+                                            </div>
+                                          </td>
+                                        </tr>
+                                      ))}
+                                    </tbody>
+                                  </Table>
                                 </div>
                               </td>
                             </tr>
-                            {expandedCategories.has(category._id) && category.subCategories?.length > 0 && (
-                              <tr className="subcategory-row">
-                                <td colSpan={6}>
-                                  <div className="subcategories-table-section">
-                                    <h6 className="subcategories-table-title mb-3">
-                                      <FaFolderOpen className="me-2" />
-                                      Subcategories ({category.subCategories.length})
-                                    </h6>
-                                    <Table size="sm" className="subcategories-table">
-                                      <thead>
-                                        <tr>
-                                          <th width="40%">Subcategory Name</th>
-                                          <th width="20%">Products</th>
-                                          <th width="20%">ID</th>
-                                          <th width="20%" className="text-center">Actions</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        {category.subCategories.map((sub, index) => (
-                                          <tr key={sub._id || `${category._id}-${index}`} className="subcategory-table-row">
-                                            <td>
-                                              <Link
-                                                to={`/products/${category.slug}/${sub.slug}`}
-                                                className="subcategory-name-link"
-                                              >
-                                                {sub.categoryName}
-                                              </Link>
-                                            </td>
-                                            <td>
-                                              <OverlayTrigger placement="top" overlay={ProductCountTooltip}>
-                                                <Badge bg="outline-success" className="table-sub-product-count">
-                                                  <FaBox className="me-1" />
-                                                  {productsBySubCategory[sub._id]?.length || 0}
-                                                </Badge>
-                                              </OverlayTrigger>
-                                            </td>
-                                            <td>
-                                              <code className="subcategory-id-table">{sub._id}</code>
-                                            </td>
-                                            <td>
-                                              <div className="d-flex justify-content-center gap-2">
-                                                <Button
-                                                  variant="outline-primary"
-                                                  size="sm"
-                                                  className="table-sub-action-btn"
-                                                  onClick={() => openEditSubcategoryModal(category, sub)}
-                                                >
-                                                  <FaEdit />
-                                                </Button>
-                                                <Button
-                                                  variant="outline-danger"
-                                                  size="sm"
-                                                  className="table-sub-action-btn"
-                                                  onClick={() => deleteSubCategoryHandler(category._id, sub._id, sub.categoryName)}
-                                                >
-                                                  <FaTrash />
-                                                </Button>
-                                              </div>
-                                            </td>
-                                          </tr>
-                                        ))}
-                                      </tbody>
-                                    </Table>
-                                  </div>
-                                </td>
-                              </tr>
-                            )}
-                          </>
-                        ))}
-                      </tbody>
+                          )}
+                        </tbody>
+                      ))}
                     </Table>
                   </div>
                 )}
@@ -804,7 +808,7 @@ const CategoryListPage = () => {
               </Form.Group>
 
               {/* Only allow adding subcategories on add mode */}
-              {modalMode !== 'edit' && (
+              {/* {modalMode !== 'edit' && (
                 <>
                   <div className="d-flex justify-content-between align-items-center mb-3">
                     <Form.Label className="mb-0">Subcategories</Form.Label>
@@ -835,7 +839,7 @@ const CategoryListPage = () => {
                     </div>
                   ))}
                 </>
-              )}
+              )} */}
             </Modal.Body>
             <Modal.Footer className="modal-footer-custom">
               <Button variant="outline-secondary" onClick={() => setShowModal(false)}>
@@ -871,12 +875,12 @@ const CategoryListPage = () => {
             <Modal.Body>
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <Form.Label className="mb-0">Subcategories</Form.Label>
-                <Button variant="outline-primary" size="sm" onClick={addSubCategoryField} className="btn-add-sub d-flex align-items-center">
+                {/* <Button variant="outline-primary" size="sm" onClick={addSubCategoryField} className="btn-add-sub d-flex align-items-center">
                   <FaPlus className="me-1" />Add Another
-                </Button>
+                </Button> */}
               </div>
               {formData.subCategories?.map((sub, i) => (
-                <div key={i} className="d-flex align-items-center mb-3">
+                <div key={i + 10} className="d-flex align-items-center mb-3">
                   <Form.Control
                     type="text"
                     placeholder={`Subcategory ${i + 1}`}
@@ -992,7 +996,7 @@ const CategoryListPage = () => {
         </Modal>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .category-table-container {
           background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
           min-height: 100vh;
@@ -1363,6 +1367,22 @@ const CategoryListPage = () => {
           font-size: 3rem;
           color: #bdc3c7;
           margin-bottom: 1rem;
+        }
+
+        .delete-confirmation{
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .delete-icon {
+          font-size: 3rem;
+          margin-bottom: 1rem;
+        }
+          
+        .btn-delete-confirm {
+          display: flex;
+          align-items: center;
         }
 
         /* Loading Spinner */

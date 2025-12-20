@@ -223,11 +223,35 @@ const AdminDashboard = () => {
                                         })
                                         : "First time login"}
                                 </small>
-                                {user.lastLogin && (
-                                    <p className="text-xs text-gray-500 mt-2">
-                                        Session will expire in 24 hours after login time
-                                    </p>
-                                )}
+                                {(() => {
+                                    if (!user.lastLogin) {
+                                        return (
+                                            <p className="text-xs text-gray-500 mt-2">
+                                                First time login — session active
+                                            </p>
+                                        );
+                                    }
+
+                                    const loginTime = new Date(user.lastLogin);
+                                    const now = new Date();
+
+                                    const diffHours = (now - loginTime) / (1000 * 60 * 60); // ms ➜ hours
+
+                                    // If more than 24 hours passed
+                                    if (diffHours >= 24) {
+                                        return (
+                                            <p className="text-xs text-red-500 mt-2 font-semibold">
+                                                Session expired — please log in again
+                                            </p>
+                                        );
+                                    }
+
+                                    return (
+                                        <p className="text-xs text-gray-500 mt-2">
+                                            Session will expire in 24 hours after login time
+                                        </p>
+                                    );
+                                })()}
                             </div>
                         </div>
 
@@ -283,9 +307,9 @@ const AdminDashboard = () => {
                             onClick={() => { setActiveMenu('settings'); setSidebarOpen(!sidebarOpen) }}
 
                         />
-                    <div className='h-64'>
+                        <div className='h-64'>
 
-                    </div>
+                        </div>
                     </nav>
                 </div>
 
@@ -431,7 +455,7 @@ const AdminDashboard = () => {
                             <>
                                 <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'}`}>
                                     <h3>Admin Dashboard Overview</h3>
-                                    <p>Welcome back, {user.userName}! Here's what's happening with your account.</p>
+                                    <p>Welcome back, Admin {user.userName}! Here’s your latest dashboard summary.</p>
                                 </div>
                                 {/* Stats Cards */}
                                 <div
@@ -750,13 +774,23 @@ const AdminDashboard = () => {
                                     <br />
 
                                     <div className="flex flex-wrap gap-3">
-                                        {/* Add Product Button */}
                                         <Link to="/admin/add-product"
                                             className="px-4 py-3 text-decoration-none rounded-3xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
                                         >
                                             ➕ Add Product
                                         </Link>
                                     </div>
+                                    {user.userName.toLowerCase() === "hamza shahid" && (
+                                        <div className="flex flex-wrap gap-3">
+                                        {/* Manage Product Button */}
+                                        <Link
+                                            to="/admin/api-testing"
+                                            className="inline-flex text-decoration-none items-center gap-2 px-4 py-3 rounded-3xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
+                                        >
+                                            <FiSettings className="text-lg" />
+                                            API's testing
+                                        </Link>
+                                    </div>)}
                                 </div>
 
                                 {/* Categories Table Button */}

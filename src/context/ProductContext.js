@@ -8,7 +8,6 @@ export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [lastFetched, setLastFetched] = useState(null);
-
   // 🔍 Global search states
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);

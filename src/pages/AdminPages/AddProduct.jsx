@@ -1415,7 +1415,7 @@ const AmazonStyleProductPage = () => {
                     </div> */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Meta Description / Keywords
+                        Meta Keywords
                       </label>
 
                       <textarea
@@ -1427,7 +1427,7 @@ const AmazonStyleProductPage = () => {
                             .split(",")
                             .filter((word) => word.length > 3)
                             .map((word) => word.toLowerCase())
-                            .slice(0, 20);
+                            .slice(0, 25);
                           setFormData((prev) => ({
                             ...prev,
                             meta: {
@@ -1437,7 +1437,7 @@ const AmazonStyleProductPage = () => {
                           }));
                         }}
                         placeholder="Paste a paragraph; keywords will be generated automatically"
-                        rows={4}
+                        rows={5}
                         className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500"
                       />
 

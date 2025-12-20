@@ -8,13 +8,15 @@ import { getProductBySubCategoryId, getSingleProduct } from '../utils/ProductSer
 import { openCart } from '../components/Cart';
 import { useToast } from '../context/ToastProvider';
 import { AuthContext } from '../components/auth/AuthProvider';
+import { useCart } from '../context/CartContext';
+import { addItemToCart } from '../utils/CartUtils';
 
 const ProductDetails = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
   const { showToast } = useToast();
   const { user } = useContext(AuthContext);
-
+  const { guestId, refreshCart } = useCart();
   const [product, setProduct] = useState(null);
   const [selectedVariation, setSelectedVariation] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
@@ -156,45 +158,70 @@ const ProductDetails = () => {
     return isValid;
   };
 
-  const addToCart = (selectedVariation) => {
+  const addToCart = async (selectedVariation) => {
     if (!validateForm(selectedVariation)) {
       return;
     }
-
-    const cartItems = JSON.parse(localStorage.getItem('cartsItems')) || [];
-
-    const existingItemIndex = cartItems.findIndex(
-      item =>
-        item.variationId === selectedVariation._id &&
-        item.size === selectedSize &&
-        item.color === selectedColor
-    );
-
-    if (existingItemIndex !== -1) {
-      cartItems[existingItemIndex].quantity += quantity;
-      showToast({ type: "info", message: `${product.productName} item already in the cart, Quantity increased` });
-    } else {
-      cartItems.push({
-        id: product._id,
+    try {
+      const itemData = {
+        productId: product._id,
         variationId: selectedVariation._id,
-        name: product.productName,
-        variation: selectedVariation.variationName,
-        color: selectedColor,
-        size: selectedSize,
+        selectedAttributes: {
+          color: selectedVariation.attributes.color,
+          size: selectedVariation.attributes.size
+        },
         quantity,
-        image: selectedVariation.productImages?.[0],
         price: selectedVariation.productPrice.discountedPrice,
-        addedAt: new Date().toISOString()
-      });
+        userId: user?.uid || null,
+      }
+      await addItemToCart(itemData)
+      await refreshCart();
       showToast({ type: "success", message: `${product.productName} added to cart!` });
-    };
-    localStorage.setItem('cartsItems', JSON.stringify(cartItems));
+      openCart();
+    } catch (error) {
+      showToast({ type: "warning", message: `${product.productName} is already in cart!` });
+      console.error("Add to cart error:", error);
+    }
+  }
 
-    window.dispatchEvent(new Event("cartUpdated"));
+  // const addToCart = (selectedVariation) => {
+  //   if (!validateForm(selectedVariation)) {
+  //     return;
+  //   }
 
-    openCart();
-  };
+  //   const cartItems = JSON.parse(localStorage.getItem('cartsItems')) || [];
 
+  //   const existingItemIndex = cartItems.findIndex(
+  //     item =>
+  //       item.variationId === selectedVariation._id &&
+  //       item.size === selectedSize &&
+  //       item.color === selectedColor
+  //   );
+
+  //   if (existingItemIndex !== -1) {
+  //     cartItems[existingItemIndex].quantity += quantity;
+  //     showToast({ type: "info", message: `${product.productName} item already in the cart, Quantity increased` });
+  //   } else {
+  //     cartItems.push({
+  //       id: product._id,
+  //       variationId: selectedVariation._id,
+  //       name: product.productName,
+  //       variation: selectedVariation.variationName,
+  //       color: selectedColor,
+  //       size: selectedSize,
+  //       quantity,
+  //       image: selectedVariation.productImages?.[0],
+  //       price: selectedVariation.productPrice.discountedPrice,
+  //       addedAt: new Date().toISOString()
+  //     });
+  //     showToast({ type: "success", message: `${product.productName} added to cart!` });
+  //   };
+  //   localStorage.setItem('cartsItems', JSON.stringify(cartItems));
+
+  //   window.dispatchEvent(new Event("cartUpdated"));
+
+  //   openCart();
+  // };
 
   const directCheckout = () => {
     addToCart(selectedVariation);
@@ -222,7 +249,7 @@ const ProductDetails = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh]">
+      <div className="flex justify-center items-center h-[90vh]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
         <span className="ml-3 text-gray-600">Loading product detail...</span>
       </div>
@@ -600,7 +627,6 @@ const ProductDetails = () => {
                   <Link
                     style={{ textDecoration: 'none', color: 'inherit' }}
                     to={`/products-details/${product._id}`}
-                    target='blank'
                   >
                     <div className="related-product-image" >
                       <img

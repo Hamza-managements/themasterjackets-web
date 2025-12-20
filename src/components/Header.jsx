@@ -4,15 +4,16 @@ import { openCart } from './Cart';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from './auth/AuthProvider';
 import { fetchCategoriesAll } from '../utils/CartUtils';
-import Aos from 'aos';
 import { useProducts } from '../context/ProductContext';
+import Aos from 'aos';
+import { useCart } from '../context/CartContext';
 
 export default function Header() {
   const { user, logout } = useContext(AuthContext);
+  const { cartItems } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSubmenu, setActiveSubmenu] = useState(null);
   const [categories, setCategories] = useState([]);
-  const [cartItems, setCartItems] = useState([]);
   const navRef = useRef();
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(prev => !prev);
@@ -41,18 +42,6 @@ export default function Header() {
     };
 
     fetchCategories();
-
-    const loadCart = () => {
-      const storedCart = JSON.parse(localStorage.getItem("cartsItems")) || [];
-      setCartItems(storedCart);
-    };
-
-    loadCart();
-
-    const handleCartUpdate = () => loadCart();
-    window.addEventListener("cartUpdated", handleCartUpdate);
-
-    return () => window.removeEventListener("cartUpdated", handleCartUpdate);
   }, []);
 
   const [input, setInput] = useState("");
@@ -109,7 +98,7 @@ export default function Header() {
             <div className={`${isMobileMenuOpen ? '' : 'mobile-header-content'}`}>
               <Link onClick={() => openCart()} className={`fs-cart-link-mobile ${isMobileMenuOpen ? '' : ''}`}>
                 <i className="fas fa-shopping-bag"></i>
-                <span className="fs-cart-count">{cartItems.length}</span>
+                <span className="fs-cart-count">{cartItems?.items?.length}</span>
               </Link>
               <button className="fs-mobile-menu-btn" onClick={toggleMobileMenu}>
                 <i className={`fas ${isMobileMenuOpen ? '' : 'fa-bars'}`}></i>
@@ -224,19 +213,38 @@ export default function Header() {
                 <div className="fs-dropdown-menu-user">
                   {user ? (
                     <>
-                      <Link
-                        to={user?.role === "admin" ? "/admin/dashboard" : "/dashboard"}
-                        className="fs-dropdown-link"
-                      >
-                        <i className="fas fa-user-circle"></i>{" "}
-                        {user?.role === "admin" ? "Admin Dashboard" : "My Account"}
-                      </Link>
-                      <Link target="_blank" to="/orders" className="fs-dropdown-link">
-                        <i className="fas fa-box-open"></i> My Orders
-                      </Link>
-                      <Link target="_blank" to="/wishlist" className="fs-dropdown-link">
-                        <i className="fas fa-heart"></i> Wishlist
-                      </Link>
+                      {
+                        user.role === "admin" ? (
+                          <>
+                            <Link
+                              to="/admin/dashboard"
+                              className="fs-dropdown-link-admin"
+                            >
+                              <i className="fas fa-user-circle"></i>{" "} Admin Panel
+                            </Link>
+                            <Link
+                              to="/admin/manage-all-products"
+                              className="fs-dropdown-link-admin"
+                            >
+                              <i className="fas fa-tools"></i> Manage Products
+                            </Link>
+                          </>
+                        ) : (
+                          <>
+                            <Link
+                              to="/dashboard"
+                              className="fs-dropdown-link"
+                            >
+                              <i className="fas fa-user-circle"></i> My Account
+                            </Link>
+                            <Link target="_blank" to="/orders" className="fs-dropdown-link">
+                              <i className="fas fa-box-open"></i> My Orders
+                            </Link>
+                            <Link target="_blank" to="/wishlist" className="fs-dropdown-link">
+                              <i className="fas fa-heart"></i> Wishlist
+                            </Link>
+                          </>
+                        )}
                       <button
                         onClick={logout}
                         className="fs-dropdown-link logout-header"
@@ -260,7 +268,7 @@ export default function Header() {
               {/* Cart */}
               <Link onClick={() => openCart()} className={`${isMobileMenuOpen ? 'd-none' : 'fs-cart-link'}`}>
                 <i className="fas fa-shopping-bag"></i>
-                <span className="fs-cart-count">{cartItems.length}</span>
+                <span className="fs-cart-count">{cartItems?.items?.length}</span>
               </Link>
             </div>
           </div>

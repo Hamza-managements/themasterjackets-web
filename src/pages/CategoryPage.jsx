@@ -77,7 +77,7 @@ const CategoryPage = () => {
               <p className="main-category-subtitle mb-3">{cat.description ||"Discover premium designs crafted for style, durability, and timeless character"}</p>
             </div>
           </div>
-          <hr class="border border-dark border-1 w-100 mx-auto" />
+          <hr className="border border-dark border-1 w-100 mx-auto" />
 
           {/* Subcategory Navigation */}
           {/* <div className="subcategory-nav" data-aos="fade-up">

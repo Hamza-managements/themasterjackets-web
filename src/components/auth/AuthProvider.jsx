@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../../context/CartContext';
 
 export const AuthContext = createContext();
 
@@ -20,7 +21,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = (userData, rememberMe) => {
-    console.log('Logging in user:', userData, 'Remember Me:', rememberMe);
     setUser(userData);
     if (rememberMe) {
       localStorage.setItem('user', JSON.stringify(userData));

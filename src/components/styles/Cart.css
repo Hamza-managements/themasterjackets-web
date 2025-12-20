@@ -154,6 +154,10 @@
             right: 0;
         }
 
+        .right-align {
+            text-align: right;
+        }
+
         /* RESPONSIVE TWEAKS */
         @media (max-width: 1024px) {
             .product-slider {
@@ -200,9 +204,9 @@
             .cart-product-price {
                 font-size: 13px;
             }
-        
+
             .product-img {
                 height: 220px;
             }
-            
+
         }

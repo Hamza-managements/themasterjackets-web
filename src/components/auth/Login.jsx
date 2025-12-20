@@ -47,7 +47,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (!validate()) return setErrors(prev => ({ ...prev, form: 'Please fix the errors before submitting.' }));
 
     setIsSubmitting(true);
 

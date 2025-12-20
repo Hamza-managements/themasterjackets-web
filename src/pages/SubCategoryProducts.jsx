@@ -797,7 +797,7 @@ const SubCategoryProductPage = () => {
 
 .filter-header h2 {
     font-size: 20px;
-    font-weight: 300;
+    font-weight: 400;
     color: #0d0d0dff;
     margin: 0;
 }
@@ -864,7 +864,7 @@ const SubCategoryProductPage = () => {
 }
 
 .section-header svg {
-    color: #9ca3af;
+    color:  #374151;
     transition: transform 0.2s ease;
 }
 
@@ -1323,6 +1323,10 @@ const SubCategoryProductPage = () => {
     .product-filters {
         width: 100%;
         max-width: none;
+    }
+
+    .section-header{
+        border-bottom: 2px solid #b72d2d8a;
     }
 }
 

@@ -1,18 +1,84 @@
 import axios from 'axios';
-
-export function getCartItems() {
-  return JSON.parse(localStorage.getItem('cartsItems')) || [];
-}
-
-export function updateCartCount(setCount) {
-  const items = getCartItems();
-  setCount(items.length);
-}
 //////////////////////////// Category fetching with token handling ////////////////////////////
 const api = axios.create({
   baseURL: 'https://themasterjacketsbackend-production.up.railway.app',
 });
 
+// Cart APIs ////////////////////////////
+export async function getGuestId() {
+  try {
+    const response = await api.get("/api/cart/is-viewed", {
+      withCredentials: true
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Cart items:", error);
+    throw error;
+  }
+}
+
+export async function getCartItems(uid, isGuest = false) {
+  try {
+    const response = await api.get(`/api/cart/user-cart/${uid}`, {
+      withCredentials: isGuest
+    });
+
+    return response.data.data;
+  } catch (error) {
+    console.error("Error fetching Cart items:", error);
+    throw error;
+  }
+}
+
+export async function addItemToCart(itemData) {
+  try {
+    const response = await api.post("/api/cart/add-item", itemData, {
+      withCredentials: true
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error adding Cart items:", error);
+    throw error;
+  }
+}
+
+export async function removeCartItem(cartId, itemId) {
+  try {
+    const response = await api.post(
+      "/api/cart/remove-item",
+      { cartId, itemId },
+      { withCredentials: true }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error removing Cart items:", error);
+    throw error;
+  }
+}
+
+export async function updateCartItemQuantity(updateData) {
+  try {
+    const response = await api.post(`/api/cart/update-item-quantity`, updateData, {
+      withCredentials: true
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating item quantity:", error);
+    throw error;
+  }
+}
+
+export async function deleteAllCartItems(cartId) {
+  try {
+    await api.delete(`/api/cart/delete/${cartId}`);
+    return true;
+  } catch (error) {
+    console.error("Error deleting all cart items:", error);
+    throw error;
+  }
+}
+
+// User APIs ////////////////////////////
 export async function fetchAllUsers() {
   try {
     api.interceptors.request.use((config) => {
@@ -101,7 +167,7 @@ export const updateCategory = async (updatedData) => {
 
 export const updateSingleSubcategory = async (updatedData) => {
   try {
-    await api.put(`/api/category/add/sub-category/68762589a469c496106e01d4`, updatedData);
+    await api.post(`/api/category/update/sub-category/68762589a469c496106e01d4`, updatedData);
   } catch (err) {
     console.error("Error updating Single Subcategory:", err);
   }
@@ -119,7 +185,7 @@ export const deleteCategory = async (currentCategory) => {
 
 export const addSubCategory = async (data) => {
   try {
-    await api.put(`/api/category/add/sub-category/68762589a469c496106e01d4`, data);
+    await api.post(`/api/category/add/sub-category/68762589a469c496106e01d4`, data);
   } catch (err) {
     console.error("Error adding Subcategory:", err);
   }

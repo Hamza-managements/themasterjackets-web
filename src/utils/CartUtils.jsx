@@ -5,39 +5,64 @@ const api = axios.create({
 });
 
 // Cart APIs ////////////////////////////
-export async function getGuestId() {
+export async function getGuestId(storedGuestId) {
   try {
     const response = await api.get("/api/cart/is-viewed", {
-      withCredentials: true
+      headers: {
+        "guest-id": storedGuestId,
+      },
     });
     return response.data;
   } catch (error) {
-    console.error("Error fetching Cart items:", error);
     throw error;
   }
 }
 
-export async function getCartItems(uid, isGuest = false) {
+export async function getCartItems(uid, isGuest) {
   try {
-    const response = await api.get(`/api/cart/user-cart/${uid}`, {
-      withCredentials: isGuest
-    });
-
-    return response.data.data;
+    const response = await api.get(
+      `/api/cart/user-cart/${uid}`,
+      isGuest
+        ? {
+          headers: {
+            "guest-id": uid
+          }
+        } : {}
+    );
+    return response.data.data || [];
   } catch (error) {
-    console.error("Error fetching Cart items:", error);
-    throw error;
+    console.error(
+      "❌ Cart fetch error:",
+      error?.response?.data?.message || error.message
+    );
+    return [];
   }
 }
 
-export async function addItemToCart(itemData) {
+
+export async function addItemToCart(itemData, isGuest, guestId) {
+  console.log("🛒 ADD ITEM", { itemData, isGuest, guestId });
+
   try {
-    const response = await api.post("/api/cart/add-item", itemData, {
-      withCredentials: true
-    });
+    const response = await api.post(
+      "/api/cart/add-item",
+      itemData,
+      isGuest
+        ? {
+          headers: {
+            "guest-id": guestId
+          }
+        }
+        : {}
+    );
+    console.log("product added successfully => ", response.data);
+    
     return response.data;
   } catch (error) {
-    console.error("Error adding Cart items:", error);
+    console.error(
+      "❌ Error adding cart item:",
+      error?.response?.data?.message || error.message
+    );
     throw error;
   }
 }
@@ -47,7 +72,6 @@ export async function removeCartItem(cartId, itemId) {
     const response = await api.post(
       "/api/cart/remove-item",
       { cartId, itemId },
-      { withCredentials: true }
     );
     return response.data;
   } catch (error) {

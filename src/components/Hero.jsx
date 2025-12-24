@@ -22,7 +22,7 @@ const Hero = () => {
       tablet: "https://res.cloudinary.com/dekf5dyng/image/upload/f_auto,q_auto/v1764147086/WINTER_1200X1000_v9futh.jpg",
       mobile: "https://res.cloudinary.com/dekf5dyng/image/upload/f_auto,q_auto/v1764147086/WINTER_BANNER_MOBILE_800X1200_ysqn7b.jpg",
       smallMobile: "https://res.cloudinary.com/dekf5dyng/image/upload/f_auto,q_auto/w_400/v1764147086/WINTER_BANNER_MOBILE_800X1200_ysqn7b.jpg",
-      link: "/category/new-in",
+      link: "/products/new-in/new-arrivals",
     },
   ];
 

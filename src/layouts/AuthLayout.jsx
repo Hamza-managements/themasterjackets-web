@@ -1,7 +1,14 @@
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, Navigate } from 'react-router-dom';
 import './AuthLayout.css';
+import { AuthContext } from '../components/auth/AuthProvider';
+import { useContext } from 'react';
 
 const AuthLayout = () => {
+  const { user } = useContext(AuthContext);
+  if (user) {
+    return <Navigate to="/" replace />;
+  }
+
   return (
     <div className="auth-page">
       <div className="auth-container">

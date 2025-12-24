@@ -16,7 +16,7 @@ const ProductDetails = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const { user } = useContext(AuthContext);
-  const { guestId, refreshCart } = useCart();
+  const { guestId, isGuest, refreshCart } = useCart();
   const [product, setProduct] = useState(null);
   const [selectedVariation, setSelectedVariation] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
@@ -174,13 +174,13 @@ const ProductDetails = () => {
         price: selectedVariation.productPrice.discountedPrice,
         userId: user?.uid || null,
       }
-      await addItemToCart(itemData)
+      await addItemToCart(itemData, isGuest, guestId);
       await refreshCart();
       showToast({ type: "success", message: `${product.productName} added to cart!` });
       openCart();
     } catch (error) {
-      showToast({ type: "warning", message: `${product.productName} is already in cart!` });
-      console.error("Add to cart error:", error);
+      showToast({ type: "warning", message: error?.response?.data?.message || "Error adding to cart!" });
+      console.error("Add to cart error:", error?.response?.data?.message || error?.message);
     }
   }
 

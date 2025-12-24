@@ -31,6 +31,7 @@
     "styled-jsx": "^5.1.7",
     "sweetalert2": "^11.22.2",
     "swiper": "^11.2.10",
+    "uuid": "^13.0.0",
     "web-vitals": "^2.1.4",
     "zxcvbn": "^4.4.2"
   },

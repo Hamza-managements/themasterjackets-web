@@ -7,85 +7,86 @@ import {
     deleteAllCartItems,
     updateCartItemQuantity
 } from "../utils/CartUtils";
+import { v4 as uuidv4 } from "uuid";
 import { AuthContext } from "../components/auth/AuthProvider";
 
 const CartContext = createContext(null);
 
+const GUEST_ID_KEY = "tmj_guest_id";
+
 export const CartProvider = ({ children }) => {
     const { user } = useContext(AuthContext);
 
-    const userId = user?.uid || null;
+    const userId = user?.uid ?? null;
+    const isGuest = !userId;
+
     const [guestId, setGuestId] = useState(null);
     const [cartItems, setCartItems] = useState([]);
-    console.log("Cart Items in Context:", cartItems);
     const [loading, setLoading] = useState(false);
 
-    const cartOwnerId = userId ?? guestId;
-    const isGuest = !user?.uid;
+    const cartOwnerId = userId || guestId;
 
-    // ✅ Fetch guest ID ONLY if not logged in
+    /* ─────────── GUEST ID RESOLUTION (ONCE) ─────────── */
     useEffect(() => {
-        if (!userId && !guestId) {
-            getGuestId()
-                .then(res => setGuestId(res?.guestId || res))
-                .catch(err => console.error("Guest ID error:", err));
+        if (userId) {
+            // User logged in → guest no longer active
+            setGuestId(null);
+            return;
         }
 
-        if (userId) {
-            setGuestId(null);
+        let storedGuestId = localStorage.getItem(GUEST_ID_KEY);
+
+        if (!storedGuestId) {
+            storedGuestId = uuidv4();
+            localStorage.setItem(GUEST_ID_KEY, storedGuestId);
+
+            // Optional: tell backend a guest exists
+            getGuestId(storedGuestId).catch(err =>
+                console.error("Guest init failed:", err)
+            );
         }
+
+        setGuestId(storedGuestId);
     }, [userId]);
 
-    // ✅ Load cart when owner changes
+    /* ─────────── FETCH CART WHEN ID READY ─────────── */
     useEffect(() => {
         if (!cartOwnerId) return;
 
-        setLoading(true);
-        getCartItems(cartOwnerId)
-            .then(res => setCartItems(res || []))
-            .catch(err => console.error("Cart fetch error:", err))
-            .finally(() => setLoading(false));
+        const fetchCart = async () => {
+            setLoading(true);
+            try {
+                const res = await getCartItems(cartOwnerId, isGuest);
+                setCartItems(res || []);
+            } catch (err) {
+                console.error("Cart fetch failed:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCart();
     }, [cartOwnerId]);
 
-    // ───────────────── ACTIONS ─────────────────
-    useEffect(() => {
-        console.log("🔐 AUTH CHANGED");
-        console.log("user:", user?.uid || null);
-        console.log("guestId:", guestId);
-        console.log("👉 SENDING ID:", cartOwnerId);
-    }, [user, guestId]);
-
+    /* ─────────── CART ACTIONS ─────────── */
     const refreshCart = async () => {
         if (!cartOwnerId) return;
-
-        console.log("🛒 FETCH CART");
-        console.log("👉 user:", user?.uid || null);
-        console.log("👉 guestId:", guestId);
-        console.log("👉 SENDING ID:", cartOwnerId);
-
         const res = await getCartItems(cartOwnerId, isGuest);
-        console.log("⬅️ CART RESPONSE:", res);
-
         setCartItems(res || []);
     };
 
-    // const refreshCart = async () => {
-    //     if (!cartOwnerId) return;
-    //     const res = await getCartItems(cartOwnerId, isGuest);
-    //     setCartItems(res || []);
-    // };
-
     const handleRemoveCartItem = async (cartId, itemId) => {
-        await removeCartItem(cartId, itemId);
+        await removeCartItem(cartId, itemId, guestId);
         await refreshCart();
     };
 
     const handleDeleteAllCartItems = async (cartId) => {
-        await deleteAllCartItems(cartId);
+        await deleteAllCartItems(cartId, guestId);
+        setCartItems([]);
     };
 
     const handleQuantityChange = async (updateData) => {
-        await updateCartItemQuantity(updateData);
+        await updateCartItemQuantity(updateData, guestId);
         await refreshCart();
     };
 
@@ -97,6 +98,7 @@ export const CartProvider = ({ children }) => {
                 cartOwnerId,
                 userId,
                 guestId,
+                isGuest,
                 loading,
                 refreshCart,
                 handleRemoveCartItem,

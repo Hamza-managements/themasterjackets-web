@@ -100,12 +100,12 @@ export default function CartSidebar() {
           ) : (
             cartItems?.items?.map((product) => (
               <div
-                key={product.variationId}
+                key={product?.variationId}
                 className="d-flex align-items-start mb-3 border-bottom pb-3"
               >
                 <img
-                  src={product.productId.productImages[0]}
-                  alt={product.productId.productName}
+                  src={product?.productId?.productImages[0]}
+                  alt={product?.productId?.productName}
                   className="img-fluid rounded"
                   style={{
                     width: "90px",
@@ -116,7 +116,7 @@ export default function CartSidebar() {
                 <div className="flex-grow-1 ms-3">
                   <div className="d-flex justify-content-between">
                     <div>
-                      <strong>{product.productId.productName}</strong>
+                      <strong>{product?.productId?.productName}</strong>
                       <div className="text-muted small">
                         Size: {product?.selectedAttributes?.size}, Color: {product?.selectedAttributes?.color.toLowerCase()}
                       </div>

@@ -154,6 +154,12 @@ const AllProductManagementPage = () => {
       <span className="status-badge inactive">Inactive</span>
     );
 
+  const getVariationInventoryStatus = (index, quantity) => {
+    if (quantity === 0) return <span className="inventory-status out-of-stock">Out of Stock</span>;
+    if (quantity < 10) return <span className="inventory-status low-stock">Low Stock</span>;
+    return <span className="inventory-status in-stock">In Stock</span>;
+  };
+
   const getInventoryStatus = (quantity) => {
     if (quantity === 0) return <span className="inventory-status out-of-stock">Out of Stock</span>;
     if (quantity < 10) return <span className="inventory-status low-stock">Low Stock</span>;
@@ -226,6 +232,8 @@ const AllProductManagementPage = () => {
                         <span className="variation-details">
                           {variation?.attributes.size}  | $
                           {variation?.productPrice.originalPrice}
+                          <br />
+                          {getInventoryStatus(product.variations?.[0]?.stockQuantity || 0)}
                         </span>
                       </div>
                       <div className="variation-actions">

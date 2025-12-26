@@ -56,7 +56,7 @@ export async function addItemToCart(itemData, isGuest, guestId) {
         : {}
     );
     console.log("product added successfully => ", response.data);
-    
+
     return response.data;
   } catch (error) {
     console.error(
@@ -80,11 +80,16 @@ export async function removeCartItem(cartId, itemId) {
   }
 }
 
-export async function updateCartItemQuantity(updateData) {
+export async function updateCartItemQuantity(updateData, isGuest, guestId) {
   try {
-    const response = await api.post(`/api/cart/update-item-quantity`, updateData, {
-      withCredentials: true
-    });
+    const response = await api.post(`/api/cart/update-item-quantity`, updateData,
+      isGuest
+        ? {
+          headers: {
+            "guest-id": guestId
+          }
+        }
+        : {});
     return response.data;
   } catch (error) {
     console.error("Error updating item quantity:", error);

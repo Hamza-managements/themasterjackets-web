@@ -25,24 +25,18 @@ export default function Header() {
       once: true,
       easing: 'ease-out-cubic'
     });
-    const fetchCategories = async () => {
-      const cached = localStorage.getItem("categories");
-      if (cached) {
-        setCategories(JSON.parse(cached));
-        return;
-      }
-
-      try {
-        const data = await fetchCategoriesAll();
-        setCategories(data);
-        localStorage.setItem("categories", JSON.stringify(data));
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
 
     fetchCategories();
   }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const data = await fetchCategoriesAll();
+      setCategories(data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
 
   const [input, setInput] = useState("");
   const { handleGlobalSearch } = useProducts();

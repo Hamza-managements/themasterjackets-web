@@ -443,19 +443,36 @@ const ProductDetails = () => {
                   <div className="size-variant-selector">
                     <span className="variant-title">Size:</span>
                     <div className="variant-options">
-                      {[...new Set(
-                        product.variations
-                          .filter(v => v.attributes.color === selectedVariation.attributes.color)
-                          .map(v => v.attributes.size)
-                      )].map(size => (
-                        <div
-                          key={size}
-                          className={`variant-option ${selectedSize === size ? 'selected' : ''}`}
-                          onClick={() => handleSizeSelect(size)}
-                        >
-                          {size}
-                        </div>
-                      ))}
+                      {[
+                        ...new Set(
+                          product.variations
+                            .filter(v => v.attributes.color === selectedVariation.attributes.color)
+                            .map(v => v.attributes.size)
+                        )
+                      ].map(size => {
+                        const matchingVariation = product.variations.find(
+                          v =>
+                            v.attributes.color === selectedVariation.attributes.color &&
+                            v.attributes.size === size
+                        );
+
+                        const isOutOfStock = !matchingVariation || matchingVariation.stockQuantity === 0;
+                        
+                        return (
+                          <div
+                            key={size}
+                            className={`variant-option 
+                            ${selectedSize === size ? "selected" : ""}
+                            ${isOutOfStock ? "disabled" : ""}
+                            `}
+                            onClick={() => {
+                              if (!isOutOfStock) handleSizeSelect(size);
+                            }}
+                          >
+                            {size}
+                          </div>
+                        );
+                      })}
                     </div>
                     <br />
                     <SizeChartOverlay />

@@ -86,7 +86,7 @@ export const CartProvider = ({ children }) => {
     };
 
     const handleQuantityChange = async (updateData) => {
-        await updateCartItemQuantity(updateData, guestId);
+        await updateCartItemQuantity(updateData, isGuest, guestId);
         await refreshCart();
     };
 

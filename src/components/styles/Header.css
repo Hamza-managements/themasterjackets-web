@@ -206,8 +206,8 @@
     position: absolute;
     top: -8px;
     right: -8px;
-    background: var(--gray);
-    color: var(--light-red);
+    background: var(--red);
+    color: var(--light);
     border-radius: 50%;
     width: 18px;
     height: 18px;

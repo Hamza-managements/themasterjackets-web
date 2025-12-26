@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './styles/Checkout.css';
 import zipToStateMap from '../data/fullZipData';
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/material.css";
 
 const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
     const [formData, setFormData] = useState({
@@ -29,8 +31,8 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
 
     // New state for Shopify features
     const [shippingMethod, setShippingMethod] = useState("standard");
-    const [isGuestCheckout, setIsGuestCheckout] = useState(true);
-    const [checkoutStep, setCheckoutStep] = useState('information'); // 'information', 'shipping', 'payment'
+    // const [isGuestCheckout, setIsGuestCheckout] = useState(true); // below is the input that is commented out
+    const [checkoutStep, setCheckoutStep] = useState('information');
     const [showOrderSummary, setShowOrderSummary] = useState(false);
 
     // Express checkout handlers
@@ -227,12 +229,6 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                         <h3>Express checkout</h3>
                         <div className="express-buttons">
                             <button
-                                className="express-btn shop-pay"
-                                onClick={() => handleExpressCheckout('shop-pay')}
-                            >
-                                Shop Pay
-                            </button>
-                            <button
                                 className="express-btn paypal"
                                 onClick={() => handleExpressCheckout('paypal')}
                             >
@@ -243,12 +239,6 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                 onClick={() => handleExpressCheckout('google-pay')}
                             >
                                 Google Pay
-                            </button>
-                            <button
-                                className="express-btn apple-pay"
-                                onClick={() => handleExpressCheckout('apple-pay')}
-                            >
-                                Apple Pay
                             </button>
                         </div>
 
@@ -278,7 +268,7 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                             </div>
 
                             {/* Guest checkout option */}
-                            <div className="guest-checkout-option">
+                            {/* <div className="guest-checkout-option">
                                 <label>
                                     <input
                                         type="checkbox"
@@ -290,12 +280,25 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                 <p className="note">
                                     You'll be able to create an account after checkout if you'd like.
                                 </p>
-                            </div>
+                            </div> */}
                         </section>
 
                         {/* Shipping address */}
                         <section className="form-section">
                             <h3>Shipping address</h3>
+                            <div className="form-group">
+                                <select
+                                    id="country"
+                                    name="country"
+                                    value={formData.country}
+                                    onChange={handleChange}
+                                    className={errors.country ? 'error' : ''}
+                                >
+                                    <option value="" disabled selected>Country/Region</option>
+                                    <option value="US">United States</option>
+                                    {/* ... other countries */}
+                                </select>
+                            </div>
                             <div className="form-row">
                                 <div className="form-group">
                                     <input
@@ -357,9 +360,6 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                         className={errors.zipCode ? 'error' : ''}
                                     />
                                 </div>
-                            </div>
-
-                            <div className="form-row">
                                 <div className="form-group">
                                     <select
                                         id="state"
@@ -420,30 +420,26 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                         <option value="WY">Wyoming</option>
                                     </select>
                                 </div>
-                                <div className="form-group">
-                                    <select
-                                        id="country"
-                                        name="country"
-                                        value={formData.country}
-                                        onChange={handleChange}
-                                        className={errors.country ? 'error' : ''}
-                                    >
-                                        <option value="" disabled selected>Country/Region</option>
-                                        <option value="US">United States</option>
-                                        {/* ... other countries */}
-                                    </select>
-                                </div>
                             </div>
 
-                            <div className="form-group">
-                                <input
-                                    type="tel"
-                                    id="phone"
-                                    name="phone"
+                            <div className="phone-input-wrapper">
+                                <PhoneInput
+                                    country={"us"}
                                     value={formData.phone}
-                                    onChange={handleChange}
-                                    placeholder="Phone (optional)"
+                                    onChange={(phone) => setFormData(prev => ({ ...prev, phone }))}
+                                    inputProps={{
+                                        name: "phone",
+                                        id: "phone"
+                                    }}
+                                    enableSearch
+                                    countryCodeEditable={false}
                                 />
+                                <span className="phone-tooltip">
+                                    ?
+                                    <span className="tooltip-text">
+                                        In case we need to contact you about your order
+                                    </span>
+                                </span>
                             </div>
                         </section>
 
@@ -571,6 +567,23 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                             />
                                             <span>PayPal</span>
                                         </label>
+
+                                        {formData.paymentMethod === "paypal" && (
+                                            <div className="payment-info paypal-info">
+                                                <div className="paypal-icon">
+                                                    <img
+                                                        src="https://www.svgrepo.com/show/349473/paypal.svg"
+                                                        alt="PayPal"
+                                                        loading="lazy"
+                                                    />
+                                                </div>
+
+                                                <p className="payment-note">
+                                                    After clicking <strong>“Pay with PayPal”</strong>, you will be redirected
+                                                    to PayPal to complete your purchase securely.
+                                                </p>
+                                            </div>
+                                        )}
                                     </div>
 
                                 </>
@@ -586,7 +599,7 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                         {/* Terms and submit */}
                         <div className="form-section">
                             <div className="terms-acceptance">
-                                <label>
+                                <label className='d-flex align-items-center'>
                                     <input
                                         type="checkbox"
                                         name="termsAccepted"
@@ -604,13 +617,27 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                 )}
                             </div>
 
-                            <button
-                                type="submit"
-                                className="submit-order-btn"
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting ? 'Processing...' : `Pay $${(totalPrice * 1.1).toFixed(2)}`}
-                            </button>
+                            {formData.paymentMethod === "paypal" ? (
+                                <button
+                                    type="submit"
+                                    className="paypal-submit-order-btn"
+                                    disabled={isSubmitting}
+                                >
+                                    <img
+                                        src="https://www.svgrepo.com/show/349473/paypal.svg"
+                                        alt="PayPal"
+                                    />
+                                    {isSubmitting ? "Processing..." : "Pay with PayPal"}
+                                </button>
+                            ) : (
+                                <button
+                                    type="submit"
+                                    className="submit-order-btn"
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting ? 'Processing...' : `Pay $${(totalPrice * 1.1).toFixed(2)}`}
+                                </button>
+                            )}
 
                             <p className="secure-notice">
                                 <svg viewBox="0 0 24 24" width="16" height="16">
@@ -621,20 +648,20 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                         </div>
                     </form>
 
-                    {/* Footer links */}
-                    <footer className="checkout-footer">
-                        <Link to="/returns">Return policy</Link>
-                        <Link to="/privacy">Privacy policy</Link>
-                        <Link to="/terms">Terms of service</Link>
-                        <div className="copyright">
-                            © {new Date().getFullYear()} The Master Jackets. All rights reserved.
-                        </div>
-                    </footer>
                 </div>
 
                 {/* Order summary sidebar */}
                 <OrderSummary />
             </div>
+            {/* Footer links */}
+            <footer className="checkout-footer">
+                <Link to="/return-exchange">Return policy</Link>
+                <Link to="/privacy">Privacy policy</Link>
+                <Link to="/terms">Terms of service</Link>
+                <div className="copyright">
+                    © {new Date().getFullYear()} The Master Jackets. All rights reserved.
+                </div>
+            </footer>
         </div>
     );
 };

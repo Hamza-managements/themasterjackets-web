@@ -227,7 +227,7 @@ export default function CartSidebar() {
                 borderRadius: 0,
               }}
             >
-              <i className="fa fa-credit-card me-2"></i> Pay with Stripe
+              <i className="fa fa-credit-card me-2"></i> Pay with PayPal
             </button>
 
             <div className="text-center d-flex justify-content-center mt-3">

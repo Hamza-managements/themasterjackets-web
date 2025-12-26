@@ -92,7 +92,9 @@ export default function Header() {
             <div className={`${isMobileMenuOpen ? '' : 'mobile-header-content'}`}>
               <Link onClick={() => openCart()} className={`fs-cart-link-mobile ${isMobileMenuOpen ? '' : ''}`}>
                 <i className="fas fa-shopping-bag"></i>
-                <span className="fs-cart-count">{cartItems?.items?.length}</span>
+                {cartItems?.items?.length > 0 &&
+                  <span className="fs-cart-count">{cartItems?.items?.length}</span>
+                }
               </Link>
               <button className="fs-mobile-menu-btn" onClick={toggleMobileMenu}>
                 <i className={`fas ${isMobileMenuOpen ? '' : 'fa-bars'}`}></i>
@@ -262,7 +264,9 @@ export default function Header() {
               {/* Cart */}
               <Link onClick={() => openCart()} className={`${isMobileMenuOpen ? 'd-none' : 'fs-cart-link'}`}>
                 <i className="fas fa-shopping-bag"></i>
-                <span className="fs-cart-count">{cartItems?.items?.length}</span>
+                {cartItems?.items?.length > 0 &&
+                  <span className="fs-cart-count">{cartItems?.items?.length}</span>
+                }
               </Link>
             </div>
           </div>

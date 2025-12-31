@@ -496,15 +496,19 @@
   display: flex;
   gap: 12px;
   margin-bottom: 16px;
-  padding-bottom: 16px;
   border-bottom: 1px solid #f3f4f6;
 }
 
+.item-image {
+  position: relative;
+}
+
 .item-image img {
+  position: relative;
   width: 64px;
   height: 64px;
   border-radius: 4px;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .item-quantity {

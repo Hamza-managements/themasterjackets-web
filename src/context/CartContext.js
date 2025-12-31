@@ -8,7 +8,7 @@ import {
     updateCartItemQuantity
 } from "../utils/CartUtils";
 import { v4 as uuidv4 } from "uuid";
-import { AuthContext } from "../components/auth/AuthProvider";
+import { AuthContext } from "./AuthContext";
 
 const CartContext = createContext(null);
 

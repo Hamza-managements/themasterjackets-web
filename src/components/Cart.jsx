@@ -4,7 +4,7 @@ import { ToastContainer, toast } from 'react-toastify'
 import { useCart } from "../context/CartContext";
 import Swal from 'sweetalert2';
 import "./styles/Cart.css";
-import { AuthContext } from "./auth/AuthProvider";
+import { AuthContext } from "../context/AuthContext";
 
 export default function CartSidebar() {
   const navigate = useNavigate();

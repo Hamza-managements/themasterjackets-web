@@ -1,6 +1,6 @@
 import { Outlet, Link, Navigate } from 'react-router-dom';
 import './AuthLayout.css';
-import { AuthContext } from '../components/auth/AuthProvider';
+import { AuthContext } from '../context/AuthContext';
 import { useContext } from 'react';
 
 const AuthLayout = () => {

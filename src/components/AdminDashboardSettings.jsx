@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { AuthContext } from "./auth/AuthProvider";
+import { AuthContext } from "../context/AuthContext";
 
 const AdminSettings = ({darkMode}) => {
     const { user } = useContext(AuthContext);

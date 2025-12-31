@@ -899,9 +899,9 @@ const SubCategoryProductPage = () => {
 }
 
 .checkmark, .radiomark {
-    width: 18px;
-    height: 18px;
-    border: 2px solid #d1d5db;
+    width: 16px;
+    height: 16px;
+    border: 1px solid #878787ff;
     border-radius: 4px;
     display: flex;
     align-items: center;

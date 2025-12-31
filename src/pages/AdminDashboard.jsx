@@ -9,7 +9,7 @@ import { Bar, Line, Pie } from 'react-chartjs-2';
 import { FiHome, FiUsers, FiSettings, FiShoppingCart, FiMail, FiBell, FiMenu, FiSun, FiMoon } from 'react-icons/fi';
 import { RiRefund2Fill } from "react-icons/ri";
 import Swal from 'sweetalert2';
-import { AuthContext } from '../components/auth/AuthProvider';
+import { AuthContext } from '../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import AdminSettings from '../components/AdminDashboardSettings';
 import { deleteUser, fetchAllUsers } from '../utils/CartUtils';

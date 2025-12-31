@@ -15,13 +15,13 @@ import {
   Scissors,
   Trash,
 } from 'lucide-react';
-import { AuthContext } from '../../components/auth/AuthProvider';
+import { AuthContext } from '../../context/AuthContext';
 import Swal from "sweetalert2";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { useNavigate } from 'react-router-dom';
 import { fetchCategoriesAll } from '../../utils/CartUtils';
 
-const AmazonStyleProductPage = () => {
+const AddProductPage = () => {
   const { user } = useContext(AuthContext)
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -1617,4 +1617,4 @@ const AmazonStyleProductPage = () => {
   );
 };
 
-export default AmazonStyleProductPage;
+export default AddProductPage;

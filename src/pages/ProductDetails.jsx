@@ -7,7 +7,7 @@ import SizeChartOverlay from '../components/SizeChart';
 import { getProductBySubCategoryId, getSingleProduct } from '../utils/ProductServices';
 import { openCart } from '../components/Cart';
 import { useToast } from '../context/ToastProvider';
-import { AuthContext } from '../components/auth/AuthProvider';
+import { AuthContext } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { addItemToCart } from '../utils/CartUtils';
 

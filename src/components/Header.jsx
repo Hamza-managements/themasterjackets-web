@@ -2,7 +2,7 @@ import './styles/Header.css';
 import { useContext, useState, useEffect, useRef } from 'react';
 import { openCart } from './Cart';
 import { Link, useNavigate } from 'react-router-dom';
-import { AuthContext } from './auth/AuthProvider';
+import { AuthContext } from '../context/AuthContext';
 import { fetchCategoriesAll } from '../utils/CartUtils';
 import { useProducts } from '../context/ProductContext';
 import Aos from 'aos';

@@ -1,7 +1,7 @@
 import { useState, useContext} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
-import { AuthContext } from './AuthProvider';
+import { AuthContext } from '../../context/AuthContext';
 import Swal from 'sweetalert2';
 
 const Login = () => {

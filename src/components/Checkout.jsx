@@ -1,10 +1,11 @@
-// Checkout.jsx - Shopify-style Checkout Implementation
-import { useState, useEffect } from 'react';
+// Checkout.jsx - Shopify-style Checkout
+import { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import './styles/Checkout.css';
 import zipToStateMap from '../data/fullZipData';
 import PhoneInput from "react-phone-input-2";
+import './styles/Checkout.css';
 import "react-phone-input-2/lib/material.css";
+import { AuthContext } from '../context/AuthContext';
 
 const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
     const [formData, setFormData] = useState({
@@ -25,6 +26,7 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
         termsAccepted: false
     });
 
+    const { user } = useContext(AuthContext);
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [orderSuccess, setOrderSuccess] = useState(false);
@@ -68,7 +70,19 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
             }));
 
         }
+
     }, [formData.zipCode]);
+
+    useEffect(() => {
+        if (user) {
+            setFormData(prev => ({
+                ...prev,
+                email: user.userEmail || "",
+                firstName: user.userName?.split(" ")[0] || "",
+                lastName: user.userName?.split(" ")[1] || ""
+            }));
+        }
+    }, [user]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -139,19 +153,20 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                     {showOrderSummary ? 'Hide' : 'Show'} order summary
                     <span className="summary-arrow">{showOrderSummary ? '↑' : '↓'}</span>
                 </button>
-                <div className="summary-total">${(totalPrice * 1.1).toFixed(2)}</div>
+                {showOrderSummary ? <div className="summary-total">${(totalPrice * 1).toFixed(2)}</div> : ''}
+                
             </div>
 
             <div className="summary-content">
-                {cartItems.map((item) => (
-                    <div key={item.id} className="summary-item">
+                {cartItems?.map((item) => (
+                    <div key={item.variationId} className="summary-item">
                         <div className="item-image">
-                            <img src={item.image} alt={item.name} />
-                            <span className="item-quantity">{item.quantity}</span>
+                            <img src={item?.productId?.productImages[0]} alt={item?.productId?.productName} />
+                            <span className="item-quantity">{item?.quantity}</span>
                         </div>
                         <div className="item-details">
-                            <h4>{item.title}</h4>
-                            <p>Size: {item.size}</p>
+                            <h4>{item?.productId?.productName}</h4>
+                            <p>{item?.selectedAttributes?.size}</p>
                         </div>
                         <div className="item-price">${(item.price * item.quantity).toFixed(2)}</div>
                     </div>
@@ -168,11 +183,11 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                     </div>
                     <div className="total-row">
                         <span>Tax</span>
-                        <span>${(totalPrice * 0.1).toFixed(2)}</span>
+                        <span>${(totalPrice * 0).toFixed(2)}</span>
                     </div>
                     <div className="total-row grand-total">
                         <span>Total</span>
-                        <span>${(totalPrice * 1.1).toFixed(2)}</span>
+                        <span>USD ${(totalPrice * 1).toFixed(2)}</span>
                     </div>
                 </div>
 
@@ -635,7 +650,7 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                     className="submit-order-btn"
                                     disabled={isSubmitting}
                                 >
-                                    {isSubmitting ? 'Processing...' : `Pay $${(totalPrice * 1.1).toFixed(2)}`}
+                                    {isSubmitting ? 'Processing...' : `Pay $${(totalPrice * 1).toFixed(2)}`}
                                 </button>
                             )}
 

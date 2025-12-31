@@ -6,7 +6,7 @@ import { addCategory, addSubCategory, deleteCategory, deleteSubCategory, fetchCa
 import { getProducts } from '../../utils/ProductServices';
 import { Link } from 'react-router-dom';
 
-const CategoryListPage = () => {
+const ManageCategoryListPage = () => {
   // State
   const [categories, setCategories] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
@@ -1466,5 +1466,4 @@ const CategoryListPage = () => {
     </div>
   );
 };
-
-export default CategoryListPage;
+export default ManageCategoryListPage;

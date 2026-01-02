@@ -23,26 +23,21 @@ export async function getCartItems(uid, isGuest) {
     const response = await api.get(
       `/api/cart/user-cart/${uid}`,
       isGuest
-        ? {
-          headers: {
-            "guest-id": uid
-          }
-        } : {}
+        ? { headers: { "guest-id": uid } }
+        : {}
     );
-    return response.data.data || [];
+
+    return response.data?.data || [];
   } catch (error) {
-    console.error(
-      "❌ Cart fetch error:",
-      error?.response?.data?.message || error.message
-    );
+    if (error.response?.status === 404) {
+      return [];
+    }
     return [];
   }
 }
 
 
 export async function addItemToCart(itemData, isGuest, guestId) {
-  console.log("🛒 ADD ITEM", { itemData, isGuest, guestId });
-
   try {
     const response = await api.post(
       "/api/cart/add-item",
@@ -55,8 +50,6 @@ export async function addItemToCart(itemData, isGuest, guestId) {
         }
         : {}
     );
-    console.log("product added successfully => ", response.data);
-
     return response.data;
   } catch (error) {
     console.error(
@@ -103,6 +96,27 @@ export async function deleteAllCartItems(cartId) {
     return true;
   } catch (error) {
     console.error("Error deleting all cart items:", error);
+    throw error;
+  }
+}
+
+// Order APIs ////////////////////////////
+export async function createNewOrder(payload) {
+  try {
+    const response = await api.post("/api/order/place-order", payload);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating order:", error);
+    throw error;
+  }
+}
+
+export async function getUserOrderById(uid) {
+  try {
+    const response = await api.get(`/api/order/get-orders-by/${uid}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user orders:", error);
     throw error;
   }
 }

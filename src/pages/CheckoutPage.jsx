@@ -1,5 +1,6 @@
 import Checkout from '../components/Checkout';
 import { useCart } from '../context/CartContext';
+import { createNewOrder } from '../utils/CartUtils';
 
 const CheckoutPage = () => {
   const { cartItems } = useCart()
@@ -9,9 +10,11 @@ const CheckoutPage = () => {
     0
   );
 
-  const handlePlaceOrder = (orderData) => {
+  const handlePlaceOrder = async (orderData) => {
     console.log('Order Placed:', orderData);
-
+    const res = await createNewOrder(orderData);
+    console.log('Order creation response:', res);
+    return res;
   };
 
   return (

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -25,6 +25,7 @@ import {
 } from 'react-icons/fa';
 import { MdSecurity } from 'react-icons/md';
 import { BsShieldLock } from 'react-icons/bs';
+import { getUserOrderById } from '../utils/CartUtils';
 
 const Dashboard = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -33,11 +34,11 @@ const Dashboard = () => {
   const [editMode, setEditMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [orders, setOrders] = useState([]);
 
   const { user, logout } = useContext(AuthContext);
   const { uid, userName, userEmail } = user;
 
-  // Initialize AOS animations
   useEffect(() => {
     AOS.init({
       duration: 800,
@@ -53,9 +54,20 @@ const Dashboard = () => {
     };
 
     handleResize();
+    fetchOrders();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  const fetchOrders = async () => {
+    try {
+      const response = await getUserOrderById(uid);
+      setOrders(response?.data);
+      console.log('Fetched orders:', response);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+    }
+  };
 
   const [notifications,] = useState([
     {
@@ -96,44 +108,6 @@ const Dashboard = () => {
   ]);
 
   const [showNotifications, setShowNotifications] = useState(false);
-
-  const [orders,] = useState([
-    {
-      id: 'ORD-78945',
-      date: '2023-06-15',
-      status: 'Delivered',
-      items: [
-        { name: 'Premium Leather Jacket', image: "https://res.cloudinary.com/dekf5dyng/image/upload/v1761909389/vhdfj9s2ont2f1fzwscp.jpg", quantity: 1, price: 99.99 },
-        { name: 'Denim Jeans', image: "https://res.cloudinary.com/dekf5dyng/image/upload/v1761909389/vhdfj9s2ont2f1fzwscp.jpg", quantity: 2, price: 25.00 }
-      ],
-      total: 149.99,
-      tracking: 'SH-784512369',
-      paymentMethod: 'Visa •••• 4242'
-    },
-    {
-      id: 'ORD-78452',
-      date: '2023-07-02',
-      status: 'Shipped',
-      items: [
-        { name: 'Casual T-Shirt', image: "https://res.cloudinary.com/dekf5dyng/image/upload/v1762517297/rttzoursxhmy1p14hfjk.jpg", quantity: 1, price: 19.99 },
-        { name: 'Baseball Cap', image: "https://res.cloudinary.com/dekf5dyng/image/upload/v1762517297/rttzoursxhmy1p14hfjk.jpg", quantity: 1, price: 15.00 }
-      ],
-      total: 89.99,
-      tracking: 'SH-451236987',
-      paymentMethod: 'Mastercard •••• 5555'
-    },
-    {
-      id: 'ORD-78123',
-      date: '2023-07-10',
-      status: 'In-Process',
-      items: [
-        { name: 'Winter Coat', image: "https://res.cloudinary.com/dekf5dyng/image/upload/v1762517297/rttzoursxhmy1p14hfjk.jpg", quantity: 1, price: 149.99 }
-      ],
-      total: 149.99,
-      tracking: 'SH-123456789',
-      paymentMethod: 'PayPal'
-    }
-  ]);
 
   const [returns,] = useState([
     {
@@ -322,11 +296,10 @@ const Dashboard = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  // Filter orders based on search query
-  const filteredOrders = orders.filter(order =>
-    order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    order.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    order.tracking.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredOrders = orders?.filter(order =>
+    order._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    order?.orderNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    order?.fulfillment?.status.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const filteredReturns = returns.filter(ret =>
@@ -615,16 +588,16 @@ const Dashboard = () => {
                       </thead>
                       <tbody>
                         {filteredOrders.slice(0, 5).map((order) => (
-                          <tr key={order.id}>
-                            <td>{order.id}</td>
-                            <td>{formatDate(order.date)}</td>
+                          <tr key={order?._id}>
+                            <td>{order?.orderNumber}</td>
+                            <td>{formatDate(order?.createdAt)}</td>
                             <td>
-                              <span className={`status-badge ${order.status.toLowerCase()}`}>
-                                {order.status}
+                              <span className={`status-badge ${order?.fulfillment?.status?.toLowerCase()}`}>
+                                {order?.fulfillment?.status}
                               </span>
                             </td>
                             <td>{order.items.reduce((sum, item) => sum + item.quantity, 0)}</td>
-                            <td>${order.total.toFixed(2)}</td>
+                            <td>${order?.pricing?.grandTotal?.toFixed(2)}</td>
                             <td>
                               <div className="action-buttons">
                                 <button className="btn-icon" title="Track Order">
@@ -708,15 +681,15 @@ const Dashboard = () => {
               <div className="orders-list">
                 {filteredOrders.length > 0 ? (
                   filteredOrders.map((order) => (
-                    <div className="order-card" key={order.id}>
+                    <div className="order-card" key={order?._id || order.id}>
                       <div className="order-header">
                         <div>
-                          <span className="order-id">Order #{order.id} </span>
-                          <small>  Placed on {formatDate(order.date)}</small>
+                          <span className="order-id">Order-ID # {order?.orderNumber} </span>
+                          <small>  Placed on {formatDate(order?.createdAt)}</small>
                         </div>
                         <div className="order-status">
-                          <span className={`status-badge ${order.status.toLowerCase()}`}>
-                            {order.status}
+                          <span className={`status-badge ${order?.fulfillment?.status.toLowerCase()}`}>
+                            {order?.fulfillment?.status}
                           </span>
                           {/* <span className="payment-method">
                             {order.paymentMethod}
@@ -728,11 +701,11 @@ const Dashboard = () => {
                         {order.items.map((item, index) => (
                           <div key={index} className="order-item">
                             <div className="item-image">
-                              <img src={item.image} alt="" />
+                              <img src={item?.productId.productImages[0]} alt="" />
                             </div>
                             <div className="item-details">
-                              <h4>{item.name}</h4>
-                              <p>Qty: {item.quantity} × ${item.price.toFixed(2)}</p>
+                              <h4>{item?.productId?.productName}</h4>
+                              <p>Qty: {item?.quantity} × ${item.unitPrice.toFixed(2)}</p>
                             </div>
                           </div>
                         ))}
@@ -741,7 +714,7 @@ const Dashboard = () => {
                       <div className="order-footer">
                         <div className="order-total">
                           <span>Total:</span>
-                          <strong>${order.total.toFixed(2)}</strong>
+                          <strong>${order?.pricing?.grandTotal?.toFixed(2)}</strong>
                         </div>
                         <div className="order-actions">
                           <button className="btn-outline">
@@ -1838,6 +1811,11 @@ th {
     font-weight: 500;
 }
 
+.status-badge.pending, .status-badge.requested {
+    background-color: rgba(255, 0, 0, 0.1);
+    color: #ff8000ff;
+}
+
 .status-badge.delivered {
     background-color: rgba(40, 167, 69, 0.1);
     color: #28a745;
@@ -1848,12 +1826,12 @@ th {
     color: #0d6efd;
 }
 
-.status-badge.in-process {
+.status-badge.processing, .status-badge.processed {
     background-color: rgba(255, 193, 7, 0.1);
     color: #cd9b05;
 }
 
-.status-badge.cancelled {
+.status-badge.cancelled, .status-badge.rejected {
     background-color: rgba(220, 53, 69, 0.1);
     color: #dc3545;
 }
@@ -1861,11 +1839,6 @@ th {
 .status-badge.approved {
     background-color: rgba(255, 0, 0, 0.1);
     color: #28a745;
-}
-
-.status-badge.pending {
-    background-color: rgba(255, 0, 0, 0.1);
-    color: #ff0000;
 }
 
 .return-reason {

@@ -6,19 +6,22 @@ import PhoneInput from "react-phone-input-2";
 import './styles/Checkout.css';
 import "react-phone-input-2/lib/material.css";
 import { AuthContext } from '../context/AuthContext';
+import { validateCheckout } from './ValidateCheckout';
 
 const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
+        fullName: '',
         email: '',
         phone: '',
-        address: '',
+        addressLine1: '',
+        addressLine2: '',
         city: '',
         zipCode: '',
         country: '',
         state: '',
-        paymentMethod: 'credit-card',
+        paymentMethod: 'CARD',
         cardNumber: '',
         cardName: '',
         expiryDate: '',
@@ -30,47 +33,29 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [orderSuccess, setOrderSuccess] = useState(false);
-
-    // New state for Shopify features
+    const [isFormValid, setIsFormValid] = useState(false);
     const [shippingMethod, setShippingMethod] = useState("standard");
-    // const [isGuestCheckout, setIsGuestCheckout] = useState(true); // below is the input that is commented out
+    const [hasInteracted, setHasInteracted] = useState(false);
     const [checkoutStep, setCheckoutStep] = useState('information');
     const [showOrderSummary, setShowOrderSummary] = useState(false);
+    // const [isGuestCheckout, setIsGuestCheckout] = useState(xtrue); // below is the input that is commented out
 
-    // Express checkout handlers
-    const handleExpressCheckout = (provider) => {
-        setShippingMethod(provider);
-        // Simulate express checkout flow
-        setTimeout(() => {
-            // Auto-fill form with mock data for demo
-            setFormData(prev => ({
-                ...prev,
-                email: 'customer@example.com',
-                firstName: 'John',
-                lastName: 'Doe',
-                address: '123 Shopify St',
-                city: 'San Francisco',
-                state: 'CA',
-                zipCode: '94107',
-                country: 'US'
-            }));
-            setCheckoutStep('shipping');
-        }, 500);
-    };
 
     useEffect(() => {
-        const zip = formData.zipCode.trim();
+        const zip = formData.zipCode?.trim();
         const stateCode = zipToStateMap[zip];
 
-        if (zip.length === 5 && stateCode) {
+        if (
+            zip?.length === 5 &&
+            stateCode &&
+            (formData.state !== stateCode || formData.country !== "USA")
+        ) {
             setFormData(prev => ({
                 ...prev,
                 state: stateCode,
-                country: 'US'
+                country: "USA"
             }));
-
         }
-
     }, [formData.zipCode]);
 
     useEffect(() => {
@@ -78,71 +63,131 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
             setFormData(prev => ({
                 ...prev,
                 email: user.userEmail || "",
-                firstName: user.userName?.split(" ")[0] || "",
-                lastName: user.userName?.split(" ")[1] || ""
+                firstName: user?.userName?.split(" ")[0] || "",
+                lastName: user?.userName?.split(" ")[1] || "",
+                fullName: user?.userName || ""
             }));
         }
     }, [user]);
 
+    useEffect(() => {
+        if (!hasInteracted) return;
+        const timeout = setTimeout(async () => {
+            const valid = await validateCheckout(formData, setErrors);
+            setIsFormValid(valid);
+        }, 300);
+
+        return () => clearTimeout(timeout);
+    }, [formData, hasInteracted]);
+
+    // Express checkout handlers
+    const handleExpressCheckout = (provider) => {
+        setShippingMethod(provider);
+        setTimeout(() => {
+            setFormData(prev => ({
+                ...prev,
+                email: 'customer@example.com',
+                firstName: 'John',
+                lastName: 'Doe',
+                addressLine1: '123 Shopify St',
+                addressLine2: '',
+                city: 'San Francisco',
+                state: 'CA',
+                zipCode: '94107',
+                country: 'USA'
+            }));
+            setCheckoutStep('shipping');
+        }, 500);
+    };
+
     const handleChange = (e) => {
+        setHasInteracted(true);
         const { name, value, type, checked } = e.target;
-        let updatedFormData = {
-            ...formData,
-            [name]: type === 'checkbox' ? checked : value
-        };
 
-        if (name === "zipCode") {
-            const location = zipToStateMap[value];
-            if (location) {
-                updatedFormData = {
-                    ...updatedFormData,
-                    state: location.state,
-                    country: location.country
-                };
+        setFormData(prev => {
+            let updated = {
+                ...prev,
+                [name]: type === "checkbox" ? checked : value
+            };
+
+            if (name === "zipCode") {
+                const location = zipToStateMap[value];
+                if (location) {
+                    updated.state = location.state;
+                    updated.country = location.country;
+                }
             }
-        }
 
-        setFormData(updatedFormData);
+            if (name === "firstName" || name === "lastName") {
+                updated.fullName = `${updated.firstName} ${updated.lastName}`.trim();
+            }
+
+            return updated;
+        });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setHasInteracted(true);
 
-        if (validateForm()) {
-            setIsSubmitting(true);
+        const isValid = await validateCheckout(formData, setErrors);
+        if (!isValid) return;
+        setIsSubmitting(true);
 
-            // Simulate API call
-            setTimeout(() => {
-                onPlaceOrder(formData);
-                setIsSubmitting(false);
-                setOrderSuccess(true);
-            }, 1500);
-        }
+        const payload = {
+            userDetails: {
+                userId: user?.uid || null,
+            },
+            items: cartItems.map(item => ({
+                productId: item?.productId?._id,
+                variationId: item?.variationId,
+                selectedAttributes: item?.selectedAttributes,
+                quantity: item?.quantity,
+                unitPrice: item?.price
+            })),
+            shippingAddress: {
+                fullName: formData.fullName,
+                phone: formData.phone,
+                addressLine1: formData.addressLine1,
+                addressLine2: formData.addressLine2,
+                postalCode: formData.zipCode,
+                city: formData.city,
+                state: formData.state,
+                country: formData.country
+            },
+            payment: {
+                method: "CARD"
+            }
+        };
+        setTimeout(() => {
+            onPlaceOrder(payload);
+            setIsSubmitting(false);
+            setOrderSuccess(true);
+        }, 1500);
     };
-    // Simplified validation focusing on required fields only
-    const validateForm = () => {
-        const newErrors = {};
 
-        // Shopify-style minimal validation
-        if (!formData.email?.trim()) newErrors.email = 'Email is required';
-        if (!formData.address?.trim()) newErrors.address = 'Address is required';
-        if (!formData.city?.trim()) newErrors.city = 'City is required';
-        if (!formData.country?.trim()) newErrors.country = 'Country is required';
-        if (!formData.zipCode?.trim()) newErrors.zipCode = 'ZIP/Postal code is required';
+    // const validateForm = () => {
+    //     const newErrors = {};
 
-        // Payment validation only if not using express checkout
-        if (!shippingMethod && formData.paymentMethod === 'credit-card') {
-            if (!formData.cardNumber?.replace(/\s/g, '')) newErrors.cardNumber = 'Card number is required';
-            if (!formData.cardName?.trim()) newErrors.cardName = 'Name on card is required';
-            if (!formData.expiryDate?.trim()) newErrors.expiryDate = 'Expiry date is required';
-            if (!formData.cvv?.trim()) newErrors.cvv = 'CVV is required';
-        }
+    //     // Shopify-style minimal validation
+    //     if (!formData.email?.trim()) newErrors.email = 'Email is required';
+    //     if (!formData.addressLine1?.trim()) newErrors.addressLine1 = 'Address is required';
+    //     if (!formData.city?.trim()) newErrors.city = 'City is required';
+    //     if (!formData.country?.trim()) newErrors.country = 'Country is required';
+    //     if (!formData.zipCode?.trim()) newErrors.zipCode = 'ZIP/Postal code is required';
 
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
+    //     // Payment validation only if not using express checkout
+    //     if (!shippingMethod && formData.paymentMethod === 'CARD') {
+    //         if (!formData.cardNumber?.replace(/\s/g, '')) newErrors.cardNumber = 'Card number is required';
+    //         if (!formData.cardName?.trim()) newErrors.cardName = 'Name on card is required';
+    //         if (!formData.expiryDate?.trim()) newErrors.expiryDate = 'Expiry date is required';
+    //         if (!formData.cvv?.trim()) newErrors.cvv = 'CVV is required';
+    //     }
 
-    // Shopify-style order summary component
+    //     setErrors(newErrors);
+    //     return Object.keys(newErrors).length === 0;
+    // };
+
     const OrderSummary = () => (
         <div className={`order-summary-sidebar ${showOrderSummary ? 'mobile-visible' : ''}`}>
             <div className="summary-header">
@@ -154,60 +199,80 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                     <span className="summary-arrow">{showOrderSummary ? '↑' : '↓'}</span>
                 </button>
                 {showOrderSummary ? <div className="summary-total">${(totalPrice * 1).toFixed(2)}</div> : ''}
-                
+
             </div>
 
-            <div className="summary-content">
-                {cartItems?.map((item) => (
-                    <div key={item.variationId} className="summary-item">
-                        <div className="item-image">
-                            <img src={item?.productId?.productImages[0]} alt={item?.productId?.productName} />
-                            <span className="item-quantity">{item?.quantity}</span>
-                        </div>
-                        <div className="item-details">
-                            <h4>{item?.productId?.productName}</h4>
-                            <p>{item?.selectedAttributes?.size}</p>
-                        </div>
-                        <div className="item-price">${(item.price * item.quantity).toFixed(2)}</div>
-                    </div>
-                ))}
+            {!cartItems || cartItems.length === 0 ?
+                (
+                    <div className="empty-cart-wrapper">
+                        <div className="empty-cart-box">
+                            <div className="empty-cart-icon">🛒</div>
 
-                <div className="summary-totals">
-                    <div className="total-row">
-                        <span>Subtotal</span>
-                        <span>${totalPrice.toFixed(2)}</span>
-                    </div>
-                    <div className="total-row">
-                        <span>Shipping</span>
-                        <span>Calculated at next step</span>
-                    </div>
-                    <div className="total-row">
-                        <span>Tax</span>
-                        <span>${(totalPrice * 0).toFixed(2)}</span>
-                    </div>
-                    <div className="total-row grand-total">
-                        <span>Total</span>
-                        <span>USD ${(totalPrice * 1).toFixed(2)}</span>
-                    </div>
-                </div>
+                            <h2>Your cart is empty</h2>
+                            <p>
+                                Looks like you haven’t added anything to your cart yet.
+                                Start shopping to continue checkout.
+                            </p>
 
-                {/* Trust badges */}
-                <div className="trust-badges">
-                    <div className="trust-badge">
-                        <svg viewBox="0 0 24 24" width="16" height="16">
-                            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
-                        </svg>
-                        Secure checkout
+                            <a href="/products/new-in/new-arrivals" className="empty-cart-btn">
+                                Continue shopping
+                            </a>
+                        </div>
                     </div>
-                    <div className="trust-badge">
-                        <svg viewBox="0 0 24 24" width="16" height="16">
-                            <path d="M20 8l-8 5-8-5v10h16V8zm-8-6l8 4v2l-8-5-8 5V6l8-4z" />
-                        </svg>
-                        SSL encrypted
+                ) : (
+                    <div className="summary-content">
+                        {cartItems?.map((item) => (
+                            <div key={item?.variationId} className="summary-item">
+                                <div className="item-image">
+                                    <img src={item?.productId?.productImages[0]} alt={item?.productId?.productName} />
+                                    <span className="item-quantity">{item?.quantity}</span>
+                                </div>
+                                <div className="item-details">
+                                    <h4>{item?.productId?.productName}</h4>
+                                    <p>Size: {item?.selectedAttributes?.size}</p>
+                                </div>
+                                <div className="item-price">${(item?.price * item?.quantity).toFixed(2)}</div>
+                            </div>
+                        ))}
+
+                        <div className="summary-totals">
+                            <div className="total-row">
+                                <span>Subtotal</span>
+                                <span>${totalPrice?.toFixed(2)}</span>
+                            </div>
+                            <div className="total-row">
+                                <span>Shipping</span>
+                                <span>Calculated at next step</span>
+                            </div>
+                            <div className="total-row">
+                                <span>Tax</span>
+                                <span>${(totalPrice * 0).toFixed(2)}</span>
+                            </div>
+                            <div className="total-row grand-total">
+                                <span>Total</span>
+                                <span>USD ${(totalPrice * 1).toFixed(2)}</span>
+                            </div>
+                        </div>
+
+                        {/* Trust badges */}
+                        <div className="trust-badges">
+                            <div className="trust-badge">
+                                <svg viewBox="0 0 24 24" width="16" height="16">
+                                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
+                                </svg>
+                                Secure checkout
+                            </div>
+                            <div className="trust-badge">
+                                <svg viewBox="0 0 24 24" width="16" height="16">
+                                    <path d="M20 8l-8 5-8-5v10h16V8zm-8-6l8 4v2l-8-5-8 5V6l8-4z" />
+                                </svg>
+                                SSL encrypted
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
+                )
+            }
+        </div >
     );
 
     return (
@@ -267,7 +332,7 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                         <section className="form-section">
                             <div className="form-contact-header">
                                 <h3>Contact information</h3>
-                                <Link to={"/auth/login"}>Sign in</Link>
+                                {!user && <Link to={"/auth/login"}>Sign in</Link>}
                             </div>
                             <div className="form-group">
                                 <input
@@ -279,7 +344,7 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                     placeholder="Email"
                                     className={errors.email ? 'error' : ''}
                                 />
-                                {errors.email && <span className="error-message">{errors.email}</span>}
+                                {errors.email && <span className="checkout-error-message">{errors.email}</span>}
                             </div>
 
                             {/* Guest checkout option */}
@@ -309,9 +374,8 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                     onChange={handleChange}
                                     className={errors.country ? 'error' : ''}
                                 >
-                                    <option value="" disabled selected>Country/Region</option>
-                                    <option value="US">United States</option>
-                                    {/* ... other countries */}
+                                    <option value="" disabled>Country/Region</option>
+                                    <option value="USA">United States</option>
                                 </select>
                             </div>
                             <div className="form-row">
@@ -342,12 +406,25 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                             <div className="form-group">
                                 <input
                                     type="text"
-                                    id="address"
-                                    name="address"
-                                    value={formData.address}
+                                    id="addressLine1"
+                                    name="addressLine1"
+                                    value={formData.addressLine1}
                                     onChange={handleChange}
-                                    placeholder="Address"
-                                    className={errors.address ? 'error' : ''}
+                                    placeholder="Address Line 1"
+                                    className={errors.addressLine1 ? 'error' : ''}
+                                />
+                                {errors.addressLine1 && <span className="checkout-error-message">{errors.addressLine1}</span>}
+                            </div>
+
+                            <div className="form-group">
+                                <input
+                                    type="text"
+                                    id="addressLine2"
+                                    name="addressLine2"
+                                    value={formData.addressLine2}
+                                    onChange={handleChange}
+                                    placeholder="Address Line 2"
+                                    className={errors.addressLine2 ? 'error' : ''}
                                 />
                             </div>
 
@@ -362,6 +439,7 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                         placeholder="City"
                                         className={errors.city ? 'error' : ''}
                                     />
+                                    {errors.city && <span className="checkout-error-message">{errors.city}</span>}
                                 </div>
 
                                 <div className="form-group">
@@ -374,6 +452,7 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                         placeholder="ZIP code"
                                         className={errors.zipCode ? 'error' : ''}
                                     />
+                                    {errors.zipCode && <span className="checkout-error-message">{errors.zipCode}</span>}
                                 </div>
                                 <div className="form-group">
                                     <select
@@ -381,9 +460,9 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                         name="state"
                                         value={formData.state}
                                         onChange={handleChange}
-                                        className={errors.state ? 'error' : ''}
+                                        className={errors.city ? 'error' : ''}
                                     >
-                                        <option value="" disabled selected>Select State</option>
+                                        <option value="" disabled >Select State</option>
                                         <option value="AL">Alabama</option>
                                         <option value="AK">Alaska</option>
                                         <option value="AZ">Arizona</option>
@@ -448,6 +527,7 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                     }}
                                     enableSearch
                                     countryCodeEditable={false}
+                                    className={errors.phone ? 'error' : ''}
                                 />
                                 <span className="phone-tooltip">
                                     ?
@@ -455,6 +535,7 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                         In case we need to contact you about your order
                                     </span>
                                 </span>
+                                {errors.phone && <span className="checkout-error-message">{errors.phone}</span>}
                             </div>
                         </section>
 
@@ -500,15 +581,15 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                         <section className="form-section">
                             <h3>Payment method</h3>
 
-                            {shippingMethod == "express" && (
+                            {shippingMethod == "standard" && (
                                 <>
                                     <div className="checkout-payment-methods">
                                         <label className="checkout-payment-method">
                                             <input
                                                 type="radio"
                                                 name="paymentMethod"
-                                                value="credit-card"
-                                                checked={formData.paymentMethod === 'credit-card'}
+                                                value="CARD"
+                                                checked={formData.paymentMethod === 'CARD'}
                                                 onChange={handleChange}
                                             />
                                             <span>Credit card</span>
@@ -519,7 +600,7 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                             </div>
                                         </label>
 
-                                        {formData.paymentMethod === 'credit-card' && (
+                                        {formData.paymentMethod === 'CARD' && (
                                             <div className="credit-card-form">
                                                 <div className="form-group">
                                                     <input
@@ -543,6 +624,9 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                                         placeholder="Name on card"
                                                         className={errors.cardName ? 'error' : ''}
                                                     />
+                                                    {errors.cardName && (
+                                                        <span className="checkout-error-message">{errors.cardName}</span>
+                                                    )}
                                                 </div>
 
                                                 <div className="form-row">
@@ -556,6 +640,9 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                                             placeholder="MM/YY"
                                                             className={errors.expiryDate ? 'error' : ''}
                                                         />
+                                                        {errors.expiryDate && (
+                                                            <span className="checkout-error-message">{errors.expiryDate}</span>
+                                                        )}
                                                     </div>
                                                     <div className="form-group">
                                                         <input
@@ -567,6 +654,9 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                                             placeholder="CVV"
                                                             className={errors.cvv ? 'error' : ''}
                                                         />
+                                                        {errors.cvv && (
+                                                            <span className="checkout-error-message">{errors.cvv}</span>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
@@ -604,7 +694,7 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                 </>
                             )}
 
-                            {shippingMethod === "standard" && (
+                            {shippingMethod === "express" && (
                                 <div className="express-checkout-active">
                                     <p>You'll complete your purchase with {shippingMethod && "Express"}.</p>
                                 </div>
@@ -620,7 +710,6 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                         name="termsAccepted"
                                         checked={formData.termsAccepted}
                                         onChange={handleChange}
-                                        className={errors.termsAccepted ? 'error' : ''}
                                     />
                                     <span>
                                         I agree to the <Link to="/terms">Terms of Service</Link> and
@@ -628,7 +717,7 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                     </span>
                                 </label>
                                 {errors.termsAccepted && (
-                                    <span className="error-message">{errors.termsAccepted}</span>
+                                    <span className="checkout-error-message">{errors.termsAccepted}</span>
                                 )}
                             </div>
 
@@ -648,7 +737,7 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                 <button
                                     type="submit"
                                     className="submit-order-btn"
-                                    disabled={isSubmitting}
+                                    disabled={!isFormValid || isSubmitting}
                                 >
                                     {isSubmitting ? 'Processing...' : `Pay $${(totalPrice * 1).toFixed(2)}`}
                                 </button>

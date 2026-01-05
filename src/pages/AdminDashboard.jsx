@@ -13,6 +13,7 @@ import { AuthContext } from '../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import AdminSettings from '../components/AdminDashboardSettings';
 import { deleteUser, fetchAllUsers } from '../utils/CartUtils';
+import AdminOrderDashboard from '../components/AdminAllOrder';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement);
 
 const AdminDashboard = () => {
@@ -51,15 +52,6 @@ const AdminDashboard = () => {
         }
         getAllUsers();
     }, []);
-
-    // useEffect(() => {
-    //     const html = document.documentElement;
-    //     if (darkMode) {
-    //         html.classList.add('dark');
-    //     } else {
-    //         html.classList.remove('dark');
-    //     }
-    // }, [darkMode]);
 
     const salesData = {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
@@ -136,19 +128,6 @@ const AdminDashboard = () => {
                 'https://res.cloudinary.com/dekf5dyng/image/upload/v1759404249/hdctwk1vrf5vvemzbecf.jpg',
         },
     ];
-
-
-
-    // Sample recent orders
-    const recentOrders = [
-        { id: 1, customer: 'John Doe', product: 'Austin Leather Jacket', amount: '$139.00', status: 'Completed' },
-        { id: 2, customer: 'Jane Smith', product: 'David Brown Leather Jacket', amount: '$129.00', status: 'Pending' },
-        { id: 3, customer: 'Robert Johnson', product: 'Bristol Black Leather Jacket', amount: '$149.00', status: 'Completed' },
-        { id: 4, customer: 'Emily Davis', product: 'Cafe Racer Leather Jacket', amount: '$129.00', status: 'Failed' },
-        { id: 5, customer: 'Michael Brown', product: 'Negan Leather Jacket', amount: '$199.00', status: 'Processing' },
-    ];
-
-    // Stats cards data
     // { title: 'Sales', value: '$12,345', change: '+12%', icon: <FiPieChart /> },
     const stats = [
         { title: 'Open Orders', value: '126', change: '+7%', icon: <FiShoppingCart /> },
@@ -664,75 +643,7 @@ const AdminDashboard = () => {
 
                         {activeMenu === 'orders' && (
                             <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-2 rounded-lg shadow-sm`}>
-                                <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Orders Management</h3>
-                                {/* Recent Orders */}
-                                <div className={`${darkMode ? 'dark bg-gray-900 text-white' : 'bg-white'} p-4 rounded-lg shadow mb-6 overflow-x-auto`}>
-                                    <div className="flex justify-between items-center mb-4">
-                                        <h3 className="text-lg font-medium">
-                                            Recent Orders
-                                        </h3>
-                                        <button className="text-sm text-blue-500 hover:underline"
-                                            onClick={() => setActiveMenu('orders')}>
-                                            View All
-                                        </button>
-                                    </div>
-
-                                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
-                                        <thead className={darkMode ? 'bg-gray-800' : 'bg-gray-50'}>
-                                            <tr>
-                                                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
-                                                    Order ID
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
-                                                    Customer
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
-                                                    Product
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
-                                                    Amount
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
-                                                    Status
-                                                </th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody className={`${darkMode ? 'bg-gray-900 divide-gray-700' : 'bg-white divide-gray-200'} divide-y`}>
-                                            {recentOrders.map((order) => (
-                                                <tr key={order.id}>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">
-                                                        #{order.id}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                                                        {order.customer}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">
-                                                        {order.product}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">
-                                                        {order.amount}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap">
-                                                        <span
-                                                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${order.status === 'Completed'
-                                                                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                                                : order.status === 'Pending'
-                                                                    ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                                                                    : order.status === 'Processing'
-                                                                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                                                                        : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                                                                }`}
-                                                        >
-                                                            {order.status}
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-
+                                <AdminOrderDashboard user={user} />
                                 <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Sales</h3>
                                 {/* Charts */}
                                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">

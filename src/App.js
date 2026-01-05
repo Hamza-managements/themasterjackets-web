@@ -34,6 +34,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ProductProvider } from './context/ProductContext';
 import { CartProvider } from './context/CartContext';
 import { setFullFaviconSet } from './utils/setFullFaviconSet';
+import OrderPage from './pages/UserOrder';
 // import AccountSettings from './components/AccountsSettings';
 
 function App() {
@@ -73,6 +74,7 @@ function App() {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+              <Route path="/dashboard/orders/:orderId" element={<PrivateRoute><OrderPage /></PrivateRoute>} />
 
               <Route path="/checkout" element={<CheckoutPage />} />
 

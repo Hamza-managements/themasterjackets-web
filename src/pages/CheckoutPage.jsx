@@ -11,10 +11,14 @@ const CheckoutPage = () => {
   );
 
   const handlePlaceOrder = async (orderData) => {
-    console.log('Order Placed:', orderData);
-    const res = await createNewOrder(orderData);
-    console.log('Order creation response:', res);
-    return res;
+    try {
+      console.log('Order Placed:', orderData);
+      const res = await createNewOrder(orderData);
+      console.log('Order creation response:', res);
+      return res;
+    } catch (error) {
+      throw error;
+    }
   };
 
   return (

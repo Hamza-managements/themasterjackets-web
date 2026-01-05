@@ -233,12 +233,13 @@ export default function Header() {
                             >
                               <i className="fas fa-user-circle"></i> My Account
                             </Link>
-                            <Link target="_blank" to="/orders" className="fs-dropdown-link">
+                            <Link target="_blank" to="/dashboard?orders" className="fs-dropdown-link">
+                              {/* /dashboard?orders pending */}
                               <i className="fas fa-box-open"></i> My Orders
                             </Link>
-                            <Link target="_blank" to="/wishlist" className="fs-dropdown-link">
-                              <i className="fas fa-heart"></i> Wishlist
-                            </Link>
+                            {/* <Link target="_blank" to="/wishlist" className="fs-dropdown-link">
+                              <i className="fas fa-heart"></i> 
+                            </Link> */}
                           </>
                         )}
                       <button

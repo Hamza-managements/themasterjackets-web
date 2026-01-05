@@ -224,6 +224,15 @@
   margin-top: 4px;
 }
 
+.checkout-submission-error {
+  background: #fce1de;
+  color: #b42318;
+  border: 1px solid #f87171a9;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
 /* ────────── Phone Input ────────── */
 .phone-input-wrapper {
   position: relative;

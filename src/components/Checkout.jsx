@@ -34,12 +34,12 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [orderSuccess, setOrderSuccess] = useState(false);
     const [isFormValid, setIsFormValid] = useState(false);
-    const [shippingMethod, setShippingMethod] = useState("standard");
     const [hasInteracted, setHasInteracted] = useState(false);
+    const [shippingMethod, setShippingMethod] = useState("standard");
     const [checkoutStep, setCheckoutStep] = useState('information');
     const [showOrderSummary, setShowOrderSummary] = useState(false);
+    const [submitError, setSubmitError] = useState(null);
     // const [isGuestCheckout, setIsGuestCheckout] = useState(xtrue); // below is the input that is commented out
-
 
     useEffect(() => {
         const zip = formData.zipCode?.trim();
@@ -129,42 +129,55 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setHasInteracted(true);
+        setSubmitError(null);
 
-        const isValid = await validateCheckout(formData, setErrors);
-        if (!isValid) return;
-        setIsSubmitting(true);
+        try {
+            const isValid = await validateCheckout(formData, setErrors);
+            if (!isValid) return;
 
-        const payload = {
-            userDetails: {
-                userId: user?.uid || null,
-            },
-            items: cartItems.map(item => ({
-                productId: item?.productId?._id,
-                variationId: item?.variationId,
-                selectedAttributes: item?.selectedAttributes,
-                quantity: item?.quantity,
-                unitPrice: item?.price
-            })),
-            shippingAddress: {
-                fullName: formData.fullName,
-                phone: formData.phone,
-                addressLine1: formData.addressLine1,
-                addressLine2: formData.addressLine2,
-                postalCode: formData.zipCode,
-                city: formData.city,
-                state: formData.state,
-                country: formData.country
-            },
-            payment: {
-                method: "CARD"
-            }
-        };
-        setTimeout(() => {
-            onPlaceOrder(payload);
-            setIsSubmitting(false);
+            setIsSubmitting(true);
+
+            const payload = {
+                userDetails: {
+                    userId: user?.uid || null,
+                },
+                items: cartItems.map(item => ({
+                    productId: item?.productId?._id,
+                    variationId: item?.variationId,
+                    selectedAttributes: item?.selectedAttributes,
+                    quantity: item?.quantity,
+                    unitPrice: item?.price
+                })),
+                shippingAddress: {
+                    fullName: formData.fullName,
+                    phone: formData.phone,
+                    addressLine1: formData.addressLine1,
+                    addressLine2: formData.addressLine2,
+                    postalCode: formData.zipCode,
+                    city: formData.city,
+                    state: formData.state,
+                    country: formData.country
+                },
+                payment: {
+                    method: "CARD"
+                }
+            };
+
+            await onPlaceOrder(payload);
+
             setOrderSuccess(true);
-        }, 1500);
+        } catch (err) {
+            console.error('Error placing order:', err.response.data.message, ",", err.response.data.errors[0] || err.message || err);
+            setSubmitError(
+                err?.message ||
+                err?.response?.data?.message ||
+                "Something went wrong while placing your order. Please try again."
+            );
+        } finally {
+            setIsSubmitting(false);
+        }
     };
+
 
     // const validateForm = () => {
     //     const newErrors = {};
@@ -720,6 +733,12 @@ const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
                                     <span className="checkout-error-message">{errors.termsAccepted}</span>
                                 )}
                             </div>
+
+                            {submitError && (
+                                <div className="checkout-submission-error">
+                                    {submitError}
+                                </div>
+                            )}
 
                             {formData.paymentMethod === "paypal" ? (
                                 <button

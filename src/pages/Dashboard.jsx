@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { Link } from "react-router-dom";
+import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { AuthContext } from '../context/AuthContext';
@@ -36,8 +36,22 @@ const Dashboard = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [orders, setOrders] = useState([]);
 
+  const [searchParams] = useSearchParams();
   const { user, logout } = useContext(AuthContext);
   const { uid, userName, userEmail } = user;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const allowedTabs = ["overview", "orders", "returns", "security", "profile"];
+
+    const tabFromQuery = [...searchParams.keys()][0];
+
+    if (allowedTabs.includes(tabFromQuery)) {
+      setActiveTab(tabFromQuery);
+    } else {
+      setActiveTab("overview");
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     AOS.init({
@@ -185,7 +199,8 @@ const Dashboard = () => {
 
   // Handle navigation click
   const handleNavClick = (tab) => {
-    setActiveTab(tab);
+    navigate(tab === "overview" ? "/dashboard" : `/dashboard?${tab}`);
+
     if (isMobileView) {
       setIsMobileMenuOpen(false);
     }
@@ -720,7 +735,10 @@ const Dashboard = () => {
                           <button className="btn-outline">
                             <FaTruck /> Track Order
                           </button>
-                          <button className="btn-primary">
+                          <button
+                            className="btn-primary"
+                            onClick={() => navigate(`/dashboard/orders/${order?._id}`)}
+                          >
                             View Details
                           </button>
                         </div>

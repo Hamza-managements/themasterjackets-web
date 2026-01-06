@@ -541,13 +541,13 @@ const ProductDetails = () => {
                 </div>
               )}
 
-              <div className="action-buttons">
+              <div className="product-detail-action-buttons">
                 <button className="detail-btn btn-addtocart" onClick={() => addToCart(selectedVariation)}>
                   <i className="fas fa-shopping-cart"></i>
                   Add to Cart
                 </button>
               </div>
-              <div className="action-buttons">
+              <div className="product-detail-action-buttons">
                 <button className="detail-btn btn-checkout" onClick={directCheckout}>
                   <i className="fas fa-credit-card payment-icon"></i>
                   <span className="checkout-text">Proceed to check out</span>

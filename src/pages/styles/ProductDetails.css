@@ -474,7 +474,7 @@
 
 
         /* === Action Buttons === */
-        .action-buttons {
+        .product-detail-action-buttons {
             display: flex;
             gap: 15px;
             margin-bottom: 8px;
@@ -773,7 +773,7 @@
                 order: 3;
             }
 
-            .action-buttons {
+            .product-detail-action-buttons {
                 flex-direction: column;
             }
 

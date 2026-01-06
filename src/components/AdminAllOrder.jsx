@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import './styles/AdminOrderDashboard.css';
+import { useState, useEffect} from 'react';
+import './styles/AdminAllOrder.css';
 import { cancelOrderWithId, GetAllOrder } from '../utils/CartUtils';
 
-const AdminOrderDashboard = ({ user }) => {
+const AdminAllOrderDashboard = ({ user }) => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -21,7 +21,6 @@ const AdminOrderDashboard = ({ user }) => {
         revenue: 0
     });
 
-    // Fetch orders from API
     useEffect(() => {
         fetchOrders();
     }, [user]);
@@ -29,9 +28,7 @@ const AdminOrderDashboard = ({ user }) => {
     const fetchOrders = async () => {
         try {
             setLoading(true);
-            // Replace with your actual API call
             const response = await GetAllOrder(user?.uid);
-            console.log('Fetched orders:', response.data);
             setOrders(response.data);
             calculateStats(response.data);
         } catch (error) {
@@ -320,7 +317,7 @@ const AdminOrderDashboard = ({ user }) => {
                                             />
                                         </td>
                                         <td>
-                                            <a href={`/admin/orders/${order._id}`} className="order-link">
+                                            <a href={`/admin/orders/${order._id}/${order.userDetails.userId._id}`} className="order-link">
                                                 {order.orderNumber}
                                             </a>
                                         </td>
@@ -357,7 +354,7 @@ const AdminOrderDashboard = ({ user }) => {
                                             <div className="action-buttons">
                                                 <button
                                                     className="btn-view"
-                                                    onClick={() => window.location.href = `/admin/orders/${order._id}`}
+                                                    onClick={() => window.location.href = `/admin/orders/${order._id}/${order.userDetails.userId._id}`}
                                                 >
                                                     👁️
                                                 </button>
@@ -494,4 +491,4 @@ const editOrder = async (orderIds, status) => {
     return { success: true };
 };
 
-export default AdminOrderDashboard;
+export default AdminAllOrderDashboard;

@@ -45,7 +45,7 @@
 .btn-refresh, .btn-export {
   padding: 10px 20px;
   border-radius: 8px;
-  border: 1px solid var(--gray-300);
+  border: 1px solid var(--gray-400);
   background-color: white;
   font-weight: 600;
   cursor: pointer;
@@ -56,18 +56,19 @@
 }
 
 .btn-refresh:hover {
-  background-color: var(--gray-100);
-  border-color: var(--gray-400);
+  background-color: var(--blue);
+  color: white;
+  border-color: var(--blue);
 }
 
 .btn-export {
-  background-color: var(--red);
+  background-color: var(--green);
   color: white;
-  border-color: var(--red);
+  border-color: var(--green);
 }
 
 .btn-export:hover {
-  background-color: #b30215;
+  background-color: var(--blue);
 }
 
 /* Stats Grid */

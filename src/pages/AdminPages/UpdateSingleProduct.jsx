@@ -933,7 +933,7 @@ const UpdateProductPage = () => {
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
                                             Meta Description *
                                             <span className="text-xs text-gray-500 ml-2">
-                                                {editableFormData.meta.description.length}/260 characters
+                                                {editableFormData.meta.description.length}/280 characters
                                             </span>
                                         </label>
                                         <textarea
@@ -942,7 +942,7 @@ const UpdateProductPage = () => {
                                             rows={4}
                                             className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500"
                                             placeholder="Compelling meta description that encourages clicks"
-                                            maxLength={260}
+                                            maxLength={280}
                                         />
                                     </div>
 

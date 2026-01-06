@@ -77,7 +77,6 @@ const Dashboard = () => {
     try {
       const response = await getUserOrderById(uid);
       setOrders(response?.data);
-      console.log('Fetched orders:', response);
     } catch (error) {
       console.error('Error fetching orders:', error);
     }
@@ -227,8 +226,6 @@ const Dashboard = () => {
 
       const data = await res.json();
       if (res.ok) {
-        // Update local user data
-        console.log('Profile updated:', data);
         setEditMode(false);
       } else {
         console.error('Profile update failed:', data.message);
@@ -703,12 +700,9 @@ const Dashboard = () => {
                           <small>  Placed on {formatDate(order?.createdAt)}</small>
                         </div>
                         <div className="order-status">
-                          <span className={`status-badge ${order?.fulfillment?.status.toLowerCase()}`}>
-                            {order?.fulfillment?.status}
+                          <span className={`status-badge ${order?.orderStatus?.toLowerCase()}`}>
+                            {order?.orderStatus}
                           </span>
-                          {/* <span className="payment-method">
-                            {order.paymentMethod}
-                          </span> */}
                         </div>
                       </div>
 
@@ -1829,24 +1823,14 @@ th {
     font-weight: 500;
 }
 
-.status-badge.pending, .status-badge.requested {
-    background-color: rgba(255, 0, 0, 0.1);
+.status-badge.pending, .status-badge.requested, .status-badge.placed , .status-badge.processing, .status-badge.processed{
+    background-color: rgba(40, 167, 69, 0.1);
     color: #ff8000ff;
 }
 
-.status-badge.delivered {
-    background-color: rgba(40, 167, 69, 0.1);
-    color: #28a745;
-}
-
-.status-badge.shipped {
+.status-badge.shipped, .status-badge.returned {
     background-color: rgba(13, 110, 253, 0.1);
     color: #0d6efd;
-}
-
-.status-badge.processing, .status-badge.processed {
-    background-color: rgba(255, 193, 7, 0.1);
-    color: #cd9b05;
 }
 
 .status-badge.cancelled, .status-badge.rejected {
@@ -1854,7 +1838,7 @@ th {
     color: #dc3545;
 }
 
-.status-badge.approved {
+.status-badge.approved, .status-badge.confirmed, .status-badge.delivered  {
     background-color: rgba(255, 0, 0, 0.1);
     color: #28a745;
 }

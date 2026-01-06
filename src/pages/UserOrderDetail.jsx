@@ -374,23 +374,23 @@ body {
   letter-spacing: 0.5px;
 }
 
-.status-placed {
+.status-placed, .status-shipped, .status-refunded {
   background-color: var(--blue);
   color: white;
 }
 
-.status-pending {
+.status-returned, .status-pending, .status-processing {
   background-color: var(--yellow);
   color: var(--black);
 }
 
-.status-shipped {
+.status-confirmed, .status-delivered, .status-paid {
   background-color: var(--green);
   color: white;
 }
 
-.status-delivered {
-  background-color: var(--green);
+.status-cancelled, .status-failed {
+  background-color: var(--red);
   color: white;
 }
 
@@ -708,16 +708,6 @@ body {
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
-}
-
-.status-pending {
-  background-color: var(--yellow);
-  color: var(--black);
-}
-
-.status-completed {
-  background-color: var(--green);
-  color: white;
 }
 
 .transaction-id {

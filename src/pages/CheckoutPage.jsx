@@ -3,7 +3,7 @@ import { useCart } from '../context/CartContext';
 import { createNewOrder } from '../utils/CartUtils';
 
 const CheckoutPage = () => {
-  const { cartItems } = useCart()
+  const { cartItems, refreshCart } = useCart()
 
   const subtotal = cartItems?.items?.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -12,9 +12,7 @@ const CheckoutPage = () => {
 
   const handlePlaceOrder = async (orderData) => {
     try {
-      console.log('Order Placed:', orderData);
       const res = await createNewOrder(orderData);
-      console.log('Order creation response:', res);
       return res;
     } catch (error) {
       throw error;
@@ -25,8 +23,10 @@ const CheckoutPage = () => {
     <div>
       <Checkout
         cartItems={cartItems?.items || []}
+        cartId={cartItems._id}
         totalPrice={subtotal || 0}
         onPlaceOrder={handlePlaceOrder}
+        refreshCart={refreshCart}
       />
     </div>
   );

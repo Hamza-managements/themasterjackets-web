@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/AdminOrderDetails.css';
 import { AuthContext } from '../../context/AuthContext';
-import { getUserOrderById, cancelOrderWithId } from '../../utils/CartUtils';
+import { getUserOrderById, cancelOrderWithId, confirmOrderWithOrderId, updateShipmentWithOrderId } from '../../utils/OrderUtils';
 
 const AdminOrderDetails = () => {
     const { user } = useContext(AuthContext);
@@ -17,9 +17,9 @@ const AdminOrderDetails = () => {
 
     // Form states
     const [trackingInfo, setTrackingInfo] = useState({
+        orderId: '',
         trackingNumber: '',
-        carrier: 'USPS',
-        estimatedDelivery: ''
+        carrier: 'FedEx',
     });
     const [refundData, setRefundData] = useState({
         amount: 0,
@@ -47,9 +47,9 @@ const AdminOrderDetails = () => {
             setOrder(selectedOrder);
             if (selectedOrder.fulfillment) {
                 setTrackingInfo({
+                    orderId: orderId,
                     trackingNumber: selectedOrder.fulfillment.trackingNumber || '',
-                    carrier: selectedOrder.fulfillment.carrier || 'USPS',
-                    estimatedDelivery: selectedOrder.fulfillment.estimatedDelivery || ''
+                    carrier: selectedOrder.fulfillment.carrier || 'FedEx',
                 });
             }
         } catch (error) {
@@ -76,7 +76,8 @@ const AdminOrderDetails = () => {
     const handleUpdateTracking = async () => {
         try {
             setIsUpdating(true);
-            await UpdateTrackingInfo(user?.uid, orderId, trackingInfo);
+            console.log("Updating tracking with info:", trackingInfo);
+            await updateShipmentWithOrderId(user?.uid, trackingInfo);
             fetchOrderDetails();
         } catch (error) {
             console.error('Error updating tracking:', error);
@@ -129,7 +130,9 @@ const AdminOrderDetails = () => {
     const updateOrderStatus = async (status) => {
         try {
             setIsUpdating(true);
-            await UpdateOrderStatus(user?.uid, [orderId], status);
+            if (status === 'confirmed') {
+                await confirmOrderWithOrderId(user?.uid, orderId);
+            }
             fetchOrderDetails();
         } catch (error) {
             console.error('Error updating order status:', error);
@@ -156,19 +159,6 @@ const AdminOrderDetails = () => {
             hour: '2-digit',
             minute: '2-digit'
         });
-    };
-
-    const getStatusColor = (status) => {
-        switch (status?.toLowerCase()) {
-            case 'pending': return '#f59e0b';
-            case 'processing': return '#3b82f6';
-            case 'shipped': return '#8b5cf6';
-            case 'delivered': return '#10b981';
-            case 'cancelled': return '#ef4444';
-            case 'refunded': return '#8b5cf6';
-            case 'returned': return '#6b7280';
-            default: return '#6b7280';
-        }
     };
 
     if (loading) {
@@ -212,7 +202,7 @@ const AdminOrderDetails = () => {
                         <h1>Order #{order.orderNumber}</h1>
                         <div className="order-meta">
                             <span className="order-date">Placed on {formatDate(order.createdAt)}</span>
-                            <span className="order-source">Online Store</span>
+                            <span className="order-source">The Master Jackets</span>
                         </div>
                     </div>
 
@@ -221,13 +211,14 @@ const AdminOrderDetails = () => {
                             className="status-select"
                             value={order.orderStatus}
                             onChange={(e) => updateOrderStatus(e.target.value)}
-                            disabled={isUpdating}
+                            disabled={isUpdating || order.orderStatus === 'cancelled'}
                         >
-                            <option value="pending">Pending</option>
-                            <option value="processing">Processing</option>
                             <option value="shipped">Shipped</option>
-                            <option value="delivered">Delivered</option>
+                            <option value="placed">Placed</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="completed">Completed</option>
                             <option value="cancelled">Cancelled</option>
+                            <option value="returned">Returned</option>
                         </select>
                         <button
                             className="btn-cancel"
@@ -266,12 +257,12 @@ const AdminOrderDetails = () => {
                 >
                     ↩️ Returns & Refunds
                 </button>
-                <button
+                {/* <button
                     className={`tab-btn ${activeTab === 'notes' ? 'active' : ''}`}
                     onClick={() => setActiveTab('notes')}
                 >
                     📝 Notes & History
-                </button>
+                </button> */}
             </nav>
 
             <div className="order-details-body">
@@ -403,7 +394,7 @@ const AdminOrderDetails = () => {
                                             <button
                                                 className="step-action"
                                                 onClick={() => updateFulfillmentStatus('processing')}
-                                                disabled={isUpdating || order.fulfillment.status === 'processing'}
+                                                disabled={isUpdating || order.fulfillment.status !== 'pending'}
                                             >
                                                 Mark as Processing
                                             </button>
@@ -448,6 +439,21 @@ const AdminOrderDetails = () => {
                                 {/* Tracking Information */}
                                 <div className="tracking-info">
                                     <h3>Tracking Information</h3>
+                                    {order.fulfillment.trackingNumber && (
+                                        <div className="current-tracking">
+                                            <h4>Current Tracking</h4>
+                                            <p><strong>Number:</strong> {order.fulfillment.trackingNumber}</p>
+                                            <p><strong>Carrier:</strong> {order.fulfillment.carrier}</p>
+                                            <a
+                                                href={`https://tools.usps.com/go/TrackConfirmAction?tRef=fullpage&tLabels=${order.fulfillment.trackingNumber}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="track-link"
+                                            >
+                                                Track Package
+                                            </a>
+                                        </div>
+                                    )}
                                     <div className="tracking-card">
                                         <div className="form-group">
                                             <label>Tracking Number</label>
@@ -479,18 +485,6 @@ const AdminOrderDetails = () => {
                                             </select>
                                         </div>
 
-                                        <div className="form-group">
-                                            <label>Estimated Delivery</label>
-                                            <input
-                                                type="date"
-                                                value={trackingInfo.estimatedDelivery}
-                                                onChange={(e) => setTrackingInfo({
-                                                    ...trackingInfo,
-                                                    estimatedDelivery: e.target.value
-                                                })}
-                                            />
-                                        </div>
-
                                         <button
                                             className="btn-save"
                                             onClick={handleUpdateTracking}
@@ -498,22 +492,6 @@ const AdminOrderDetails = () => {
                                         >
                                             {isUpdating ? 'Updating...' : 'Update Tracking Info'}
                                         </button>
-
-                                        {order.fulfillment.trackingNumber && (
-                                            <div className="current-tracking">
-                                                <h4>Current Tracking</h4>
-                                                <p><strong>Number:</strong> {order.fulfillment.trackingNumber}</p>
-                                                <p><strong>Carrier:</strong> {order.fulfillment.carrier}</p>
-                                                <a
-                                                    href={`https://tools.usps.com/go/TrackConfirmAction?tRef=fullpage&tLabels=${order.fulfillment.trackingNumber}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="track-link"
-                                                >
-                                                    Track Package
-                                                </a>
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -539,8 +517,8 @@ const AdminOrderDetails = () => {
 
                                         <div className="payment-info">
                                             <div className="info-row">
-                                                <span>Amount Charged</span>
-                                                <span>{formatCurrency(order.pricing.grandTotal)}</span>
+                                                <span>Amount Charged :</span>
+                                                <span> {formatCurrency(order.pricing.grandTotal)}</span>
                                             </div>
                                             {order.payment.transactionId && (
                                                 <div className="info-row">
@@ -549,7 +527,7 @@ const AdminOrderDetails = () => {
                                                 </div>
                                             )}
                                             <div className="info-row">
-                                                <span>Payment Date</span>
+                                                <span>Payment Date :</span>
                                                 <span>{formatDate(order.createdAt)}</span>
                                             </div>
                                         </div>
@@ -774,7 +752,7 @@ const AdminOrderDetails = () => {
                     )}
 
                     {/* Notes & History Tab */}
-                    {activeTab === 'notes' && (
+                    {/* {activeTab === 'notes' && (
                         <div className="tab-content">
                             <div className="notes-history-grid">
                                 <div className="order-notes">
@@ -821,17 +799,17 @@ const AdminOrderDetails = () => {
                                                 </div>
                                             </div>
                                             <div className="history-event">
-                                                <div className="event-icon">💳</div>
-                                                <div className="event-content">
-                                                    <p>Payment received via {order.payment.method}</p>
-                                                    <span className="event-time">Yesterday, 14:22 PM</span>
-                                                </div>
-                                            </div>
-                                            <div className="history-event">
                                                 <div className="event-icon">📦</div>
                                                 <div className="event-content">
                                                     <p>Order placed by customer</p>
                                                     <span className="event-time">{formatDate(order.createdAt)}</span>
+                                                </div>
+                                            </div>
+                                            <div className="history-event">
+                                                <div className="event-icon">💳</div>
+                                                <div className="event-content">
+                                                    <p>Payment received via {order.payment.method}</p>
+                                                     <span className="event-time">Yesterday, 14:22 PM</span> 
                                                 </div>
                                             </div>
                                         </div>
@@ -839,30 +817,30 @@ const AdminOrderDetails = () => {
                                 </div>
                             </div>
                         </div>
-                    )}
+                    )} */}
                 </div>
 
                 {/* Quick Actions Sidebar */}
-                <asdie className="quick-actions-sidebar">
+                <aside className="quick-actions-sidebar">
                     <h3>Quick Actions</h3>
 
-                    <div className="action-buttons">
-                        <button className="action-btn">
+                    <div className="order-details-action-buttons">
+                        <button className="order-details-action-btn">
                             📦 Create Shipping Label
                         </button>
-                        <button className="action-btn">
+                        <button className="order-details-action-btn">
                             ✉️ Send Shipping Notification
                         </button>
-                        <button className="action-btn">
+                        {/* <button className="order-details-action-btn">
                             🎁 Add Gift Note
                         </button>
-                        <button className="action-btn">
+                        <button className="order-details-action-btn">
                             🔄 Resend Invoice
                         </button>
-                        <button className="action-btn">
+                        <button className="order-details-action-btn">
                             📋 Duplicate Order
-                        </button>
-                        <button className="action-btn danger" onClick={handleCancelOrder}>
+                        </button> */}
+                        <button className="order-details-action-btn danger" onClick={handleCancelOrder} disabled={order.orderStatus === 'cancelled'}>
                             ❌ Cancel Order
                         </button>
                     </div>
@@ -886,7 +864,7 @@ const AdminOrderDetails = () => {
                             <span>192.168.1.1</span>
                         </div>
                     </div>
-                </asdie>
+                </aside>
             </div>
 
         </div>
@@ -898,22 +876,12 @@ const UpdateFulfillmentStatus = async (uid, orderId, status) => {
     return { success: true };
 };
 
-const UpdateTrackingInfo = async (uid, orderId, trackingInfo) => {
-    // Your API call implementation
-    return { success: true };
-};
-
 const ProcessRefund = async (uid, orderId, refundData) => {
     // Your API call implementation
     return { success: true };
 };
 
 const UpdateReturnStatus = async (uid, orderId, returnData) => {
-    // Your API call implementation
-    return { success: true };
-};
-
-const UpdateOrderStatus = async (uid, orderIds, status) => {
     // Your API call implementation
     return { success: true };
 };

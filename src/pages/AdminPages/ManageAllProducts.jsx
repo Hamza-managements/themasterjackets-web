@@ -113,6 +113,9 @@ const ManageProducts = () => {
         <Link to='/' target="_blank" className="text-decoration-none hover:underline"><h3 className="text-center text-3xl font-bold text-gray-700 mt-2">The Master Jackets</h3></Link>
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           <div>
+            <button className="back-btn" onClick={() => navigate('/admin/dashboard')}>
+              ←  Back to Dashboard
+            </button>
             <h1 className="text-2xl font-bold text-gray-900">Manage Products</h1>
             <p className="text-gray-600 mt-1">
               View and manage your entire product catalog

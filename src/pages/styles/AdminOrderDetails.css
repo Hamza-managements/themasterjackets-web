@@ -47,7 +47,8 @@
 /* Sidebar */
 .quick-actions-sidebar {
     border: 1px solid var(--gray-400);
-    padding: 6px;
+    border-radius: 12px;
+    padding: 10px;
     flex: 0 0 300px;
     /* fixed width */
     min-width: 300px;
@@ -155,8 +156,8 @@
 }
 
 .status-select {
-    padding: 8px 16px;
-    border: 1px solid var(--gray-300);
+    padding: 8px 12px;
+    border: 1px solid var(--gray-400);
     border-radius: 6px;
     background: white;
     font-size: 14px;
@@ -840,14 +841,14 @@
     color: var(--gray-800);
 }
 
-.action-buttons {
+.order-details-action-buttons {
     display: flex;
     flex-direction: column;
     gap: 8px;
     margin-bottom: 24px;
 }
 
-.action-btn {
+.order-details-action-btn {
     padding: 12px;
     background: white;
     border: 1px solid var(--gray-300);
@@ -861,19 +862,24 @@
     gap: 8px;
 }
 
-.action-btn:hover {
+.order-details-action-btn:hover {
     background: var(--gray-50);
     border-color: var(--gray-400);
 }
 
-.action-btn.danger {
+.order-details-action-btn.danger {
     border-color: #ef4444;
     color: #ef4444;
 }
 
-.action-btn.danger:hover {
+.order-details-action-btn.danger:hover:not(:disabled) {
     background: #ef4444;
     color: white;
+}
+
+.order-details-action-btn.danger:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .order-metadata {
@@ -994,7 +1000,7 @@
         align-self: stretch;
     }
 
-    .action-buttons .action-btn {
+    .order-details-action-buttons .order-details-action-btn {
         font-size: 12px;
     }
 }
@@ -1011,7 +1017,7 @@
     .btn-save,
     .btn-process-refund,
     .btn-update-return,
-    .action-btn {
+    .order-details-action-btn {
         display: none !important;
     }
 

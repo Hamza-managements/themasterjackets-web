@@ -24,6 +24,10 @@ export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(false);
 
+    const hasCart =
+        localStorage.getItem("hasCart") === "true" ||
+        localStorage.getItem("guestCart") === "true";
+
     const cartOwnerId = userId || guestId;
 
     /* ─────────── GUEST ID RESOLUTION (ONCE) ─────────── */
@@ -52,21 +56,23 @@ export const CartProvider = ({ children }) => {
     /* ─────────── FETCH CART WHEN ID READY ─────────── */
     useEffect(() => {
         if (!cartOwnerId) return;
+        if (!hasCart) {
+            setCartItems([]);
+            return;
+        }
 
         const fetchCart = async () => {
             setLoading(true);
             try {
                 const res = await getCartItems(cartOwnerId, isGuest);
                 setCartItems(res || []);
-            } catch (err) {
-                console.error("Cart fetch failed:", err);
             } finally {
                 setLoading(false);
             }
         };
 
         fetchCart();
-    }, [cartOwnerId]);
+    }, [cartOwnerId, isGuest, hasCart]);
 
     /* ─────────── CART ACTIONS ─────────── */
     const refreshCart = async () => {
@@ -82,6 +88,8 @@ export const CartProvider = ({ children }) => {
 
     const handleDeleteAllCartItems = async (cartId) => {
         await deleteAllCartItems(cartId, guestId);
+        localStorage.removeItem("hasCart");
+        localStorage.removeItem("guestCart");
         setCartItems([]);
     };
 

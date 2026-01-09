@@ -1,6 +1,6 @@
 import Checkout from '../components/Checkout';
 import { useCart } from '../context/CartContext';
-import { createNewOrder } from '../utils/CartUtils';
+import { createNewOrder } from '../utils/OrderUtils';
 
 const CheckoutPage = () => {
   const { cartItems, refreshCart } = useCart()

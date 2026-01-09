@@ -1,296 +1,311 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { getUserOrderById } from '../utils/CartUtils';
+import { getUserOrderById } from '../utils/OrderUtils';;
 
 const OrderPage = () => {
-    const { orderId } = useParams();
-    const { user } = useContext(AuthContext);
-    const navigate = useNavigate();
+  const { orderId } = useParams();
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-    const [order, setOrder] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState('details');
+  const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('details');
 
-    useEffect(() => {
-        fetchOrders();
-    }, []);
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
-    const fetchOrders = async () => {
-        try {
-            const data = await getUserOrderById(user.uid);
+  const fetchOrders = async () => {
+    try {
+      const data = await getUserOrderById(user.uid);
 
-            const selectedOrder = data?.data?.find(
-                (order) => order._id === orderId
-            );
+      const selectedOrder = data?.data?.find(
+        (order) => order._id === orderId
+      );
 
-            if (!selectedOrder) {
-                navigate("/dashboard?orders");
-                return;
-            }
+      if (!selectedOrder) {
+        navigate("/dashboard?orders");
+        return;
+      }
 
-            setOrder(selectedOrder);
-        } catch (err) {
-            console.error(err);
-            navigate("/dashboard?orders");
-        } finally {
-            setLoading(false);
-        }
-    };
+      setOrder(selectedOrder);
+    } catch (err) {
+      console.error(err);
+      navigate("/dashboard?orders");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    };
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
-    const formatCurrency = (amount) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD'
-        }).format(amount);
-    };
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(amount);
+  };
 
-    if (loading) return <p>Loading...</p>;
-    if (!order) return null;
+  if (loading) {
     return (
-        <div className="order-page">
-            {/* Header Section */}
-            <header className="order-header">
-                <div className="container">
-                    <h1>Order Details</h1>
-                    <div className="order-summary-header">
-                        <div className="order-meta">
-                            <span className="order-number">Order #{order.orderNumber}</span>
-                            <span className="order-date">Placed on {formatDate(order.createdAt)}</span>
-                        </div>
-                        <div className={`status-badge status-${order.orderStatus.toLowerCase()}`}>
-                            {order.orderStatus.toUpperCase()}
-                        </div>
+      <div className="admin-order-details loading">
+        <div className="loading-spinner"></div>
+        <p>Loading order details...</p>
+      </div>
+    );
+  }
+
+  if (!order) {
+    return (
+      <div className="admin-order-details not-found">
+        <h2>Order not found</h2>
+        <button onClick={() => navigate('/admin/orders')}>Back to Orders</button>
+      </div>
+    );
+  }
+  return (
+    <div className="order-page">
+      {/* Header Section */}
+      <header className="order-header">
+        <div className="container">
+          <h1>Order Details</h1>
+          <div className="order-summary-header">
+            <div className="order-meta">
+              <span className="order-number">Order #{order.orderNumber}</span>
+              <span className="order-date">Placed on {formatDate(order.createdAt)}</span>
+            </div>
+            <div className={`status-badge ${order.orderStatus.toLowerCase()}`}>
+              {order.orderStatus.toUpperCase()}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="order-main container">
+        {/* Navigation Tabs */}
+        <nav className="order-tabs">
+          <button
+            className={`tab-btn ${activeTab === 'details' ? 'active' : ''}`}
+            onClick={() => setActiveTab('details')}
+          >
+            Order Details
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'shipping' ? 'active' : ''}`}
+            onClick={() => setActiveTab('shipping')}
+          >
+            Shipping & Tracking
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'payment' ? 'active' : ''}`}
+            onClick={() => setActiveTab('payment')}
+          >
+            Payment
+          </button>
+        </nav>
+
+        {/* Order Details Tab */}
+        {activeTab === 'details' && (
+          <div className="tab-content">
+            {/* Order Items */}
+            <section className="order-items-section">
+              <h2>Items Ordered</h2>
+              {order.items.map((item, index) => (
+                <div key={index} className="order-item-card">
+                  <div className="item-image">
+                    <img
+                      src={item.productId.productImages[0]}
+                      alt={item.productId.productName}
+                    />
+                  </div>
+                  <div className="item-details">
+                    <h3 className="item-name">{item.productId.productName}</h3>
+                    <div className="item-variants">
+                      <span className="variant">
+                        <strong>Size:</strong> {item.selectedAttributes.size}
+                      </span>
+                      <span className="variant">
+                        <strong>Color:</strong> {item.selectedAttributes.color}
+                      </span>
                     </div>
+                    <div className="item-price-info">
+                      <span className="price">
+                        {formatCurrency(item.unitPrice)} × {item.quantity}
+                      </span>
+                      <span className="total-price">
+                        {formatCurrency(item.totalPrice)}
+                      </span>
+                    </div>
+                    <div className="item-status">
+                      <span className="in-stock">In Stock</span>
+                      <span className="estimated-delivery">
+                        Est. Delivery: 5-7 days
+                      </span>
+                    </div>
+                  </div>
                 </div>
-            </header>
+              ))}
+            </section>
 
-            <main className="order-main container">
-                {/* Navigation Tabs */}
-                <nav className="order-tabs">
-                    <button
-                        className={`tab-btn ${activeTab === 'details' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('details')}
-                    >
-                        Order Details
-                    </button>
-                    <button
-                        className={`tab-btn ${activeTab === 'shipping' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('shipping')}
-                    >
-                        Shipping & Tracking
-                    </button>
-                    <button
-                        className={`tab-btn ${activeTab === 'payment' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('payment')}
-                    >
-                        Payment
-                    </button>
-                </nav>
+            {/* Order Summary */}
+            <section className="order-summary-section">
+              <h2>Order Summary</h2>
+              <div className="summary-card">
+                <div className="summary-row">
+                  <span>Subtotal</span>
+                  <span>{formatCurrency(order.pricing.subTotal)}</span>
+                </div>
+                <div className="summary-row">
+                  <span>Shipping</span>
+                  <span className="free">FREE</span>
+                </div>
+                <div className="summary-row">
+                  <span>Tax</span>
+                  <span>{formatCurrency(order.pricing.tax)}</span>
+                </div>
+                <div className="summary-row">
+                  <span>Discount</span>
+                  <span className="discount">-{formatCurrency(order.pricing.discount)}</span>
+                </div>
+                <div className="summary-row total">
+                  <span>Total</span>
+                  <span>{formatCurrency(order.pricing.grandTotal)}</span>
+                </div>
+              </div>
+            </section>
+          </div>
+        )}
 
-                {/* Order Details Tab */}
-                {activeTab === 'details' && (
-                    <div className="tab-content">
-                        {/* Order Items */}
-                        <section className="order-items-section">
-                            <h2>Items Ordered</h2>
-                            {order.items.map((item, index) => (
-                                <div key={index} className="order-item-card">
-                                    <div className="item-image">
-                                        <img
-                                            src={item.productId.productImages[0]}
-                                            alt={item.productId.productName}
-                                        />
-                                    </div>
-                                    <div className="item-details">
-                                        <h3 className="item-name">{item.productId.productName}</h3>
-                                        <div className="item-variants">
-                                            <span className="variant">
-                                                <strong>Size:</strong> {item.selectedAttributes.size}
-                                            </span>
-                                            <span className="variant">
-                                                <strong>Color:</strong> {item.selectedAttributes.color}
-                                            </span>
-                                        </div>
-                                        <div className="item-price-info">
-                                            <span className="price">
-                                                {formatCurrency(item.unitPrice)} × {item.quantity}
-                                            </span>
-                                            <span className="total-price">
-                                                {formatCurrency(item.totalPrice)}
-                                            </span>
-                                        </div>
-                                        <div className="item-status">
-                                            <span className="in-stock">In Stock</span>
-                                            <span className="estimated-delivery">
-                                                Est. Delivery: 5-7 days
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </section>
+        {/* Shipping Tab */}
+        {activeTab === 'shipping' && (
+          <div className="tab-content">
+            <section className="shipping-section">
+              <h2>Shipping Information</h2>
+              <div className="address-card">
+                <div className="address-header">
+                  <h3>Shipping Address</h3>
+                  <span className="default-badge">Default</span>
+                </div>
+                <div className="address-details">
+                  <p><strong>{order.shippingAddress.fullName}</strong></p>
+                  <p>{order.shippingAddress.addressLine1}</p>
+                  {order.shippingAddress.addressLine2 && (
+                    <p>{order.shippingAddress.addressLine2}</p>
+                  )}
+                  <p>
+                    {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.postalCode}
+                  </p>
+                  <p>{order.shippingAddress.country}</p>
+                  <p className="phone">Phone: {order.shippingAddress.phone}</p>
+                </div>
+              </div>
 
-                        {/* Order Summary */}
-                        <section className="order-summary-section">
-                            <h2>Order Summary</h2>
-                            <div className="summary-card">
-                                <div className="summary-row">
-                                    <span>Subtotal</span>
-                                    <span>{formatCurrency(order.pricing.subTotal)}</span>
-                                </div>
-                                <div className="summary-row">
-                                    <span>Shipping</span>
-                                    <span className="free">FREE</span>
-                                </div>
-                                <div className="summary-row">
-                                    <span>Tax</span>
-                                    <span>{formatCurrency(order.pricing.tax)}</span>
-                                </div>
-                                <div className="summary-row">
-                                    <span>Discount</span>
-                                    <span className="discount">-{formatCurrency(order.pricing.discount)}</span>
-                                </div>
-                                <div className="summary-row total">
-                                    <span>Total</span>
-                                    <span>{formatCurrency(order.pricing.grandTotal)}</span>
-                                </div>
-                            </div>
-                        </section>
+              {/* Tracking Info */}
+              <div className="tracking-card">
+                <h3>Tracking Information</h3>
+                {order.fulfillment.trackingNumber ? (
+                  <div className="tracking-details">
+                    <div className="tracking-row">
+                      <span>Tracking Number:</span>
+                      <strong>{order.fulfillment.trackingNumber}</strong>
                     </div>
-                )}
-
-                {/* Shipping Tab */}
-                {activeTab === 'shipping' && (
-                    <div className="tab-content">
-                        <section className="shipping-section">
-                            <h2>Shipping Information</h2>
-                            <div className="address-card">
-                                <div className="address-header">
-                                    <h3>Shipping Address</h3>
-                                    <span className="default-badge">Default</span>
-                                </div>
-                                <div className="address-details">
-                                    <p><strong>{order.shippingAddress.fullName}</strong></p>
-                                    <p>{order.shippingAddress.addressLine1}</p>
-                                    {order.shippingAddress.addressLine2 && (
-                                        <p>{order.shippingAddress.addressLine2}</p>
-                                    )}
-                                    <p>
-                                        {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.postalCode}
-                                    </p>
-                                    <p>{order.shippingAddress.country}</p>
-                                    <p className="phone">Phone: {order.shippingAddress.phone}</p>
-                                </div>
-                            </div>
-
-                            {/* Tracking Info */}
-                            <div className="tracking-card">
-                                <h3>Tracking Information</h3>
-                                {order.fulfillment.trackingNumber ? (
-                                    <div className="tracking-details">
-                                        <div className="tracking-row">
-                                            <span>Tracking Number:</span>
-                                            <strong>{order.fulfillment.trackingNumber}</strong>
-                                        </div>
-                                        <div className="tracking-row">
-                                            <span>Carrier:</span>
-                                            <span>{order.fulfillment.carrier || 'Standard Shipping'}</span>
-                                        </div>
-                                        <div className="tracking-row">
-                                            <span>Status:</span>
-                                            <span className={`status-${order.fulfillment.status}`}>
-                                                {order.fulfillment.status.toUpperCase()}
-                                            </span>
-                                        </div>
-                                        <a href="#" className="track-btn">
-                                            Track Package
-                                        </a>
-                                    </div>
-                                ) : (
-                                    <p className="no-tracking">Tracking information will be available once the order is shipped.</p>
-                                )}
-                            </div>
-                        </section>
+                    <div className="tracking-row">
+                      <span>Carrier:</span>
+                      <span>{order.fulfillment.carrier || 'Standard Shipping'}</span>
                     </div>
-                )}
-
-                {/* Payment Tab */}
-                {activeTab === 'payment' && (
-                    <div className="tab-content">
-                        <section className="payment-section">
-                            <h2>Payment Information</h2>
-                            <div className="payment-card">
-                                <div className="payment-method">
-                                    <h3>Payment Method</h3>
-                                    <div className="method-details">
-                                        <span className="method-icon">💳</span>
-                                        <div>
-                                            <p className="method-name">Credit / Debit Card</p>
-                                            <p className="method-status">Payment {order.payment.status}</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="payment-summary">
-                                    <h3>Payment Summary</h3>
-                                    <div className="payment-row">
-                                        <span>Order Total</span>
-                                        <span>{formatCurrency(order.pricing.grandTotal)}</span>
-                                    </div>
-                                    <div className="payment-row">
-                                        <span>Payment Status</span>
-                                        <span className={`payment-status status-${order.payment.status}`}>
-                                            {order.payment.status.toUpperCase()}
-                                        </span>
-                                    </div>
-                                    {order.payment.transactionId && (
-                                        <div className="payment-row">
-                                            <span>Transaction ID</span>
-                                            <span className="transaction-id">{order.payment.transactionId}</span>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {!order.isPaid && (
-                                    <div className="payment-actions">
-                                        <button className="pay-now-btn">
-                                            Complete Payment
-                                        </button>
-                                        <button className="cancel-btn">
-                                            Cancel Order
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                        </section>
+                    <div className="tracking-row">
+                      <span>Status:</span>
+                      <span className={`status-badge ${order.fulfillment.status}`}>
+                        {order.fulfillment.status.toUpperCase()}
+                      </span>
                     </div>
+                    <a href="#" className="track-btn">
+                      Track Package
+                    </a>
+                  </div>
+                ) : (
+                  <p className="no-tracking">Tracking information will be available once the order is shipped.</p>
                 )}
+              </div>
+            </section>
+          </div>
+        )}
 
-                {/* Action Buttons */}
-                <div className="action-buttons">
-                    {/* <button className="print-btn">
+        {/* Payment Tab */}
+        {activeTab === 'payment' && (
+          <div className="tab-content">
+            <section className="payment-section">
+              <h2>Payment Information</h2>
+              <div className="payment-card">
+                <div className="payment-method">
+                  <h3>Payment Method</h3>
+                  <div className="method-details">
+                    <span className="method-icon">💳</span>
+                    <div>
+                      <p className="method-name">Credit / Debit Card</p>
+                      <p className="method-status">Payment {order.payment.status}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="payment-summary">
+                  <h3>Payment Summary</h3>
+                  <div className="payment-row">
+                    <span>Order Total</span>
+                    <span>{formatCurrency(order.pricing.grandTotal)}</span>
+                  </div>
+                  <div className="payment-row">
+                    <span>Payment Status</span>
+                    <span className={`payment-status ${order.payment.status}`}>
+                      {order.payment.status.toUpperCase()}
+                    </span>
+                  </div>
+                  {order.payment.transactionId && (
+                    <div className="payment-row">
+                      <span>Transaction ID</span>
+                      <span className="transaction-id">{order.payment.transactionId}</span>
+                    </div>
+                  )}
+                </div>
+
+                {!order.isPaid && (
+                  <div className="payment-actions">
+                    <button className="pay-now-btn">
+                      Complete Payment
+                    </button>
+                    <button className="cancel-btn">
+                      Cancel Order
+                    </button>
+                  </div>
+                )}
+              </div>
+            </section>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="action-buttons">
+          {/* <button className="print-btn">
                         📄 Print Order
                     </button> */}
-                    <button className="support-btn" onClick={() => navigate('/contact-us')}>
-                        💬 Contact Support
-                    </button>
-                    <button className="return-btn">
-                        ↩️ Start Return
-                    </button>
-                </div>
-            </main>
-            <style>{`:root {
+          <button className="support-btn" onClick={() => navigate('/contact-us')}>
+            💬 Contact Support
+          </button>
+          <button className="return-btn">
+            ↩️ Start Return
+          </button>
+        </div>
+      </main>
+      <style>{`:root {
   --red: #d30217;
   --black: #000000;
   --gray-50: #f9fafb;
@@ -374,22 +389,22 @@ body {
   letter-spacing: 0.5px;
 }
 
-.status-placed, .status-shipped, .status-refunded {
+.status-badge.placed, .status-badge.shipped, .status-badge.refunded {
   background-color: var(--blue);
   color: white;
 }
 
-.status-returned, .status-pending, .status-processing {
+.status-badge.returned, .status-badge.pending, .status-badge.processing {
   background-color: var(--yellow);
   color: var(--black);
 }
 
-.status-confirmed, .status-delivered, .status-paid {
+.status-badge.confirmed, .status-badge.delivered, .status-badge.paid {
   background-color: var(--green);
   color: white;
 }
 
-.status-cancelled, .status-failed {
+.status-badge.cancelled, .status-badge.failed {
   background-color: var(--red);
   color: white;
 }
@@ -908,9 +923,9 @@ body {
     opacity: 0.5;
   }
 }`}
-            </style>
-        </div>
-    );
+      </style>
+    </div>
+  );
 };
 
 export default OrderPage;

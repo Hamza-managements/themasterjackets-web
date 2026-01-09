@@ -25,7 +25,7 @@ import {
 } from 'react-icons/fa';
 import { MdSecurity } from 'react-icons/md';
 import { BsShieldLock } from 'react-icons/bs';
-import { getUserOrderById } from '../utils/CartUtils';
+import { getUserOrderById } from '../utils/OrderUtils';
 
 const Dashboard = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

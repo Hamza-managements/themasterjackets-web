@@ -353,7 +353,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                         <h3>Contact information</h3>
                                         {!user && <Link to={"/auth/login"}>Sign in</Link>}
                                     </div>
-                                    <div className="form-group">
+                                    <div className="checkout-form-group">
                                         <input
                                             type="email"
                                             id="email"
@@ -385,7 +385,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                 {/* Shipping address */}
                                 <section className="form-section">
                                     <h3>Shipping address</h3>
-                                    <div className="form-group">
+                                    <div className="checkout-form-group">
                                         <select
                                             id="country"
                                             name="country"
@@ -398,7 +398,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                         </select>
                                     </div>
                                     <div className="form-row">
-                                        <div className="form-group">
+                                        <div className="checkout-form-group">
                                             <input
                                                 type="text"
                                                 id="firstName"
@@ -409,7 +409,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                                 className={errors.firstName ? 'error' : ''}
                                             />
                                         </div>
-                                        <div className="form-group">
+                                        <div className="checkout-form-group">
                                             <input
                                                 type="text"
                                                 id="lastName"
@@ -422,7 +422,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                         </div>
                                     </div>
 
-                                    <div className="form-group">
+                                    <div className="checkout-form-group">
                                         <input
                                             type="text"
                                             id="addressLine1"
@@ -435,7 +435,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                         {errors.addressLine1 && <span className="checkout-error-message">{errors.addressLine1}</span>}
                                     </div>
 
-                                    <div className="form-group">
+                                    <div className="checkout-form-group">
                                         <input
                                             type="text"
                                             id="addressLine2"
@@ -448,7 +448,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                     </div>
 
                                     <div className="form-row">
-                                        <div className="form-group">
+                                        <div className="checkout-form-group">
                                             <input
                                                 type="text"
                                                 id="city"
@@ -461,7 +461,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                             {errors.city && <span className="checkout-error-message">{errors.city}</span>}
                                         </div>
 
-                                        <div className="form-group">
+                                        <div className="checkout-form-group">
                                             <input
                                                 type="text"
                                                 id="zipCode"
@@ -473,7 +473,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                             />
                                             {errors.zipCode && <span className="checkout-error-message">{errors.zipCode}</span>}
                                         </div>
-                                        <div className="form-group">
+                                        <div className="checkout-form-group">
                                             <select
                                                 id="state"
                                                 name="state"
@@ -621,7 +621,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
 
                                                 {formData.paymentMethod === 'CARD' && (
                                                     <div className="credit-card-form">
-                                                        <div className="form-group">
+                                                        <div className="checkout-form-group">
                                                             <input
                                                                 type="text"
                                                                 id="cardNumber"
@@ -633,7 +633,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                                             />
                                                         </div>
 
-                                                        <div className="form-group">
+                                                        <div className="checkout-form-group">
                                                             <input
                                                                 type="text"
                                                                 id="cardName"
@@ -649,7 +649,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                                         </div>
 
                                                         <div className="form-row">
-                                                            <div className="form-group">
+                                                            <div className="checkout-form-group">
                                                                 <input
                                                                     type="text"
                                                                     id="expiryDate"
@@ -663,7 +663,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                                                     <span className="checkout-error-message">{errors.expiryDate}</span>
                                                                 )}
                                                             </div>
-                                                            <div className="form-group">
+                                                            <div className="checkout-form-group">
                                                                 <input
                                                                     type="text"
                                                                     id="cvv"

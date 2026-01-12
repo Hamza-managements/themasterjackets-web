@@ -224,6 +224,12 @@ export default function Header() {
                             >
                               <i className="fas fa-tools"></i> Manage Products
                             </Link>
+                            <Link
+                              to="/admin/dashboard?orders"
+                              className="fs-dropdown-link-admin"
+                            >
+                              <i className="fas fa-gear"></i> Manage Orders
+                            </Link>
                           </>
                         ) : (
                           <>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/AdminOrderDetails.css';
 import { AuthContext } from '../../context/AuthContext';
@@ -11,8 +11,6 @@ const AdminOrderDetails = () => {
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('overview');
-    const [editingField, setEditingField] = useState(null);
-    const [tempValue, setTempValue] = useState('');
     const [isUpdating, setIsUpdating] = useState(false);
 
     // Form states
@@ -184,7 +182,7 @@ const AdminOrderDetails = () => {
             {/* Header */}
             <div className="order-header">
                 <div className="header-top">
-                    <button className="back-btn" onClick={() => navigate('/admin/dashboard')}>
+                    <button className="back-btn" onClick={() => navigate('/admin/dashboard?orders')}>
                         ← Back to Orders
                     </button>
                     <div className="header-actions">

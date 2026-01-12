@@ -10,7 +10,7 @@ import { FiHome, FiUsers, FiSettings, FiShoppingCart, FiMail, FiBell, FiMenu, Fi
 import { RiRefund2Fill } from "react-icons/ri";
 import Swal from 'sweetalert2';
 import { AuthContext } from '../context/AuthContext';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import AdminSettings from '../components/AdminDashboardSettings';
 import { deleteUser, fetchAllUsers } from '../utils/CartUtils';
 import AdminOrderDashboard from '../components/AdminAllOrder';
@@ -25,6 +25,7 @@ const AdminDashboard = () => {
     const [notificationsOpen, setNotificationsOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
     const [darkMode, setDarkMode] = useState(false)
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -44,6 +45,19 @@ const AdminDashboard = () => {
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, [isAdmin, navigate]);
+
+    useEffect(() => {
+        const allowedTabs = ["users", "products", "orders", "messages", "settings"];
+
+        const tabFromQuery = [...searchParams.keys()][0];
+
+        if (allowedTabs.includes(tabFromQuery)) {
+            setActiveMenu(tabFromQuery);
+            setSidebarOpen(!sidebarOpen)
+        } else {
+            setActiveMenu("dashboard");
+        }
+    }, [searchParams]);
 
     useEffect(() => {
         const getAllUsers = async () => {
@@ -693,15 +707,15 @@ const AdminDashboard = () => {
                                     </div>
                                     {user.userName.toLowerCase() === "hamza shahid" && (
                                         <div className="flex flex-wrap gap-3">
-                                        {/* Manage Product Button */}
-                                        <Link
-                                            to="/admin/api-testing"
-                                            className="inline-flex text-decoration-none items-center gap-2 px-4 py-3 rounded-3xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
-                                        >
-                                            <FiSettings className="text-lg" />
-                                            API's testing
-                                        </Link>
-                                    </div>)}
+                                            {/* Manage Product Button */}
+                                            <Link
+                                                to="/admin/api-testing"
+                                                className="inline-flex text-decoration-none items-center gap-2 px-4 py-3 rounded-3xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
+                                            >
+                                                <FiSettings className="text-lg" />
+                                                API's testing
+                                            </Link>
+                                        </div>)}
                                 </div>
 
                                 {/* Categories Table Button */}

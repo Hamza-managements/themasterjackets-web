@@ -9,7 +9,7 @@ import { AuthContext } from '../context/AuthContext';
 import { validateCheckout } from './ValidateCheckout';
 import OrderSuccess from './OrderSuccess';
 
-const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) => {
+const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) => {
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -239,19 +239,18 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                     <div className="summary-content">
                         {cartItems?.map((item) => (
                             <div key={item?.variationId} className="summary-item">
-                                <div className="item-image">
+                                <div className="checkout-item-image">
                                     <img src={item?.productId?.productImages[0]} alt={item?.productId?.productName} />
-                                    <span className="item-quantity">{item?.quantity}</span>
+                                    <span className="checkout-item-quantity">{item?.quantity}</span>
                                 </div>
-                                <div className="item-details">
+                                <div className="checkout-item-details">
                                     <h4>{item?.productId?.productName}</h4>
                                     <p>Size: {item?.selectedAttributes?.size}</p>
                                 </div>
-                                <div className="item-price">${(item?.price * item?.quantity).toFixed(2)}</div>
+                                <div className="checkout-item-price">${(item?.price * item?.quantity).toFixed(2)}</div>
                             </div>
                         ))}
-
-                        <div className="summary-totals">
+                        <div className="checkout-summary-totals">
                             <div className="total-row">
                                 <span>Subtotal</span>
                                 <span>${totalPrice?.toFixed(2)}</span>
@@ -260,13 +259,13 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                 <span>Shipping</span>
                                 <span>Calculated at next step</span>
                             </div>
-                            <div className="total-row">
+                            {/* <div className="total-row">
                                 <span>Tax</span>
                                 <span>${(totalPrice * 0).toFixed(2)}</span>
-                            </div>
-                            <div className="total-row grand-total">
-                                <span>Total</span>
-                                <span>USD ${(totalPrice * 1).toFixed(2)}</span>
+                            </div> */}
+                            <div className="total-row">
+                                <span><span className='grand-total'>Total</span></span>
+                                <span>USD<span className='grand-total'> ${(totalPrice * 1).toFixed(2)}</span></span>
                             </div>
                         </div>
 
@@ -304,7 +303,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                 alt="The Master Jackets"
                             />
                         </Link>
-                        <div className="checkout-steps">
+                        {/* <div className="checkout-steps">
                             <div className={`step ${checkoutStep === 'information' ? 'active' : ''}`}>
                                 <span>1</span>
                                 Information
@@ -317,7 +316,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                 <span>3</span>
                                 Payment
                             </div>
-                        </div>
+                        </div> */}
                     </header>
 
                     <div className="checkout-layout">
@@ -397,7 +396,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                             <option value="USA">United States</option>
                                         </select>
                                     </div>
-                                    <div className="form-row">
+                                    <div className="checkout-form-row">
                                         <div className="checkout-form-group">
                                             <input
                                                 type="text"
@@ -447,7 +446,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                         />
                                     </div>
 
-                                    <div className="form-row">
+                                    <div className="checkout-form-row phone-zip-row">
                                         <div className="checkout-form-group">
                                             <input
                                                 type="text"
@@ -460,19 +459,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                             />
                                             {errors.city && <span className="checkout-error-message">{errors.city}</span>}
                                         </div>
-
-                                        <div className="checkout-form-group">
-                                            <input
-                                                type="text"
-                                                id="zipCode"
-                                                name="zipCode"
-                                                value={formData.zipCode}
-                                                onChange={handleChange}
-                                                placeholder="ZIP code"
-                                                className={errors.zipCode ? 'error' : ''}
-                                            />
-                                            {errors.zipCode && <span className="checkout-error-message">{errors.zipCode}</span>}
-                                        </div>
+                                        
                                         <div className="checkout-form-group">
                                             <select
                                                 id="state"
@@ -481,7 +468,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                                 onChange={handleChange}
                                                 className={errors.city ? 'error' : ''}
                                             >
-                                                <option value="" disabled >Select State</option>
+                                                <option value="" disabled >State</option>
                                                 <option value="AL">Alabama</option>
                                                 <option value="AK">Alaska</option>
                                                 <option value="AZ">Arizona</option>
@@ -533,6 +520,19 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                                 <option value="WY">Wyoming</option>
                                             </select>
                                         </div>
+
+                                        <div className="checkout-form-group">
+                                            <input
+                                                type="text"
+                                                id="zipCode"
+                                                name="zipCode"
+                                                value={formData.zipCode}
+                                                onChange={handleChange}
+                                                placeholder="ZIP code"
+                                                className={errors.zipCode ? 'error' : ''}
+                                            />
+                                            {errors.zipCode && <span className="checkout-error-message">{errors.zipCode}</span>}
+                                        </div>
                                     </div>
 
                                     <div className="phone-input-wrapper">
@@ -563,7 +563,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                     <h3>Shipping method</h3>
 
                                     <div className="shipping-options">
-                                        <label className="shipping-option">
+                                        <label className={`shipping-option ${shippingMethod === "standard" ? "selected" : ""}`}>
                                             <input
                                                 type="radio"
                                                 name="shippingMethod"
@@ -578,7 +578,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                             </div>
                                         </label>
 
-                                        <label className="shipping-option">
+                                        {/* <label className="shipping-option">
                                             <input
                                                 type="radio"
                                                 name="shippingMethod"
@@ -591,7 +591,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                                 <span className="option-price">$9.99</span>
                                                 <span className="option-time">2–3 business days</span>
                                             </div>
-                                        </label>
+                                        </label> */}
                                     </div>
                                 </section>
 
@@ -603,7 +603,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                     {shippingMethod == "standard" && (
                                         <>
                                             <div className="checkout-payment-methods">
-                                                <label className="checkout-payment-method">
+                                                <label className={`checkout-payment-method ${formData.paymentMethod === "CARD" ? "selected" : ""}`}>
                                                     <input
                                                         type="radio"
                                                         name="paymentMethod"
@@ -648,7 +648,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                                             )}
                                                         </div>
 
-                                                        <div className="form-row">
+                                                        <div className="checkout-form-row">
                                                             <div className="checkout-form-group">
                                                                 <input
                                                                     type="text"
@@ -681,7 +681,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart}) =
                                                     </div>
                                                 )}
 
-                                                <label className="checkout-payment-method">
+                                                <label className={`checkout-payment-method ${formData.paymentMethod === "paypal" ? "selected" : ""}`}>
                                                     <input
                                                         type="radio"
                                                         name="paymentMethod"

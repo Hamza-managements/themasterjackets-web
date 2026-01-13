@@ -16,8 +16,9 @@ const AdminOrderDetails = () => {
     // Form states
     const [trackingInfo, setTrackingInfo] = useState({
         orderId: '',
+        email: '',
         trackingNumber: '',
-        carrier: 'FedEx',
+        carrier: 'FEDEX',
     });
     const [refundData, setRefundData] = useState({
         amount: 0,
@@ -46,8 +47,9 @@ const AdminOrderDetails = () => {
             if (selectedOrder.fulfillment) {
                 setTrackingInfo({
                     orderId: orderId,
+                    email: selectedOrder.userDetails.userId.email,
                     trackingNumber: selectedOrder.fulfillment.trackingNumber || '',
-                    carrier: selectedOrder.fulfillment.carrier || 'FedEx',
+                    carrier: selectedOrder.fulfillment.carrier || 'FEDEX',
                 });
             }
         } catch (error) {
@@ -74,7 +76,6 @@ const AdminOrderDetails = () => {
     const handleUpdateTracking = async () => {
         try {
             setIsUpdating(true);
-            console.log("Updating tracking with info:", trackingInfo);
             await updateShipmentWithOrderId(user?.uid, trackingInfo);
             fetchOrderDetails();
         } catch (error) {
@@ -477,9 +478,8 @@ const AdminOrderDetails = () => {
                                             >
                                                 <option value="USPS">USPS</option>
                                                 <option value="UPS">UPS</option>
-                                                <option value="FedEx">FedEx</option>
+                                                <option value="FEDEX">FedEx</option>
                                                 <option value="DHL">DHL</option>
-                                                <option value="Other">Other</option>
                                             </select>
                                         </div>
 

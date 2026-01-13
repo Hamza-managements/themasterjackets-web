@@ -8,6 +8,9 @@ import "react-phone-input-2/lib/material.css";
 import { AuthContext } from '../context/AuthContext';
 import { validateCheckout } from './ValidateCheckout';
 import OrderSuccess from './OrderSuccess';
+import { createPortal } from "react-dom";
+
+
 
 const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) => {
     const [formData, setFormData] = useState({
@@ -40,6 +43,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
     const [checkoutStep, setCheckoutStep] = useState('information');
     const [showOrderSummary, setShowOrderSummary] = useState(false);
     const [submitError, setSubmitError] = useState(null);
+    const [openShippingModal, setOpenShippingModal] = useState(false);
     // const [isGuestCheckout, setIsGuestCheckout] = useState(xtrue); // below is the input that is commented out
 
     useEffect(() => {
@@ -214,8 +218,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                     {showOrderSummary ? 'Hide' : 'Show'} order summary
                     <span className="summary-arrow">{showOrderSummary ? '↑' : '↓'}</span>
                 </button>
-                {showOrderSummary ? <div className="summary-total">${(totalPrice * 1).toFixed(2)}</div> : ''}
-
+                {!showOrderSummary ? <div className="summary-total">${(totalPrice * 1).toFixed(2)}</div> : ''}
             </div>
 
             {!cartItems || cartItems.length === 0 ?
@@ -255,10 +258,74 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                 <span>Subtotal</span>
                                 <span>${totalPrice?.toFixed(2)}</span>
                             </div>
+                            {/* Shipping row */}
                             <div className="total-row">
-                                <span>Shipping</span>
+                                <span className="shipping-label">
+                                    Shipping
+                                    <button
+                                        type="button"
+                                        className="checkout-info-btn"
+                                        onClick={() => setOpenShippingModal(true)}
+                                    >
+                                        ?
+                                    </button>
+                                </span>
                                 <span>Calculated at next step</span>
                             </div>
+
+                            {openShippingModal &&
+                                createPortal(
+                                    <div
+                                        className="checkout-shipping-modal-backdrop"
+                                        onClick={() => setOpenShippingModal(false)}
+                                    >
+                                        <div
+                                            className="checkout-shipping-modal"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <div className="checkout-shipping-modal-header">
+                                                <h3>Shipping Policy</h3>
+                                                <button
+                                                    className="checkout-shipping-close"
+                                                    onClick={() => setOpenShippingModal(false)}
+                                                >
+                                                    ✕
+                                                </button>
+                                            </div>
+
+                                            <div className="checkout-shipping-modal-body">
+                                                <p>
+                                                    Shipping charges are calculated at checkout based on your delivery
+                                                    address and selected shipping method.
+                                                </p>
+                                                <p>
+                                                    Orders are processed within 1–2 business days.
+                                                </p><p>
+                                                    1. Delivery Time:
+                                                </p><p>
+                                                    Orders are delivered between 5-8 working days.
+                                                </p><p>
+                                                    Note - You can contact us at support@decrum.com, and we will be happy to assist you.
+                                                </p><p>
+                                                    2. Tracking:
+                                                </p><p>
+                                                    The customer will receive a tracking link via email once his or her order is shipped from our location.
+                                                </p><p>
+                                                    3. Courier Service:
+                                                </p><p>
+                                                    We use valuable courier services (DHL, FedEx, or USPS) that are known for shipping products on time. We may choose to ship from the US, UK, or from our overseas warehouses.
+                                                </p><p>
+                                                    4. In Case of Damage/Defect:
+                                                </p><p>
+                                                    We make every effort to provide you with high-quality flawless products. However, if the item is damaged during the shipment process, please contact us within 7 days.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>,
+                                    document.body
+                                )
+                            }
+
                             {/* <div className="total-row">
                                 <span>Tax</span>
                                 <span>${(totalPrice * 0).toFixed(2)}</span>
@@ -349,7 +416,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                             <form onSubmit={handleSubmit} className="checkout-form">
                                 <section className="form-section">
                                     <div className="form-contact-header">
-                                        <h3>Contact information</h3>
+                                        <h3>Contact</h3>
                                         {!user && <Link to={"/auth/login"}>Sign in</Link>}
                                     </div>
                                     <div className="checkout-form-group">
@@ -383,7 +450,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
 
                                 {/* Shipping address */}
                                 <section className="form-section">
-                                    <h3>Shipping address</h3>
+                                    <h3>Delivery</h3>
                                     <div className="checkout-form-group">
                                         <select
                                             id="country"
@@ -459,7 +526,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                             />
                                             {errors.city && <span className="checkout-error-message">{errors.city}</span>}
                                         </div>
-                                        
+
                                         <div className="checkout-form-group">
                                             <select
                                                 id="state"

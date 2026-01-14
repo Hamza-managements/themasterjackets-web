@@ -115,7 +115,7 @@
 }
 
 .express-btn.paypal {
-  background: #ffc439;
+  background: #ffffff;
   color: #000;
   border-color: #ffc439;
 }
@@ -126,6 +126,13 @@
   color: #fff;
   border-color: #000;
 }
+
+.express-btn img {
+    height: 20px !important;
+    width: auto;
+    object-fit: contain;
+}
+
 
 .divider {
   display: flex;

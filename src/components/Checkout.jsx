@@ -397,13 +397,13 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                         className="express-btn paypal"
                                         onClick={() => handleExpressCheckout('paypal')}
                                     >
-                                        PayPal
+                                        <img src="https://res.cloudinary.com/dekf5dyng/image/upload/v1768391458/paypal_cp6hum.png" height={30} alt="" />
                                     </button>
                                     <button
                                         className="express-btn google-pay"
                                         onClick={() => handleExpressCheckout('google-pay')}
                                     >
-                                        Google Pay
+                                        <img src="https://res.cloudinary.com/dekf5dyng/image/upload/v1768391176/g_pay_a1yrmk.jpg" height={30} alt="" />
                                     </button>
                                 </div>
 

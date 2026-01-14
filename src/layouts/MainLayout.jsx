@@ -10,7 +10,7 @@ const MainLayout = () => {
       <Header />
       <CartSidebar />
     
-      <main className="main-content">
+      <main className="layout-main-content">
         <Outlet /> 
       </main>
       <Footer />

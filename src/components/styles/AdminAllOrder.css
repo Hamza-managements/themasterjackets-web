@@ -130,6 +130,7 @@
 }
 
 .search-box {
+  display: flex;
   position: relative;
   min-width: 300px;
 }

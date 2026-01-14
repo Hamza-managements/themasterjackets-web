@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import './styles/AdminAllOrder.css';
 import { cancelOrderWithId, GetAllOrder } from '../utils/OrderUtils';
+import { Search } from 'lucide-react';
 
 const AdminAllOrderDashboard = ({ user }) => {
     const [orders, setOrders] = useState([]);
@@ -165,10 +166,10 @@ const AdminAllOrderDashboard = ({ user }) => {
                 <h1>Order Management</h1>
                 <div className="header-actions">
                     <button className="btn-export" onClick={fetchOrders}>
-                        🔄 Refresh
+                        Refresh
                     </button>
                     <button className="btn-export">
-                        📊 Export Report
+                        Export Report
                     </button>
                 </div>
             </div>
@@ -178,7 +179,6 @@ const AdminAllOrderDashboard = ({ user }) => {
                 <div className="stat-card">
                     <div className="stat-header">
                         <span className="stat-title">Sales</span>
-                        <span className="stat-icon">💰</span>
                     </div>
                     <div className="stat-value">{formatCurrency(stats.revenue)}</div>
                     <div className="stat-change">+18% from last month</div>
@@ -187,7 +187,6 @@ const AdminAllOrderDashboard = ({ user }) => {
                 <div className="stat-card">
                     <div className="stat-header">
                         <span className="stat-title">Total Orders</span>
-                        <span className="stat-icon">📦</span>
                     </div>
                     <div className="stat-value">{stats.total}</div>
                     <div className="stat-change">+12% from last month</div>
@@ -196,16 +195,13 @@ const AdminAllOrderDashboard = ({ user }) => {
                 <div className="stat-card">
                     <div className="stat-header">
                         <span className="stat-title">Pending</span>
-                        <span className="stat-icon">⏳</span>
                     </div>
                     <div className="stat-value">{stats.pending}</div>
-                    <div className="stat-change">{Math.round((stats.pending / stats.total) * 100)}% of total</div>
                 </div>
 
                 <div className="stat-card">
                     <div className="stat-header">
                         <span className="stat-title">Confirmed</span>
-                        <span className="stat-icon">⚙️</span>
                     </div>
                     <div className="stat-value">{stats.shipped}</div>
                     <div className="stat-change">{Math.round((stats.shipped / stats.total) * 100)}% of total</div>
@@ -216,13 +212,16 @@ const AdminAllOrderDashboard = ({ user }) => {
             <div className="filters-section">
                 <div className="filter-group">
                     <div className="search-box">
+                        <Search
+                            className="search-icon"
+                            size={20}
+                        />
                         <input
                             type="text"
                             placeholder="Search orders, customers..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
-                        <span className="search-icon">🔍</span>
                     </div>
 
                     <select

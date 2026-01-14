@@ -59,6 +59,10 @@ const AdminDashboard = () => {
         }
     }, [searchParams]);
 
+    const handleNavClick = (tab) => {
+        navigate(tab === "dashboard" ? "/admin/dashboard" : `/admin/dashboard?${tab}`);
+    };
+
     useEffect(() => {
         const getAllUsers = async () => {
             const res = await fetchAllUsers();
@@ -259,14 +263,14 @@ const AdminDashboard = () => {
                             text="Dashboard"
                             active={activeMenu === 'dashboard'}
                             expanded={sidebarOpen}
-                            onClick={() => { setActiveMenu('dashboard'); setSidebarOpen(!sidebarOpen) }}
+                            onClick={() => { handleNavClick('dashboard')}}
                         />
                         <NavItem
                             icon={<FiUsers />}
                             text="Users"
                             active={activeMenu === 'users'}
                             expanded={sidebarOpen}
-                            onClick={() => { setActiveMenu('users'); setSidebarOpen(!sidebarOpen) }}
+                            onClick={() => { handleNavClick('users')}}
 
                         />
                         <NavItem
@@ -274,14 +278,14 @@ const AdminDashboard = () => {
                             text="Products"
                             active={activeMenu === 'products'}
                             expanded={sidebarOpen}
-                            onClick={() => { setActiveMenu('products'); setSidebarOpen(!sidebarOpen) }}
+                            onClick={() => { handleNavClick('products')}}
                         />
                         <NavItem
                             icon={<FiShoppingCart />}
                             text="Orders"
                             active={activeMenu === 'orders'}
                             expanded={sidebarOpen}
-                            onClick={() => { setActiveMenu('orders'); setSidebarOpen(!sidebarOpen) }}
+                            onClick={() => { handleNavClick('orders')}}
 
                         />
                         <NavItem
@@ -289,7 +293,7 @@ const AdminDashboard = () => {
                             text="Messages"
                             active={activeMenu === 'messages'}
                             expanded={sidebarOpen}
-                            onClick={() => { setActiveMenu('messages'); setSidebarOpen(!sidebarOpen) }}
+                            onClick={() => { handleNavClick('messages')}}
 
                         />
                         <NavItem
@@ -297,7 +301,7 @@ const AdminDashboard = () => {
                             text="Settings"
                             active={activeMenu === 'settings'}
                             expanded={sidebarOpen}
-                            onClick={() => { setActiveMenu('settings'); setSidebarOpen(!sidebarOpen) }}
+                            onClick={() => { handleNavClick('settings')}}
 
                         />
                         <div className='h-64'>
@@ -397,7 +401,7 @@ const AdminDashboard = () => {
                                             ))}
                                         </div>
                                         <div className="px-4 py-2 text-center text-sm text-blue-600 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                                            onClick={() => setActiveMenu('orders')}>
+                                            onClick={() => handleNavClick('messages')}>
                                             View all notifications
                                         </div>
                                     </div>
@@ -425,7 +429,7 @@ const AdminDashboard = () => {
                                         <button
                                             href="#"
                                             className={`block px-4 py-2 text-sm ${darkMode ? 'text-gray-300 hover:bg-gray-700' : ' text-gray-700 hover:bg-gray-100'}`}
-                                            onClick={() => setActiveMenu('settings')}
+                                            onClick={() => handleNavClick('settings')}
                                         >
                                             Settings
                                         </button>

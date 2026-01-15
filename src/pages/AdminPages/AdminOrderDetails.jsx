@@ -236,25 +236,25 @@ const AdminOrderDetails = () => {
                     className={`tab-btn ${activeTab === 'overview' ? 'active' : ''}`}
                     onClick={() => setActiveTab('overview')}
                 >
-                    📋 Overview
+                    Overview
                 </button>
                 <button
                     className={`tab-btn ${activeTab === 'fulfillment' ? 'active' : ''}`}
                     onClick={() => setActiveTab('fulfillment')}
                 >
-                    🚚 Fulfillment
+                    Fulfillment
                 </button>
                 <button
                     className={`tab-btn ${activeTab === 'payment' ? 'active' : ''}`}
                     onClick={() => setActiveTab('payment')}
                 >
-                    💳 Payment
+                    Payment
                 </button>
                 <button
                     className={`tab-btn ${activeTab === 'returns' ? 'active' : ''}`}
                     onClick={() => setActiveTab('returns')}
                 >
-                    ↩️ Returns & Refunds
+                    Returns & Refunds
                 </button>
                 {/* <button
                     className={`tab-btn ${activeTab === 'notes' ? 'active' : ''}`}
@@ -271,7 +271,7 @@ const AdminOrderDetails = () => {
                         <div className="tab-content">
                             <div className="overview-grid">
                                 {/* Order Summary */}
-                                <div className="order-summary">
+                                {/* <div className="order-summary">
                                     <h3>Order Summary</h3>
                                     <div className="summary-card">
                                         <div className="summary-row">
@@ -295,33 +295,84 @@ const AdminOrderDetails = () => {
                                             <span>{formatCurrency(order.pricing.grandTotal)}</span>
                                         </div>
                                     </div>
-                                </div>
+                                </div> */}
 
-                                {/* Customer Info */}
-                                <div className="customer-info">
-                                    <h3>Customer Information</h3>
-                                    <div className="info-card">
-                                        <div className="customer-header">
-                                            <div className="customer-avatar">
-                                                {order.userDetails.userId.userName.charAt(0)}
+                                {/* Shipping & Billing */}
+                                <div className="shipping-billing">
+                                    <div className="address-card">
+                                        <h4>Shipping Address</h4>
+
+                                        <div className="shipping-content">
+                                            <div className="row">
+                                                <span className="label">Name</span>
+                                                <span className="value">{order.shippingAddress.fullName}</span>
                                             </div>
-                                            <div>
-                                                <h4>{order.userDetails.userId.userName}</h4>
-                                                <p className="customer-email">{order.userDetails.userId.email}</p>
+
+                                            <div className="row">
+                                                <span className="label">Address</span>
+                                                <span className="value">{order.shippingAddress.addressLine1}</span>
                                             </div>
-                                        </div>
-                                        <div className="customer-details">
-                                            <p><strong>Customer ID:</strong> {order.userDetails.userId._id}</p>
-                                            <p><strong>Account:</strong> Registered Customer</p>
-                                            <p><strong>Orders:</strong> 5 total orders</p>
+
+                                            {order.shippingAddress.addressLine2 && (
+                                                <div className="row">
+                                                    <span className="label">Address 2</span>
+                                                    <span className="value">{order.shippingAddress.addressLine2}</span>
+                                                </div>
+                                            )}
+
+                                            <div className="row">
+                                                <span className="label">City</span>
+                                                <span className="value">
+                                                    {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.postalCode}
+                                                </span>
+                                            </div>
+
+                                            <div className="row">
+                                                <span className="label">Country</span>
+                                                <span className="value">{order.shippingAddress.country}</span>
+                                            </div>
+
+                                            <div className="row">
+                                                <span className="label">Phone</span>
+                                                <span className="value">
+                                                    {order.shippingAddress.phone || "No phone provided"}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
+
+
+                                    <div className="address-card">
+                                        <h4>Billing Address</h4>
+                                        <p><em>Same as shipping address</em></p>
+                                    </div>
+
+                                    {/* Customer Info */}
+                                    {/* <div className="customer-info">
+                                        <h3>Customer Information</h3>
+                                        <div className="info-card">
+                                            <div className="customer-header">
+                                                <div className="customer-avatar">
+                                                    {order.userDetails.userId.userName.charAt(0)}
+                                                </div>
+                                                <div>
+                                                    <h4>{order.userDetails.userId.userName}</h4>
+                                                    <p className="customer-email">{order.userDetails.userId.email}</p>
+                                                </div>
+                                            </div>
+                                            <div className="customer-details">
+                                                <p><strong>Customer ID:</strong> {order.userDetails.userId._id}</p>
+                                                <p><strong>Account:</strong> Registered Customer</p>
+                                                <p><strong>Orders:</strong> 5 total orders</p>
+                                            </div>
+                                        </div>
+                                    </div> */}
                                 </div>
 
                                 {/* Order Items */}
                                 <div className="order-items">
-                                    <h3>Order Items</h3>
                                     <div className="items-list">
+                                        <h3>Order Items</h3>
                                         {order.items.map((item, index) => (
                                             <div key={index} className="order-item">
                                                 <img
@@ -342,26 +393,6 @@ const AdminOrderDetails = () => {
                                                 </div>
                                             </div>
                                         ))}
-                                    </div>
-                                </div>
-
-                                {/* Shipping & Billing */}
-                                <div className="shipping-billing">
-                                    <div className="address-card">
-                                        <h4>Shipping Address</h4>
-                                        <p><strong>{order.shippingAddress.fullName}</strong></p>
-                                        <p>{order.shippingAddress.addressLine1}</p>
-                                        {order.shippingAddress.addressLine2 && (
-                                            <p>{order.shippingAddress.addressLine2}</p>
-                                        )}
-                                        <p>{order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.postalCode}</p>
-                                        <p>{order.shippingAddress.country}</p>
-                                        <p className="phone">📱 {order.shippingAddress.phone || 'No phone provided'}</p>
-                                    </div>
-
-                                    <div className="address-card">
-                                        <h4>Billing Address</h4>
-                                        <p><em>Same as shipping address</em></p>
                                     </div>
                                 </div>
                             </div>
@@ -850,16 +881,16 @@ const AdminOrderDetails = () => {
                             <code>{order._id}</code>
                         </div>
                         <div className="metadata-item">
+                            <span>C.Email:</span>
+                            <span className="customer-email">{order.userDetails.userId.email}</span>
+                        </div>
+                        <div className="metadata-item">
                             <span>Created:</span>
                             <span>{formatDate(order.createdAt)}</span>
                         </div>
                         <div className="metadata-item">
                             <span>Updated:</span>
                             <span>{formatDate(order.updatedAt)}</span>
-                        </div>
-                        <div className="metadata-item">
-                            <span>IP Address:</span>
-                            <span>192.168.1.1</span>
                         </div>
                     </div>
                 </aside>

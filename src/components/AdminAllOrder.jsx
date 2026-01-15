@@ -40,6 +40,8 @@ const AdminAllOrderDashboard = ({ user }) => {
         }
     };
 
+    console.log("Orders data:", orders);
+
     const calculateStats = (ordersData) => {
         const statsData = {
             total: ordersData.length,
@@ -302,7 +304,7 @@ const AdminAllOrderDashboard = ({ user }) => {
                             </thead>
                             <tbody>
                                 {currentOrders.map((order) => (
-                                    <tr key={order._id}>
+                                    <tr key={order._id} className='order-line'>
                                         <td>
                                             <input
                                                 type="checkbox"
@@ -321,7 +323,7 @@ const AdminAllOrderDashboard = ({ user }) => {
                                                 {order.orderNumber}
                                             </a>
                                         </td>
-                                        <td className="customer-name">{formatDate(order.createdAt)}</td>
+                                        <td className="customer-email">{formatDate(order.createdAt)}</td>
                                         <td>
                                             <div className="customer-info">
                                                 <div className="customer-name">{order.shippingAddress.fullName}</div>
@@ -330,7 +332,8 @@ const AdminAllOrderDashboard = ({ user }) => {
                                         </td>
                                         <td>
                                             <div className="items-count">
-                                                {order.items.length} item{order.items.length > 1 ? 's' : ''}
+                                                <img src={order.items[0]?.productId?.productImages[0] || ''} alt="" />
+                                                <span title={order.items[0]?.productId?.productName}>{order.items[0]?.productId?.productName?.slice(0, 15)}...</span>
                                             </div>
                                         </td>
                                         <td className="total-amount">

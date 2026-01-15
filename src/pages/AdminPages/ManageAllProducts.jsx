@@ -12,6 +12,8 @@ import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { deleteProduct } from "../../utils/ProductServices";
 import { useProducts } from "../../context/ProductContext";
+import { Col, Row } from "react-bootstrap";
+import { FaBox, FaFolder, FaFolderOpen } from "react-icons/fa";
 
 const ManageProducts = () => {
   const navigate = useNavigate();
@@ -93,10 +95,12 @@ const ManageProducts = () => {
     }
   };
 
-  const totalRevenue = products.reduce((sum, product) => {
-    const variation = product.variations?.[0];
-    return sum + (variation?.productPrice?.discountedPrice || 0);
-  }, 0);
+  // const totalRevenue = products.reduce((sum, product) => {
+  //   const variation = product.variations?.[0];
+  //   return sum + (variation?.productPrice?.discountedPrice || 0);
+  // }, 0);
+
+  let totalRevenue;
 
   if (loading) {
     return (
@@ -109,60 +113,96 @@ const ManageProducts = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <Link to='/' target="_blank" className="text-decoration-none hover:underline"><h3 className="text-center text-3xl font-bold text-gray-700 mt-2">The Master Jackets</h3></Link>
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div>
-            <button className="back-btn" onClick={() => navigate('/admin/dashboard')}>
-              ←  Back to Dashboard
-            </button>
-            <h1 className="text-2xl font-bold text-gray-900">Manage Products</h1>
-            <p className="text-gray-600 mt-1">
-              View and manage your entire product catalog
-            </p>
-            <p className="text-sm text-gray-500 mt-1">
-              Last updated: {lastFetched ? new Date(lastFetched).toLocaleString() : "Never"}
-            </p>
+      <div className="bg-white shadow-sm border-b" >
+        <Link
+          to="/"
+          target="_blank"
+          className="flex justify-center items-center my-2"
+        >
+          <img
+            src="https://res.cloudinary.com/dvmpyh0hj/image/upload/v1760615184/hilkmru9zutcneybpwwc.png"
+            alt="TheMasterJacketsLOGO"
+            className="h-10 md:h-12 object-contain"
+          />
+        </Link>
+        <div className="max-w-7xl mx-auto px-4 py-4 rounded-lg" style={{
+          background: "linear-gradient(135deg, #2c3e50 0%, #34495e 100%)"
+        }}>
+          <div className="flex justify-between items-center rounded-lg">
+            <div>
+              <button className="back-btn" onClick={() => navigate('/admin/dashboard')}>
+                ←  Back to Dashboard
+              </button>
+              <h1 className="text-2xl font-bold text-white mt-2">Manage Products</h1>
+              <p className="text-gray-300 mt-1">
+                View and manage your entire product catalog
+              </p>
+              <p className="text-sm text-gray-400">
+                Last updated: {lastFetched ? new Date(lastFetched).toLocaleString() : "Never"}
+              </p>
+            </div>
+            <div className="">
+              <button onClick={refreshProducts} className="flex items-center gap-2 bg-blue-600 text-white px-8 py-2 rounded-lg hover:bg-blue-700 transition-colors"><RotateCw size={18} /> Refresh</button>
+              <button
+                onClick={() => navigate("/admin/add-product")}
+                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors mt-3"
+              >
+                <Plus size={18} />
+                Add Product
+              </button>
+            </div>
           </div>
-          <div className="flex items-center gap-4">
-            <button onClick={refreshProducts} className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"><RotateCw size={18} /></button>
-            <button
-              onClick={() => navigate("/admin/add-product")}
-              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Plus size={18} />
-              Add Product
-            </button>
-          </div>
+          <Row className="mt-2 g-3">
+            <Col xs={6} md={3}>
+              <div className="table-stat-card">
+                <div className="table-stat-icon total-categories">
+                  <FaFolder />
+                </div>
+                <div className="table-stat-content">
+                  <h5>{products.length}</h5>
+                  <span>Total Products</span>
+                </div>
+              </div>
+            </Col>
+            <Col xs={6} md={3}>
+              <div className="table-stat-card">
+                <div className="table-stat-icon total-products">
+                  <FaBox />
+                </div>
+                <div className="table-stat-content">
+                  <h5>{products.filter((p) => p.status === true).length}</h5>
+                  <span>Published</span>
+                </div>
+              </div>
+            </Col>
+            <Col xs={6} md={3}>
+              <div className="table-stat-card">
+                <div className="table-stat-icon total-subcategories">
+                  <FaFolder />
+                </div>
+                <div className="table-stat-content">
+                  <h5>{[...new Set(products.map((p) => p.categoryId))].length}</h5>
+                  <span>Categories</span>
+                </div>
+              </div>
+            </Col>
+            <Col xs={6} md={3}>
+              <div className="table-stat-card">
+                <div className="table-stat-icon active-categories">
+                  <FaFolderOpen />
+                </div>
+                <div className="table-stat-content">
+                  <h5>{totalRevenue ? `$${totalRevenue.toLocaleString()}` : "T/B"}</h5>
+                  <span>Total Revenue</span>
+                </div>
+              </div>
+            </Col>
+          </Row>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-6">
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          <StatCard
-            title="Total Products"
-            value={products.length}
-            icon={<Package className="text-blue-600" />}
-          />
-          <StatCard
-            title="Published"
-            value={products.filter((p) => p.status === true).length}
-            icon={<CheckCircle className="text-green-600" />}
-          />
-          <StatCard
-            title="Categories"
-            value={[...new Set(products.map((p) => p.categoryId))].length}
-            icon={<BarChart3 className="text-purple-600" />}
-          />
-          <StatCard
-            title="Total Revenue"
-            value={`$${totalRevenue.toLocaleString()}`}
-            icon={<DollarSign className="text-green-600" />}
-          />
-        </div>
-
         {/* Filters */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <div className="flex flex-col lg:flex-row gap-4">
@@ -341,6 +381,115 @@ const ManageProducts = () => {
           )}
         </div>
       </div>
+      <style>{`/* Statistics Cards */
+        .table-stat-card {
+          background: rgba(255, 255, 255, 0.15);
+          color: white;
+          border-radius: 10px;
+          padding: 1rem;
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .table-stat-icon {
+          width: 50px;
+          height: 50px;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.2rem;
+          color: white;
+        }
+
+        .table-stat-icon.total-categories { background: #3498db; }
+        .table-stat-icon.total-products { background: #2ecc71; }
+        .table-stat-icon.active-categories { background: #e74c3c; }
+        .table-stat-icon.total-subcategories { background: #9b59b6; }
+
+        .table-stat-content h5 {
+          margin: 0;
+          font-size: 1.5rem;
+          font-weight: 700;
+        }
+
+        .table-stat-content span {
+          font-size: 0.8rem;
+          opacity: 0.8;
+        }
+
+        /* Table Controls */
+        .table-controls-bar {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1rem 1.5rem;
+          background: #f8f9fa;
+          border-bottom: 1px solid #dee2e6;
+          flex-wrap: wrap;
+          gap: 1rem;
+        }
+
+        .table-search-box {
+          position: relative;
+          width: 70%;
+          flex: 1;
+        }
+
+        .table-search-icon {
+          position: absolute;
+          left: 15px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: #6c757d;
+          z-index: 2;
+        }
+
+        .table-search-input {
+          width: 100%;
+          padding: 10px 10px 10px 40px;
+          border: 1px solid #ced4da;
+          border-radius: 6px;
+          background: white;
+          transition: all 0.3s ease;
+          font-size: 0.9rem;
+        }
+
+        .table-search-input:focus {
+          outline: none;
+          border-color: #3498db;
+          box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        .table-filter-controls {
+          width: 30%;
+          display: flex;
+          flex-direction: row !important;
+          gap: 0.75rem;
+          align-items: center;
+        }
+
+        .table-filter-select {
+          width: 60%;
+          border-radius: 6px;
+          border: 1px solid #ced4da;
+          padding: 8px 12px;
+          background: white;
+        }
+
+        .table-btn-expand-all {
+         display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 40%;
+          border-radius: 6px;
+          padding: 8px 16px;
+          font-weight: 500;
+          font-size: 0.875rem;
+        }`}</style>
     </div>
   );
 };

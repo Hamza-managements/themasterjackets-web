@@ -204,8 +204,8 @@
     padding: 16px;
     background-color: white;
     border: none;
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 20px;
+    font-weight: 700;
     color: var(--gray-600);
     cursor: pointer;
     transition: all 0.3s ease;
@@ -239,11 +239,10 @@
 .overview-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
+    background: var(--gray-300);
 }
 
 .overview-grid>* {
-    background: var(--gray-50);
     border-radius: 8px;
     padding: 20px;
 }
@@ -261,6 +260,7 @@
 }
 
 .order-items {
+    background: white;
     grid-column: 1 / -1;
 }
 
@@ -269,6 +269,7 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
+    background: var(--gray-300);
 }
 
 /* Summary Card */
@@ -276,7 +277,6 @@
     background: white;
     border-radius: 8px;
     padding: 16px;
-    border: 1px solid var(--gray-200);
 }
 
 .summary-row {
@@ -341,6 +341,11 @@
     gap: 12px;
 }
 
+.items-list h3 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
 .order-item {
     display: flex;
     gap: 16px;
@@ -387,31 +392,35 @@
     color: var(--black);
 }
 
-/* Address Cards */
 .address-card {
-    background: white;
-    padding: 16px;
+    background: #fff;
     border-radius: 8px;
-    border: 1px solid var(--gray-200);
+    padding: 16px;
 }
 
-.address-card h4 {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 12px;
-    color: var(--gray-800);
+.shipping-content {
+    display: grid;
+    row-gap: 10px;
 }
 
-.address-card p {
-    margin: 4px 0;
-    font-size: 14px;
-    color: var(--gray-700);
+.shipping-content .row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    align-items: start;
 }
 
-.phone {
-    margin-top: 12px !important;
-    color: var(--gray-600);
+.shipping-content .label {
+    font-size: 16px;
+    color: #6b7280; /* muted gray */
 }
+
+.shipping-content .value {
+    font-size: 17px;
+    font-weight: 500;
+    color: #111827;
+    word-break: break-word;
+}
+
 
 /* Fulfillment Grid */
 .fulfillment-grid,

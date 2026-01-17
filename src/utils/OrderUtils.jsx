@@ -98,7 +98,7 @@ export async function completeOrderWithOrderId(uid, orderId) {
             }
             return config;
         });
-        const response = await api.put(`/api/order/complete-order/${uid}?orderId=${orderId}`);
+        const response = await api.put(`/api/order/complete/${uid}?orderId=${orderId}`);
         return response.data;
     } catch (error) {
         throw error;

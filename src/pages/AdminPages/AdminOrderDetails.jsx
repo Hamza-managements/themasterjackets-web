@@ -249,7 +249,6 @@ const AdminOrderDetails = () => {
                                 <option value="placed">Placed</option>
                                 <option value="confirmed">Confirmed</option>
                                 <option value="completed">Completed</option>
-                                <option value="cancelled">Cancelled</option>
                                 <option value="returned">Returned</option>
                             </select>
                             <button

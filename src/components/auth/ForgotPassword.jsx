@@ -79,7 +79,7 @@ export default function ForgotPassword() {
   // Auto-redirect if already submitted
   useEffect(() => {
     if (isSubmitted) {
-      const timer = setTimeout(() => navigate('/auth/login'), 5000);
+      const timer = setTimeout(() => navigate('/auth/login'), 8000);
       return () => clearTimeout(timer);
     }
   }, [isSubmitted, navigate]);

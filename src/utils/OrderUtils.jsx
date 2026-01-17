@@ -82,7 +82,23 @@ export async function updateShipmentWithOrderId(uid, updatedData) {
             }
             return config;
         });
-        const response = await api.put(`/api/order/ship/${uid}`, updatedData );
+        const response = await api.put(`/api/order/ship/${uid}`, updatedData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function completeOrderWithOrderId(uid, orderId) {
+    try {
+        api.interceptors.request.use((config) => {
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
+            return config;
+        });
+        const response = await api.put(`/api/order/complete-order/${uid}?orderId=${orderId}`);
         return response.data;
     } catch (error) {
         throw error;

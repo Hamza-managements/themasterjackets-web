@@ -24,7 +24,7 @@
     padding: 24px;
     background-color: var(--gray-50);
     min-height: 100vh;
-    gap: 30px;
+    gap: 15px;
 }
 
 /* Order Details Body: Flex for content + sidebar */
@@ -70,16 +70,14 @@
     grid-column: 1 / -1;
     background: white;
     border-radius: 12px;
-    padding: 24px;
+    padding: 0 24px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
 }
 
 .header-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
 }
 
 .back-btn {
@@ -231,7 +229,7 @@
 .tab-content {
     background: white;
     border-radius: 12px;
-    padding: 24px;
+    padding: 0 24px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -244,7 +242,7 @@
 
 .overview-grid>* {
     border-radius: 8px;
-    padding: 20px;
+    padding: 0 20px;
 }
 
 .overview-grid h3 {
@@ -410,17 +408,16 @@
 }
 
 .shipping-content .label {
-    font-size: 16px;
+    font-size: 13px;
     color: #6b7280; /* muted gray */
 }
 
 .shipping-content .value {
-    font-size: 17px;
+    font-size: 14px;
     font-weight: 500;
     color: #111827;
     word-break: break-word;
 }
-
 
 /* Fulfillment Grid */
 .fulfillment-grid,

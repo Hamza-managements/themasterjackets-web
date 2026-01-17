@@ -2,16 +2,21 @@ import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/AdminOrderDetails.css';
 import { AuthContext } from '../../context/AuthContext';
-import { getUserOrderById, cancelOrderWithId, confirmOrderWithOrderId, updateShipmentWithOrderId } from '../../utils/OrderUtils';
+import { getUserOrderById, cancelOrderWithId, confirmOrderWithOrderId, updateShipmentWithOrderId, completeOrderWithOrderId } from '../../utils/OrderUtils';
+import { useToast } from '../../context/ToastProvider';
 
 const AdminOrderDetails = () => {
     const { user } = useContext(AuthContext);
     const { orderId, userId } = useParams();
+    const { showToast } = useToast();
     const navigate = useNavigate();
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('overview');
     const [isUpdating, setIsUpdating] = useState(false);
+    const [openFulfillment, setOpenFulfillment] = useState(false);
+
+    console.log('Order Data:', order);
 
     // Form states
     const [trackingInfo, setTrackingInfo] = useState({
@@ -78,8 +83,10 @@ const AdminOrderDetails = () => {
             setIsUpdating(true);
             await updateShipmentWithOrderId(user?.uid, trackingInfo);
             fetchOrderDetails();
+            showToast({ type: "success", message: `Order tracking updated Succesfullly` });
         } catch (error) {
             console.error('Error updating tracking:', error);
+            showToast({ type: "error", message: `Failed to update order status, Try Again` });
         } finally {
             setIsUpdating(false);
         }
@@ -118,8 +125,10 @@ const AdminOrderDetails = () => {
             setIsUpdating(true);
             await cancelOrderWithId(user?.uid, orderId);
             fetchOrderDetails();
+            showToast({ type: "success", message: `Order status updated to Cancelled` });
         } catch (error) {
             console.error('Error cancelling order:', error);
+            showToast({ type: "error", message: `Failed to update order status, Try Again` });
         } finally {
             setIsUpdating(false);
         }
@@ -127,14 +136,26 @@ const AdminOrderDetails = () => {
 
     // Update order status
     const updateOrderStatus = async (status) => {
+        const actions = {
+            confirmed: confirmOrderWithOrderId,
+            completed: completeOrderWithOrderId,
+        };
+
         try {
             setIsUpdating(true);
-            if (status === 'confirmed') {
-                await confirmOrderWithOrderId(user?.uid, orderId);
+
+            const action = actions[status];
+            if (!action) {
+                showToast({ type: "error", message: `Unknown status: ${status}` });
+                return;
             }
-            fetchOrderDetails();
+
+            await action(user?.uid, orderId);
+            await fetchOrderDetails();
+            showToast({ type: "success", message: `Order status updated to "${status.charAt(0).toUpperCase() + status.slice(1)}"` });
         } catch (error) {
-            console.error('Error updating order status:', error);
+            console.error("Failed to update order status:", error);
+            showToast({ type: "error", message: `Failed to update order status, Try Again` });
         } finally {
             setIsUpdating(false);
         }
@@ -158,6 +179,30 @@ const AdminOrderDetails = () => {
             hour: '2-digit',
             minute: '2-digit'
         });
+    };
+
+    const getStatusClasses = (status) => {
+        switch (status?.toLowerCase()) {
+            case "shipped":
+                return "bg-blue-100 text-blue-700";
+            case "confirmed":
+                return "bg-green-100 text-green-700";
+            case "cancelled":
+                return "bg-red-100 text-red-700";
+            case "placed":
+            default:
+                return "bg-yellow-100 text-yellow-700";
+        }
+    };
+
+    const getVariantSKU = (product, selectedAttributes) => {
+        const variant = product?.variations?.find(
+            (v) =>
+                v?.attributes?.size === selectedAttributes?.size &&
+                v?.attributes?.color === selectedAttributes?.color
+        );
+
+        return variant?.stockKeepingUnit || "N/A";
     };
 
     if (loading) {
@@ -193,10 +238,32 @@ const AdminOrderDetails = () => {
                         <button className="btn-email">
                             ✉️ Email Customer
                         </button>
+                        <div className="status-actions">
+                            <select
+                                className="status-select"
+                                value={order.orderStatus}
+                                onChange={(e) => updateOrderStatus(e.target.value)}
+                                disabled={isUpdating || order.orderStatus === 'cancelled'}
+                            >
+                                <option value="shipped">Shipped</option>
+                                <option value="placed">Placed</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                                <option value="returned">Returned</option>
+                            </select>
+                            <button
+                                className="btn-cancel"
+                                onClick={handleCancelOrder}
+                                disabled={isUpdating || order.orderStatus === 'cancelled'}
+                            >
+                                Cancel Order
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <div className="header-main">
+                {/* <div className="header-main">
                     <div>
                         <h1>Order #{order.orderNumber}</h1>
                         <div className="order-meta">
@@ -204,30 +271,7 @@ const AdminOrderDetails = () => {
                             <span className="order-source">The Master Jackets</span>
                         </div>
                     </div>
-
-                    <div className="status-actions">
-                        <select
-                            className="status-select"
-                            value={order.orderStatus}
-                            onChange={(e) => updateOrderStatus(e.target.value)}
-                            disabled={isUpdating || order.orderStatus === 'cancelled'}
-                        >
-                            <option value="shipped">Shipped</option>
-                            <option value="placed">Placed</option>
-                            <option value="confirmed">Confirmed</option>
-                            <option value="completed">Completed</option>
-                            <option value="cancelled">Cancelled</option>
-                            <option value="returned">Returned</option>
-                        </select>
-                        <button
-                            className="btn-cancel"
-                            onClick={handleCancelOrder}
-                            disabled={isUpdating || order.orderStatus === 'cancelled'}
-                        >
-                            Cancel Order
-                        </button>
-                    </div>
-                </div>
+                </div> */}
             </div>
 
             {/* Tabs Navigation */}
@@ -237,12 +281,6 @@ const AdminOrderDetails = () => {
                     onClick={() => setActiveTab('overview')}
                 >
                     Overview
-                </button>
-                <button
-                    className={`tab-btn ${activeTab === 'fulfillment' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('fulfillment')}
-                >
-                    Fulfillment
                 </button>
                 <button
                     className={`tab-btn ${activeTab === 'payment' ? 'active' : ''}`}
@@ -269,38 +307,34 @@ const AdminOrderDetails = () => {
                     {/* Overview Tab */}
                     {activeTab === 'overview' && (
                         <div className="tab-content">
-                            <div className="overview-grid">
-                                {/* Order Summary */}
-                                {/* <div className="order-summary">
-                                    <h3>Order Summary</h3>
-                                    <div className="summary-card">
-                                        <div className="summary-row">
-                                            <span>Subtotal</span>
-                                            <span>{formatCurrency(order.pricing.subTotal)}</span>
-                                        </div>
-                                        <div className="summary-row">
-                                            <span>Shipping</span>
-                                            <span>{order.pricing.shippingCharges === 0 ? 'FREE' : formatCurrency(order.pricing.shippingCharges)}</span>
-                                        </div>
-                                        <div className="summary-row">
-                                            <span>Tax</span>
-                                            <span>{formatCurrency(order.pricing.tax)}</span>
-                                        </div>
-                                        <div className="summary-row">
-                                            <span>Discount</span>
-                                            <span className="discount">-{formatCurrency(order.pricing.discount)}</span>
-                                        </div>
-                                        <div className="summary-row total">
-                                            <span>Total</span>
-                                            <span>{formatCurrency(order.pricing.grandTotal)}</span>
-                                        </div>
-                                    </div>
-                                </div> */}
 
+                            <hr className="border-gray-900" />
+
+                            <div className="overview-grid">
                                 {/* Shipping & Billing */}
                                 <div className="shipping-billing">
                                     <div className="address-card">
-                                        <h4>Shipping Address</h4>
+                                        <h3>Order Summary</h3>
+
+                                        <div className="shipping-content">
+                                            <div className="row">
+                                                <span className="label">Order #</span>
+                                                <span className="value">{order.orderNumber}</span>
+                                            </div>
+
+                                            <div className="row">
+                                                <span className="label">Purchase Date</span>
+                                                <span className="value">{formatDate(order.createdAt)}</span>
+                                            </div>
+
+                                            <div className="row">
+                                                <span className="label">Updated At</span>
+                                                <span className="value">{formatDate(order.updatedAt)}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="address-card">
+                                        <h3>Shipping Address</h3>
 
                                         <div className="shipping-content">
                                             <div className="row">
@@ -340,70 +374,273 @@ const AdminOrderDetails = () => {
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
 
+                            <hr className="my-6 border-gray-900" />
 
-                                    <div className="address-card">
-                                        <h4>Billing Address</h4>
-                                        <p><em>Same as shipping address</em></p>
+                            <div>
+                                {!order.fulfillment.trackingNumber &&
+                                    <div className="">
+                                        <button
+                                            onClick={() => setOpenFulfillment(true)}
+                                            className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-medium rounded"
+                                        >
+                                            Confirm Shipment
+                                        </button>
+                                    </div>
+                                }
+                            </div>
+
+                            <hr className="my-6 border-gray-900" />
+
+                            {/* Order Items */}
+                            <div className="order-items">
+                                <h3 className="mb-3 font-semibold text-lg">Order Items</h3>
+
+                                <div className="overflow-x-auto">
+                                    <table className="w-full border-collapse text-sm">
+                                        <thead>
+                                            <tr className="bg-gray-100 text-left border ">
+                                                <th className="px-4 py-3 border text-center">Status</th>
+                                                <th className="px-4 py-3 border">Product</th>
+                                                <th className="px-4 py-3 border text-center">Qty</th>
+                                                <th className="px-4 py-3 border text-right">Unit Price</th>
+                                                <th className="px-4 py-3 border text-right">Proceeds</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            {order.items.map((item, index) => (
+                                                <tr key={index} className="hover:bg-gray-300">
+                                                    {/* Status */}
+                                                    <td className="px-4 py-3 border text-center">
+                                                        <span
+                                                            className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusClasses(order.orderStatus)}`}
+                                                        >
+                                                            {order.orderStatus}
+                                                        </span>
+                                                    </td>
+
+                                                    {/* Product */}
+                                                    <td className="px-4 py-3 border">
+                                                        <div className="flex items-start gap-3">
+                                                            <img
+                                                                src={item.productId.productImages[0]}
+                                                                alt={item.productId.productName}
+                                                                className="w-12 h-16 object-cover rounded"
+                                                            />
+
+                                                            <div className="flex flex-col">
+                                                                {/* Product Name */}
+                                                                <span className="font-medium text-gray-900">
+                                                                    {item.productId.productName}
+                                                                </span>
+
+                                                                {/* SKU */}
+                                                                <span className="text-xs text-gray-500 font-mono">
+                                                                    SKU: {getVariantSKU(item.productId, item.selectedAttributes)}
+                                                                </span>
+
+                                                                {/* Variants */}
+                                                                <span className="text-xs text-gray-500">
+                                                                    Size: {item.selectedAttributes.size} · Color: {item.selectedAttributes.color}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+
+                                                    {/* Quantity */}
+                                                    <td className="px-4 py-3 border text-center">
+                                                        {item.quantity}
+                                                    </td>
+
+                                                    {/* Unit Price */}
+                                                    <td className="px-4 py-3 border text-right">
+                                                        {formatCurrency(item.unitPrice)}
+                                                    </td>
+
+                                                    {/* Proceeds */}
+                                                    <td className="px-4 py-3 border text-right font-semibold">
+                                                        {formatCurrency(item.totalPrice)}
+                                                    </td>
+                                                </tr>
+                                            )
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            {order.fulfillment?.trackingNumber && (
+                                <div className="mt-4 border rounded-lg bg-white shadow-sm p-4">
+                                    {/* Header */}
+                                    <div className="flex items-center justify-between mb-3">
+                                        <h4 className="text-sm font-semibold text-gray-900">
+                                            Current Tracking
+                                        </h4>
+
+                                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
+                                            Shipped
+                                        </span>
                                     </div>
 
-                                    {/* Customer Info */}
-                                    {/* <div className="customer-info">
-                                        <h3>Customer Information</h3>
-                                        <div className="info-card">
-                                            <div className="customer-header">
-                                                <div className="customer-avatar">
-                                                    {order.userDetails.userId.userName.charAt(0)}
-                                                </div>
-                                                <div>
-                                                    <h4>{order.userDetails.userId.userName}</h4>
-                                                    <p className="customer-email">{order.userDetails.userId.email}</p>
-                                                </div>
-                                            </div>
-                                            <div className="customer-details">
-                                                <p><strong>Customer ID:</strong> {order.userDetails.userId._id}</p>
-                                                <p><strong>Account:</strong> Registered Customer</p>
-                                                <p><strong>Orders:</strong> 5 total orders</p>
-                                            </div>
+                                    {/* Details */}
+                                    <div className="space-y-2 text-sm">
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-500">Tracking Number :</span>
+                                            <span className="font-mono text-gray-900">
+                                                {order.fulfillment.trackingNumber}
+                                            </span>
                                         </div>
-                                    </div> */}
-                                </div>
 
-                                {/* Order Items */}
-                                <div className="order-items">
-                                    <div className="items-list">
-                                        <h3>Order Items</h3>
-                                        {order.items.map((item, index) => (
-                                            <div key={index} className="order-item">
-                                                <img
-                                                    src={item.productId.productImages[0]}
-                                                    alt={item.productId.productName}
-                                                    className="item-image"
-                                                />
-                                                <div className="item-details">
-                                                    <h4>{item.productId.productName}</h4>
-                                                    <div className="item-variants">
-                                                        <span>Size: {item.selectedAttributes.size}</span>
-                                                        <span>Color: {item.selectedAttributes.color}</span>
+                                        <div className="flex justify-between">
+                                            <span className="text-gray-500">Carrier :</span>
+                                            <span className="font-medium text-gray-900">
+                                                {order.fulfillment.carrier}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Actions */}
+                                    <div className="mt-4 flex justify-end">
+                                        <a
+                                            href={`https://tools.usps.com/go/TrackConfirmAction?tRef=fullpage&tLabels=${order.fulfillment.trackingNumber}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 transition"
+                                        >
+                                            Track Package
+                                        </a>
+                                    </div>
+                                </div>
+                            )}
+
+                            <hr className="my-6 border-gray-900" />
+
+                            {openFulfillment && (
+                                <div className="mt-4 border rounded-lg bg-white shadow-sm p-4">
+                                    <div className="flex justify-between items-center mb-4">
+                                        <h3 className="font-semibold text-lg">Create Fulfillment</h3>
+                                        <button
+                                            onClick={() => setOpenFulfillment(false)}
+                                            className="text-sm text-gray-500 hover:text-gray-700"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+
+                                    {/* Carrier */}
+                                    <div className="mb-3">
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Shipping Carrier
+                                        </label>
+                                        <select
+                                            value={trackingInfo.carrier}
+                                            onChange={(e) => setTrackingInfo({
+                                                ...trackingInfo,
+                                                carrier: e.target.value
+                                            })}
+                                            className="w-full border rounded px-3 py-2 text-sm focus:ring focus:ring-yellow-200"
+                                        >
+                                            <option value="">Select carrier</option>
+                                            <option>DHL</option>
+                                            <option>FedEx</option>
+                                            <option>USPS</option>
+                                            <option>UPS</option>
+                                        </select>
+                                    </div>
+
+                                    {/* Tracking Number */}
+                                    <div className="mb-4">
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Tracking Number
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={trackingInfo.trackingNumber}
+                                            onChange={(e) => setTrackingInfo({
+                                                ...trackingInfo,
+                                                trackingNumber: e.target.value
+                                            })}
+                                            placeholder="Enter tracking number"
+                                            className="w-full border rounded px-3 py-2 text-sm focus:ring focus:ring-yellow-200"
+                                        />
+                                    </div>
+
+                                    <hr className="my-6 border-gray-900" />
+
+                                    {/* Fulfillment Items */}
+                                    <div className="mb-4">
+                                        <h5 className="text-sm font-semibold text-gray-800 mb-2">
+                                            Items to Fulfill
+                                        </h5>
+
+                                        {order.items.map((item, idx) => (
+                                            <div
+                                                key={idx}
+                                                className="flex justify-between items-center py-4 border-b border-gray-900 last:border-b-0"
+                                            >
+                                                {/* Left: Image + Details */}
+                                                <div className="flex items-start gap-4">
+                                                    <img
+                                                        src={item.productId.productImages[0]}
+                                                        alt={item.productId.productName}
+                                                        className="w-12 h-16 object-cover rounded border border-gray-700"
+                                                    />
+
+                                                    <div className="space-y-1">
+                                                        {/* Product Name */}
+                                                        <div className="text-sm font-medium text-gray-900">
+                                                            {item.productId.productName}
+                                                        </div>
+
+                                                        {/* SKU */}
+                                                        <div className="text-xs text-gray-500 font-mono">
+                                                            SKU: {getVariantSKU(item.productId, item.selectedAttributes)}
+                                                        </div>
+
+                                                        {/* Variants */}
+                                                        <div className="text-xs text-gray-500">
+                                                            Size: {item.selectedAttributes.size} · Color: {item.selectedAttributes.color}
+                                                        </div>
                                                     </div>
-                                                    <div className="item-price">
-                                                        <span>{item.quantity} × {formatCurrency(item.unitPrice)}</span>
-                                                        <strong>{formatCurrency(item.totalPrice)}</strong>
-                                                    </div>
+                                                </div>
+
+                                                {/* Right: Quantity */}
+                                                <div className="text-sm font-medium text-gray-900">
+                                                    Qty: {item.quantity}
                                                 </div>
                                             </div>
                                         ))}
                                     </div>
+
+                                    {/* Actions */}
+                                    <div className="flex justify-end gap-3">
+                                        <button
+                                            onClick={() => setOpenFulfillment(false)}
+                                            className="px-4 py-2 text-sm border rounded"
+                                        >
+                                            Cancel
+                                        </button>
+
+                                        <button
+                                            disabled={!trackingInfo.carrier || !trackingInfo.trackingNumber}
+                                            onClick={handleUpdateTracking}
+                                            className="px-4 py-2 text-sm bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+                                        >
+                                            {isUpdating ? 'Updating...' : ' Create Fulfillment'}
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
                     )}
 
                     {/* Fulfillment Tab */}
-                    {activeTab === 'fulfillment' && (
+                    {/* {activeTab === 'fulfillment' && (
                         <div className="tab-content">
                             <div className="fulfillment-grid">
-                                {/* Fulfillment Status */}
                                 <div className="fulfillment-status">
                                     <h3>Fulfillment Status</h3>
                                     <div className="status-timeline">
@@ -466,7 +703,6 @@ const AdminOrderDetails = () => {
                                     </div>
                                 </div>
 
-                                {/* Tracking Information */}
                                 <div className="tracking-info">
                                     <h3>Tracking Information</h3>
                                     {order.fulfillment.trackingNumber && (
@@ -525,7 +761,7 @@ const AdminOrderDetails = () => {
                                 </div>
                             </div>
                         </div>
-                    )}
+                    )} */}
 
                     {/* Payment Tab */}
                     {activeTab === 'payment' && (
@@ -894,9 +1130,9 @@ const AdminOrderDetails = () => {
                         </div>
                     </div>
                 </aside>
-            </div>
+            </div >
 
-        </div>
+        </div >
     );
 };
 

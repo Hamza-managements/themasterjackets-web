@@ -332,7 +332,7 @@ const AdminAllOrderDashboard = ({ user }) => {
                                         <td>
                                             <div className="items-count">
                                                 <img src={order.items[0]?.productId?.productImages[0] || ''} alt="" />
-                                                <span title={order.items[0]?.productId?.productName}>{order.items[0]?.productId?.productName?.slice(0, 15)}...</span>
+                                                <span title={order.items[0]?.productId?.productName}>{order.items[0]?.productId?.productName}</span>
                                             </div>
                                         </td>
                                         <td className="total-amount">
@@ -340,7 +340,7 @@ const AdminAllOrderDashboard = ({ user }) => {
                                         </td>
                                         <td>
                                             <span
-                                                className="status-badge"
+                                                className="all-order-status-badge"
                                                 style={{ backgroundColor: getStatusColor(order.orderStatus) }}
                                             >
                                                 {order.orderStatus}
@@ -355,28 +355,22 @@ const AdminAllOrderDashboard = ({ user }) => {
                                             </div>
                                         </td>
                                         <td>
-                                            <div className="action-buttons">
-                                                {/* <button
-                                                    className="btn-view"
-                                                    onClick={() => window.location.href = `/admin/orders/${order._id}/${order.userDetails.userId._id}`}
-                                                >
-                                                    👁️
-                                                </button>
+                                            <div className="all-order-action-buttons">
                                                 <button
-                                                    className="btn-edit"
-                                                    onClick={() => editOrder(order._id)}
+                                                    className={`placed ${order.orderStatus === 'placed' ? 'disabled' : ''}`}
+                                                    onClick={() => updateOrderStatus([order._id], 'placed')}
+                                                    disabled={order.orderStatus === 'cancelled' || order.orderStatus === 'delivered' || order.orderStatus === 'placed'}
                                                 >
-                                                    ✏️
-                                                </button> */}
-                                                <select
-                                                    className="status-dropdown"
-                                                    value={order.orderStatus}
-                                                    onChange={(e) => updateOrderStatus([order._id], e.target.value)}
-                                                    disabled={order.orderStatus === 'cancelled' || order.orderStatus === 'delivered'}
+                                                    Placed
+                                                </button>
+
+                                                <button
+                                                    className={`confirmed ${order.orderStatus === 'confirmed' ? 'disabled' : ''}`}
+                                                    onClick={() => updateOrderStatus([order._id], 'confirmed')}
+                                                    disabled={order.orderStatus === 'cancelled' || order.orderStatus === 'delivered' || order.orderStatus === 'confirmed'}
                                                 >
-                                                    <option value="placed">Placed</option>
-                                                    <option value="confirmed">Confirmed</option>
-                                                </select>
+                                                    Confirmed
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>

@@ -13,6 +13,179 @@ import { getProductBySubCategoryId, getProducts } from '../utils/ProductServices
 import { fetchCategoriesAll } from '../utils/CartUtils';
 import { FaStar } from 'react-icons/fa';
 
+const CATEGORY_TAG_MAP = {
+    "biker-jackets": [
+        "Biker",
+        "Motorcycle",
+        "Cafe racer",
+        "Moto",
+        "Quilted",
+        "Asymmetrical",
+        "Vintage",
+        "Zipper",
+        "Studded",
+        "Spikes",
+        "Lapel Collar",
+        "Snap Tab Collar"
+    ],
+
+    "leather-car-coats": [
+        "Car Coat",
+        "3/4th Length",
+        "Long Coat",
+        "Trench Coat",
+        "Duster",
+        "Classic",
+        "Vintage",
+        "Buttoned",
+        "Belted",
+        "Stand Collar"
+    ],
+
+    "leather-blazers": [
+        "Blazer",
+        "Classic",
+        "Formal",
+        "Vintage",
+        "Long Coat",
+        "Buttoned",
+        "Lapel Collar"
+    ],
+
+    "suede-leather-jackets": [
+        "Suede",
+        "Vintage",
+        "Classic",
+        "Bomber",
+        "Trucker",
+        "Zipper",
+        "Buttoned",
+        "Stand Collar"
+    ],
+
+    "denim-cotton-jackets": [
+        "Denim",
+        "Cotton",
+        "Casual",
+        "Vintage",
+        "Distressed",
+        "Trucker",
+        "Shirt Collar",
+        "Buttoned"
+    ],
+
+    "trucker-jackets": [
+        "Trucker",
+        "Denim",
+        "Classic",
+        "Shirt Collar",
+        "Buttoned",
+        "Casual",
+        "Vintage"
+    ],
+
+    "wool-coats": [
+        "Wool",
+        "Long Coat",
+        "3/4th Length",
+        "Trench Coat",
+        "Formal",
+        "Classic",
+        "Buttoned",
+        "Belted"
+    ],
+
+    "bomber-leather-jackets": [
+        "Bomber",
+        "Ribbed Hem",
+        "Classic",
+        "Casual",
+        "Vintage",
+        "Zipper",
+        "Buttoned",
+        "Stand Collar",
+        "Wing Collar",
+        "Shirt Collar",
+        "Fur Collar",
+        "Rib Knit Collar",
+        "Shearling",
+        "G1",
+        "B2",
+        "A2",
+        "B3",
+        "Flight",
+        "World War",
+        "Aviator",
+        "German",
+        "Pilot",
+        "Maverick",
+        "Top gun",
+        "Navy",
+    ],
+
+    "real-leather-jackets": [
+        "Lambskin",
+        "Cowhide",
+        "Sheepskin",
+        "Classic",
+        "Vintage",
+        "Zipper",
+        "Buttoned",
+        "Biker",
+        "Bomber",
+        "Trucker"
+    ],
+
+    "hooded-leather-jackets": [
+        "Hood",
+        "Hooded",
+        "Removable Hood",
+        "Zipper",
+        "Winter",
+        "Casual",
+        "Bomber",
+        "Biker"
+    ],
+
+    "varsity-jackets": [
+        "Varsity",
+        "Wool",
+        "Leather Sleeves",
+        "Buttoned",
+        "Ribbed Hem",
+        "Casual",
+        "Sports"
+    ],
+
+    "winter-leather-jackets": [
+        "Winter",
+        "Warm",
+        "Shearling",
+        "Fur",
+        "Hooded",
+        "Insulated",
+        "Long Coat",
+        "Zipper",
+        "Buttoned"
+    ],
+    "default": [
+        "Classic",
+        "Vintage",
+        "Casual",
+        "Formal",
+        "Zipper",
+        "Buttoned",
+        "Biker",
+        "Bomber",
+        "Trucker",
+        "Leather",
+        "Wool",
+        "Denim",
+        "Hooded",
+        "Winter"
+    ]
+};
+
 const SubCategoryProductPage = () => {
     const navigate = useNavigate();
     const { slug } = useParams();
@@ -187,7 +360,7 @@ const SubCategoryProductPage = () => {
         const fetchProducts = async () => {
             try {
                 setLoading(true);
-                if (slug == "new-arrivals") {
+                if (slug === "new-arrivals") {
                     let filtered = await getProducts();
                     filtered = filtered.filter(
                         product =>
@@ -233,179 +406,6 @@ const SubCategoryProductPage = () => {
         const filteredTags = CATEGORY_TAG_MAP[slug] || CATEGORY_TAG_MAP["default"];
         setAvailableFilters(filteredTags);
     }, [slug]);
-
-    const CATEGORY_TAG_MAP = {
-        "biker-jackets": [
-            "Biker",
-            "Motorcycle",
-            "Cafe racer",
-            "Moto",
-            "Quilted",
-            "Asymmetrical",
-            "Vintage",
-            "Zipper",
-            "Studded",
-            "Spikes",
-            "Lapel Collar",
-            "Snap Tab Collar"
-        ],
-
-        "leather-car-coats": [
-            "Car Coat",
-            "3/4th Length",
-            "Long Coat",
-            "Trench Coat",
-            "Duster",
-            "Classic",
-            "Vintage",
-            "Buttoned",
-            "Belted",
-            "Stand Collar"
-        ],
-
-        "leather-blazers": [
-            "Blazer",
-            "Classic",
-            "Formal",
-            "Vintage",
-            "Long Coat",
-            "Buttoned",
-            "Lapel Collar"
-        ],
-
-        "suede-leather-jackets": [
-            "Suede",
-            "Vintage",
-            "Classic",
-            "Bomber",
-            "Trucker",
-            "Zipper",
-            "Buttoned",
-            "Stand Collar"
-        ],
-
-        "denim-cotton-jackets": [
-            "Denim",
-            "Cotton",
-            "Casual",
-            "Vintage",
-            "Distressed",
-            "Trucker",
-            "Shirt Collar",
-            "Buttoned"
-        ],
-
-        "trucker-jackets": [
-            "Trucker",
-            "Denim",
-            "Classic",
-            "Shirt Collar",
-            "Buttoned",
-            "Casual",
-            "Vintage"
-        ],
-
-        "wool-coats": [
-            "Wool",
-            "Long Coat",
-            "3/4th Length",
-            "Trench Coat",
-            "Formal",
-            "Classic",
-            "Buttoned",
-            "Belted"
-        ],
-
-        "bomber-leather-jackets": [
-            "Bomber",
-            "Ribbed Hem",
-            "Classic",
-            "Casual",
-            "Vintage",
-            "Zipper",
-            "Buttoned",
-            "Stand Collar",
-            "Wing Collar",
-            "Shirt Collar",
-            "Fur Collar",
-            "Rib Knit Collar",
-            "Shearling",
-            "G1",
-            "B2",
-            "A2",
-            "B3",
-            "Flight",
-            "World War",
-            "Aviator",
-            "German",
-            "Pilot",
-            "Maverick",
-            "Top gun",
-            "Navy",
-        ],
-
-        "real-leather-jackets": [
-            "Lambskin",
-            "Cowhide",
-            "Sheepskin",
-            "Classic",
-            "Vintage",
-            "Zipper",
-            "Buttoned",
-            "Biker",
-            "Bomber",
-            "Trucker"
-        ],
-
-        "hooded-leather-jackets": [
-            "Hood",
-            "Hooded",
-            "Removable Hood",
-            "Zipper",
-            "Winter",
-            "Casual",
-            "Bomber",
-            "Biker"
-        ],
-
-        "varsity-jackets": [
-            "Varsity",
-            "Wool",
-            "Leather Sleeves",
-            "Buttoned",
-            "Ribbed Hem",
-            "Casual",
-            "Sports"
-        ],
-
-        "winter-leather-jackets": [
-            "Winter",
-            "Warm",
-            "Shearling",
-            "Fur",
-            "Hooded",
-            "Insulated",
-            "Long Coat",
-            "Zipper",
-            "Buttoned"
-        ],
-        "default": [
-            "Classic",
-            "Vintage",
-            "Casual",
-            "Formal",
-            "Zipper",
-            "Buttoned",
-            "Biker",
-            "Bomber",
-            "Trucker",
-            "Leather",
-            "Wool",
-            "Denim",
-            "Hooded",
-            "Winter"
-        ]
-    };
 
 
     useEffect(() => {
@@ -646,7 +646,6 @@ const SubCategoryProductPage = () => {
                             </div>
                         ) : (
                             filteredProducts?.map(product => {
-                                const mainImage = product.productImages?.[0];
                                 const rating = Math?.max(...product?.variations.map(v => v?.ratings?.count || 0));
                                 return (
                                     <div key={product?._id} className="subcategory-product-card" >

@@ -53,7 +53,7 @@ const AdminDashboard = () => {
 
         if (allowedTabs.includes(tabFromQuery)) {
             setActiveMenu(tabFromQuery);
-            setSidebarOpen(!sidebarOpen)
+            setSidebarOpen(s => !s);
         } else {
             setActiveMenu("dashboard");
         }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './styles/AdminAllOrder.css';
 import { cancelOrderWithId, GetAllOrder } from '../utils/OrderUtils';
 import { Search } from 'lucide-react';
@@ -22,25 +22,24 @@ const AdminAllOrderDashboard = ({ user }) => {
         revenue: 0
     });
 
-    console.log("AdminAllOrderDashboard orders:", orders);
-    useEffect(() => {
-        fetchOrders();
-    }, [user]);
+    const fetchOrders = useCallback(async () => {
+        if (!user?.uid) return;
 
-    const fetchOrders = async () => {
         try {
             setLoading(true);
-            const response = await GetAllOrder(user?.uid);
+            const response = await GetAllOrder(user.uid);
             setOrders(response.data);
             calculateStats(response.data);
         } catch (error) {
-            console.error('Error fetching orders:', error);
+            console.error("Error fetching orders:", error);
         } finally {
             setLoading(false);
         }
-    };
+    }, [user?.uid]);
 
-    console.log("Orders data:", orders);
+    useEffect(() => {
+        fetchOrders();
+    }, [fetchOrders]);
 
     const calculateStats = (ordersData) => {
         const statsData = {
@@ -485,11 +484,6 @@ const AdminAllOrderDashboard = ({ user }) => {
 };
 
 const UpdateOrderStatus = async (orderIds, status) => {
-    // Your API call implementation
-    return { success: true };
-};
-
-const editOrder = async (orderIds, status) => {
     // Your API call implementation
     return { success: true };
 };

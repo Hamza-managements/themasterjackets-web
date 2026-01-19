@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useCallback } from 'react';
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -9,7 +9,6 @@ import {
   FaTachometerAlt,
   FaShoppingBag,
   FaUser,
-  FaMapMarkerAlt,
   FaLock,
   FaBell,
   FaSearch,
@@ -53,34 +52,40 @@ const Dashboard = () => {
     }
   }, [searchParams]);
 
-  useEffect(() => {
-    AOS.init({
-      duration: 800,
-      easing: 'ease-in-out',
-      once: true
-    });
+  
+const fetchOrders = useCallback(async () => {
+  if (!uid) return;
 
-    const handleResize = () => {
-      setIsMobileView(window.innerWidth <= 1024);
-      if (window.innerWidth > 1024) {
-        setIsMobileMenuOpen(false);
-      }
-    };
+  try {
+    const response = await getUserOrderById(uid);
+    setOrders(response?.data);
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+  }
+}, [uid]);
 
-    handleResize();
-    fetchOrders();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+useEffect(() => {
+  AOS.init({
+    duration: 800,
+    easing: "ease-in-out",
+    once: true,
+  });
 
-  const fetchOrders = async () => {
-    try {
-      const response = await getUserOrderById(uid);
-      setOrders(response?.data);
-    } catch (error) {
-      console.error('Error fetching orders:', error);
+  const handleResize = () => {
+    const isMobile = window.innerWidth <= 1024;
+    setIsMobileView(isMobile);
+
+    if (!isMobile) {
+      setIsMobileMenuOpen(false);
     }
   };
+
+  handleResize();
+  fetchOrders();
+
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
+}, [fetchOrders]);
 
   const [notifications,] = useState([
     {

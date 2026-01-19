@@ -3,9 +3,6 @@ import {
   RotateCw,
   Plus,
   Package,
-  CheckCircle,
-  BarChart3,
-  DollarSign,
   Search,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -493,16 +490,5 @@ const ManageProducts = () => {
     </div>
   );
 };
-
-// ✅ Reusable Stat Card
-const StatCard = ({ title, value, icon }) => (
-  <div className="bg-white rounded-lg shadow-sm p-6 flex justify-between items-center">
-    <div>
-      <p className="text-sm font-medium text-gray-600">{title}</p>
-      <p className="text-2xl font-bold text-gray-900">{value}</p>
-    </div>
-    {icon}
-  </div>
-);
 
 export default ManageProducts;

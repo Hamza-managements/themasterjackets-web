@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useCallback, useContext, useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { getUserOrderById } from '../utils/OrderUtils';;
 
@@ -12,16 +12,14 @@ const OrderPage = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('details');
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
+  const fetchOrders = useCallback(async () => {
+    if (!user?.uid || !orderId) return;
 
-  const fetchOrders = async () => {
     try {
       const data = await getUserOrderById(user.uid);
 
       const selectedOrder = data?.data?.find(
-        (order) => order._id === orderId
+        order => order._id === orderId
       );
 
       if (!selectedOrder) {
@@ -36,7 +34,12 @@ const OrderPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.uid, orderId, navigate]);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
+
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -228,9 +231,9 @@ const OrderPage = () => {
                         {order.fulfillment.status.toUpperCase()}
                       </span>
                     </div>
-                    <a href="#" className="track-btn">
+                    <Link to="/" className="track-btn">
                       Track Package
-                    </a>
+                    </Link>
                   </div>
                 ) : (
                   <p className="no-tracking">Tracking information will be available once the order is shipped.</p>

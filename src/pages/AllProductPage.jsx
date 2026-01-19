@@ -12,6 +12,161 @@ import {
 import { getProducts } from '../utils/ProductServices';
 import { FaStar } from 'react-icons/fa';
 
+const CATEGORY_TAG_MAP = {
+    "biker-jackets": [
+        "Biker",
+        "Motorcycle",
+        "Cafe racer",
+        "Moto",
+        "Quilted",
+        "Asymmetrical",
+        "Vintage",
+        "Zipper",
+        "Studded",
+        "Spikes",
+        "Lapel Collar",
+        "Snap Tab Collar"
+    ],
+
+    "leather-car-coats": [
+        "Car Coat",
+        "3/4th Length",
+        "Long Coat",
+        "Trench Coat",
+        "Duster",
+        "Classic",
+        "Vintage",
+        "Buttoned",
+        "Belted",
+        "Stand Collar"
+    ],
+
+    "leather-blazers": [
+        "Blazer",
+        "Classic",
+        "Formal",
+        "Vintage",
+        "Long Coat",
+        "Buttoned",
+        "Lapel Collar"
+    ],
+
+    "suede-leather-jackets": [
+        "Suede",
+        "Vintage",
+        "Classic",
+        "Bomber",
+        "Trucker",
+        "Zipper",
+        "Buttoned",
+        "Stand Collar"
+    ],
+
+    "denim-cotton-jackets": [
+        "Denim",
+        "Cotton",
+        "Casual",
+        "Vintage",
+        "Distressed",
+        "Trucker",
+        "Shirt Collar",
+        "Buttoned"
+    ],
+
+    "trucker-jackets": [
+        "Trucker",
+        "Denim",
+        "Classic",
+        "Shirt Collar",
+        "Buttoned",
+        "Casual",
+        "Vintage"
+    ],
+
+    "wool-coats": [
+        "Wool",
+        "Long Coat",
+        "3/4th Length",
+        "Trench Coat",
+        "Formal",
+        "Classic",
+        "Buttoned",
+        "Belted"
+    ],
+
+    "bomber-leather-jackets": [
+        "Bomber",
+        "Classic",
+        "Ribbed Hem",
+        "Vintage",
+        "Zipper",
+        "Casual",
+        "Stand Collar"
+    ],
+
+    "real-leather-jackets": [
+        "Lambskin",
+        "Cowhide",
+        "Sheepskin",
+        "Classic",
+        "Vintage",
+        "Zipper",
+        "Buttoned",
+        "Biker",
+        "Bomber",
+        "Trucker"
+    ],
+
+    "hooded-leather-jackets": [
+        "Hood",
+        "Hooded",
+        "Removable Hood",
+        "Zipper",
+        "Winter",
+        "Casual",
+        "Bomber",
+        "Biker"
+    ],
+
+    "varsity-jackets": [
+        "Varsity",
+        "Wool",
+        "Leather Sleeves",
+        "Buttoned",
+        "Ribbed Hem",
+        "Casual",
+        "Sports"
+    ],
+
+    "winter-leather-jackets": [
+        "Winter",
+        "Warm",
+        "Shearling",
+        "Fur",
+        "Hooded",
+        "Insulated",
+        "Long Coat",
+        "Zipper",
+        "Buttoned"
+    ],
+    "default": [
+        "Classic",
+        "Vintage",
+        "Casual",
+        "Formal",
+        "Zipper",
+        "Buttoned",
+        "Biker",
+        "Bomber",
+        "Trucker",
+        "Leather",
+        "Wool",
+        "Denim",
+        "Hooded",
+        "Winter"
+    ]
+};
+
 const AllProductPage = () => {
     const navigate = useNavigate();
     const { slug } = useParams();
@@ -146,7 +301,7 @@ const AllProductPage = () => {
 
         setFilteredProducts(filtered);
         setShowFilters(false);
-    }, [products, filters, sortOption, colorFilter]);
+    }, [products, filters, sortOption, slug]);
 
     const handleFilterChange = (filterType, value) => {
         setFilters(prev => ({
@@ -226,161 +381,6 @@ const AllProductPage = () => {
             applyFiltersAndSort();
         }
     }, [applyFiltersAndSort, products]);
-
-    const CATEGORY_TAG_MAP = {
-        "biker-jackets": [
-            "Biker",
-            "Motorcycle",
-            "Cafe racer",
-            "Moto",
-            "Quilted",
-            "Asymmetrical",
-            "Vintage",
-            "Zipper",
-            "Studded",
-            "Spikes",
-            "Lapel Collar",
-            "Snap Tab Collar"
-        ],
-
-        "leather-car-coats": [
-            "Car Coat",
-            "3/4th Length",
-            "Long Coat",
-            "Trench Coat",
-            "Duster",
-            "Classic",
-            "Vintage",
-            "Buttoned",
-            "Belted",
-            "Stand Collar"
-        ],
-
-        "leather-blazers": [
-            "Blazer",
-            "Classic",
-            "Formal",
-            "Vintage",
-            "Long Coat",
-            "Buttoned",
-            "Lapel Collar"
-        ],
-
-        "suede-leather-jackets": [
-            "Suede",
-            "Vintage",
-            "Classic",
-            "Bomber",
-            "Trucker",
-            "Zipper",
-            "Buttoned",
-            "Stand Collar"
-        ],
-
-        "denim-cotton-jackets": [
-            "Denim",
-            "Cotton",
-            "Casual",
-            "Vintage",
-            "Distressed",
-            "Trucker",
-            "Shirt Collar",
-            "Buttoned"
-        ],
-
-        "trucker-jackets": [
-            "Trucker",
-            "Denim",
-            "Classic",
-            "Shirt Collar",
-            "Buttoned",
-            "Casual",
-            "Vintage"
-        ],
-
-        "wool-coats": [
-            "Wool",
-            "Long Coat",
-            "3/4th Length",
-            "Trench Coat",
-            "Formal",
-            "Classic",
-            "Buttoned",
-            "Belted"
-        ],
-
-        "bomber-leather-jackets": [
-            "Bomber",
-            "Classic",
-            "Ribbed Hem",
-            "Vintage",
-            "Zipper",
-            "Casual",
-            "Stand Collar"
-        ],
-
-        "real-leather-jackets": [
-            "Lambskin",
-            "Cowhide",
-            "Sheepskin",
-            "Classic",
-            "Vintage",
-            "Zipper",
-            "Buttoned",
-            "Biker",
-            "Bomber",
-            "Trucker"
-        ],
-
-        "hooded-leather-jackets": [
-            "Hood",
-            "Hooded",
-            "Removable Hood",
-            "Zipper",
-            "Winter",
-            "Casual",
-            "Bomber",
-            "Biker"
-        ],
-
-        "varsity-jackets": [
-            "Varsity",
-            "Wool",
-            "Leather Sleeves",
-            "Buttoned",
-            "Ribbed Hem",
-            "Casual",
-            "Sports"
-        ],
-
-        "winter-leather-jackets": [
-            "Winter",
-            "Warm",
-            "Shearling",
-            "Fur",
-            "Hooded",
-            "Insulated",
-            "Long Coat",
-            "Zipper",
-            "Buttoned"
-        ],
-        "default": [
-            "Classic",
-            "Vintage",
-            "Casual",
-            "Formal",
-            "Zipper",
-            "Buttoned",
-            "Biker",
-            "Bomber",
-            "Trucker",
-            "Leather",
-            "Wool",
-            "Denim",
-            "Hooded",
-            "Winter"
-        ]
-    };
 
     useEffect(() => {
         const filteredTags = CATEGORY_TAG_MAP[slug] || CATEGORY_TAG_MAP["default"];
@@ -619,7 +619,6 @@ const AllProductPage = () => {
                             </div>
                         ) : (
                             filteredProducts?.map(product => {
-                                const mainImage = product.productImages?.[0];
                                 const rating = Math?.max(...product?.variations.map(v => v?.ratings?.count || 0));
                                 return (
                                     <div key={product?._id} className="subcategory-product-card" >

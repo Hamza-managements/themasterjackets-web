@@ -40,28 +40,30 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
     const [isFormValid, setIsFormValid] = useState(false);
     const [hasInteracted, setHasInteracted] = useState(false);
     const [shippingMethod, setShippingMethod] = useState("standard");
-    const [checkoutStep, setCheckoutStep] = useState('information');
+    const [, setCheckoutStep] = useState('information');
     const [showOrderSummary, setShowOrderSummary] = useState(false);
     const [submitError, setSubmitError] = useState(null);
     const [openShippingModal, setOpenShippingModal] = useState(false);
     // const [isGuestCheckout, setIsGuestCheckout] = useState(xtrue); // below is the input that is commented out
 
+    const { zipCode, state, country } = formData;
+
     useEffect(() => {
-        const zip = formData.zipCode?.trim();
+        const zip = zipCode?.trim();
         const stateCode = zipToStateMap[zip];
 
         if (
             zip?.length === 5 &&
             stateCode &&
-            (formData.state !== stateCode || formData.country !== "USA")
+            (state !== stateCode || country !== "USA")
         ) {
             setFormData(prev => ({
                 ...prev,
                 state: stateCode,
-                country: "USA"
+                country: "USA",
             }));
         }
-    }, [formData.zipCode]);
+    }, [zipCode, state, country]);
 
     useEffect(() => {
         if (user) {
@@ -667,7 +669,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                 <section className="form-section">
                                     <h3>Payment method</h3>
 
-                                    {shippingMethod == "standard" && (
+                                    {shippingMethod === "standard" && (
                                         <>
                                             <div className="checkout-payment-methods">
                                                 <label className={`checkout-payment-method ${formData.paymentMethod === "CARD" ? "selected" : ""}`}>

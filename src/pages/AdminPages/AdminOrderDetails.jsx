@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/AdminOrderDetails.css';
 import { AuthContext } from '../../context/AuthContext';
@@ -37,45 +37,39 @@ const AdminOrderDetails = () => {
         notes: ''
     });
 
-    useEffect(() => {
-        fetchOrderDetails();
-    }, [orderId]);
+    const fetchOrderDetails = useCallback(async () => {
+        if (!orderId || !userId) return;
 
-    const fetchOrderDetails = async () => {
         try {
             setLoading(true);
+
             const data = await getUserOrderById(userId);
             const selectedOrder = data?.data?.find(
-                (order) => order._id === orderId
+                order => order._id === orderId
             );
+
             setOrder(selectedOrder);
-            if (selectedOrder.fulfillment) {
+
+            if (selectedOrder?.fulfillment) {
                 setTrackingInfo({
-                    orderId: orderId,
+                    orderId,
                     email: selectedOrder.userDetails.userId.email,
-                    trackingNumber: selectedOrder.fulfillment.trackingNumber || '',
-                    carrier: selectedOrder.fulfillment.carrier || 'FEDEX',
+                    trackingNumber:
+                        selectedOrder.fulfillment.trackingNumber || "",
+                    carrier:
+                        selectedOrder.fulfillment.carrier || "FEDEX",
                 });
             }
         } catch (error) {
-            console.error('Error fetching order details:', error);
+            console.error("Error fetching order details:", error);
         } finally {
             setLoading(false);
         }
-    };
+    }, [orderId, userId]);
 
-    // Update fulfillment status
-    const updateFulfillmentStatus = async (status) => {
-        try {
-            setIsUpdating(true);
-            await UpdateFulfillmentStatus(user?.uid, orderId, status);
-            fetchOrderDetails();
-        } catch (error) {
-            console.error('Error updating fulfillment:', error);
-        } finally {
-            setIsUpdating(false);
-        }
-    };
+    useEffect(() => {
+        fetchOrderDetails();
+    }, [fetchOrderDetails]);
 
     // Update tracking info
     const handleUpdateTracking = async () => {
@@ -1133,11 +1127,6 @@ const AdminOrderDetails = () => {
 
         </div >
     );
-};
-
-const UpdateFulfillmentStatus = async (uid, orderId, status) => {
-    // Your API call implementation
-    return { success: true };
 };
 
 const ProcessRefund = async (uid, orderId, refundData) => {

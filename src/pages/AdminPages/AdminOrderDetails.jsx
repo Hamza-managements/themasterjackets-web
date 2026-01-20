@@ -5,6 +5,12 @@ import { AuthContext } from '../../context/AuthContext';
 import { getUserOrderById, cancelOrderWithId, confirmOrderWithOrderId, updateShipmentWithOrderId, completeOrderWithOrderId } from '../../utils/OrderUtils';
 import { useToast } from '../../context/ToastProvider';
 
+const statusClasses = {
+    delivered: "bg-green-200 text-green-700",
+    shipped: "bg-green-200 text-blue-700",
+    cancelled: "bg-red-200 text-red-700",
+};
+
 const AdminOrderDetails = () => {
     const { user } = useContext(AuthContext);
     const { orderId, userId } = useParams();
@@ -17,7 +23,6 @@ const AdminOrderDetails = () => {
     const [openFulfillment, setOpenFulfillment] = useState(false);
 
     console.log('Order Data:', order);
-
     // Form states
     const [trackingInfo, setTrackingInfo] = useState({
         orderId: '',
@@ -83,6 +88,7 @@ const AdminOrderDetails = () => {
             showToast({ type: "error", message: `Failed to update order status, Try Again` });
         } finally {
             setIsUpdating(false);
+            setOpenFulfillment(false);
         }
     };
 
@@ -178,14 +184,14 @@ const AdminOrderDetails = () => {
     const getStatusClasses = (status) => {
         switch (status?.toLowerCase()) {
             case "shipped":
-                return "bg-blue-100 text-blue-700";
+                return "bg-blue-200 text-blue-700";
             case "confirmed":
-                return "bg-green-100 text-green-700";
+                return "bg-green-200 text-green-700";
             case "cancelled":
-                return "bg-red-100 text-red-700";
+                return "bg-red-200 text-red-700";
             case "placed":
             default:
-                return "bg-yellow-100 text-yellow-700";
+                return "bg-yellow-200 text-yellow-700";
         }
     };
 
@@ -222,7 +228,7 @@ const AdminOrderDetails = () => {
             {/* Header */}
             <div className="order-header">
                 <div className="header-top">
-                    <button className="back-btn" onClick={() => navigate('/admin/dashboard?orders')}>
+                    <button className="back-btn hide-print" onClick={() => navigate('/admin/dashboard?orders')}>
                         ← Back to Orders
                     </button>
                     <div className="header-actions">
@@ -301,7 +307,7 @@ const AdminOrderDetails = () => {
                     {activeTab === 'overview' && (
                         <div className="tab-content">
 
-                            <hr className="border-gray-900" />
+                            <hr className="border-gray-900 hide-print" />
 
                             <div className="overview-grid">
                                 {/* Shipping & Billing */}
@@ -312,7 +318,7 @@ const AdminOrderDetails = () => {
                                         <div className="shipping-content">
                                             <div className="row">
                                                 <span className="label">Order #</span>
-                                                <span className="value">{order.orderNumber}</span>
+                                                <span className="value order-number" onClick={() => navigator.clipboard.writeText(order.orderNumber)}>{order.orderNumber}</span>
                                             </div>
 
                                             <div className="row">
@@ -372,27 +378,12 @@ const AdminOrderDetails = () => {
 
                             <hr className="my-6 border-gray-900" />
 
-                            <div>
-                                {!order.fulfillment.trackingNumber &&
-                                    <div className="">
-                                        <button
-                                            onClick={() => setOpenFulfillment(true)}
-                                            className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-medium rounded"
-                                        >
-                                            Confirm Shipment
-                                        </button>
-                                    </div>
-                                }
-                            </div>
-
-                            <hr className="my-6 border-gray-900" />
-
                             {/* Order Items */}
                             <div className="order-items">
                                 <h3 className="mb-3 font-semibold text-lg">Order Items</h3>
 
                                 <div className="overflow-x-auto">
-                                    <table className="w-full border-collapse text-sm">
+                                    <table className="w-full text-sm table-border">
                                         <thead>
                                             <tr className="bg-gray-100 text-left border ">
                                                 <th className="px-4 py-3 border text-center">Status</th>
@@ -411,7 +402,7 @@ const AdminOrderDetails = () => {
                                                         <span
                                                             className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusClasses(order.orderStatus)}`}
                                                         >
-                                                            {order.orderStatus}
+                                                            {order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1)}
                                                         </span>
                                                     </td>
 
@@ -465,6 +456,22 @@ const AdminOrderDetails = () => {
                                 </div>
                             </div>
 
+                            <hr className="my-6 border-gray-900 hide-print" />
+
+                            {order.orderStatus !== "cancelled" && (
+                                <div className='hide-print'>
+                                    <button
+                                        onClick={() => setOpenFulfillment(true)}
+                                        className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-medium rounded"
+                                    >
+                                        {order.fulfillment.trackingNumber ? "Update Tracking" : "Confirm Shipment"}
+                                    </button>
+
+                                    <hr className="my-6 border-gray-900" />
+                                </div>
+                            )}
+
+
                             {order.fulfillment?.trackingNumber && (
                                 <div className="mt-4 border rounded-lg bg-white shadow-sm p-4">
                                     {/* Header */}
@@ -509,12 +516,10 @@ const AdminOrderDetails = () => {
                                 </div>
                             )}
 
-                            <hr className="my-6 border-gray-900" />
-
                             {openFulfillment && (
-                                <div className="mt-4 border rounded-lg bg-white shadow-sm p-4">
+                                <div className="mt-4 border rounded-lg bg-white shadow-sm p-4 hide-print">
                                     <div className="flex justify-between items-center mb-4">
-                                        <h3 className="font-semibold text-lg">Create Fulfillment</h3>
+                                        <h3 className="font-semibold text-lg">{order.fulfillment.trackingNumber ? "Update Fulfillment" : "Create Fulfillment"}</h3>
                                         <button
                                             onClick={() => setOpenFulfillment(false)}
                                             className="text-sm text-gray-500 hover:text-gray-700"
@@ -534,13 +539,13 @@ const AdminOrderDetails = () => {
                                                 ...trackingInfo,
                                                 carrier: e.target.value
                                             })}
-                                            className="w-full border rounded px-3 py-2 text-sm focus:ring focus:ring-yellow-200"
+                                            className="w-full border border-[1px] rounded px-3 py-2 text-sm focus:border-yellow-400 focus:ring focus:ring-yellow-200 tracking-input"
                                         >
                                             <option value="">Select carrier</option>
-                                            <option>DHL</option>
-                                            <option>FedEx</option>
-                                            <option>USPS</option>
-                                            <option>UPS</option>
+                                            <option value="DHL">DHL</option>
+                                            <option value="FEDEX">FedEx</option>
+                                            <option value="USPS">USPS</option>
+                                            <option value="UPS">UPS</option>
                                         </select>
                                     </div>
 
@@ -552,12 +557,14 @@ const AdminOrderDetails = () => {
                                         <input
                                             type="text"
                                             value={trackingInfo.trackingNumber}
-                                            onChange={(e) => setTrackingInfo({
-                                                ...trackingInfo,
-                                                trackingNumber: e.target.value
-                                            })}
+                                            onChange={(e) =>
+                                                setTrackingInfo({
+                                                    ...trackingInfo,
+                                                    trackingNumber: e.target.value,
+                                                })
+                                            }
                                             placeholder="Enter tracking number"
-                                            className="w-full border rounded px-3 py-2 text-sm focus:ring focus:ring-yellow-200"
+                                            className="w-full border border-[1px] rounded px-3 py-2 text-sm focus:border-yellow-400 focus:ring focus:ring-yellow-200 tracking-input"
                                         />
                                     </div>
 
@@ -622,7 +629,11 @@ const AdminOrderDetails = () => {
                                             onClick={handleUpdateTracking}
                                             className="px-4 py-2 text-sm bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
                                         >
-                                            {isUpdating ? 'Updating...' : ' Create Fulfillment'}
+                                            {isUpdating
+                                                ? "Updating..."
+                                                : order.fulfillment.trackingNumber
+                                                    ? "Update Tracking"
+                                                    : "Confirm Shipment"}
                                         </button>
                                     </div>
                                 </div>
@@ -1079,7 +1090,7 @@ const AdminOrderDetails = () => {
                 </div>
 
                 {/* Quick Actions Sidebar */}
-                <aside className="quick-actions-sidebar">
+                {/* <aside className="quick-actions-sidebar">
                     <h3>Quick Actions</h3>
 
                     <div className="order-details-action-buttons">
@@ -1089,7 +1100,7 @@ const AdminOrderDetails = () => {
                         <button className="order-details-action-btn">
                             ✉️ Send Shipping Notification
                         </button>
-                        {/* <button className="order-details-action-btn">
+                         <button className="order-details-action-btn">
                             🎁 Add Gift Note
                         </button>
                         <button className="order-details-action-btn">
@@ -1097,7 +1108,7 @@ const AdminOrderDetails = () => {
                         </button>
                         <button className="order-details-action-btn">
                             📋 Duplicate Order
-                        </button> */}
+                        </button> 
                         <button className="order-details-action-btn danger" onClick={handleCancelOrder} disabled={order.orderStatus === 'cancelled'}>
                             ❌ Cancel Order
                         </button>
@@ -1122,7 +1133,7 @@ const AdminOrderDetails = () => {
                             <span>{formatDate(order.updatedAt)}</span>
                         </div>
                     </div>
-                </aside>
+                </aside> */}
             </div >
 
         </div >

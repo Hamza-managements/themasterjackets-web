@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import './styles/AdminAllOrder.css';
-import { cancelOrderWithId, GetAllOrder } from '../utils/OrderUtils';
+import { confirmOrderWithOrderId, GetAllOrder } from '../utils/OrderUtils';
 import { Search } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const AdminAllOrderDashboard = ({ user }) => {
     const [orders, setOrders] = useState([]);
@@ -87,13 +88,10 @@ const AdminAllOrderDashboard = ({ user }) => {
                 updateOrderStatus(selectedOrders, 'processing');
                 break;
             case 'mark_shipped':
-                updateOrderStatus(selectedOrders, 'shipped');
+                updateOrderStatus(selectedOrders, 'confirmed');
                 break;
             case 'mark_delivered':
                 updateOrderStatus(selectedOrders, 'delivered');
-                break;
-            case 'cancel':
-                handleCancelOrder(selectedOrders, 'cancelled');
                 break;
             case 'print_labels':
                 printShippingLabels(selectedOrders);
@@ -106,20 +104,20 @@ const AdminAllOrderDashboard = ({ user }) => {
 
     const updateOrderStatus = async (orderIds, status) => {
         try {
-            if (status === 'cancelled') {
-                await handleCancelOrder(orderIds);
+            if (status === 'confirmed') {
+                await handleConfirmOrder(orderIds);
             } else {
                 await UpdateOrderStatus(orderIds, status);
-                fetchOrders();
             }
+            fetchOrders();
         } catch (error) {
             console.error('Error updating order status:', error);
         }
     };
 
-    const handleCancelOrder = async (orderIds) => {
+    const handleConfirmOrder = async (orderIds) => {
         try {
-            await cancelOrderWithId(user?.uid, orderIds);
+            await confirmOrderWithOrderId(user?.uid, orderIds);
             fetchOrders();
         } catch (error) {
             console.error('Error updating order status:', error);
@@ -318,9 +316,9 @@ const AdminAllOrderDashboard = ({ user }) => {
                                             />
                                         </td>
                                         <td>
-                                            <a href={`/admin/orders/${order._id}/${order.userDetails.userId._id}`} className="order-link">
+                                            <Link to={`/admin/orders/${order._id}/${order.userDetails.userId._id}`} className="order-link">
                                                 {order.orderNumber}
-                                            </a>
+                                            </Link>
                                         </td>
                                         <td className="customer-email">{formatDate(order.createdAt)}</td>
                                         <td>
@@ -356,18 +354,20 @@ const AdminAllOrderDashboard = ({ user }) => {
                                         </td>
                                         <td>
                                             <div className="all-order-action-buttons">
-                                                <button
-                                                    className={`placed ${order.orderStatus === 'placed' ? 'disabled' : ''}`}
-                                                    onClick={() => updateOrderStatus([order._id], 'placed')}
-                                                    disabled={order.orderStatus === 'cancelled' || order.orderStatus === 'delivered' || order.orderStatus === 'placed'}
-                                                >
-                                                    Placed
-                                                </button>
+                                                {order?.orderStatus === 'placed' && (
+                                                    <button
+                                                        className={`placed`}
+                                                        onClick={() => updateOrderStatus([order._id], 'placed')}
+                                                        disabled={order.orderStatus === 'cancelled' || order.orderStatus === 'completed' || order.orderStatus === 'placed' || order.orderStatus === 'confirmed'}
+                                                    >
+                                                        Placed
+                                                    </button>
+                                                )}
 
                                                 <button
-                                                    className={`confirmed ${order.orderStatus === 'confirmed' ? 'disabled' : ''}`}
+                                                    className={`confirmed ${order.orderStatus === 'cancelled' || order.orderStatus === 'completed' || order.orderStatus === 'confirmed' ? 'disabled' : ''}`}
                                                     onClick={() => updateOrderStatus([order._id], 'confirmed')}
-                                                    disabled={order.orderStatus === 'cancelled' || order.orderStatus === 'delivered' || order.orderStatus === 'confirmed'}
+                                                    disabled={order.orderStatus === 'cancelled' || order.orderStatus === 'completed' || order.orderStatus === 'confirmed'}
                                                 >
                                                     Confirmed
                                                 </button>

@@ -237,19 +237,7 @@
 .overview-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    background: var(--gray-300);
-}
-
-.overview-grid>* {
-    border-radius: 8px;
-    padding: 0 20px;
-}
-
-.overview-grid h3 {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--gray-800);
-    margin-bottom: 16px;
+    background: #fff;
 }
 
 .order-summary,
@@ -267,7 +255,6 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
-    background: var(--gray-300);
 }
 
 /* Summary Card */
@@ -392,6 +379,7 @@
 
 .address-card {
     background: #fff;
+    border: 1px solid var(--gray-400);
     border-radius: 8px;
     padding: 16px;
 }
@@ -409,7 +397,8 @@
 
 .shipping-content .label {
     font-size: 13px;
-    color: #6b7280; /* muted gray */
+    color: #6b7280;
+    /* muted gray */
 }
 
 .shipping-content .value {
@@ -527,6 +516,15 @@
     outline: none;
     border-color: var(--red);
     box-shadow: 0 0 0 3px rgba(211, 2, 23, 0.1);
+}
+
+.tracking-input {
+    border-color: #b8b8b8 !important;
+}
+
+.table-border th, .table-border td {
+    border-collapse: collapse;
+    border: 1px solid #b8b8b8 !important;
 }
 
 .btn-save {
@@ -1013,7 +1011,6 @@
 
 /* Print Styles */
 @media print {
-
     .order-tabs,
     .quick-actions-sidebar,
     .btn-print,
@@ -1023,7 +1020,8 @@
     .btn-save,
     .btn-process-refund,
     .btn-update-return,
-    .order-details-action-btn {
+    .order-details-action-btn,
+    .hide-print {
         display: none !important;
     }
 

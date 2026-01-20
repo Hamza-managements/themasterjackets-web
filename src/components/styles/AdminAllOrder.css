@@ -291,7 +291,6 @@
   font-size: 12px;
   font-weight: 500;
   color: var(--gray-700);
-  max-width: 70%;
 }
 
 .items-count img {
@@ -378,7 +377,7 @@
 }
 
 .all-order-action-buttons button.disabled {
-  background-color: #ccc;
+  background-color: #939393;
   cursor: not-allowed;
 }
 

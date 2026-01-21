@@ -104,3 +104,19 @@ export async function completeOrderWithOrderId(uid, orderId) {
         throw error;
     }
 }
+
+export async function updateTrackingNumberWithOrderId(uid, updatedData) {
+    try {
+        api.interceptors.request.use((config) => {
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
+            return config;
+        });
+        const response = await api.put(`/api/order/update-tracking/${uid}`, updatedData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}

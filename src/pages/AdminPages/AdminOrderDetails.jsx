@@ -2,12 +2,12 @@ import { useState, useEffect, useContext, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/AdminOrderDetails.css';
 import { AuthContext } from '../../context/AuthContext';
-import { getUserOrderById, cancelOrderWithId, confirmOrderWithOrderId, updateShipmentWithOrderId, completeOrderWithOrderId } from '../../utils/OrderUtils';
+import { getUserOrderById, cancelOrderWithId, confirmOrderWithOrderId, updateShipmentWithOrderId, completeOrderWithOrderId, updateTrackingNumberWithOrderId } from '../../utils/OrderUtils';
 import { useToast } from '../../context/ToastProvider';
 
 const statusClasses = {
     delivered: "bg-green-200 text-green-700",
-    shipped: "bg-green-200 text-blue-700",
+    shipped: "bg-blue-200 text-blue-700",
     cancelled: "bg-red-200 text-red-700",
 };
 
@@ -76,21 +76,36 @@ const AdminOrderDetails = () => {
         fetchOrderDetails();
     }, [fetchOrderDetails]);
 
-    // Update tracking info
-    const handleUpdateTracking = async () => {
+    const handleTracking = async (order) => {
         try {
             setIsUpdating(true);
-            await updateShipmentWithOrderId(user?.uid, trackingInfo);
+
+            if (order?.fulfillment?.trackingNumber) {
+                // UPDATE existing tracking
+                await updateTrackingNumberWithOrderId(user?.uid, trackingInfo);
+            } else {
+                // ADD new tracking
+                await updateShipmentWithOrderId(user?.uid, trackingInfo);
+            }
+
             fetchOrderDetails();
-            showToast({ type: "success", message: `Order tracking updated Succesfullly` });
+
+            showToast({
+                type: "success",
+                message: "Order tracking updated successfully",
+            });
         } catch (error) {
-            console.error('Error updating tracking:', error);
-            showToast({ type: "error", message: `Failed to update order status, Try Again` });
+            console.error("Error updating tracking:", error);
+            showToast({
+                type: "error",
+                message: "Failed to update order status, Try Again",
+            });
         } finally {
             setIsUpdating(false);
             setOpenFulfillment(false);
         }
     };
+
 
     // Process refund
     const handleProcessRefund = async () => {
@@ -226,7 +241,7 @@ const AdminOrderDetails = () => {
     return (
         <div className="admin-order-details">
             {/* Header */}
-            <div className="order-header">
+            <div className="order-header hide-print">
                 <div className="header-top">
                     <button className="back-btn hide-print" onClick={() => navigate('/admin/dashboard?orders')}>
                         ← Back to Orders
@@ -472,16 +487,16 @@ const AdminOrderDetails = () => {
                             )}
 
 
-                            {order.fulfillment?.trackingNumber && (
-                                <div className="mt-4 border rounded-lg bg-white shadow-sm p-4">
+                            {order.fulfillment?.trackingNumber && !openFulfillment && (
+                                <div className="mt-4 border rounded-lg bg-white shadow-sm p-4 hide-print">
                                     {/* Header */}
                                     <div className="flex items-center justify-between mb-3">
                                         <h4 className="text-sm font-semibold text-gray-900">
-                                            Current Tracking
+                                            Current Tracking Status:
                                         </h4>
 
-                                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
-                                            Shipped
+                                        <span className={`px-2 py-1 text-s font-medium rounded-full ${statusClasses[order.fulfillment.status]} text-blue-700`}>
+                                            {order.fulfillment.status.slice(0, 1).toUpperCase() + order.fulfillment.status.slice(1)}
                                         </span>
                                     </div>
 
@@ -625,13 +640,17 @@ const AdminOrderDetails = () => {
                                         </button>
 
                                         <button
-                                            disabled={!trackingInfo.carrier || !trackingInfo.trackingNumber}
-                                            onClick={handleUpdateTracking}
+                                            disabled={
+                                                isUpdating ||
+                                                !trackingInfo.carrier ||
+                                                !trackingInfo.trackingNumber
+                                            }
+                                            onClick={() => handleTracking(order)}
                                             className="px-4 py-2 text-sm bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
                                         >
                                             {isUpdating
                                                 ? "Updating..."
-                                                : order.fulfillment.trackingNumber
+                                                : order?.fulfillment?.trackingNumber
                                                     ? "Update Tracking"
                                                     : "Confirm Shipment"}
                                         </button>

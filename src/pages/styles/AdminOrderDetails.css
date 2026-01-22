@@ -917,7 +917,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 400px;
+    min-height: 80vh;
     grid-column: 1 / -1;
 }
 

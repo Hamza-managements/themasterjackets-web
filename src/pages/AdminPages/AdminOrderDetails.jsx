@@ -6,9 +6,13 @@ import { getUserOrderById, cancelOrderWithId, confirmOrderWithOrderId, updateShi
 import { useToast } from '../../context/ToastProvider';
 
 const statusClasses = {
-    delivered: "bg-green-200 text-green-700",
+    delivered: "bg-emerald-100 text-emerald-700",
     shipped: "bg-blue-200 text-blue-700",
-    cancelled: "bg-red-200 text-red-700",
+};
+
+const statusFlow = {
+    placed: ['confirmed'],
+    shipped: ['completed'],
 };
 
 const AdminOrderDetails = () => {
@@ -28,7 +32,7 @@ const AdminOrderDetails = () => {
         orderId: '',
         email: '',
         trackingNumber: '',
-        carrier: 'FEDEX',
+        carrier: '',
     });
     const [refundData, setRefundData] = useState({
         amount: 0,
@@ -62,7 +66,7 @@ const AdminOrderDetails = () => {
                     trackingNumber:
                         selectedOrder.fulfillment.trackingNumber || "",
                     carrier:
-                        selectedOrder.fulfillment.carrier || "FEDEX",
+                        selectedOrder.fulfillment.carrier || "",
                 });
             }
         } catch (error) {
@@ -98,7 +102,7 @@ const AdminOrderDetails = () => {
             console.error("Error updating tracking:", error);
             showToast({
                 type: "error",
-                message: "Failed to update order status, Try Again",
+                message: `${error.response?.data?.message || error.message || "Failed to update order status, Try Again"}`,
             });
         } finally {
             setIsUpdating(false);
@@ -143,7 +147,7 @@ const AdminOrderDetails = () => {
             showToast({ type: "success", message: `Order status updated to Cancelled` });
         } catch (error) {
             console.error('Error cancelling order:', error);
-            showToast({ type: "error", message: `Failed to update order status, Try Again` });
+            showToast({ type: "error", message: `${error.response?.data?.message || error.message || "Failed to update order status, Try Again"}` });
         } finally {
             setIsUpdating(false);
         }
@@ -170,7 +174,7 @@ const AdminOrderDetails = () => {
             showToast({ type: "success", message: `Order status updated to "${status.charAt(0).toUpperCase() + status.slice(1)}"` });
         } catch (error) {
             console.error("Failed to update order status:", error);
-            showToast({ type: "error", message: `Failed to update order status, Try Again` });
+            showToast({ type: "error", message: `${error.response?.data?.message || error.message || "Failed to update order status, Try Again"}` });
         } finally {
             setIsUpdating(false);
         }
@@ -187,12 +191,13 @@ const AdminOrderDetails = () => {
     // Format date
     const formatDate = (dateString) => {
         if (!dateString) return 'N/A';
-        return new Date(dateString).toLocaleDateString('en-US', {
+        return new Date(dateString).toLocaleDateString('en-GB', {
             year: 'numeric',
-            month: 'long',
+            month: 'short',
             day: 'numeric',
             hour: '2-digit',
-            minute: '2-digit'
+            minute: '2-digit',
+            hour12: true,
         });
     };
 
@@ -201,6 +206,8 @@ const AdminOrderDetails = () => {
             case "shipped":
                 return "bg-blue-200 text-blue-700";
             case "confirmed":
+                return "bg-orange-200 text-orange-700";
+            case "completed":
                 return "bg-green-200 text-green-700";
             case "cancelled":
                 return "bg-red-200 text-red-700";
@@ -233,7 +240,7 @@ const AdminOrderDetails = () => {
         return (
             <div className="admin-order-details not-found">
                 <h2>Order not found</h2>
-                <button onClick={() => navigate('/admin/orders')}>Back to Orders</button>
+                <button className="btn-email" onClick={() => navigate('/admin/dashboard?orders')}>Back to Orders</button>
             </div>
         );
     }
@@ -250,21 +257,22 @@ const AdminOrderDetails = () => {
                         <button className="btn-print" onClick={() => window.print()}>
                             🖨️ Print
                         </button>
-                        <button className="btn-email">
+                        {/* <button className="btn-email">
                             ✉️ Email Customer
-                        </button>
+                        </button> */}
                         <div className="status-actions">
                             <select
                                 className="status-select"
                                 value={order.orderStatus}
                                 onChange={(e) => updateOrderStatus(e.target.value)}
-                                disabled={isUpdating || order.orderStatus === 'cancelled'}
                             >
-                                <option value="shipped">Shipped</option>
-                                <option value="placed">Placed</option>
-                                <option value="confirmed">Confirmed</option>
-                                <option value="completed">Completed</option>
-                                <option value="returned">Returned</option>
+                                <option value={order.orderStatus}>{order.orderStatus?.slice(0, 1).toUpperCase() + order.orderStatus.slice(1)}</option>
+
+                                {(statusFlow[order.orderStatus] || []).map(status => (
+                                    <option key={status} value={status}>
+                                        {status?.slice(0, 1).toUpperCase() + status.slice(1)}
+                                    </option>
+                                ))}
                             </select>
                             <button
                                 className="btn-cancel"
@@ -473,7 +481,7 @@ const AdminOrderDetails = () => {
 
                             <hr className="my-6 border-gray-900 hide-print" />
 
-                            {order.orderStatus !== "cancelled" && (
+                            {order.orderStatus !== "cancelled" && order.orderStatus !== "completed" && (
                                 <div className='hide-print'>
                                     <button
                                         onClick={() => setOpenFulfillment(true)}
@@ -515,6 +523,24 @@ const AdminOrderDetails = () => {
                                                 {order.fulfillment.carrier}
                                             </span>
                                         </div>
+
+                                        {order.fulfillment.shippedAt &&
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-500">Shipping date:</span>
+                                                <span className="font-medium text-blue-900 rounded">
+                                                    {order.fulfillment.shippedAt ? formatDate(order.fulfillment.shippedAt) : 'N/A'}
+                                                </span>
+                                            </div>
+                                        }
+
+                                        {order.fulfillment.deliveredAt &&
+                                            <div className="flex justify-between">
+                                                <span className="text-gray-500">Delivery date:</span>
+                                                <span className="font-medium text-green-900 rounded">
+                                                    {order.fulfillment.deliveredAt ? formatDate(order.fulfillment.deliveredAt) : 'N/A'}
+                                                </span>
+                                            </div>
+                                        }
                                     </div>
 
                                     {/* Actions */}

@@ -52,40 +52,40 @@ const Dashboard = () => {
     }
   }, [searchParams]);
 
-  
-const fetchOrders = useCallback(async () => {
-  if (!uid) return;
 
-  try {
-    const response = await getUserOrderById(uid);
-    setOrders(response?.data);
-  } catch (error) {
-    console.error("Error fetching orders:", error);
-  }
-}, [uid]);
+  const fetchOrders = useCallback(async () => {
+    if (!uid) return;
 
-useEffect(() => {
-  AOS.init({
-    duration: 800,
-    easing: "ease-in-out",
-    once: true,
-  });
-
-  const handleResize = () => {
-    const isMobile = window.innerWidth <= 1024;
-    setIsMobileView(isMobile);
-
-    if (!isMobile) {
-      setIsMobileMenuOpen(false);
+    try {
+      const response = await getUserOrderById(uid);
+      setOrders(response?.data);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
     }
-  };
+  }, [uid]);
 
-  handleResize();
-  fetchOrders();
+  useEffect(() => {
+    AOS.init({
+      duration: 800,
+      easing: "ease-in-out",
+      once: true,
+    });
 
-  window.addEventListener("resize", handleResize);
-  return () => window.removeEventListener("resize", handleResize);
-}, [fetchOrders]);
+    const handleResize = () => {
+      const isMobile = window.innerWidth <= 1024;
+      setIsMobileView(isMobile);
+
+      if (!isMobile) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    handleResize();
+    fetchOrders();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [fetchOrders]);
 
   const [notifications,] = useState([
     {
@@ -1833,7 +1833,7 @@ th {
     color: #ff8000ff;
 }
 
-.status-badge.shipped, .status-badge.returned {
+.status-badge.shipped, .status-badge.returned, .status-badge.confirmed {
     background-color: rgba(13, 110, 253, 0.1);
     color: #0d6efd;
 }
@@ -1843,7 +1843,7 @@ th {
     color: #dc3545;
 }
 
-.status-badge.approved, .status-badge.confirmed, .status-badge.delivered  {
+.status-badge.approved, .status-badge.confirmed, .status-badge.delivered , .status-badge.completed  {
     background-color: rgba(255, 0, 0, 0.1);
     color: #28a745;
 }

@@ -224,6 +224,9 @@ const ProductDetails = () => {
   // };
 
   const directCheckout = () => {
+    if (!validateForm(selectedVariation)) {
+      return;
+    }
     addToCart(selectedVariation);
     setIsLoading(true);
     setTimeout(() => {
@@ -457,7 +460,7 @@ const ProductDetails = () => {
                         );
 
                         const isOutOfStock = !matchingVariation || matchingVariation.stockQuantity === 0;
-                        
+
                         return (
                           <div
                             key={size}

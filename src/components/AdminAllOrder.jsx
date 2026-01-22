@@ -357,17 +357,16 @@ const AdminAllOrderDashboard = ({ user }) => {
                                                 {order?.orderStatus === 'placed' && (
                                                     <button
                                                         className={`placed`}
-                                                        onClick={() => updateOrderStatus([order._id], 'placed')}
-                                                        disabled={order.orderStatus === 'cancelled' || order.orderStatus === 'completed' || order.orderStatus === 'placed' || order.orderStatus === 'confirmed'}
+                                                        disabled={order.orderStatus === 'placed'}
                                                     >
                                                         Placed
                                                     </button>
                                                 )}
 
                                                 <button
-                                                    className={`confirmed ${order.orderStatus === 'cancelled' || order.orderStatus === 'completed' || order.orderStatus === 'confirmed' ? 'disabled' : ''}`}
+                                                    className={`confirmed ${order.orderStatus === 'cancelled' || order.orderStatus === 'completed' || order.orderStatus === 'confirmed' || order.orderStatus === 'shipped' ? 'disabled' : ''}`}
                                                     onClick={() => updateOrderStatus([order._id], 'confirmed')}
-                                                    disabled={order.orderStatus === 'cancelled' || order.orderStatus === 'completed' || order.orderStatus === 'confirmed'}
+                                                    disabled={order.orderStatus === 'cancelled' || order.orderStatus === 'completed' || order.orderStatus === 'confirmed' || order.orderStatus === 'shipped'}
                                                 >
                                                     Confirmed
                                                 </button>

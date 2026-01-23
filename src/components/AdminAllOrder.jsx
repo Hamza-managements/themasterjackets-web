@@ -41,7 +41,7 @@ const AdminAllOrderDashboard = ({ user }) => {
     useEffect(() => {
         fetchOrders();
     }, [fetchOrders]);
-
+     
     const calculateStats = (ordersData) => {
         const statsData = {
             total: ordersData.length,
@@ -316,7 +316,7 @@ const AdminAllOrderDashboard = ({ user }) => {
                                             />
                                         </td>
                                         <td>
-                                            <Link to={`/admin/orders/${order._id}/${order.userDetails.userId._id}`} className="order-link">
+                                            <Link to={`/admin/orders/${order?._id}`} className="order-link">
                                                 {order.orderNumber}
                                             </Link>
                                         </td>
@@ -324,7 +324,7 @@ const AdminAllOrderDashboard = ({ user }) => {
                                         <td>
                                             <div className="customer-info">
                                                 <div className="customer-name">{order.shippingAddress.fullName}</div>
-                                                <div className="customer-email">{order.userDetails.userId.email}</div>
+                                                <div className="customer-email">{order.userDetails?.userId?.email || order.userDetails.guestEmail}</div>
                                             </div>
                                         </td>
                                         <td>

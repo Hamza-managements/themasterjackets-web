@@ -2,7 +2,7 @@ import { useState, useEffect, useContext, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/AdminOrderDetails.css';
 import { AuthContext } from '../../context/AuthContext';
-import { getUserOrderById, cancelOrderWithId, confirmOrderWithOrderId, updateShipmentWithOrderId, completeOrderWithOrderId, updateTrackingNumberWithOrderId } from '../../utils/OrderUtils';
+import { cancelOrderWithId, confirmOrderWithOrderId, updateShipmentWithOrderId, completeOrderWithOrderId, updateTrackingNumberWithOrderId, GetAllOrder } from '../../utils/OrderUtils';
 import { useToast } from '../../context/ToastProvider';
 
 const statusClasses = {
@@ -17,7 +17,7 @@ const statusFlow = {
 
 const AdminOrderDetails = () => {
     const { user } = useContext(AuthContext);
-    const { orderId, userId } = useParams();
+    const { orderId } = useParams();
     const { showToast } = useToast();
     const navigate = useNavigate();
     const [order, setOrder] = useState(null);
@@ -47,26 +47,40 @@ const AdminOrderDetails = () => {
     });
 
     const fetchOrderDetails = useCallback(async () => {
-        if (!orderId || !userId) return;
+        if (!orderId) return;
 
         try {
             setLoading(true);
 
-            const data = await getUserOrderById(userId);
-            const selectedOrder = data?.data?.find(
-                order => order._id === orderId
+            const res = await GetAllOrder(user?.uid);
+
+            // Safely get orders array
+            const orders = res?.data || [];
+
+            // Find order matching params orderId
+            const selectedOrder = orders.find(
+                (order) => order._id === orderId
             );
+
+            if (!selectedOrder) {
+                console.warn("Order not found");
+                setOrder(null);
+                return;
+            }
 
             setOrder(selectedOrder);
 
-            if (selectedOrder?.fulfillment) {
+            // Set tracking info if fulfillment exists
+            if (selectedOrder.fulfillment) {
                 setTrackingInfo({
-                    orderId,
-                    email: selectedOrder.userDetails.userId.email,
+                    orderId: selectedOrder._id,
+                    email: selectedOrder.userDetails?.userId
+                        ? selectedOrder.userDetails.userId.email
+                        : selectedOrder.userDetails?.guestEmail,
                     trackingNumber:
-                        selectedOrder.fulfillment.trackingNumber || "",
+                        selectedOrder.fulfillment.trackingNumber ?? "",
                     carrier:
-                        selectedOrder.fulfillment.carrier || "",
+                        selectedOrder.fulfillment.carrier ?? "",
                 });
             }
         } catch (error) {
@@ -74,7 +88,7 @@ const AdminOrderDetails = () => {
         } finally {
             setLoading(false);
         }
-    }, [orderId, userId]);
+    }, [orderId, user?.uid]);
 
     useEffect(() => {
         fetchOrderDetails();

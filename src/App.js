@@ -97,7 +97,7 @@ function App() {
                 <Route path="edit-product/:productId" element={<UpdateProductPage />} />
                 <Route path="manage-single-product/:productId" element={<ProductManagementPage />} />
                 <Route path="api-testing" element={<APITestingPage />} />
-                <Route path="orders/:orderId/:userId" element={<AdminOrderDetails />} />
+                <Route path="orders/:orderId" element={<AdminOrderDetails />} />
                 {/* <Route path="/account/settings" element={<PrivateRoute> <AccountSettings /> </PrivateRoute> } /> */}
               </Route>
 

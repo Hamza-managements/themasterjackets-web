@@ -1,28 +1,31 @@
 import { useNavigate } from "react-router-dom";
 
-const OrderSuccess = () => {
-    const navigate = useNavigate();
+const OrderSuccess = (user) => {
+  const navigate = useNavigate();
+  const userId = user?.user === "true" ? true : false;
+  return (
+    <div className="order-success-wrapper">
+      <div className="order-success-box">
+        <div className="success-icon">✔</div>
 
+        <h2>Order Confirmed</h2>
+        <p>Your order has been placed successfully.</p>
 
+        <div className="success-actions">
+          {userId ? (
+            <button className="btn-primary" onClick={() => navigate("/dashboard?orders")}>View My Orders</button>
+          ) : (
+            <button className="btn-primary" onClick={() => navigate("/auth/signup")}>Sign in</button>
+          )
+          }
+          <button className="btn-secondary" onClick={() => navigate("/")}>Continue Shopping</button>
+        </div>
 
-    return (
-        <div className="order-success-wrapper">
-            <div className="order-success-box">
-                <div className="success-icon">✔</div>
-
-                <h2>Order Confirmed</h2>
-                <p>Your order has been placed successfully.</p>
-
-                <div className="success-actions">
-                    <button className="btn-primary" onClick={() => navigate("/dashboard?orders")}>View My Orders</button>
-                    <button className="btn-secondary" onClick={() => navigate("/")}>Continue Shopping</button>
-                </div>
-
-                <p className="success-note">
-                    A confirmation email has been sent to your email address.
-                </p>
-            </div>
-            <style>{`
+        <p className="success-note">
+          A confirmation email has been sent to your email address.
+        </p>
+      </div>
+      <style>{`
 .order-success-wrapper {
   min-height: 80vh;
   display: flex;
@@ -146,9 +149,9 @@ const OrderSuccess = () => {
   }
 }
 `}</style>
-        </div>
+    </div>
 
-    );
+  );
 };
 
 export default OrderSuccess;

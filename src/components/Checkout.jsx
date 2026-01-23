@@ -145,9 +145,9 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
             setIsSubmitting(true);
 
             const payload = {
-                userDetails: {
-                    userId: user?.uid || null,
-                },
+                userDetails: user?.uid
+                    ? { userId: user.uid }
+                    : { guestEmail: formData.email },
                 items: cartItems.map(item => ({
                     productId: item?.productId?._id,
                     variationId: item?.variationId,
@@ -362,7 +362,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
     return (
         <div className="checkout-container shopify-style">
             {orderSuccess ? (
-                <OrderSuccess />
+                <OrderSuccess user={user?.uid ? "true" : "false"} />
             ) : (
                 <>
                     <header className="checkout-header">

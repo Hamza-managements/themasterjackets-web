@@ -15,10 +15,20 @@ export async function createNewOrder(payload) {
 
 export async function getUserOrderById(uid) {
     try {
-        const response = await api.get(`/api/order/get-orders-by/${uid}`);
+        const response = await api.get(`/api/order/get-orders-by?uid=${uid}`);
         return response.data;
     } catch (error) {
         console.error("Error fetching user orders:", error);
+        throw error;
+    }
+}
+
+export async function getGuestOrderById(email) {
+    try {
+        const response = await api.get(`/api/order/get-orders-by?email=${email}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching guest orders:", error);
         throw error;
     }
 }

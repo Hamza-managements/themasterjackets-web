@@ -24,7 +24,7 @@ import {
 } from 'react-icons/fa';
 import { MdSecurity } from 'react-icons/md';
 import { BsShieldLock } from 'react-icons/bs';
-import { getUserOrderById } from '../utils/OrderUtils';
+import { getUserOrderById, getGuestOrderById } from '../utils/OrderUtils';
 
 const Dashboard = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -34,6 +34,7 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [orders, setOrders] = useState([]);
+  const guestEmail = localStorage.getItem('guestEmail') || 'hamzaasudani@gmail.com';
 
   const [searchParams] = useSearchParams();
   const { user, logout } = useContext(AuthContext);
@@ -54,9 +55,12 @@ const Dashboard = () => {
 
 
   const fetchOrders = useCallback(async () => {
-    if (!uid) return;
-
     try {
+      if (!uid) {
+        // const response = await getGuestOrderById(guestEmail);
+        // setOrders(response?.data);
+        return;
+      }
       const response = await getUserOrderById(uid);
       setOrders(response?.data);
     } catch (error) {

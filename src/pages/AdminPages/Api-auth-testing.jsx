@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import { getGuestOrderById } from "../../utils/OrderUtils";
 
 const APITestingPage = () => {
   const { user } = useContext(AuthContext);
@@ -60,7 +61,6 @@ const APITestingPage = () => {
     const id = prompt("Enter User ID to fetch:", "564564564564564564");
     if (!id) {
       callAPI(`user/fetchById/68762589a469c496106e01d4?uid=${user.uid}`, "GET");
-      console.log("No ID provided, fetching current user." + user.userName);
       return
     }
     callAPI(`user/fetchById/68762589a469c496106e01d4?uid=${id}`, "GET");
@@ -113,7 +113,35 @@ const APITestingPage = () => {
       "DELETE"
     );
   }
-  
+
+  const handleGuestOrder = async () => {
+    const email = prompt("Enter User email to fetch:", "hamza@gmail.com");
+    if (!email) return;
+    try {
+      const response = await getGuestOrderById(email);
+      const data = response;
+      setApiResults(prev => ({
+        ...prev,
+        ["guestOrder"]: {
+          success: response.status,
+          data: data,
+          status: response.status,
+          timestamp: new Date().toLocaleTimeString()
+        }
+      }));
+    } catch (error) {
+      setApiResults(prev => ({
+        ...prev,
+        ["guestOrder"]: {
+          success: false,
+          error: error.message,
+          timestamp: new Date().toLocaleTimeString()
+        }
+      }));
+    } finally {
+      setLoading(false);
+    }
+  }
 
   // User Check
   const checkAdminStatus = async () => {
@@ -219,6 +247,11 @@ const APITestingPage = () => {
         <APITestButton
           label="delete product by id"
           onClick={deleteProductByID}
+          loading={loading}
+        />
+        <APITestButton
+          label="get order by Guest Email"
+          onClick={handleGuestOrder}
           loading={loading}
         />
       </div>

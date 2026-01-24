@@ -114,34 +114,35 @@ const APITestingPage = () => {
     );
   }
 
-  const handleGuestOrder = async () => {
-    const email = prompt("Enter User email to fetch:", "hamza@gmail.com");
-    if (!email) return;
-    try {
-      const response = await getGuestOrderById(email);
-      const data = response;
-      setApiResults(prev => ({
-        ...prev,
-        ["guestOrder"]: {
-          success: response.status,
-          data: data,
-          status: response.status,
-          timestamp: new Date().toLocaleTimeString()
-        }
-      }));
-    } catch (error) {
-      setApiResults(prev => ({
-        ...prev,
-        ["guestOrder"]: {
-          success: false,
-          error: error.message,
-          timestamp: new Date().toLocaleTimeString()
-        }
-      }));
-    } finally {
-      setLoading(false);
-    }
+ const handleGuestOrder = async () => {
+  const email = prompt("Enter User email to fetch:", "hamza@gmail.com");
+  if (!email) return;
+
+  try {
+    const response = await getGuestOrderById(email);
+
+    setApiResults(prev => ({
+      ...prev,
+      guestOrder: {
+        success: response.status,
+        data: response,
+        status: response.status,
+        timestamp: new Date().toLocaleTimeString()
+      }
+    }));
+  } catch (error) {
+    setApiResults(prev => ({
+      ...prev,
+      guestOrder: {
+        success: false,
+        error: error.message,
+        timestamp: new Date().toLocaleTimeString()
+      }
+    }));
+  } finally {
+    setLoading(false);
   }
+};
 
   // User Check
   const checkAdminStatus = async () => {

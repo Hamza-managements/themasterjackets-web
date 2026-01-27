@@ -427,6 +427,16 @@
 
 /* Smaller mobile devices */
 @media (max-width: 576px) {
+    .fs-header-container {
+        position: fixed;
+        z-index: 1000;
+        height: 160px;
+    }
+
+    .layout-main-content{
+        padding-top: 160px;
+    }
+
     .fs-main-header {
         flex-wrap: wrap;
         gap: 10px;

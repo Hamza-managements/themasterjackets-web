@@ -19,11 +19,11 @@ const AllProductManagementPage = () => {
     stockKeepingUnit: "",
     variationName: "",
     productImages: [],
-    productPrice: { originalPrice: 0, discountedPrice: 0, currency: "USD" },
-    stockQuantity: 0,
-    attributes: { color: "", size: "", material: "Leather", weight: "1.5 Kg" },
+    productPrice: { originalPrice: 210, discountedPrice: 199, currency: "USD" },
+    stockQuantity: 100,
+    attributes: { color: "BLACK", size: "", material: "Leather", weight: "1.5 Kg" },
     inventoryStatus: "in stock",
-    shipping: { shippingCharges: 0, isFreeShipping: false, estimatedDeliveryDays: 5 },
+    shipping: { shippingCharges: 0, isFreeShipping: true, estimatedDeliveryDays: 5 },
     ratings: { count: 5 },
   };
 

@@ -188,7 +188,7 @@ const CATEGORY_TAG_MAP = {
 
 const SubCategoryProductPage = () => {
     const navigate = useNavigate();
-    const { slug } = useParams();
+    const { categorySlug, slug } = useParams();
     const [products, setProducts] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -207,6 +207,8 @@ const SubCategoryProductPage = () => {
         color: true,
         delivery: true
     });
+
+    console.log("categorySlug:", categorySlug, "slug:", slug);
 
     const applyFiltersAndSort = useCallback(() => {
         let filtered = [...products];
@@ -356,57 +358,69 @@ const SubCategoryProductPage = () => {
     };
 
     useEffect(() => {
-
         const fetchProducts = async () => {
             try {
                 setLoading(true);
+
+                // ✅ Special case: new arrivals
                 if (slug === "new-arrivals") {
-                    let filtered = await getProducts();
-                    filtered = filtered.filter(
+                    let allProducts = await getProducts();
+                    const filtered = allProducts.filter(
                         product =>
-                            product.attributes?.badge &&
-                            product.attributes.badge.toLowerCase() === "new arrival"
+                            product.attributes?.badge?.toLowerCase() === "new arrival"
                     );
                     setProducts(filtered);
                     return;
                 }
+
                 const categoryRes = await fetchCategoriesAll();
                 const categories = categoryRes || [];
 
-                let matchedCategory = null;
-                let matchedSubCategory = null;
+                // ✅ Match parent category first
+                const matchedCategory = categories.find(
+                    (cat) => cat.slug === categorySlug
+                );
 
-                for (const category of categories) {
-                    const sub = category.subCategories.find(
-                        (subCat) => subCat.slug === slug
-                    );
-                    if (sub) {
-                        matchedCategory = category;
-                        matchedSubCategory = sub;
-                        break;
-                    }
-                }
-
-                if (!matchedSubCategory) {
-                    Swal.fire("Not Found", "No subcategory found for this URL.", "warning");
+                if (!matchedCategory) {
+                    Swal.fire("Not Found", "Category not found.", "warning");
                     setProducts([]);
                     return;
                 }
 
-                const res = await getProductBySubCategoryId(matchedCategory._id, matchedSubCategory._id);
+                // ✅ Match subcategory inside the correct category
+                const matchedSubCategory = matchedCategory.subCategories.find(
+                    (subCat) => subCat.slug === slug
+                );
+
+                if (!matchedSubCategory) {
+                    Swal.fire("Not Found", "Subcategory not found.", "warning");
+                    setProducts([]);
+                    return;
+                }
+
+                // ✅ Fetch correct products
+                const res = await getProductBySubCategoryId(
+                    matchedCategory._id,
+                    matchedSubCategory._id
+                );
+
                 setProducts(res.data || []);
             } catch (error) {
-                Swal.fire("Not Found", "No subcategory found for this URL.", "warning");
+                Swal.fire("Error", "Something went wrong.", "error");
             } finally {
                 setLoading(false);
             }
         };
+
         fetchProducts();
 
-        const filteredTags = CATEGORY_TAG_MAP[slug] || CATEGORY_TAG_MAP["default"];
-        setAvailableFilters(filteredTags);
-    }, [slug]);
+        const filteredTags =
+            CATEGORY_TAG_MAP[`${categorySlug}/${slug}`] ||
+            CATEGORY_TAG_MAP[slug] ||
+            CATEGORY_TAG_MAP["default"];
 
+        setAvailableFilters(filteredTags);
+    }, [categorySlug, slug]);
 
     useEffect(() => {
         if (products.length > 0) {

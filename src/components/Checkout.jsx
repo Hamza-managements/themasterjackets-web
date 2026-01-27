@@ -89,7 +89,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
 
     // Express checkout handlers
     const handleExpressCheckout = (provider) => {
-        setShippingMethod(provider);
+        setShippingMethod("standard");
         setTimeout(() => {
             setFormData(prev => ({
                 ...prev,
@@ -104,6 +104,10 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                 country: 'USA'
             }));
             setCheckoutStep('shipping');
+            setFormData(prev => ({
+                ...prev,
+                paymentMethod: provider === 'paypal' ? 'paypal' : 'stripe'
+            }));
         }, 500);
     };
 
@@ -301,13 +305,13 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                                     address and selected shipping method.
                                                 </p>
                                                 <p>
-                                                    Orders are processed within 1–2 business days.
+                                                    Orders are processed within 1–3 business days.
                                                 </p><p>
                                                     1. Delivery Time:
                                                 </p><p>
                                                     Orders are delivered between 5-8 working days.
                                                 </p><p>
-                                                    Note - You can contact us at support@decrum.com, and we will be happy to assist you.
+                                                    Note - You can contact us at info@themasterjackets.com, and we will be happy to assist you.
                                                 </p><p>
                                                     2. Tracking:
                                                 </p><p>
@@ -402,10 +406,14 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                         <img src="https://res.cloudinary.com/dekf5dyng/image/upload/v1768391458/paypal_cp6hum.png" height={30} alt="" />
                                     </button>
                                     <button
-                                        className="express-btn google-pay"
-                                        onClick={() => handleExpressCheckout('google-pay')}
+                                        className="express-btn stripe-pay"
+                                        onClick={() => handleExpressCheckout("stripe")}
                                     >
-                                        <img src="https://res.cloudinary.com/dekf5dyng/image/upload/v1768391176/g_pay_a1yrmk.jpg" height={30} alt="" />
+                                        <img
+                                            src="https://res.cloudinary.com/dekf5dyng/image/upload/v1769500363/Stripe_Logo__revised_2016.svg_biqcli.png"
+                                            height={30}
+                                            alt="Stripe"
+                                        />
                                     </button>
                                 </div>
 
@@ -777,8 +785,34 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                                         </p>
                                                     </div>
                                                 )}
-                                            </div>
+                                                <label className={`checkout-payment-method ${formData.paymentMethod === "stripe" ? "selected" : ""}`}>
+                                                    <input
+                                                        type="radio"
+                                                        name="paymentMethod"
+                                                        value="stripe"
+                                                        checked={formData.paymentMethod === 'stripe'}
+                                                        onChange={handleChange}
+                                                    />
+                                                    <span>Stripe</span>
+                                                </label>
 
+                                                {formData.paymentMethod === "stripe" && (
+                                                    <div className="payment-info paypal-info">
+                                                        <div className="paypal-icon">
+                                                            <img
+                                                                src="https://res.cloudinary.com/dekf5dyng/image/upload/v1769500924/images_axnhqp.png"
+                                                                alt="Stripe"
+                                                                loading="lazy"
+                                                            />
+                                                        </div>
+
+                                                        <p className="payment-note">
+                                                            After clicking <strong>“Pay with Stripe”</strong>, you will be redirected
+                                                            to Stripe to complete your purchase securely.
+                                                        </p>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </>
                                     )}
 
@@ -831,16 +865,28 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                             />
                                             {isSubmitting ? "Processing..." : "Pay with PayPal"}
                                         </button>
+                                    ) : formData.paymentMethod === "stripe" ? (
+                                    <button
+                                        type="submit"
+                                        className="stripe-submit-order-btn"
+                                        disabled={isSubmitting || orderSuccess}
+                                    >
+                                        <img
+                                            src="https://res.cloudinary.com/dekf5dyng/image/upload/v1769500924/images_axnhqp.png"
+                                            alt="Stripe"
+                                        />
+                                        {isSubmitting ? "Processing..." : "Pay with Stripe"}
+                                    </button>
                                     ) : (
-                                        <button
-                                            type="submit"
-                                            className="submit-order-btn"
-                                            disabled={!isFormValid || isSubmitting || orderSuccess}
-                                        >
-                                            {isSubmitting
-                                                ? "Processing..."
-                                                : `Pay $${(totalPrice * 1).toFixed(2)}`}
-                                        </button>
+                                    <button
+                                        type="submit"
+                                        className="submit-order-btn"
+                                        disabled={!isFormValid || isSubmitting || orderSuccess}
+                                    >
+                                        {isSubmitting
+                                            ? "Processing..."
+                                            : `Pay $${(totalPrice * 1).toFixed(2)}`}
+                                    </button>
                                     )}
 
                                     <p className="secure-notice">

@@ -109,7 +109,7 @@
 }
 
 .express-btn.shop-pay {
-  background: #5a31f4;
+  background: #635bff;
   color: #fff;
   border-color: #5a31f4;
 }
@@ -120,19 +120,22 @@
   border-color: #ffc439;
 }
 
-.express-btn.google-pay,
-.express-btn.apple-pay {
-  background: #000;
-  color: #fff;
-  border-color: #000;
+.express-btn.stripe-pay {
+  background: #f9fafb;
+  color: #000;
+  border-color: #635bff;
+  border-radius: 6px;
+}
+
+.express-btn.stripe-pay:hover {
+  opacity: 0.9;
 }
 
 .express-btn img {
-    height: 20px !important;
-    width: auto;
-    object-fit: contain;
+  height: 20px !important;
+  width: auto;
+  object-fit: contain;
 }
-
 
 .divider {
   display: flex;
@@ -469,6 +472,37 @@
   cursor: not-allowed;
 }
 
+.stripe-submit-order-btn {
+  width: 100%;
+  padding: 16px;
+  background: #635bff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background 0.2s ease;
+}
+
+.stripe-submit-order-btn:hover {
+  background: #5a31f4;
+}
+
+.stripe-submit-order-btn img {
+  width: 22px;
+  height: 22px;
+}
+
+.stripe-submit-order-btn:disabled {
+  background: #9bbbd4;
+  cursor: not-allowed;
+}
+
 .secure-notice {
   display: flex;
   align-items: center;
@@ -621,6 +655,7 @@
   z-index: 100000 !important;
   position: relative !important;
 }
+
 /* Header */
 .checkout-shipping-modal-header {
   display: flex;
@@ -734,7 +769,8 @@
     margin-top: 24px;
   }
 
-  .summary-toggle, .summary-total {
+  .summary-toggle,
+  .summary-total {
     display: flex;
   }
 

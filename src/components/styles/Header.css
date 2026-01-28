@@ -9,8 +9,14 @@
     background: white;
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
     max-width: 100vw;
+    position: fixed;
+    z-index: 1000;
+    height: 16vh;
 }
 
+.layout-main-content {
+    padding-top: 16vh;
+}
 
 .fs-announcement-bar {
     background: var(--black);
@@ -428,12 +434,10 @@
 /* Smaller mobile devices */
 @media (max-width: 576px) {
     .fs-header-container {
-        position: fixed;
-        z-index: 1000;
         height: 160px;
     }
 
-    .layout-main-content{
+    .layout-main-content {
         padding-top: 160px;
     }
 

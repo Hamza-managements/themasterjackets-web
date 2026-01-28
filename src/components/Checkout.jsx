@@ -180,7 +180,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
             await refreshCart();
             setOrderSuccess(true);
         } catch (err) {
-            console.error('Error placing order:', err.response.data.message, ",", err.response.data.errors[0] || err.message || err);
+            console.error('Error placing order:', err.response.data.message || err.message || err);
             setSubmitError(
                 err?.message ||
                 err?.response?.data?.message ||

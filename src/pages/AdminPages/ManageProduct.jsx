@@ -253,6 +253,14 @@ const AllProductManagementPage = () => {
           <div className="modal-content">
             <div className="modal-header">
               <h3>{isEditing ? "Edit Variation" : "Add New Variation"}</h3>
+              {/* <div className="modal-actions">
+                <button
+                  onClick={isEditing ? handleUpdateVariation : handleAddVariation}
+                  className="btn-primary"
+                >
+                  {isEditing ? "Update Variation" : "Add Variation"}
+                </button>
+              </div> */}
               <button onClick={closeVariationModal} className="close-btn">×</button>
             </div>
             <div className="modal-body">
@@ -283,6 +291,24 @@ const AllProductManagementPage = () => {
                     setCurrentVariation((prev) => ({ ...prev, variationName: e.target.value.toUpperCase(), }))
                   }
                 />
+              </div>
+
+              <div className={`form-group ${showErrors && !currentVariation.attributes.size ? 'error' : ''}`}>
+                <label>Size *</label>
+                <select
+                  value={currentVariation.attributes.size}
+                  onChange={(e) =>
+                    setCurrentVariation((prev) => ({
+                      ...prev,
+                      attributes: { ...prev.attributes, size: e.target.value },
+                    }))
+                  }
+                >
+                  <option value="">Select Size</option>
+                  {["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"].map((s) => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
               </div>
 
               {/* Product Image */}
@@ -350,23 +376,6 @@ const AllProductManagementPage = () => {
                     }))
                   }
                 />
-              </div>
-              <div className={`form-group ${showErrors && !currentVariation.attributes.size ? 'error' : ''}`}>
-                <label>Size *</label>
-                <select
-                  value={currentVariation.attributes.size}
-                  onChange={(e) =>
-                    setCurrentVariation((prev) => ({
-                      ...prev,
-                      attributes: { ...prev.attributes, size: e.target.value },
-                    }))
-                  }
-                >
-                  <option value="">Select Size</option>
-                  {["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"].map((s) => (
-                    <option key={s} value={s}>{s}</option>
-                  ))}
-                </select>
               </div>
               {/* Sizes */}
               {/* <div
@@ -446,7 +455,6 @@ const AllProductManagementPage = () => {
                 <label className="ml-2">Free Shipping</label>
               </div>
             </div>
-
             <div className="modal-actions">
               <button onClick={closeVariationModal} className="btn-secondary">
                 Cancel

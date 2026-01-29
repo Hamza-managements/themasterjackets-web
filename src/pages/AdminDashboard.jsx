@@ -5,7 +5,7 @@ import {
     Chart as ChartJS, CategoryScale,
     LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement
 } from 'chart.js';
-import { Bar, Line, Pie } from 'react-chartjs-2';
+// import { Bar, Line, Pie } from 'react-chartjs-2';
 import { FiHome, FiUsers, FiSettings, FiShoppingCart, FiMail, FiBell, FiMenu, FiSun, FiMoon } from 'react-icons/fi';
 import { RiRefund2Fill } from "react-icons/ri";
 import Swal from 'sweetalert2';
@@ -71,87 +71,84 @@ const AdminDashboard = () => {
         getAllUsers();
     }, []);
 
-    const salesData = {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        datasets: [
-            {
-                label: 'Sales 2023',
-                data: [65, 59, 80, 81, 56, 55],
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1,
-            },
-        ],
-    };
-
-    const userGrowthData = {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        datasets: [
-            {
-                label: 'New Users',
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1,
-            },
-        ],
-    };
-
-    const revenueSourcesData = {
-        labels: ['Products', 'Services', 'Subscriptions'],
-        datasets: [
-            {
-                data: [300, 50, 100],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.7)',
-                    'rgba(54, 162, 235, 0.7)',
-                    'rgba(255, 206, 86, 0.7)',
-                ],
-                borderWidth: 1,
-            },
-        ],
-    };
-
-    const bestSellingProducts = [
-        {
-            name: 'Autmn HoodedLeather Jacket',
-            category: 'Men',
-            unitsSold: 320,
-            trend: 90,
-            image:
-                'https://res.cloudinary.com/dekf5dyng/image/upload/v1761389483/mju0f4kotiphnpw7yi4z.jpg',
-        },
-        {
-            name: 'Shearling Bomber',
-            category: 'Men',
-            unitsSold: 275,
-            trend: 76,
-            image:
-                'https://res.cloudinary.com/dekf5dyng/image/upload/v1760617290/x3rivrq4vohh5obcjifn.jpg',
-        },
-        {
-            name: 'Black Biker Leather Jacket',
-            category: 'New In',
-            unitsSold: 190,
-            trend: 62,
-            image:
-                'https://res.cloudinary.com/dekf5dyng/image/upload/v1759832334/oqd8zvybrzdtrsoaxc2f.jpg',
-        },
-        {
-            name: 'Suede Overshirt',
-            category: 'Men',
-            unitsSold: 145,
-            trend: 48,
-            image:
-                'https://res.cloudinary.com/dekf5dyng/image/upload/v1759404249/hdctwk1vrf5vvemzbecf.jpg',
-        },
-    ];
-    // { title: 'Sales', value: '$12,345', change: '+12%', icon: <FiPieChart /> },
-    const stats = [
-        { title: 'Open Orders', value: '126', change: '+7%', icon: <FiShoppingCart /> },
-        { title: 'Buyer Messages', value: '4', change: '+5%', icon: <FiMail /> },
-        { title: 'Returns and Refunds', value: '2', change: '-3%', icon: <RiRefund2Fill /> },
-    ];
+    // const salesData = {
+    //     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    //     datasets: [
+    //         {
+    //             label: 'Sales 2023',
+    //             data: [65, 59, 80, 81, 56, 55],
+    //             backgroundColor: 'rgba(54, 162, 235, 0.2)',
+    //             borderColor: 'rgba(54, 162, 235, 1)',
+    //             borderWidth: 1,
+    //         },
+    //     ],
+    // };
+    // const userGrowthData = {
+    //     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    //     datasets: [
+    //         {
+    //             label: 'New Users',
+    //             data: [12, 19, 3, 5, 2, 3],
+    //             backgroundColor: 'rgba(255, 99, 132, 0.2)',
+    //             borderColor: 'rgba(255, 99, 132, 1)',
+    //             borderWidth: 1,
+    //         },
+    //     ],
+    // };
+    // const revenueSourcesData = {
+    //     labels: ['Products', 'Services', 'Subscriptions'],
+    //     datasets: [
+    //         {
+    //             data: [300, 50, 100],
+    //             backgroundColor: [
+    //                 'rgba(255, 99, 132, 0.7)',
+    //                 'rgba(54, 162, 235, 0.7)',
+    //                 'rgba(255, 206, 86, 0.7)',
+    //             ],
+    //             borderWidth: 1,
+    //         },
+    //     ],
+    // };
+    // const bestSellingProducts = [
+    //     {
+    //         name: 'Autmn HoodedLeather Jacket',
+    //         category: 'Men',
+    //         unitsSold: 320,
+    //         trend: 90,
+    //         image:
+    //             'https://res.cloudinary.com/dekf5dyng/image/upload/v1761389483/mju0f4kotiphnpw7yi4z.jpg',
+    //     },
+    //     {
+    //         name: 'Shearling Bomber',
+    //         category: 'Men',
+    //         unitsSold: 275,
+    //         trend: 76,
+    //         image:
+    //             'https://res.cloudinary.com/dekf5dyng/image/upload/v1760617290/x3rivrq4vohh5obcjifn.jpg',
+    //     },
+    //     {
+    //         name: 'Black Biker Leather Jacket',
+    //         category: 'New In',
+    //         unitsSold: 190,
+    //         trend: 62,
+    //         image:
+    //             'https://res.cloudinary.com/dekf5dyng/image/upload/v1759832334/oqd8zvybrzdtrsoaxc2f.jpg',
+    //     },
+    //     {
+    //         name: 'Suede Overshirt',
+    //         category: 'Men',
+    //         unitsSold: 145,
+    //         trend: 48,
+    //         image:
+    //             'https://res.cloudinary.com/dekf5dyng/image/upload/v1759404249/hdctwk1vrf5vvemzbecf.jpg',
+    //     },
+    // ];
+    // // { title: 'Sales', value: '$12,345', change: '+12%', icon: <FiPieChart /> },
+    // const stats = [
+    //     { title: 'Open Orders', value: '126', change: '+7%', icon: <FiShoppingCart /> },
+    //     { title: 'Buyer Messages', value: '4', change: '+5%', icon: <FiMail /> },
+    //     { title: 'Returns and Refunds', value: '2', change: '-3%', icon: <RiRefund2Fill /> },
+    // ];
 
     const deleteUserFromDashboard = async (userId) => {
         const confirm = await Swal.fire({

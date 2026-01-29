@@ -263,14 +263,14 @@ const AdminDashboard = () => {
                             text="Dashboard"
                             active={activeMenu === 'dashboard'}
                             expanded={sidebarOpen}
-                            onClick={() => { handleNavClick('dashboard')}}
+                            onClick={() => { handleNavClick('dashboard') }}
                         />
                         <NavItem
                             icon={<FiUsers />}
                             text="Users"
                             active={activeMenu === 'users'}
                             expanded={sidebarOpen}
-                            onClick={() => { handleNavClick('users')}}
+                            onClick={() => { handleNavClick('users') }}
 
                         />
                         <NavItem
@@ -278,14 +278,14 @@ const AdminDashboard = () => {
                             text="Products"
                             active={activeMenu === 'products'}
                             expanded={sidebarOpen}
-                            onClick={() => { handleNavClick('products')}}
+                            onClick={() => { handleNavClick('products') }}
                         />
                         <NavItem
                             icon={<FiShoppingCart />}
                             text="Orders"
                             active={activeMenu === 'orders'}
                             expanded={sidebarOpen}
-                            onClick={() => { handleNavClick('orders')}}
+                            onClick={() => { handleNavClick('orders') }}
 
                         />
                         <NavItem
@@ -293,7 +293,7 @@ const AdminDashboard = () => {
                             text="Messages"
                             active={activeMenu === 'messages'}
                             expanded={sidebarOpen}
-                            onClick={() => { handleNavClick('messages')}}
+                            onClick={() => { handleNavClick('messages') }}
 
                         />
                         <NavItem
@@ -301,7 +301,7 @@ const AdminDashboard = () => {
                             text="Settings"
                             active={activeMenu === 'settings'}
                             expanded={sidebarOpen}
-                            onClick={() => { handleNavClick('settings')}}
+                            onClick={() => { handleNavClick('settings') }}
 
                         />
                         <div className='h-64'>
@@ -449,7 +449,7 @@ const AdminDashboard = () => {
                     {/* Dashboard Content */}
                     <main className={`p-4 ${darkMode ? 'dark bg-gray-800' : 'bg-white'}`}>
                         {activeMenu === 'dashboard' && (
-                            <>
+                            <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'}`}>
                                 <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'}`}>
                                     <h3>Admin Dashboard Overview</h3>
                                     <p>Welcome back, Admin {user.userName}! Here’s your latest dashboard summary.</p>
@@ -472,7 +472,7 @@ const AdminDashboard = () => {
                                 </div>
 
                                 {/* ✨ Best Selling Products Section */}
-                                <div
+                                {/* <div
                                     className={`rounded-2xl shadow-xl p-6 transition-all duration-500 ${darkMode
                                         ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100'
                                         : 'bg-gradient-to-br from-white via-gray-50 to-white text-gray-900'
@@ -515,7 +515,6 @@ const AdminDashboard = () => {
                                                             : 'hover:bg-gray-50 border-gray-200'
                                                             }`}
                                                     >
-                                                        {/* Product */}
                                                         <td className="px-6 py-4 flex items-center gap-3">
                                                             <img
                                                                 src={product.image}
@@ -525,14 +524,11 @@ const AdminDashboard = () => {
                                                             <span className="font-medium">{product.name}</span>
                                                         </td>
 
-                                                        {/* Category */}
                                                         <td className="px-6 py-4 text-sm opacity-80">
                                                             {product.category}
                                                         </td>
 
-                                                        {/* Units Sold */}
                                                         <td className="px-6 py-4 font-semibold">{product.unitsSold}</td>
-                                                        {/* Trend Bar */}
                                                         <td className="px-6 py-4">
                                                             <div className="w-24 bg-gray-300 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
                                                                 <div
@@ -551,9 +547,17 @@ const AdminDashboard = () => {
                                             </tbody>
                                         </table>
                                     </div>
-                                </div>
-                                <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                </div> */}
+                                <hr
+                                    className={`border-2 ${darkMode ? 'border-gray-300' : 'border-gray-900'} w-100 mx-auto`}
+                                />
 
+                                <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white text-gray-900'} flex items-center justify-between`}>
+                                    <h2 className="text-xl font-semibold tracking-wide">
+                                        Quick Actions
+                                    </h2>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                     {/* Manage All Products */}
                                     <Link
                                         to="/admin/manage-all-products"
@@ -598,7 +602,7 @@ const AdminDashboard = () => {
 
                                 </div>
 
-                            </>
+                            </div>
                         )}
 
                         {activeMenu === 'users' && (
@@ -611,7 +615,7 @@ const AdminDashboard = () => {
                                     <table className="min-w-full text-sm text-left border-collapse">
                                         <thead className="border-b border-gray-200 dark:border-gray-700">
                                             <tr>
-                                                <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">User ID</th>
+                                                {/* <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">User ID</th> */}
                                                 <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Name</th>
                                                 <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Email</th>
                                                 <th className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">Role</th>
@@ -625,7 +629,7 @@ const AdminDashboard = () => {
                                                     key={user._id}
                                                     className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
                                                 >
-                                                    <td className="px-4 py-3">{user._id}</td>
+                                                    {/* <td className="px-4 py-3">{user._id}</td> */}
                                                     <td className="px-4 py-3">{user.userName}</td>
                                                     <td className="px-4 py-3">{user.email}</td>
                                                     <td className="px-4 py-3">{user.role}</td>
@@ -648,22 +652,21 @@ const AdminDashboard = () => {
                                     </table>
                                 </div>
 
-                                <div className="grid grid-cols-1 gap-6 mb-6">
+                                {/* <div className="grid grid-cols-1 gap-6 mb-6">
                                     <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
                                         <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-4">
                                             User Growth
                                         </h3>
                                         <Bar data={userGrowthData} />
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                         )}
 
                         {activeMenu === 'orders' && (
                             <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-2 rounded-lg shadow-sm`}>
-                                <AdminOrderDashboard user={user} />
-                                <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Sales</h3>
-                                {/* Charts */}
+                                <AdminOrderDashboard user={user} darkMode={darkMode} />
+                                {/* <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Sales</h3>
                                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                                     <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm lg:col-span-2">
                                         <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-4">
@@ -678,8 +681,7 @@ const AdminDashboard = () => {
                                         </h3>
                                         <Pie data={revenueSourcesData} />
                                     </div>
-                                </div>
-
+                                </div> */}
                             </div>
                         )}
 

@@ -4,7 +4,7 @@ import { confirmOrderWithOrderId, GetAllOrder } from '../utils/OrderUtils';
 import { Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const AdminAllOrderDashboard = ({ user }) => {
+const AdminAllOrderDashboard = ({ user, darkMode }) => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -159,7 +159,7 @@ const AdminAllOrderDashboard = ({ user }) => {
     };
 
     return (
-        <div className="admin-order-dashboard">
+        <div className={`admin-order-dashboard ${darkMode ? 'dark' : ''}`}>
             {/* Header */}
             <div className="dashboard-header">
                 <h1>Order Management</h1>

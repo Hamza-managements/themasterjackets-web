@@ -5,6 +5,7 @@ import {
     Chart as ChartJS, CategoryScale,
     LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement
 } from 'chart.js';
+import { RiRefund2Fill } from "react-icons/ri";
 import { FiHome, FiUsers, FiSettings, FiShoppingCart, FiMail, FiBell, FiMenu, FiSun, FiMoon } from 'react-icons/fi';
 import Swal from 'sweetalert2';
 import { AuthContext } from '../context/AuthContext';
@@ -69,6 +70,11 @@ const AdminDashboard = () => {
         getAllUsers();
     }, []);
 
+    const stats = [
+        { title: 'Open Orders', value: '126', change: '+7%', icon: <FiShoppingCart /> },
+        { title: 'Buyer Messages', value: '4', change: '+5%', icon: <FiMail /> },
+        { title: 'Returns and Refunds', value: '2', change: '-3%', icon: <RiRefund2Fill /> },
+    ];
 
     const deleteUserFromDashboard = async (userId) => {
         const confirm = await Swal.fire({
@@ -376,7 +382,7 @@ const AdminDashboard = () => {
                                     className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 ${darkMode ? 'dark bg-gray-800' : 'bg-white'
                                         }`}
                                 >
-                                    {stats.map((stat, index) => (
+                                    {stats?.map((stat, index) => (
                                         <StatCard
                                             key={index}
                                             title={stat.title}

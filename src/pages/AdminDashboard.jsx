@@ -5,9 +5,7 @@ import {
     Chart as ChartJS, CategoryScale,
     LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement
 } from 'chart.js';
-// import { Bar, Line, Pie } from 'react-chartjs-2';
 import { FiHome, FiUsers, FiSettings, FiShoppingCart, FiMail, FiBell, FiMenu, FiSun, FiMoon } from 'react-icons/fi';
-import { RiRefund2Fill } from "react-icons/ri";
 import Swal from 'sweetalert2';
 import { AuthContext } from '../context/AuthContext';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
@@ -71,84 +69,6 @@ const AdminDashboard = () => {
         getAllUsers();
     }, []);
 
-    // const salesData = {
-    //     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    //     datasets: [
-    //         {
-    //             label: 'Sales 2023',
-    //             data: [65, 59, 80, 81, 56, 55],
-    //             backgroundColor: 'rgba(54, 162, 235, 0.2)',
-    //             borderColor: 'rgba(54, 162, 235, 1)',
-    //             borderWidth: 1,
-    //         },
-    //     ],
-    // };
-    // const userGrowthData = {
-    //     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    //     datasets: [
-    //         {
-    //             label: 'New Users',
-    //             data: [12, 19, 3, 5, 2, 3],
-    //             backgroundColor: 'rgba(255, 99, 132, 0.2)',
-    //             borderColor: 'rgba(255, 99, 132, 1)',
-    //             borderWidth: 1,
-    //         },
-    //     ],
-    // };
-    // const revenueSourcesData = {
-    //     labels: ['Products', 'Services', 'Subscriptions'],
-    //     datasets: [
-    //         {
-    //             data: [300, 50, 100],
-    //             backgroundColor: [
-    //                 'rgba(255, 99, 132, 0.7)',
-    //                 'rgba(54, 162, 235, 0.7)',
-    //                 'rgba(255, 206, 86, 0.7)',
-    //             ],
-    //             borderWidth: 1,
-    //         },
-    //     ],
-    // };
-    // const bestSellingProducts = [
-    //     {
-    //         name: 'Autmn HoodedLeather Jacket',
-    //         category: 'Men',
-    //         unitsSold: 320,
-    //         trend: 90,
-    //         image:
-    //             'https://res.cloudinary.com/dekf5dyng/image/upload/v1761389483/mju0f4kotiphnpw7yi4z.jpg',
-    //     },
-    //     {
-    //         name: 'Shearling Bomber',
-    //         category: 'Men',
-    //         unitsSold: 275,
-    //         trend: 76,
-    //         image:
-    //             'https://res.cloudinary.com/dekf5dyng/image/upload/v1760617290/x3rivrq4vohh5obcjifn.jpg',
-    //     },
-    //     {
-    //         name: 'Black Biker Leather Jacket',
-    //         category: 'New In',
-    //         unitsSold: 190,
-    //         trend: 62,
-    //         image:
-    //             'https://res.cloudinary.com/dekf5dyng/image/upload/v1759832334/oqd8zvybrzdtrsoaxc2f.jpg',
-    //     },
-    //     {
-    //         name: 'Suede Overshirt',
-    //         category: 'Men',
-    //         unitsSold: 145,
-    //         trend: 48,
-    //         image:
-    //             'https://res.cloudinary.com/dekf5dyng/image/upload/v1759404249/hdctwk1vrf5vvemzbecf.jpg',
-    //     },
-    // ];
-    // // { title: 'Sales', value: '$12,345', change: '+12%', icon: <FiPieChart /> },
-    // const stats = [
-    //     { title: 'Open Orders', value: '126', change: '+7%', icon: <FiShoppingCart /> },
-    //     { title: 'Buyer Messages', value: '4', change: '+5%', icon: <FiMail /> },
-    //     { title: 'Returns and Refunds', value: '2', change: '-3%', icon: <RiRefund2Fill /> },
-    // ];
 
     const deleteUserFromDashboard = async (userId) => {
         const confirm = await Swal.fire({
@@ -468,83 +388,6 @@ const AdminDashboard = () => {
                                     ))}
                                 </div>
 
-                                {/* ✨ Best Selling Products Section */}
-                                {/* <div
-                                    className={`rounded-2xl shadow-xl p-6 transition-all duration-500 ${darkMode
-                                        ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100'
-                                        : 'bg-gradient-to-br from-white via-gray-50 to-white text-gray-900'
-                                        }`}
-                                >
-                                    <div className="flex items-center justify-between mb-4">
-                                        <h2 className="text-xl font-semibold tracking-wide">
-                                            Best Selling Products
-                                        </h2>
-                                        <span
-                                            className={`text-sm px-3 py-1 rounded-full ${darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'
-                                                }`}
-                                        >
-                                            This Month
-                                        </span>
-                                    </div>
-
-                                    <div className="overflow-x-auto">
-                                        <table className="min-w-full border-collapse">
-                                            <thead>
-                                                <tr
-                                                    className={`text-left text-sm uppercase tracking-wider ${darkMode
-                                                        ? 'bg-gray-800 text-gray-300'
-                                                        : 'bg-gray-100 text-gray-700'
-                                                        }`}
-                                                >
-                                                    <th className="px-6 py-3 rounded-tl-xl">Product</th>
-                                                    <th className="px-6 py-3">Category</th>
-                                                    <th className="px-6 py-3">Units Sold</th>
-                                                    <th className="px-6 py-3 rounded-tr-xl">Trend</th>
-                                                </tr>
-                                            </thead>
-
-                                            <tbody>
-                                                {bestSellingProducts.map((product, index) => (
-                                                    <tr
-                                                        key={index}
-                                                        className={`transition-all duration-300 ${darkMode
-                                                            ? 'hover:bg-gray-800/70 border-gray-800'
-                                                            : 'hover:bg-gray-50 border-gray-200'
-                                                            }`}
-                                                    >
-                                                        <td className="px-6 py-4 flex items-center gap-3">
-                                                            <img
-                                                                src={product.image}
-                                                                alt={product.name}
-                                                                className="w-10 h-10 rounded-lg object-cover shadow-md"
-                                                            />
-                                                            <span className="font-medium">{product.name}</span>
-                                                        </td>
-
-                                                        <td className="px-6 py-4 text-sm opacity-80">
-                                                            {product.category}
-                                                        </td>
-
-                                                        <td className="px-6 py-4 font-semibold">{product.unitsSold}</td>
-                                                        <td className="px-6 py-4">
-                                                            <div className="w-24 bg-gray-300 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
-                                                                <div
-                                                                    className={`h-full rounded-full ${product.trend >= 80
-                                                                        ? 'bg-green-500'
-                                                                        : product.trend >= 50
-                                                                            ? 'bg-yellow-400'
-                                                                            : 'bg-red-500'
-                                                                        }`}
-                                                                    style={{ width: `${product.trend}%` }}
-                                                                ></div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div> */}
                                 <hr
                                     className={`border-2 ${darkMode ? 'border-gray-300' : 'border-gray-900'} w-100 mx-auto`}
                                 />
@@ -647,38 +490,14 @@ const AdminDashboard = () => {
                                             ))}
                                         </tbody>
                                     </table>
-                                </div>
-
-                                {/* <div className="grid grid-cols-1 gap-6 mb-6">
-                                    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
-                                        <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-4">
-                                            User Growth
-                                        </h3>
-                                        <Bar data={userGrowthData} />
-                                    </div>
-                                </div> */}
+                                </div>                                
                             </div>
                         )}
 
                         {activeMenu === 'orders' && (
                             <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-2 rounded-lg shadow-sm`}>
                                 <AdminOrderDashboard user={user} darkMode={darkMode} />
-                                {/* <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Sales</h3>
-                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                                    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm lg:col-span-2">
-                                        <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-4">
-                                            Sales Overview
-                                        </h3>
-                                        <Line data={salesData} />
-                                    </div>
-
-                                    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
-                                        <h3 className="text-lg font-medium text-gray-800 dark:text-white mb-4">
-                                            Revenue Sources
-                                        </h3>
-                                        <Pie data={revenueSourcesData} />
-                                    </div>
-                                </div> */}
+                                
                             </div>
                         )}
 

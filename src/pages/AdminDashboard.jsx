@@ -496,14 +496,14 @@ const AdminDashboard = () => {
                                             ))}
                                         </tbody>
                                     </table>
-                                </div>                                
+                                </div>
                             </div>
                         )}
 
                         {activeMenu === 'orders' && (
                             <div className={`${darkMode ? 'dark bg-gray-800 text-white' : 'bg-white'} p-2 rounded-lg shadow-sm`}>
                                 <AdminOrderDashboard user={user} darkMode={darkMode} />
-                                
+
                             </div>
                         )}
 
@@ -575,7 +575,6 @@ const AdminDashboard = () => {
                 </div>
             </div >
         </>
-
     );
 };
 

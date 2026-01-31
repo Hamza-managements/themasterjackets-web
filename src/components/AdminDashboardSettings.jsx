@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 
-const AdminSettings = ({darkMode}) => {
+const AdminSettings = ({ darkMode }) => {
     const { user } = useContext(AuthContext);
     const [formData, setFormData] = useState({
         userName: user?.userName || '',
@@ -53,7 +53,7 @@ const AdminSettings = ({darkMode}) => {
                         />
                     </div>
                     <div className="admin-dashboard-form-group">
-                        <label>contactNo</label>
+                        <label>Contact No:</label>
                         <input
                             type="contactNo"
                             name="contactNo"
@@ -92,8 +92,8 @@ const AdminSettings = ({darkMode}) => {
 
                 {/* Buttons */}
                 <div className="settings-actions">
-                    <button type="submit" className="btn-save">Save Changes</button>
-                    <button type="reset" className="btn-cancel">Cancel</button>
+                    <button type="submit" className="admin-btn-save">Save Changes</button>
+                    <button type="reset" className="admin-btn-cancel">Cancel</button>
                 </div>
             </form>
 
@@ -185,7 +185,7 @@ const AdminSettings = ({darkMode}) => {
   margin-top: 10px;
 }
 
-.btn-save {
+.admin-btn-save {
   background: #007bff;
   color: #fff;
   padding: 10px 18px;
@@ -196,11 +196,11 @@ const AdminSettings = ({darkMode}) => {
   transition: background 0.2s ease;
 }
 
-.btn-save:hover {
+.admin-btn-save:hover {
   background: #0056b3;
 }
 
-.btn-cancel {
+.admin-btn-cancel {
   background: #e0e0e0;
   color: #333;
   padding: 10px 18px;
@@ -211,8 +211,9 @@ const AdminSettings = ({darkMode}) => {
   transition: background 0.2s ease;
 }
 
-.btn-cancel:hover {
-  background: #c4c4c4;
+.admin-btn-cancel:hover {
+  background: var(--red);
+  color: #fff;
 }`}
             </style>
         </div>

@@ -206,7 +206,7 @@ const Signup = () => {
 
     try {
       const response = await fetch(
-        "https://themasterjacketsbackend-production.up.railway.app/api/user/register",
+        `${process.env.REACT_APP_BACKEND_URL}/api/user/register`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

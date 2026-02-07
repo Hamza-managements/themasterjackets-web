@@ -1,7 +1,7 @@
 // Order APIs ////////////////////////////
 import axios from 'axios';
 const api = axios.create({
-    baseURL: 'https://themasterjacketsbackend-production.up.railway.app',
+    baseURL: process.env.REACT_APP_BACKEND_URL,
 });
 
 export async function createNewOrder(payload) {
@@ -12,6 +12,16 @@ export async function createNewOrder(payload) {
         throw error;
     }
 }
+
+export async function createStripeOrder(payload) {
+    try {
+        const response = await api.post("/api/payment/create-intent", payload);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
 
 export async function getUserOrderById(uid) {
     try {

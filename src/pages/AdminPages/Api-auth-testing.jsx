@@ -24,7 +24,7 @@ const APITestingPage = () => {
       }
 
       const response = await fetch(
-        `https://themasterjacketsbackend-production.up.railway.app/api/${endpoint}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/${endpoint}`,
         options
       );
 
@@ -152,7 +152,7 @@ const APITestingPage = () => {
       const userEmail = currentUser?.userEmail || "No user found";
 
       const response = await fetch(
-        "https://themasterjacketsbackend-production.up.railway.app/api/user/fetch-all/68762589a469c496106e01d4?role=admin",
+        `${process.env.REACT_APP_BACKEND_URL}/api/user/fetch-all/68762589a469c496106e01d4?role=admin`,
         {
           headers: {
             "Content-Type": "application/json",

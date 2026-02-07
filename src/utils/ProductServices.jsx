@@ -34,7 +34,7 @@ export const getRelatedProducts = async (category) => {
 
 ////////////////////////////REAL API DATA
 const api = axios.create({
-  baseURL: 'https://themasterjacketsbackend-production.up.railway.app',
+  baseURL: process.env.REACT_APP_BACKEND_URL,
 });
 
 export const getProducts = async () => {

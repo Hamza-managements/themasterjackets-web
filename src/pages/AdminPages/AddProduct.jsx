@@ -365,7 +365,7 @@ const AddProductPage = () => {
       }
 
       const res = await fetch(
-        `https://themasterjacketsbackend-production.up.railway.app/api/product/save/${user.uid}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/product/save/${user.uid}`,
         {
           method: "POST",
           headers: {

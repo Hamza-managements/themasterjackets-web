@@ -1,7 +1,7 @@
 import axios from 'axios';
 //////////////////////////// Category fetching with token handling ////////////////////////////
 const api = axios.create({
-  baseURL: 'https://themasterjacketsbackend-production.up.railway.app',
+  baseURL: process.env.REACT_APP_BACKEND_URL,
 });
 
 // Cart APIs ////////////////////////////

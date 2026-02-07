@@ -69,7 +69,7 @@ export default function ResetPassword() {
         setIsLoading(true);
 
         try {
-            const response = await fetch('https://themasterjacketsbackend-production.up.railway.app/api/user/update-password', {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/user/update-password`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

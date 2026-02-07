@@ -37,7 +37,7 @@ export default function ForgotPassword() {
     }
 
     try {
-      const res = await fetch('https://themasterjacketsbackend-production.up.railway.app/api/user/verify-email', {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/user/verify-email`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

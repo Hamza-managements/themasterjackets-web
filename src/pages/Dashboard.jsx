@@ -219,7 +219,7 @@ const Dashboard = () => {
     e.preventDefault();
     try {
       const res = await fetch(
-        "https://themasterjacketsbackend-production.up.railway.app/api/user/update/68762589a469c496106e01d4", {
+        `${process.env.REACT_APP_BACKEND_URL}/api/user/update/68762589a469c496106e01d4`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -52,7 +52,7 @@ const Login = () => {
     setIsSubmitting(true);
 
     try {
-      const res = await fetch('https://themasterjacketsbackend-production.up.railway.app/api/user/login', {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/user/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

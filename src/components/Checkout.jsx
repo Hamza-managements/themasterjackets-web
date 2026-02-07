@@ -1,4 +1,5 @@
 // Checkout.jsx - Shopify-style Checkout
+import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import zipToStateMap from '../data/fullZipData';
@@ -9,8 +10,9 @@ import { AuthContext } from '../context/AuthContext';
 import { validateCheckout } from './ValidateCheckout';
 import OrderSuccess from './OrderSuccess';
 import { createPortal } from "react-dom";
-
-
+import { createStripeOrder } from "../utils/OrderUtils";
+import { AlertCircle, CreditCard, LockIcon } from "lucide-react";
+import { FaCcVisa, FaCcMastercard, FaCcAmex, FaCcDiscover } from 'react-icons/fa';
 
 const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) => {
     const [formData, setFormData] = useState({
@@ -33,6 +35,8 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
         termsAccepted: false
     });
 
+    const stripe = useStripe();
+    const elements = useElements();
     const { user } = useContext(AuthContext);
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -137,57 +141,116 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
         });
     };
 
+    const handleStripePayment = async (orderData) => {
+        try {
+            setIsSubmitting(true);
+            setSubmitError(null);
+
+            const res = await createStripeOrder({
+                amount: totalPrice,
+            });
+
+            const { clientSecret } = res.data;
+            // , intentId
+            // 2. Confirm card payment
+            const cardElement = elements.getElement(CardElement);
+
+            const result = await stripe.confirmCardPayment(clientSecret, {
+                payment_method: {
+                    card: cardElement,
+                    billing_details: {
+                        name: orderData.shippingAddress.fullName,
+                        phone: orderData.shippingAddress.phone,
+                    },
+                },
+            });
+
+            if (result.error) {
+                setSubmitError(result.error.message);
+                setIsSubmitting(false);
+                return;
+            }
+
+            if (result.paymentIntent.status !== "succeeded") {
+                setSubmitError("Payment not successful");
+                setIsSubmitting(false);
+                return;
+            }
+
+            // 3. Place order in backend
+            await onPlaceOrder({
+                ...orderData,
+                payment: {
+                    method: "CARD",
+                    stripePaymentId: result.paymentIntent.id
+                }
+            });
+
+            await refreshCart();
+            setOrderSuccess(true);
+
+        } catch (err) {
+            console.error(err);
+            setSubmitError(
+                err?.response?.data?.message ||
+                err?.message ||
+                "Payment failed. Please try again."
+            );
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setHasInteracted(true);
         setSubmitError(null);
 
-        try {
-            const isValid = await validateCheckout(formData, setErrors);
-            if (!isValid) return;
+        const isValid = await validateCheckout(formData, setErrors);
+        if (!isValid) return;
 
+        setIsSubmitting(true);
+
+        const payload = {
+            userDetails: user?.uid
+                ? { userId: user.uid }
+                : { guestEmail: formData.email },
+            items: cartItems.map(item => ({
+                productId: item?.productId?._id,
+                variationId: item?.variationId,
+                selectedAttributes: item?.selectedAttributes,
+                quantity: item?.quantity,
+                unitPrice: item?.price
+            })),
+            shippingAddress: {
+                fullName: formData.fullName,
+                phone: formData.phone,
+                addressLine1: formData.addressLine1,
+                addressLine2: formData.addressLine2,
+                postalCode: formData.zipCode,
+                city: formData.city,
+                state: formData.state,
+                country: formData.country
+            },
+            payment: {
+                method: formData.paymentMethod
+            },
+            cartId
+        };
+
+        if (formData.paymentMethod === "CARD") {
+            await handleStripePayment(payload);
+        } else {
             setIsSubmitting(true);
-
-            const payload = {
-                userDetails: user?.uid
-                    ? { userId: user.uid }
-                    : { guestEmail: formData.email },
-                items: cartItems.map(item => ({
-                    productId: item?.productId?._id,
-                    variationId: item?.variationId,
-                    selectedAttributes: item?.selectedAttributes,
-                    quantity: item?.quantity,
-                    unitPrice: item?.price
-                })),
-                shippingAddress: {
-                    fullName: formData.fullName,
-                    phone: formData.phone,
-                    addressLine1: formData.addressLine1,
-                    addressLine2: formData.addressLine2,
-                    postalCode: formData.zipCode,
-                    city: formData.city,
-                    state: formData.state,
-                    country: formData.country
-                },
-                payment: {
-                    method: "CARD"
-                },
-                cartId
-            };
-
-            await onPlaceOrder(payload);
-
-            await refreshCart();
-            setOrderSuccess(true);
-        } catch (err) {
-            console.error('Error placing order:', err.response.data.message || err.message || err);
-            setSubmitError(
-                err?.message ||
-                err?.response?.data?.message ||
-                "Something went wrong while placing your order. Please try again."
-            );
-        } finally {
-            setIsSubmitting(false);
+            try {
+                await onPlaceOrder(payload);
+                await refreshCart();
+                setOrderSuccess(true);
+            } catch (err) {
+                setSubmitError(err?.message || "Something went wrong");
+            } finally {
+                setIsSubmitting(false);
+            }
         }
     };
 
@@ -681,22 +744,28 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                         <>
                                             <div className="checkout-payment-methods">
                                                 <label className={`checkout-payment-method ${formData.paymentMethod === "CARD" ? "selected" : ""}`}>
-                                                    <input
-                                                        type="radio"
-                                                        name="paymentMethod"
-                                                        value="CARD"
-                                                        checked={formData.paymentMethod === 'CARD'}
-                                                        onChange={handleChange}
-                                                    />
-                                                    <span>Credit card</span>
-                                                    <div className="card-icons">
-                                                        <span className="card-icon visa">Visa</span>
-                                                        <span className="card-icon mastercard">Mastercard</span>
-                                                        <span className="card-icon amex">Amex</span>
+                                                    <div className="payment-method-header">
+                                                        <div className="payment-method-title">
+                                                            <input
+                                                                type="radio"
+                                                                name="paymentMethod"
+                                                                value="CARD"
+                                                                checked={formData.paymentMethod === 'CARD'}
+                                                                onChange={handleChange}
+                                                            />
+                                                            <CreditCard className="payment-icon" />
+                                                            <span>Credit or debit card</span>
+                                                        </div>
+                                                        <div className="payment-logos">
+                                                            <FaCcVisa className="card-logo" />
+                                                            <FaCcMastercard className="card-logo" />
+                                                            <FaCcAmex className="card-logo" />
+                                                            <FaCcDiscover className="card-logo" />
+                                                        </div>
                                                     </div>
                                                 </label>
 
-                                                {formData.paymentMethod === 'CARD' && (
+                                                {/* {formData.paymentMethod === 'CARD' && (
                                                     <div className="credit-card-form">
                                                         <div className="checkout-form-group">
                                                             <input
@@ -756,6 +825,78 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                                             </div>
                                                         </div>
                                                     </div>
+                                                )} */}
+
+                                                {formData.paymentMethod === 'CARD' && (
+                                                    <div className="checkout-form-group">
+                                                        <div className={`checkout-stripe-card ${submitError ? 'stripe-card-error' : ''}`}>
+                                                            <div className="stripe-card-wrapper">
+                                                                <div className="stripe-card-label">
+                                                                    Card information
+                                                                </div>
+                                                                <div className="stripe-card-element-container">
+                                                                    <CardElement
+                                                                        id="card-element"
+                                                                        // onChange={handleCardElementChange} ${isCardFocused ? 'stripe-card-focused' : ''}
+                                                                        // onFocus={() => setIsCardFocused(true)}
+                                                                        // onBlur={() => setIsCardFocused(false)}
+                                                                        options={{
+                                                                            style: {
+                                                                                base: {
+                                                                                    fontSize: '16px',
+                                                                                    color: '#1a1a1a',
+                                                                                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                                                                                    fontSmoothing: 'antialiased',
+                                                                                    fontWeight: '400',
+                                                                                    lineHeight: '1.5',
+                                                                                    '::placeholder': {
+                                                                                        color: '#6b7280',
+                                                                                        fontWeight: '400',
+                                                                                    },
+                                                                                    padding: '12px 14px',
+                                                                                    backgroundColor: 'transparent',
+                                                                                    ':-webkit-autofill': {
+                                                                                        color: '#1a1a1a',
+                                                                                        backgroundColor: '#fefce8',
+                                                                                    },
+                                                                                },
+                                                                                invalid: {
+                                                                                    color: '#dc2626',
+                                                                                    iconColor: '#dc2626',
+                                                                                },
+                                                                            },
+                                                                            hidePostalCode: true,
+                                                                            classes: {
+                                                                                focus: 'stripe-card-focus',
+                                                                                empty: 'stripe-card-empty',
+                                                                                invalid: 'stripe-card-invalid',
+                                                                                complete: 'stripe-card-complete',
+                                                                            },
+                                                                        }}
+                                                                    />
+                                                                </div>
+
+                                                                <div className="stripe-card-hint">
+                                                                    <LockIcon className="lock-icon" />
+                                                                    <span>Your payment details are secured with 256-bit SSL encryption</span>
+                                                                </div>
+                                                            </div>
+
+                                                            {submitError ? (
+                                                                <div className="checkout-error-message">
+                                                                    <AlertCircle className="error-icon" />
+                                                                    <span>{submitError}</span>
+                                                                </div>
+                                                            ) : (
+                                                                <div className="stripe-card-help">
+                                                                    <span>Accepted cards: Visa, Mastercard, American Express, Discover</span>
+                                                                    <Link to="/about-us" className="security-link">
+                                                                        How we keep your information safe
+                                                                    </Link>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
                                                 )}
 
                                                 <label className={`checkout-payment-method ${formData.paymentMethod === "paypal" ? "selected" : ""}`}>
@@ -785,7 +926,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                                         </p>
                                                     </div>
                                                 )}
-                                                <label className={`checkout-payment-method ${formData.paymentMethod === "stripe" ? "selected" : ""}`}>
+                                                {/* <label className={`checkout-payment-method ${formData.paymentMethod === "stripe" ? "selected" : ""}`}>
                                                     <input
                                                         type="radio"
                                                         name="paymentMethod"
@@ -794,9 +935,9 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                                         onChange={handleChange}
                                                     />
                                                     <span>Stripe</span>
-                                                </label>
+                                                </label> */}
 
-                                                {formData.paymentMethod === "stripe" && (
+                                                {/* {formData.paymentMethod === "stripe" && (
                                                     <div className="payment-info paypal-info">
                                                         <div className="paypal-icon">
                                                             <img
@@ -811,7 +952,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                                             to Stripe to complete your purchase securely.
                                                         </p>
                                                     </div>
-                                                )}
+                                                )} */}
                                             </div>
                                         </>
                                     )}
@@ -866,27 +1007,27 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                             {isSubmitting ? "Processing..." : "Pay with PayPal"}
                                         </button>
                                     ) : formData.paymentMethod === "stripe" ? (
-                                    <button
-                                        type="submit"
-                                        className="stripe-submit-order-btn"
-                                        disabled={isSubmitting || orderSuccess}
-                                    >
-                                        <img
-                                            src="https://res.cloudinary.com/dekf5dyng/image/upload/v1769500924/images_axnhqp.png"
-                                            alt="Stripe"
-                                        />
-                                        {isSubmitting ? "Processing..." : "Pay with Stripe"}
-                                    </button>
+                                        <button
+                                            type="submit"
+                                            className="stripe-submit-order-btn"
+                                            disabled={isSubmitting || orderSuccess}
+                                        >
+                                            <img
+                                                src="https://res.cloudinary.com/dekf5dyng/image/upload/v1769500924/images_axnhqp.png"
+                                                alt="Stripe"
+                                            />
+                                            {isSubmitting ? "Processing..." : "Pay with Stripe"}
+                                        </button>
                                     ) : (
-                                    <button
-                                        type="submit"
-                                        className="submit-order-btn"
-                                        disabled={!isFormValid || isSubmitting || orderSuccess}
-                                    >
-                                        {isSubmitting
-                                            ? "Processing..."
-                                            : `Pay $${(totalPrice * 1).toFixed(2)}`}
-                                    </button>
+                                        <button
+                                            type="submit"
+                                            className="submit-order-btn"
+                                            disabled={!isFormValid || isSubmitting || orderSuccess}
+                                        >
+                                            {isSubmitting
+                                                ? "Processing..."
+                                                : `Pay $${(totalPrice * 1).toFixed(2)}`}
+                                        </button>
                                     )}
 
                                     <p className="secure-notice">

@@ -94,6 +94,7 @@ export async function confirmOrderWithOrderId(uid, orderId) {
 }
 
 export async function updateShipmentWithOrderId(uid, updatedData) {
+    console.log("Updating shipment with data:", updatedData);
     try {
         api.interceptors.request.use((config) => {
             const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -126,6 +127,7 @@ export async function completeOrderWithOrderId(uid, orderId) {
 }
 
 export async function updateTrackingNumberWithOrderId(uid, updatedData) {
+    console.log("Updating shipment with data:", updatedData);
     try {
         api.interceptors.request.use((config) => {
             const token = localStorage.getItem('token') || sessionStorage.getItem('token');

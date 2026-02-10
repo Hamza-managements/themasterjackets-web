@@ -44,7 +44,6 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
     const [isFormValid, setIsFormValid] = useState(false);
     const [hasInteracted, setHasInteracted] = useState(false);
     const [shippingMethod, setShippingMethod] = useState("standard");
-    const [, setCheckoutStep] = useState('information');
     const [showOrderSummary, setShowOrderSummary] = useState(false);
     const [submitError, setSubmitError] = useState(null);
     const [openShippingModal, setOpenShippingModal] = useState(false);
@@ -107,7 +106,6 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                 zipCode: '94107',
                 country: 'USA'
             }));
-            setCheckoutStep('shipping');
             setFormData(prev => ({
                 ...prev,
                 paymentMethod: provider === 'paypal' ? 'paypal' : 'stripe'
@@ -238,7 +236,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
             cartId
         };
 
-        if (formData.paymentMethod === "CARD") {
+        if (formData.paymentMethod === "CAD") {
             await handleStripePayment(payload);
         } else {
             setIsSubmitting(true);
@@ -753,7 +751,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                                                 checked={formData.paymentMethod === 'CARD'}
                                                                 onChange={handleChange}
                                                             />
-                                                            <CreditCard className="payment-icon" />
+                                                            <CreditCard className="checkout-payment-icon" />
                                                             <span>Credit or debit card</span>
                                                         </div>
                                                         <div className="payment-logos">
@@ -765,7 +763,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                                     </div>
                                                 </label>
 
-                                                {/* {formData.paymentMethod === 'CARD' && (
+                                                {formData.paymentMethod === 'CARD' && (
                                                     <div className="credit-card-form">
                                                         <div className="checkout-form-group">
                                                             <input
@@ -825,7 +823,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                                             </div>
                                                         </div>
                                                     </div>
-                                                )} */}
+                                                )}
 
                                                 {formData.paymentMethod === 'CARD' && (
                                                     <div className="checkout-form-group">

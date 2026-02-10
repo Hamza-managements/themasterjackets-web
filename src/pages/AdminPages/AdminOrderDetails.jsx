@@ -26,8 +26,6 @@ const AdminOrderDetails = () => {
     const [isUpdating, setIsUpdating] = useState(false);
     const [openFulfillment, setOpenFulfillment] = useState(false);
 
-    console.log('Order Data:', order);
-    // Form states
     const [trackingInfo, setTrackingInfo] = useState({
         orderId: '',
         email: '',

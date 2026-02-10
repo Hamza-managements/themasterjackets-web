@@ -74,7 +74,6 @@
   background: #fff;
   /* padding: 24px; */
   border-radius: 8px;
-  border: 1px solid #e1e3e5;
 }
 
 .express-checkout-section h3 {
@@ -908,7 +907,7 @@
     color: #111827;
 }
 
-.payment-icon {
+.checkout-payment-icon {
     width: 24px;
     height: 24px;
     color: #4f46e5;
@@ -918,6 +917,7 @@
     display: flex;
     gap: 6px;
     align-items: center;
+    padding-left: 1rem;
 }
 
 .card-logo {
@@ -1051,6 +1051,7 @@
 /* Help Text */
 .stripe-card-help {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     align-items: center;
     margin-top: 16px;

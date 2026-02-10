@@ -77,10 +77,10 @@ const AddProductPage = () => {
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    console.log("Fetched categories:", categories);
-    console.log("updated formData:", formData);
-  }, [categories, formData]);
+  // useEffect(() => {
+  //   console.log("Fetched categories:", categories);
+  //   console.log("updated formData:", formData);
+  // }, [categories, formData]);
 
   const addVariation = () => {
     setFormData((prev) => ({

@@ -763,7 +763,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                                     </div>
                                                 </label>
 
-                                                {formData.paymentMethod === 'CARD' && (
+                                                {/* {formData.paymentMethod === 'CARD' && (
                                                     <div className="credit-card-form">
                                                         <div className="checkout-form-group">
                                                             <input
@@ -823,7 +823,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                                             </div>
                                                         </div>
                                                     </div>
-                                                )}
+                                                )} */}
 
                                                 {formData.paymentMethod === 'CARD' && (
                                                     <div className="checkout-form-group">

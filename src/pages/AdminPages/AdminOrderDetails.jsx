@@ -28,7 +28,7 @@ const AdminOrderDetails = () => {
 
     const [trackingInfo, setTrackingInfo] = useState({
         orderId: '',
-        email: '',
+        userEmail: '',
         trackingNumber: '',
         carrier: '',
     });
@@ -72,7 +72,7 @@ const AdminOrderDetails = () => {
             if (selectedOrder.fulfillment) {
                 setTrackingInfo({
                     orderId: selectedOrder._id,
-                    email: selectedOrder.userDetails?.userId
+                    userEmail: selectedOrder.userDetails?.userId
                         ? selectedOrder.userDetails.userId.email
                         : selectedOrder.userDetails?.guestEmail,
                     trackingNumber:

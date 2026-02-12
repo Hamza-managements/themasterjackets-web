@@ -149,7 +149,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
             // });
             const res = await createStripeOrder(orderData);
 
-            return console.log("Stripe order creation response:", res);
+            console.log("Stripe order creation response:", res);
 
             const { clientSecret } = res.data;
             // , intentId

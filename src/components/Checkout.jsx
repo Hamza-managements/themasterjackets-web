@@ -144,9 +144,12 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
             setIsSubmitting(true);
             setSubmitError(null);
 
-            const res = await createStripeOrder({
-                amount: totalPrice,
-            });
+            // const res = await createStripeOrder({
+            //     amount: totalPrice,
+            // });
+            const res = await createStripeOrder(orderData);
+
+            return console.log("Stripe order creation response:", res);
 
             const { clientSecret } = res.data;
             // , intentId
@@ -236,7 +239,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
             cartId
         };
 
-        if (formData.paymentMethod === "CAD") {
+        if (formData.paymentMethod === "CARD") {
             await handleStripePayment(payload);
         } else {
             setIsSubmitting(true);
@@ -763,7 +766,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                                     </div>
                                                 </label>
 
-                                                {/* {formData.paymentMethod === 'CARD' && (
+                                                {formData.paymentMethod === 'CARD' && (
                                                     <div className="credit-card-form">
                                                         <div className="checkout-form-group">
                                                             <input
@@ -823,7 +826,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                                             </div>
                                                         </div>
                                                     </div>
-                                                )} */}
+                                                )}
 
                                                 {formData.paymentMethod === 'CARD' && (
                                                     <div className="checkout-form-group">

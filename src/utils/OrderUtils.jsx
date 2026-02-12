@@ -14,14 +14,18 @@ export async function createNewOrder(payload) {
 }
 
 export async function createStripeOrder(payload) {
+    const { userDetails, items, shippingAddress } = payload;
     try {
-        const response = await api.post("/api/payment/create-intent", payload);
-        return response.data;
+        const response = await api.post("/api/payment/create-payment-intent", {
+            userDetails,
+            items,
+            shippingAddress
+        });
+        return response;
     } catch (error) {
         throw error;
     }
 }
-
 
 export async function getUserOrderById(uid) {
     try {

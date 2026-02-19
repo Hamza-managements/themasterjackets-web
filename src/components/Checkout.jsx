@@ -40,7 +40,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
     const { user } = useContext(AuthContext);
     const [errors, setErrors] = useState({});
     const [submitError, setSubmitError] = useState(null);
-    const [cardComplete, setCardComplete] = useState(false);
+    const [, setCardComplete] = useState(false);
     const [cardError, setCardError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [orderSuccess, setOrderSuccess] = useState(false);
@@ -152,13 +152,13 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
 
             const { intentId, paymentId, clientSecret } = res.data?.data;
 
-            // const resultStripe = await stripe.confirmCardPayment(clientSecret, {
-            //     payment_method: {
-            //         card: elements.getElement(CardElement),
-            //     },
-            // });
+            const resultStripe = await stripe.confirmCardPayment(clientSecret, {
+                payment_method: {
+                    card: elements.getElement(CardElement),
+                },
+            });
 
-            // return console.log("stripeeeee:", resultStripe);
+            console.log("stripeeeee:", resultStripe);
 
             const result = await orderPaymentConfirm(paymentId, intentId);
 

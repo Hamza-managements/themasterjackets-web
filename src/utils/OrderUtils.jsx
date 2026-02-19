@@ -13,7 +13,7 @@ export async function createNewOrder(payload) {
     }
 }
 
-export async function createStripeOrder(payload) {
+export async function createStripeIntent(payload) {
     const { userDetails, items, shippingAddress } = payload;
     try {
         const response = await api.post("/api/payment/create-payment-intent", {
@@ -21,6 +21,15 @@ export async function createStripeOrder(payload) {
             items,
             shippingAddress
         });
+        return response;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function orderPaymentConfirm(paymentId, intentId) {
+    try {
+        const response = await api.post("/api/payment/confirm-payment", { paymentId, intentId });
         return response;
     } catch (error) {
         throw error;

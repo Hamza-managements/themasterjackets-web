@@ -51,50 +51,49 @@ export const checkoutSchema = yup.object().shape({
 
     paymentMethod: yup
         .string()
-        .oneOf(["CARD", "PAYPAL"])
+        .oneOf(["card", "PAYPAL"])
         .required("Payment method is required"),
 
     /* ---------------- CARD FIELDS ---------------- */
+    // cardNumber: yup.string().when("paymentMethod", {
+    //     is: "CARD",
+    //     then: () =>
+    //         yup
+    //             .string()
+    //             .required("Card number is required")
+    //             .matches(/^[0-9 ]+$/, "Invalid card number")
+    //             .min(13, "Card number is too short")
+    //             .max(19, "Card number is too long"),
+    //     otherwise: () => yup.string().strip()
+    // }),
 
-    cardNumber: yup.string().when("paymentMethod", {
-        is: "CARD",
-        then: () =>
-            yup
-                .string()
-                .required("Card number is required")
-                .matches(/^[0-9 ]+$/, "Invalid card number")
-                .min(13, "Card number is too short")
-                .max(19, "Card number is too long"),
-        otherwise: () => yup.string().strip()
-    }),
+    // cardName: yup.string().when("paymentMethod", {
+    //     is: "CARD",
+    //     then: () =>
+    //         yup
+    //             .string()
+    //             .trim()
+    //             .required("Name on card is required"),
+    //     otherwise: () => yup.string().strip()
+    // }),
 
-    cardName: yup.string().when("paymentMethod", {
-        is: "CARD",
-        then: () =>
-            yup
-                .string()
-                .trim()
-                .required("Name on card is required"),
-        otherwise: () => yup.string().strip()
-    }),
+    // expiryDate: yup.string().when("paymentMethod", {
+    //     is: "CARD",
+    //     then: () =>
+    //         yup
+    //             .string()
+    //             .required("Expiry date is required")
+    //             .matches(/^(0[1-9]|1[0-2])\/\d{2}$/, "Invalid expiry date (MM/YY)"),
+    //     otherwise: () => yup.string().strip()
+    // }),
 
-    expiryDate: yup.string().when("paymentMethod", {
-        is: "CARD",
-        then: () =>
-            yup
-                .string()
-                .required("Expiry date is required")
-                .matches(/^(0[1-9]|1[0-2])\/\d{2}$/, "Invalid expiry date (MM/YY)"),
-        otherwise: () => yup.string().strip()
-    }),
-
-    cvv: yup.string().when("paymentMethod", {
-        is: "CARD",
-        then: () =>
-            yup
-                .string()
-                .required("CVV is required")
-                .matches(/^[0-9]{3,4}$/, "Invalid CVV"),
-        otherwise: () => yup.string().strip()
-    })
+    // cvv: yup.string().when("paymentMethod", {
+    //     is: "CARD",
+    //     then: () =>
+    //         yup
+    //             .string()
+    //             .required("CVV is required")
+    //             .matches(/^[0-9]{3,4}$/, "Invalid CVV"),
+    //     otherwise: () => yup.string().strip()
+    // })
 });

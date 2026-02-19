@@ -10,7 +10,7 @@ import { AuthContext } from '../context/AuthContext';
 import { validateCheckout } from './ValidateCheckout';
 import OrderSuccess from './OrderSuccess';
 import { createPortal } from "react-dom";
-import { createStripeOrder } from "../utils/OrderUtils";
+import { createStripeIntent, orderPaymentConfirm } from "../utils/OrderUtils";
 import { AlertCircle, CreditCard, LockIcon } from "lucide-react";
 import { FaCcVisa, FaCcMastercard, FaCcAmex, FaCcDiscover } from 'react-icons/fa';
 
@@ -27,7 +27,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
         zipCode: '',
         country: '',
         state: '',
-        paymentMethod: 'CARD',
+        paymentMethod: 'card',
         cardNumber: '',
         cardName: '',
         expiryDate: '',
@@ -39,13 +39,15 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
     const elements = useElements();
     const { user } = useContext(AuthContext);
     const [errors, setErrors] = useState({});
+    const [submitError, setSubmitError] = useState(null);
+    const [cardComplete, setCardComplete] = useState(false);
+    const [cardError, setCardError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [orderSuccess, setOrderSuccess] = useState(false);
     const [isFormValid, setIsFormValid] = useState(false);
     const [hasInteracted, setHasInteracted] = useState(false);
     const [shippingMethod, setShippingMethod] = useState("standard");
     const [showOrderSummary, setShowOrderSummary] = useState(false);
-    const [submitError, setSubmitError] = useState(null);
     const [openShippingModal, setOpenShippingModal] = useState(false);
     // const [isGuestCheckout, setIsGuestCheckout] = useState(xtrue); // below is the input that is commented out
 
@@ -108,7 +110,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
             }));
             setFormData(prev => ({
                 ...prev,
-                paymentMethod: provider === 'paypal' ? 'paypal' : 'stripe'
+                paymentMethod: provider === 'paypal' ? 'paypal' : 'card'
             }));
         }, 500);
     };
@@ -144,27 +146,23 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
             setIsSubmitting(true);
             setSubmitError(null);
 
-            // const res = await createStripeOrder({
-            //     amount: totalPrice,
-            // });
-            const res = await createStripeOrder(orderData);
+            const res = await createStripeIntent(orderData);
 
             console.log("Stripe order creation response:", res);
 
-            const { clientSecret } = res.data;
-            // , intentId
-            // 2. Confirm card payment
-            const cardElement = elements.getElement(CardElement);
+            const { intentId, paymentId, clientSecret } = res.data?.data;
 
-            const result = await stripe.confirmCardPayment(clientSecret, {
-                payment_method: {
-                    card: cardElement,
-                    billing_details: {
-                        name: orderData.shippingAddress.fullName,
-                        phone: orderData.shippingAddress.phone,
-                    },
-                },
-            });
+            // const resultStripe = await stripe.confirmCardPayment(clientSecret, {
+            //     payment_method: {
+            //         card: elements.getElement(CardElement),
+            //     },
+            // });
+
+            // return console.log("stripeeeee:", resultStripe);
+
+            const result = await orderPaymentConfirm(paymentId, intentId);
+
+            console.log("Payment Api response:", result);
 
             if (result.error) {
                 setSubmitError(result.error.message);
@@ -182,7 +180,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
             await onPlaceOrder({
                 ...orderData,
                 payment: {
-                    method: "CARD",
+                    method: "card",
                     stripePaymentId: result.paymentIntent.id
                 }
             });
@@ -239,7 +237,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
             cartId
         };
 
-        if (formData.paymentMethod === "CARD") {
+        if (formData.paymentMethod === "card") {
             await handleStripePayment(payload);
         } else {
             setIsSubmitting(true);
@@ -254,29 +252,6 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
             }
         }
     };
-
-
-    // const validateForm = () => {
-    //     const newErrors = {};
-
-    //     // Shopify-style minimal validation
-    //     if (!formData.email?.trim()) newErrors.email = 'Email is required';
-    //     if (!formData.addressLine1?.trim()) newErrors.addressLine1 = 'Address is required';
-    //     if (!formData.city?.trim()) newErrors.city = 'City is required';
-    //     if (!formData.country?.trim()) newErrors.country = 'Country is required';
-    //     if (!formData.zipCode?.trim()) newErrors.zipCode = 'ZIP/Postal code is required';
-
-    //     // Payment validation only if not using express checkout
-    //     if (!shippingMethod && formData.paymentMethod === 'CARD') {
-    //         if (!formData.cardNumber?.replace(/\s/g, '')) newErrors.cardNumber = 'Card number is required';
-    //         if (!formData.cardName?.trim()) newErrors.cardName = 'Name on card is required';
-    //         if (!formData.expiryDate?.trim()) newErrors.expiryDate = 'Expiry date is required';
-    //         if (!formData.cvv?.trim()) newErrors.cvv = 'CVV is required';
-    //     }
-
-    //     setErrors(newErrors);
-    //     return Object.keys(newErrors).length === 0;
-    // };
 
     const OrderSummary = () => (
         <div className={`order-summary-sidebar ${showOrderSummary ? 'mobile-visible' : ''}`}>
@@ -471,7 +446,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                     </button>
                                     <button
                                         className="express-btn stripe-pay"
-                                        onClick={() => handleExpressCheckout("stripe")}
+                                        onClick={() => handleExpressCheckout("card")}
                                     >
                                         <img
                                             src="https://res.cloudinary.com/dekf5dyng/image/upload/v1769500363/Stripe_Logo__revised_2016.svg_biqcli.png"
@@ -744,14 +719,14 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                     {shippingMethod === "standard" && (
                                         <>
                                             <div className="checkout-payment-methods">
-                                                <label className={`checkout-payment-method ${formData.paymentMethod === "CARD" ? "selected" : ""}`}>
+                                                <label className={`checkout-payment-method ${formData.paymentMethod === "card" ? "selected" : ""}`}>
                                                     <div className="payment-method-header">
                                                         <div className="payment-method-title">
                                                             <input
                                                                 type="radio"
                                                                 name="paymentMethod"
-                                                                value="CARD"
-                                                                checked={formData.paymentMethod === 'CARD'}
+                                                                value="card"
+                                                                checked={formData.paymentMethod === 'card'}
                                                                 onChange={handleChange}
                                                             />
                                                             <CreditCard className="checkout-payment-icon" />
@@ -766,7 +741,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                                     </div>
                                                 </label>
 
-                                                {formData.paymentMethod === 'CARD' && (
+                                                {/* {formData.paymentMethod === 'card' && (
                                                     <div className="credit-card-form">
                                                         <div className="checkout-form-group">
                                                             <input
@@ -826,9 +801,9 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                                             </div>
                                                         </div>
                                                     </div>
-                                                )}
+                                                )} */}
 
-                                                {formData.paymentMethod === 'CARD' && (
+                                                {formData.paymentMethod === 'card' && (
                                                     <div className="checkout-form-group">
                                                         <div className={`checkout-stripe-card ${submitError ? 'stripe-card-error' : ''}`}>
                                                             <div className="stripe-card-wrapper">
@@ -838,7 +813,11 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                                                 <div className="stripe-card-element-container">
                                                                     <CardElement
                                                                         id="card-element"
-                                                                        // onChange={handleCardElementChange} ${isCardFocused ? 'stripe-card-focused' : ''}
+                                                                        onChange={(e) => {
+                                                                            setCardComplete(e.complete);
+                                                                            setCardError(e.error ? e.error.message : "");
+                                                                        }}
+                                                                        //  ${isCardFocused ? 'stripe-card-focused' : ''}
                                                                         // onFocus={() => setIsCardFocused(true)}
                                                                         // onBlur={() => setIsCardFocused(false)}
                                                                         options={{
@@ -876,6 +855,12 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                                                         }}
                                                                     />
                                                                 </div>
+
+                                                                {cardError && (
+                                                                    <div style={{ color: "red", marginTop: "8px" }}>
+                                                                        {cardError}
+                                                                    </div>
+                                                                )}
 
                                                                 <div className="stripe-card-hint">
                                                                     <LockIcon className="lock-icon" />
@@ -1024,6 +1009,7 @@ const Checkout = ({ cartId, cartItems, totalPrice, onPlaceOrder, refreshCart }) 
                                             type="submit"
                                             className="submit-order-btn"
                                             disabled={!isFormValid || isSubmitting || orderSuccess}
+                                        //  || !cardComplete
                                         >
                                             {isSubmitting
                                                 ? "Processing..."

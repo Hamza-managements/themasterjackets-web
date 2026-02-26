@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Swal from "sweetalert2";
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -9,9 +9,9 @@ import {
     ChevronDown,
     ChevronUp
 } from 'lucide-react';
-import { getProductBySubCategoryId, getProducts } from '../utils/ProductServices';
 import { fetchCategoriesAll } from '../utils/CartUtils';
 import { FaStar } from 'react-icons/fa';
+import { useProducts } from '../context/ProductContext';
 
 const CATEGORY_TAG_MAP = {
     "biker-jackets": [
@@ -189,131 +189,170 @@ const CATEGORY_TAG_MAP = {
 const SubCategoryProductPage = () => {
     const navigate = useNavigate();
     const { categorySlug, slug } = useParams();
-    const [products, setProducts] = useState([]);
+
+    const { products, loading, hasMore, loadMore, resetProducts } = useProducts();
+
     const [filteredProducts, setFilteredProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [filters, setFilters] = useState({
-        style: 'all',
-        price: 'all',
-        color: 'all',
-        delivery: 'all'
-    });
-    const [sortOption, setSortOption] = useState('featured');
+    const [matchedSubCategoryId, setMatchedSubCategoryId] = useState(null);
+    const [filters, setFilters] = useState({ style: "all", price: "all", color: "all", delivery: "all" });
+    const [sortOption, setSortOption] = useState("featured");
     const [showFilters, setShowFilters] = useState(false);
+    const [expandedSections, setExpandedSections] = useState({ style: true, price: true, color: true, delivery: true });
     const [availableFilters, setAvailableFilters] = useState([]);
-    const [expandedSections, setExpandedSections] = useState({
-        style: true,
-        price: true,
-        color: true,
-        delivery: true
-    });
+    const loaderRef = useRef(null);
 
-    console.log("categorySlug:", categorySlug, "slug:", slug);
+    useEffect(() => {
+        const fetchSubcategoryProducts = async () => {
 
+            // 🔥 RESET EVERYTHING FIRST
+            resetProducts();
+            setFilteredProducts([]);
+
+            try {
+                const isNewArrival = slug === "new-arrivals";
+
+                if (!isNewArrival) {
+
+                    const categories = await fetchCategoriesAll();
+
+                    const matchedCategory = categories.find(
+                        c => c.slug === categorySlug
+                    );
+
+                    const matchedSubCategory =
+                        matchedCategory?.subCategories.find(
+                            s => s.slug === slug
+                        );
+                    setMatchedSubCategoryId(matchedSubCategory?._id || null);
+
+                }
+
+                const tags =
+                    CATEGORY_TAG_MAP[slug] ||
+                    CATEGORY_TAG_MAP["default"];
+
+                setAvailableFilters(tags);
+
+            } catch (err) {
+                Swal.fire("Error", "Something went wrong", "error");
+            }
+        };
+
+        fetchSubcategoryProducts();
+
+    }, [categorySlug, slug]);
+
+    useEffect(() => {
+        const node = loaderRef.current;
+        if (!node) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && hasMore && !loading) {
+                    loadMore();
+                }
+            },
+            {
+                root: null,
+                rootMargin: "300px",
+                threshold: 0
+            }
+        );
+
+        observer.observe(node);
+
+        return () => observer.unobserve(node);
+    }, [hasMore, loading, loadMore]);
+
+
+    // Apply filtering & sorting
     const applyFiltersAndSort = useCallback(() => {
         let filtered = [...products];
+        if (slug !== "new-arrivals") {
+            filtered = filtered.filter(product =>
+                product.categoryId?.slug === categorySlug
+            );
+        } else {
+            console.log("Applying new arrivals filter", filtered);
+            filtered = filtered.filter(product =>
+                product.attributes?.badge === "New Arrival" || product.attributes?.badge === "new arrival" || product.attributes?.badge === "new-arrival"
+            );
+            console.log("Applied new arrivals filter", filtered);
+        }
 
-        if (filters.style && filters.style !== "all") {
+        if (matchedSubCategoryId) {
+            filtered = filtered.filter(product =>
+                product.subCategoryId === matchedSubCategoryId
+            );
+        }
+
+        // Style
+        if (filters.style !== "all") {
             filtered = filtered.filter(product =>
                 Array.isArray(product.attributes?.style) &&
                 product.attributes.style.map(s => s.toLowerCase()).includes(filters.style.toLowerCase())
             );
         }
 
-        if (filters.price !== 'all') {
+        // Price
+        if (filters.price !== "all") {
             filtered = filtered.filter(product => {
-                const minPrice = Math.min(...product.variations.map(v =>
-                    v.productPrice?.discountedPrice || v.productPrice?.originalPrice || 0
-                ));
-
+                const minPrice = Math.min(...product.variations.map(v => v.productPrice?.discountedPrice || v.productPrice?.originalPrice || 0));
                 switch (filters.price) {
-                    case '0-50': return minPrice <= 50;
-                    case '50-100': return minPrice > 50 && minPrice <= 100;
-                    case '100-200': return minPrice > 100 && minPrice <= 200;
-                    case '200+': return minPrice > 200;
+                    case "0-50": return minPrice <= 50;
+                    case "50-100": return minPrice > 50 && minPrice <= 100;
+                    case "100-200": return minPrice > 100 && minPrice <= 200;
+                    case "200+": return minPrice > 200;
                     default: return true;
                 }
             });
         }
 
-        if (filters.color !== 'all') {
+        // Color
+        if (filters.color !== "all") {
             filtered = filtered.filter(product =>
-                product.variations.some(variation =>
-                    variation.attributes?.color?.toLowerCase().includes(filters.color.toLowerCase())
-                )
+                product.variations.some(v => v.attributes?.color?.toLowerCase() === filters.color.toLowerCase())
             );
         }
 
-        if (filters.delivery !== 'all') {
+        // Delivery
+        if (filters.delivery !== "all") {
             filtered = filtered.filter(product =>
-                product.variations.some(variation => {
-                    if (filters.delivery === 'prime') {
-                        return variation.shipping?.isFreeShipping;
-                    } else if (filters.delivery === 'express') {
-                        return variation.shipping?.estimatedDeliveryDays <= 3;
-                    }
+                product.variations.some(v => {
+                    if (filters.delivery === "prime") return v.shipping?.isFreeShipping;
+                    if (filters.delivery === "express") return v.shipping?.estimatedDeliveryDays <= 3;
                     return true;
                 })
             );
         }
 
+        // Sorting
         filtered.sort((a, b) => {
-            const getMinPrice = (product) =>
-                Math.min(...product.variations.map(v =>
-                    v.productPrice?.discountedPrice || v.productPrice?.originalPrice || Infinity
-                ));
-
-            const getMaxRating = (product) =>
-                Math.max(...product.variations.map(v => v.ratings?.count || 0));
+            const minPrice = p => Math.min(...p.variations.map(v => v.productPrice?.discountedPrice || v.productPrice?.originalPrice || Infinity));
+            const maxRating = p => Math.max(...p.variations.map(v => v.ratings?.count || 0));
 
             switch (sortOption) {
-                case 'price-low':
-                    return getMinPrice(a) - getMinPrice(b);
-                case 'price-high':
-                    return getMinPrice(b) - getMinPrice(a);
-                case 'newest':
-                    return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
-                case 'rating':
-                    return getMaxRating(b) - getMaxRating(a);
-                default:
-                    return 0; // featured - no sorting
+                case "price-low": return minPrice(a) - minPrice(b);
+                case "price-high": return minPrice(b) - minPrice(a);
+                case "newest": return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+                case "rating": return maxRating(b) - maxRating(a);
+                default: return 0;
             }
         });
 
         setFilteredProducts(filtered);
-        setShowFilters(false);
     }, [products, filters, sortOption]);
 
-    const handleFilterChange = (filterType, value) => {
-        setFilters(prev => ({
-            ...prev,
-            [filterType]: value
-        }));
-    };
+    useEffect(() => { if (products.length) applyFiltersAndSort(); }, [products, applyFiltersAndSort]);
 
-    const handleSortChange = (e) => {
-        setSortOption(e.target.value);
-    };
-
-    const toggleFilters = () => {
-        setShowFilters(!showFilters);
-    };
-
-    const toggleSection = (section) => {
-        setExpandedSections(prev => ({
-            ...prev,
-            [section]: !prev[section]
-        }));
-    };
-
-    const clearAllFilters = () => {
-        setFilters({
-            style: 'all',
-            price: 'all',
-            color: 'all',
-            delivery: 'all'
-        });
-    };
+    // Handlers
+    const handleFilterChange = (type, value) => setFilters(prev => ({ ...prev, [type]: value }));
+    const handleSortChange = e => setSortOption(e.target.value);
+    const toggleFilters = () => setShowFilters(prev => !prev);
+    const toggleSection = sec => setExpandedSections(prev => ({ ...prev, [sec]: !prev[sec] }));
+    const clearAllFilters = () => setFilters({ style: "all", price: "all", color: "all", delivery: "all" });
+    const navigateToProductDetail = id => navigate(`/products-details/${id}`);
+    const hasActiveFilters = () => Object.values(filters).some(f => f !== "all");
 
     const generateStarRating = (rating) => {
         return Array.from({ length: 5 }, (_, index) => (
@@ -323,10 +362,6 @@ const SubCategoryProductPage = () => {
                 className={index < Math.floor(rating) ? "text-orange-600 fill-current" : "text-gray-300"}
             />
         ));
-    };
-
-    const navigateToProductDetail = (productId) => {
-        navigate(`/products-details/${productId}`);
     };
 
     const getProductPriceRange = (product) => {
@@ -342,96 +377,13 @@ const SubCategoryProductPage = () => {
         return `$${minPrice.toFixed(2)} - $${maxPrice.toFixed(2)}`;
     };
 
-    const getProductColors = (product) => {
-        const colors = [...new Set(product.variations
-            .map(v => v.attributes?.color)
-            .filter(color => color && color.trim() !== '')
-        )];
-        return colors;
-    };
+    const getProductColors = product => [...new Set(product.variations.map(v => v.attributes?.color).filter(Boolean))];
 
-    const hasActiveFilters = () => {
-        return filters.style !== 'all' ||
-            filters.price !== 'all' ||
-            filters.color !== 'all' ||
-            filters.delivery !== 'all';
-    };
-
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                setLoading(true);
-
-                // ✅ Special case: new arrivals
-                if (slug === "new-arrivals") {
-                    let allProducts = await getProducts();
-                    const filtered = allProducts.filter(
-                        product =>
-                            product.attributes?.badge?.toLowerCase() === "new arrival"
-                    );
-                    setProducts(filtered);
-                    return;
-                }
-
-                const categoryRes = await fetchCategoriesAll();
-                const categories = categoryRes || [];
-
-                // ✅ Match parent category first
-                const matchedCategory = categories.find(
-                    (cat) => cat.slug === categorySlug
-                );
-
-                if (!matchedCategory) {
-                    Swal.fire("Not Found", "Category not found.", "warning");
-                    setProducts([]);
-                    return;
-                }
-
-                // ✅ Match subcategory inside the correct category
-                const matchedSubCategory = matchedCategory.subCategories.find(
-                    (subCat) => subCat.slug === slug
-                );
-
-                if (!matchedSubCategory) {
-                    Swal.fire("Not Found", "Subcategory not found.", "warning");
-                    setProducts([]);
-                    return;
-                }
-
-                // ✅ Fetch correct products
-                const res = await getProductBySubCategoryId(
-                    matchedCategory._id,
-                    matchedSubCategory._id
-                );
-
-                setProducts(res.data || []);
-            } catch (error) {
-                Swal.fire("Error", "Something went wrong.", "error");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchProducts();
-
-        const filteredTags =
-            CATEGORY_TAG_MAP[`${categorySlug}/${slug}`] ||
-            CATEGORY_TAG_MAP[slug] ||
-            CATEGORY_TAG_MAP["default"];
-
-        setAvailableFilters(filteredTags);
-    }, [categorySlug, slug]);
-
-    useEffect(() => {
-        if (products.length > 0) {
-            applyFiltersAndSort();
-        }
-    }, [applyFiltersAndSort, products]);
-
-    if (loading) {
+    // Render
+    if (loading && products.length === 0) {
         return (
             <div className="flex justify-center items-center min-h-[100vh]">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
                 <span className="ml-3 text-gray-600">Loading products...</span>
             </div>
         );
@@ -688,6 +640,7 @@ const SubCategoryProductPage = () => {
                                             />
                                             <div className="product-badges">
                                                 <span className={`badge badge-sale`}>
+                                                    {/* <Truck size={12} /> */}
                                                     {product?.attributes?.badge}
                                                 </span>
                                             </div>
@@ -729,6 +682,14 @@ const SubCategoryProductPage = () => {
                                 );
                             })
                         )}
+                    </div>
+                    <div ref={loaderRef} className="min-h-[200px] flex items-center justify-center">
+                        {loading && (
+                            <div className="flex justify-center items-center my-4">
+                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                            </div>
+                        )}
+                        {/* {!hasMore && !loading && <p>No more products to load.</p>} */}
                     </div>
                 </main>
             </div>

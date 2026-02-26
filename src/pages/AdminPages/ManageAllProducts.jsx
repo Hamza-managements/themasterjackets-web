@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import {
   RotateCw,
   Plus,
@@ -15,10 +15,11 @@ import { FaBox, FaFolder, FaFolderOpen } from "react-icons/fa";
 const ManageProducts = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const loaderRef = useRef(null);
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   const [selectedProducts, setSelectedProducts] = useState([]);
-  const { products, loading, lastFetched, refreshProducts } = useProducts();
+  const { products, loading, lastFetched, refreshProducts, hasMore, loadMore } = useProducts();
 
   // ✅ Filter + Sort + Search
   const filteredProducts = useMemo(() => {
@@ -50,6 +51,28 @@ const ManageProducts = () => {
 
     return result;
   }, [products, searchTerm, statusFilter, sortBy]);
+
+  useEffect(() => {
+    const node = loaderRef.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loading) {
+          loadMore();
+        }
+      },
+      {
+        root: null,
+        rootMargin: "300px",
+        threshold: 0
+      }
+    );
+
+    observer.observe(node);
+
+    return () => observer.unobserve(node);
+  }, [hasMore, loading, loadMore]);
 
   // ✅ Selection logic
   const toggleSelect = (productId) => {
@@ -99,7 +122,7 @@ const ManageProducts = () => {
 
   let totalRevenue;
 
-  if (loading) {
+  if (loading && products.length === 0) {
     return (
       <div className="flex justify-center items-center min-h-screen text-gray-600 text-lg">
         Loading products...
@@ -309,6 +332,9 @@ const ManageProducts = () => {
                       {product.variations?.[0]?.productPrice?.discountedPrice ||
                         0}
                     </td>
+                    <td className="px-4 py-3 text-sm text-gray-700">
+                      {product.variations?.length || 0}
+                    </td>
                     <td className="px-4 py-3">
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-semibold ${product.status
@@ -376,6 +402,14 @@ const ManageProducts = () => {
               </button>
             </div>
           )}
+        </div>
+        <div ref={loaderRef} style={{ height: "60px", textAlign: "center" }}>
+          {loading && (
+            <div className="flex justify-center items-center my-4">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+          )}
+          {/* {!hasMore && !loading && <p>No more products to load.</p>} */}
         </div>
       </div>
       <style>{`/* Statistics Cards */

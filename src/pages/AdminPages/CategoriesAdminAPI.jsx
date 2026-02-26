@@ -91,7 +91,7 @@ const ManageCategoryListPage = () => {
     const fetchProducts = async () => {
       try {
         const data = await getProducts();
-        setAllProducts(data);
+        setAllProducts(data.products);
       } catch (err) {
         console.error("Failed to load products", err);
       }

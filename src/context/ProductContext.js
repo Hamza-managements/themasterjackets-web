@@ -1,105 +1,142 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getProducts } from "../utils/ProductServices";
+import {
+  getProductBySubCategoryId,
+  getProducts
+} from "../utils/ProductServices";
 
 const ProductContext = createContext();
-const REFRESH_INTERVAL = 6 * 60 * 60 * 1000; // 6 hours
+
+const LIMIT = 40;
 
 export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [lastFetched, setLastFetched] = useState(null);
-  // 🔍 Global search states
-  const [query, setQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // ✅ Fetch all products (with caching)
-  const fetchAllProducts = async (forceRefresh = false) => {
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  const [mode, setMode] = useState("all"); 
+  // "all" | "subcategory"
+
+  const [currentCategory, setCurrentCategory] = useState(null);
+  const [currentSubCategory, setCurrentSubCategory] = useState(null);
+
+  // 🔹 FETCH ALL PRODUCTS
+  const fetchProducts = async (pageToLoad = 1, append = false) => {
     try {
       setLoading(true);
 
-      const cachedProducts = localStorage.getItem("allProducts");
-      const cachedTime = localStorage.getItem("productsFetchedAt");
-      const now = Date.now();
+      const data = await getProducts(pageToLoad, LIMIT);
+      const newProducts = data?.products || [];
 
-      // 🧠 Use cache if valid and not forcing refresh
-      if (
-        cachedProducts &&
-        cachedTime &&
-        !forceRefresh &&
-        now - parseInt(cachedTime) < REFRESH_INTERVAL
-      ) {
-        setProducts(JSON.parse(cachedProducts));
-        setLastFetched(parseInt(cachedTime));
-        setLoading(false);
-        return;
-      }
+      setProducts(prev =>
+        append ? [...prev, ...newProducts] : newProducts
+      );
 
-      const data = await getProducts();
+      setPage(pageToLoad);
 
-      if (data && Array.isArray(data)) {
-        setProducts(data);
-        localStorage.setItem("allProducts", JSON.stringify(data));
-        localStorage.setItem("productsFetchedAt", now.toString());
-        setLastFetched(now);
-      } else {
-        console.warn("⚠️ API returned invalid product data.");
-      }
+      // ⭐ FRONTEND hasMore logic
+      setHasMore(newProducts.length === LIMIT);
+      setMode("all");
+
     } catch (err) {
       console.error("❌ Error fetching products:", err);
-
-      const fallback = localStorage.getItem("allProducts");
-      if (fallback) {
-        setProducts(JSON.parse(fallback));
-        console.warn("⚠️ Using cached products due to API error.");
-      }
     } finally {
       setLoading(false);
     }
   };
 
-  // 🔁 Auto refresh every 6 hours
-  useEffect(() => {
-    fetchAllProducts();
-    const interval = setInterval(() => fetchAllProducts(true), REFRESH_INTERVAL);
-    return () => clearInterval(interval);
-  }, []);
+  // 🔹 FETCH BY SUBCATEGORY
+  const fetchBySubCategory = async (
+    categoryId,
+    subCategoryId,
+    pageToLoad = 1,
+    append = false
+  ) => {
+    try {
+      setLoading(true);
 
-  // 🔍 Global Search Logic
-  const handleGlobalSearch = (input) => {
-    setQuery(input);
+      const res = await getProductBySubCategoryId(
+        categoryId,
+        subCategoryId,
+        pageToLoad,
+        LIMIT
+      );
 
-    if (!input.trim()) {
-      setSearchResults([]);
-      return;
+      const newProducts = res?.data || [];
+
+      setProducts(prev =>
+        append ? [...prev, ...newProducts] : newProducts
+      );
+
+      setPage(pageToLoad);
+
+      setCurrentCategory(categoryId);
+      setCurrentSubCategory(subCategoryId);
+
+      // ⭐ FRONTEND hasMore logic
+      setHasMore(newProducts.length === LIMIT);
+      setMode("subcategory");
+
+    } catch (err) {
+      console.error("❌ Error fetching subcategory:", err);
+    } finally {
+      setLoading(false);
     }
-
-    const lowerInput = input.toLowerCase();
-
-    const filtered = products.filter((product) => {
-      const nameMatch = product.productName?.toLowerCase().includes(lowerInput);
-      const descMatch = product.productDescription?.toLowerCase().includes(lowerInput);
-
-      const tagMatch = Array.isArray(product.tags)
-        ? product.tags.some((tag) => tag.toLowerCase().includes(lowerInput))
-        : false;
-
-      return nameMatch || descMatch || tagMatch;
-    });
-
-    setSearchResults(filtered);
   };
+
+  // 🔹 LOAD MORE (for infinite scroll)
+  const loadMore = async () => {
+    if (!hasMore || loading) return;
+
+    const nextPage = page + 1;
+
+    if (mode === "subcategory") {
+      await fetchBySubCategory(
+        currentCategory,
+        currentSubCategory,
+        nextPage,
+        true
+      );
+    } else {
+      await fetchProducts(nextPage, true);
+    }
+  };
+
+  // 🔹 RESET + LOAD ALL PRODUCTS
+  const refreshProducts = () => {
+    setProducts([]);
+    setPage(1);
+    setHasMore(true);
+    fetchProducts(1, false);
+  };
+
+  // 🔹 RESET when switching category
+  const resetProducts = () => {
+    setProducts([]);
+    setPage(1);
+    setHasMore(true);
+  };
+
+  // // 🔹 INITIAL LOAD
+  useEffect(() => {
+    fetchProducts(1);
+  }, []);
 
   return (
     <ProductContext.Provider
       value={{
         products,
         loading,
-        lastFetched,
-        refreshProducts: () => fetchAllProducts(true),
 
-        query,
-        searchResults,
-        handleGlobalSearch,
+        page,
+        hasMore,
+        loadMore,
+
+        fetchProducts,
+        fetchBySubCategory,
+        refreshProducts,
+        resetProducts
       }}
     >
       {children}

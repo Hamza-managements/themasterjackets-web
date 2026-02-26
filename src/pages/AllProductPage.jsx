@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Swal from "sweetalert2";
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
@@ -9,7 +9,7 @@ import {
     ChevronDown,
     ChevronUp
 } from 'lucide-react';
-import { getProducts } from '../utils/ProductServices';
+import { useProducts } from "../context/ProductContext";
 import { FaStar } from 'react-icons/fa';
 
 const CATEGORY_TAG_MAP = {
@@ -173,9 +173,14 @@ const AllProductPage = () => {
     const location = useLocation();
     const params = new URLSearchParams(location.search);
     const colorFilter = params.get("color");
-    const [products, setProducts] = useState([]);
+    const {
+        products,
+        loading,
+        hasMore,
+        loadMore
+    } = useProducts();
+    const loaderRef = useRef(null);
     const [filteredProducts, setFilteredProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [filters, setFilters] = useState({
         style: 'all',
         price: 'all',
@@ -192,22 +197,49 @@ const AllProductPage = () => {
         delivery: true
     });
 
+    useEffect(() => {
+        const node = loaderRef.current;
+        if (!node) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && hasMore && !loading) {
+                    loadMore();
+                }
+            },
+            {
+                root: null,
+                rootMargin: "300px",
+                threshold: 0
+            }
+        );
+
+        observer.observe(node);
+
+        return () => observer.unobserve(node);
+    }, [hasMore, loading, loadMore]);
+
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                setLoading(true);
-                const res = await getProducts();
-                setLoading(false);
-                setProducts(res || []);
-            } catch (error) {
-                Swal.fire("Not Found", "No subcategory found for this URL.", "warning");
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchProducts();
-    }, [slug, colorFilter]);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }, [filters, sortOption]);
+
+
+    // useEffect(() => {
+    //     const fetchProducts = async () => {
+    //         try {
+    //             setLoading(true);
+    //             const res = await getProducts();
+    //             setLoading(false);
+    //             setProducts(res || []);
+    //         } catch (error) {
+    //             Swal.fire("Not Found", "No subcategory found for this URL.", "warning");
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
+    //     fetchProducts();
+    // }, [slug, colorFilter]);
 
     const applyFiltersAndSort = useCallback(() => {
         let filtered = [...products];
@@ -222,10 +254,11 @@ const AllProductPage = () => {
         // Filter by category or slug
         if (filters.category || slug) {
             const selectedCategoryId = categoryMap[filters.category?.toLowerCase()] || categoryMap[slug?.toLowerCase()];
+            console.log("Selected Category ID:", selectedCategoryId);
 
             if (selectedCategoryId) {
                 filtered = filtered.filter(
-                    (p) => p.categoryId === selectedCategoryId
+                    (p) => p.categoryId?._id === selectedCategoryId
                 );
             } else {
                 Swal.warning("⚠️ No matching category ID found for:", filters.category);
@@ -387,7 +420,7 @@ const AllProductPage = () => {
         setAvailableFilters(filteredTags);
     }, [slug]);
 
-    if (loading) {
+    if (loading && products.length === 0) {
         return (
             <div className="flex justify-center items-center min-h-[100vh]">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -689,6 +722,14 @@ const AllProductPage = () => {
                                 );
                             })
                         )}
+                    </div>
+                    <div ref={loaderRef} style={{ height: "60px", textAlign: "center" }}>
+                        {loading && (
+                            <div className="flex justify-center items-center my-4">
+                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                            </div>
+                        )}
+                        {/* {!hasMore && !loading && <p>No more products to load.</p>} */}
                     </div>
                 </main>
             </div>

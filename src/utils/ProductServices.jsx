@@ -37,7 +37,7 @@ const api = axios.create({
   baseURL: process.env.REACT_APP_BACKEND_URL,
 });
 
-export const getProducts = async () => {
+export const getProducts = async (page = 1, limit = 40) => {
   try {
     api.interceptors.request.use((config) => {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -46,7 +46,9 @@ export const getProducts = async () => {
       }
       return config;
     });
-    const response = await api.get('/api/product/fetch-all');
+    const response = await api.get('/api/product/fetch-all', {
+      params: { page, limit }
+    });
     return response.data.data;
   } catch (error) {
     console.warn("Error fetching categories:", error);
@@ -124,7 +126,6 @@ export const addProductVariation = async (productId, currentVariation) => {
       }
       return config;
     });
-    console.log("Adding variation to productId:", productId, "with data:", currentVariation);
     const response = await api.put(
       `/api/product/add-variation/68762589a469c496106e01d4`,
       {
@@ -148,7 +149,6 @@ export const updateProductVariation = async (currentVariation) => {
       }
       return config;
     });
-    console.log("updatung variation to productId:", currentVariation);
     const response = await api.put(`/api/product/update-variation/68762589a469c496106e01d4`, currentVariation);
     return response.data;
   } catch (error) {

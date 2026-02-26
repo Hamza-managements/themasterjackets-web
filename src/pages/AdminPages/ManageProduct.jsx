@@ -16,12 +16,18 @@ const AllProductManagementPage = () => {
   const { refreshProducts } = useProducts();
 
   const emptyVariation = {
-    stockKeepingUnit: "",
+    stockKeepingUnit: "ROWAN-9088",
     variationName: "",
-    productImages: [],
-    productPrice: { originalPrice: 210, discountedPrice: 199, currency: "USD" },
+    productImages: [
+            "https://res.cloudinary.com/dekf5dyng/image/upload/v1764573954/nir8jhaprs4ia4niayh9.jpg",
+            "https://res.cloudinary.com/dekf5dyng/image/upload/v1764573954/orwvwdzax44vrj7tvf8h.jpg",
+            "https://res.cloudinary.com/dekf5dyng/image/upload/v1764573955/lsu2hxolmywiie9mcfee.jpg",
+            "https://res.cloudinary.com/dekf5dyng/image/upload/v1764573955/rqwrdlmr9nccpb2pxsp9.jpg",
+            "https://res.cloudinary.com/dekf5dyng/image/upload/v1764573955/hnmx06tf7peoeailfink.jpg"
+          ],
+    productPrice: { originalPrice: 200, discountedPrice: 199, currency: "USD" },
     stockQuantity: 100,
-    attributes: { color: "BLACK", size: "", material: "Leather", weight: "1.5 Kg" },
+    attributes: { color: "BROWN", size: "", material: "Leather", weight: "1.5 Kg" },
     inventoryStatus: "in stock",
     shipping: { shippingCharges: 0, isFreeShipping: true, estimatedDeliveryDays: 5 },
     ratings: { count: 5 },
@@ -88,9 +94,9 @@ const AllProductManagementPage = () => {
       text: "Your product variation was added successfully.",
     })
     closeVariationModal();
-    setTimeout(() => {
-      window.location.reload();
-    }, 1500);
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 1500);
   };
 
   const handleUpdateVariation = async () => {
@@ -253,14 +259,16 @@ const AllProductManagementPage = () => {
           <div className="modal-content">
             <div className="modal-header">
               <h3>{isEditing ? "Edit Variation" : "Add New Variation"}</h3>
-              {/* <div className="modal-actions">
+
+              <div className="modal-actions">
                 <button
                   onClick={isEditing ? handleUpdateVariation : handleAddVariation}
                   className="btn-primary"
                 >
                   {isEditing ? "Update Variation" : "Add Variation"}
                 </button>
-              </div> */}
+              </div>
+
               <button onClick={closeVariationModal} className="close-btn">×</button>
             </div>
             <div className="modal-body">

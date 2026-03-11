@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useCallback, useContext, useState } from "react";
 import {
   getProductBySubCategoryId,
   getProducts
@@ -22,7 +22,7 @@ export const ProductProvider = ({ children }) => {
   const [currentSubCategory, setCurrentSubCategory] = useState(null);
 
   // 🔹 FETCH PRODUCTS BY CATEGORY
-  const fetchProducts = async (
+  const fetchProducts = useCallback(async (
     categoryId,
     pageToLoad = 1,
     append = false
@@ -34,11 +34,11 @@ export const ProductProvider = ({ children }) => {
 
       const data = await getProducts(pageToLoad, LIMIT, categoryId);
       const newProducts = data?.products || [];
-      
+
       setProducts(prev =>
         append ? [...prev, ...newProducts] : newProducts
       );
-      setTotalProducts(data?.totalProducts || products.length);
+      setTotalProducts(data?.totalProducts);
 
       setPage(pageToLoad);
 
@@ -53,10 +53,10 @@ export const ProductProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // 🔹 FETCH BY SUBCATEGORY
-  const fetchBySubCategory = async (
+  const fetchBySubCategory = useCallback(async (
     categoryId,
     subCategoryId,
     pageToLoad = 1,
@@ -73,15 +73,15 @@ export const ProductProvider = ({ children }) => {
         pageToLoad,
         LIMIT
       );
- 
+
 
       const newProducts = res?.data?.products || [];
-      
+
       setProducts(prev =>
         append ? [...prev, ...newProducts] : newProducts
       );
 
-      setTotalProducts(res?.data?.totalProducts || products.length);
+      setTotalProducts(res?.data?.totalProducts);
 
       setPage(pageToLoad);
 
@@ -96,7 +96,7 @@ export const ProductProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // 🔹 LOAD MORE (INFINITE SCROLL)
   const loadMore = async () => {

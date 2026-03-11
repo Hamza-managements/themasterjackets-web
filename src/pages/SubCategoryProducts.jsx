@@ -249,7 +249,7 @@ const SubCategoryProductPage = () => {
 
         fetchSubcategoryProducts();
 
-    }, [categorySlug, slug]);
+    }, [categorySlug, slug, fetchBySubCategory, fetchProducts]);
 
     useEffect(() => {
 

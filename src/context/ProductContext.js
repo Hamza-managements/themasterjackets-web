@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import {
   getProductBySubCategoryId,
   getProducts
@@ -11,31 +11,40 @@ const LIMIT = 40;
 export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [totalProducts, setTotalProducts] = useState(0)
 
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
-  const [mode, setMode] = useState("all"); 
-  // "all" | "subcategory"
+  const [mode, setMode] = useState("all"); // "all" | "subcategory"
 
   const [currentCategory, setCurrentCategory] = useState(null);
   const [currentSubCategory, setCurrentSubCategory] = useState(null);
 
-  // 🔹 FETCH ALL PRODUCTS
-  const fetchProducts = async (pageToLoad = 1, append = false) => {
+  // 🔹 FETCH PRODUCTS BY CATEGORY
+  const fetchProducts = async (
+    categoryId,
+    pageToLoad = 1,
+    append = false
+  ) => {
     try {
+      if (!categoryId) return;
+
       setLoading(true);
 
-      const data = await getProducts(pageToLoad, LIMIT);
+      const data = await getProducts(pageToLoad, LIMIT, categoryId);
       const newProducts = data?.products || [];
-
+      
       setProducts(prev =>
         append ? [...prev, ...newProducts] : newProducts
       );
+      setTotalProducts(data?.totalProducts || products.length);
 
       setPage(pageToLoad);
 
-      // ⭐ FRONTEND hasMore logic
+      setCurrentCategory(categoryId);
+      setCurrentSubCategory(null);
+
       setHasMore(newProducts.length === LIMIT);
       setMode("all");
 
@@ -54,6 +63,8 @@ export const ProductProvider = ({ children }) => {
     append = false
   ) => {
     try {
+      if (!categoryId || !subCategoryId) return;
+
       setLoading(true);
 
       const res = await getProductBySubCategoryId(
@@ -62,19 +73,21 @@ export const ProductProvider = ({ children }) => {
         pageToLoad,
         LIMIT
       );
+ 
 
-      const newProducts = res?.data || [];
-
+      const newProducts = res?.data?.products || [];
+      
       setProducts(prev =>
         append ? [...prev, ...newProducts] : newProducts
       );
+
+      setTotalProducts(res?.data?.totalProducts || products.length);
 
       setPage(pageToLoad);
 
       setCurrentCategory(categoryId);
       setCurrentSubCategory(subCategoryId);
 
-      // ⭐ FRONTEND hasMore logic
       setHasMore(newProducts.length === LIMIT);
       setMode("subcategory");
 
@@ -85,7 +98,7 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
-  // 🔹 LOAD MORE (for infinite scroll)
+  // 🔹 LOAD MORE (INFINITE SCROLL)
   const loadMore = async () => {
     if (!hasMore || loading) return;
 
@@ -99,35 +112,38 @@ export const ProductProvider = ({ children }) => {
         true
       );
     } else {
-      await fetchProducts(nextPage, true);
+      await fetchProducts(
+        currentCategory,
+        nextPage,
+        true
+      );
     }
   };
 
-  // 🔹 RESET + LOAD ALL PRODUCTS
-  const refreshProducts = () => {
+  // 🔹 REFRESH CURRENT CATEGORY
+  const refreshProducts = async () => {
+    if (!currentCategory) return;
+
     setProducts([]);
     setPage(1);
     setHasMore(true);
-    fetchProducts(1, false);
+
+    await fetchProducts(currentCategory, 1, false);
   };
 
-  // 🔹 RESET when switching category
+  // 🔹 RESET WHEN SWITCHING PAGE
   const resetProducts = () => {
     setProducts([]);
     setPage(1);
     setHasMore(true);
   };
 
-  // // 🔹 INITIAL LOAD
-  useEffect(() => {
-    fetchProducts(1);
-  }, []);
-
   return (
     <ProductContext.Provider
       value={{
         products,
         loading,
+        totalProducts,
 
         page,
         hasMore,
@@ -135,6 +151,7 @@ export const ProductProvider = ({ children }) => {
 
         fetchProducts,
         fetchBySubCategory,
+
         refreshProducts,
         resetProducts
       }}

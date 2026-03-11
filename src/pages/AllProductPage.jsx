@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useContext } from 'react';
 import Swal from "sweetalert2";
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useProducts } from "../context/ProductContext";
 import { FaStar } from 'react-icons/fa';
+import { AuthContext } from '../context/AuthContext';
 
 const CATEGORY_TAG_MAP = {
     "biker-jackets": [
@@ -167,6 +168,13 @@ const CATEGORY_TAG_MAP = {
     ]
 };
 
+const categoryMap = {
+    "men": "68ac23c0146f4993994f41b2",
+    "women": "68ad7a27010f07c1100d3e56",
+    "new-in": "68ad9ab6010f07c1100d3f1e",
+    "halloween": "68da47a52dd010a7a0b6cf3f",
+};
+
 const AllProductPage = () => {
     const navigate = useNavigate();
     const { slug } = useParams();
@@ -177,8 +185,11 @@ const AllProductPage = () => {
         products,
         loading,
         hasMore,
-        loadMore
+        loadMore,
+        fetchProducts,
+        totalProducts
     } = useProducts();
+    const { user } = useContext(AuthContext);
     const loaderRef = useRef(null);
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [filters, setFilters] = useState({
@@ -196,6 +207,16 @@ const AllProductPage = () => {
         color: true,
         delivery: true
     });
+
+
+    useEffect(() => {
+        const categoryId = categoryMap[slug?.toLowerCase()];
+
+        if (!categoryId) return;
+
+        fetchProducts(categoryId, 1);
+
+    }, [slug, fetchProducts]);
 
     useEffect(() => {
         const node = loaderRef.current;
@@ -225,37 +246,12 @@ const AllProductPage = () => {
     }, [filters, sortOption]);
 
 
-    // useEffect(() => {
-    //     const fetchProducts = async () => {
-    //         try {
-    //             setLoading(true);
-    //             const res = await getProducts();
-    //             setLoading(false);
-    //             setProducts(res || []);
-    //         } catch (error) {
-    //             Swal.fire("Not Found", "No subcategory found for this URL.", "warning");
-    //         } finally {
-    //             setLoading(false);
-    //         }
-    //     };
-    //     fetchProducts();
-    // }, [slug, colorFilter]);
-
     const applyFiltersAndSort = useCallback(() => {
         let filtered = [...products];
-
-        const categoryMap = {
-            "men": "68ac23c0146f4993994f41b2",
-            "women": "68ad7a27010f07c1100d3e56",
-            "new-in": "68ad9ab6010f07c1100d3f1e",
-            "halloween": "68da47a52dd010a7a0b6cf3f",
-        };
 
         // Filter by category or slug
         if (filters.category || slug) {
             const selectedCategoryId = categoryMap[filters.category?.toLowerCase()] || categoryMap[slug?.toLowerCase()];
-            console.log("Selected Category ID:", selectedCategoryId);
-
             if (selectedCategoryId) {
                 filtered = filtered.filter(
                     (p) => p.categoryId?._id === selectedCategoryId
@@ -617,7 +613,12 @@ const AllProductPage = () => {
                                 {slug?.replace(/-/g, " ").replace(/\b\w/g, (char) => char?.toUpperCase())}
                             </h1>
                             <div className="results-count">
-                                {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'}
+                                {user?.role === "admin" &&
+                                    (loading
+                                        ? "Loading products..."
+                                        : `Showing ${filteredProducts.length} of ${totalProducts} ${totalProducts === 1 ? "Product" : "Products"
+                                        }`)
+                                }
                                 {hasActiveFilters() && ' (Filtered)'}
                             </div>
                         </div>
@@ -726,7 +727,8 @@ const AllProductPage = () => {
                     <div ref={loaderRef} style={{ height: "60px", textAlign: "center" }}>
                         {loading && (
                             <div className="flex justify-center items-center my-4">
-                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                                {/* <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div> */}
+                                <p>Loading..</p>
                             </div>
                         )}
                         {/* {!hasMore && !loading && <p>No more products to load.</p>} */}

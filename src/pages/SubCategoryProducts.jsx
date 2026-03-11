@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useContext } from 'react';
 import Swal from "sweetalert2";
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -12,6 +12,7 @@ import {
 import { fetchCategoriesAll } from '../utils/CartUtils';
 import { FaStar } from 'react-icons/fa';
 import { useProducts } from '../context/ProductContext';
+import { AuthContext } from '../context/AuthContext';
 
 const CATEGORY_TAG_MAP = {
     "biker-jackets": [
@@ -190,12 +191,13 @@ const SubCategoryProductPage = () => {
     const navigate = useNavigate();
     const { categorySlug, slug } = useParams();
 
-    const { products, loading, hasMore, loadMore, resetProducts } = useProducts();
+    const { products, loading, hasMore, loadMore, fetchProducts, fetchBySubCategory, totalProducts } = useProducts();
 
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [matchedSubCategoryId, setMatchedSubCategoryId] = useState(null);
     const [filters, setFilters] = useState({ style: "all", price: "all", color: "all", delivery: "all" });
     const [sortOption, setSortOption] = useState("featured");
+    const { user } = useContext(AuthContext);
     const [showFilters, setShowFilters] = useState(false);
     const [expandedSections, setExpandedSections] = useState({ style: true, price: true, color: true, delivery: true });
     const [availableFilters, setAvailableFilters] = useState([]);
@@ -204,8 +206,6 @@ const SubCategoryProductPage = () => {
     useEffect(() => {
         const fetchSubcategoryProducts = async () => {
 
-            // 🔥 RESET EVERYTHING FIRST
-            resetProducts();
             setFilteredProducts([]);
 
             try {
@@ -223,7 +223,16 @@ const SubCategoryProductPage = () => {
                         matchedCategory?.subCategories.find(
                             s => s.slug === slug
                         );
-                    setMatchedSubCategoryId(matchedSubCategory?._id || null);
+
+                    if (matchedCategory && matchedSubCategory) {
+                        setMatchedSubCategoryId(matchedSubCategory?._id || null);
+                        console.log("fethicnsnss sub")
+                        fetchBySubCategory(matchedCategory._id, matchedSubCategory._id);
+                    }
+
+                } else {
+                    console.log("fsfsfsfsfsf all")
+                    fetchProducts("68ac23c0146f4993994f41b2", 1);
 
                 }
 
@@ -243,6 +252,7 @@ const SubCategoryProductPage = () => {
     }, [categorySlug, slug]);
 
     useEffect(() => {
+
         const node = loaderRef.current;
         if (!node) return;
 
@@ -264,20 +274,18 @@ const SubCategoryProductPage = () => {
         return () => observer.unobserve(node);
     }, [hasMore, loading, loadMore]);
 
-
     // Apply filtering & sorting
     const applyFiltersAndSort = useCallback(() => {
         let filtered = [...products];
-        if (slug !== "new-arrivals") {
-            filtered = filtered.filter(product =>
-                product.categoryId?.slug === categorySlug
-            );
-        } else {
-            console.log("Applying new arrivals filter", filtered);
+        // if (slug !== "new-arrivals") {
+        //     filtered = filtered.filter(product =>
+        //         product.categoryId?.slug === categorySlug
+        //     );
+        // } 
+        if (slug === "new-arrivals") {
             filtered = filtered.filter(product =>
                 product.attributes?.badge === "New Arrival" || product.attributes?.badge === "new arrival" || product.attributes?.badge === "new-arrival"
             );
-            console.log("Applied new arrivals filter", filtered);
         }
 
         if (matchedSubCategoryId) {
@@ -341,9 +349,9 @@ const SubCategoryProductPage = () => {
         });
 
         setFilteredProducts(filtered);
-    }, [products, filters, sortOption]);
+    }, [products, filters, sortOption, matchedSubCategoryId, slug]);
 
-    useEffect(() => { if (products.length) applyFiltersAndSort(); }, [products, applyFiltersAndSort]);
+    useEffect(() => { if (products.length) {applyFiltersAndSort(); console.log("aaaaaplying gilter")} }, [products, applyFiltersAndSort]);
 
     // Handlers
     const handleFilterChange = (type, value) => setFilters(prev => ({ ...prev, [type]: value }));
@@ -577,7 +585,12 @@ const SubCategoryProductPage = () => {
                                 {slug?.replace(/-/g, " ").replace(/\b\w/g, (char) => char?.toUpperCase())}
                             </h1>
                             <div className="results-count">
-                                {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'}
+                                {user?.role === "admin" &&
+                                    (loading
+                                        ? "Loading products..."
+                                        : `Showing ${filteredProducts.length} of ${totalProducts} ${totalProducts === 1 ? "Product" : "Products"
+                                        }`)
+                                }
                                 {hasActiveFilters() && ' (Filtered)'}
                             </div>
                         </div>
@@ -683,10 +696,11 @@ const SubCategoryProductPage = () => {
                             })
                         )}
                     </div>
-                    <div ref={loaderRef} className="min-h-[200px] flex items-center justify-center">
+                    <div ref={loaderRef} style={{ height: "60px", textAlign: "center" }}>
                         {loading && (
                             <div className="flex justify-center items-center my-4">
-                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                                {/* <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div> */}
+                                <p>Loading..</p>
                             </div>
                         )}
                         {/* {!hasMore && !loading && <p>No more products to load.</p>} */}

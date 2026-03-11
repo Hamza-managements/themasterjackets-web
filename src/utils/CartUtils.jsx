@@ -1,7 +1,8 @@
 import axios from 'axios';
 //////////////////////////// Category fetching with token handling ////////////////////////////
 const api = axios.create({
-  baseURL: process.env.REACT_APP_BACKEND_URL,
+  // baseURL: process.env.REACT_APP_BACKEND_URL,
+  baseURL: "https://the-master-jackets-b881387dd0c5.herokuapp.com",
 });
 
 // Cart APIs ////////////////////////////

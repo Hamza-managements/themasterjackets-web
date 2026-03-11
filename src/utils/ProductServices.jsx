@@ -34,10 +34,11 @@ export const getRelatedProducts = async (category) => {
 
 ////////////////////////////REAL API DATA
 const api = axios.create({
-  baseURL: process.env.REACT_APP_BACKEND_URL,
+  // baseURL: process.env.REACT_APP_BACKEND_URL,
+  baseURL: "https://the-master-jackets-b881387dd0c5.herokuapp.com",
 });
 
-export const getProducts = async (page = 1, limit = 40) => {
+export const getProducts = async (page = 1, limit = 40, categoryId = "68ac23c0146f4993994f41b2") => {
   try {
     api.interceptors.request.use((config) => {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -46,7 +47,7 @@ export const getProducts = async (page = 1, limit = 40) => {
       }
       return config;
     });
-    const response = await api.get('/api/product/fetch-all', {
+    const response = await api.get(`/api/product/fetch-all?categoryId=${categoryId}`, {
       params: { page, limit }
     });
     return response.data.data;
@@ -100,7 +101,7 @@ export const updateProduct = async (formData) => {
   }
 };
 
-export const getProductBySubCategoryId = async (CategoryId, SubCategoryId) => {
+export const getProductBySubCategoryId = async (CategoryId, SubCategoryId, page = 1, limit = 40,) => {
   try {
     api.interceptors.request.use((config) => {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -109,7 +110,17 @@ export const getProductBySubCategoryId = async (CategoryId, SubCategoryId) => {
       }
       return config;
     });
-    const response = await api.get(`/api/product/fetch-by-sub-category?categoryId=${CategoryId}&subCategoryId=${SubCategoryId}`);
+    const response = await api.get(
+      "/api/product/fetch-by-sub-category",
+      {
+        params: {
+          categoryId: CategoryId,
+          subCategoryId: SubCategoryId,
+          page,
+          limit
+        }
+      }
+    );
     return response.data;
   } catch (error) {
     console.warn("Error fetching product by SubId:", error);

@@ -13,18 +13,10 @@ const FeaturedProductsCarousel = ({ title = "Featured Products" }) => {
   const [products, setProducts] = useState([]);
   useEffect(() => {
     const product = async () => {
-      const cachedProducts = localStorage.getItem("allProducts");
-
-      if (cachedProducts) {
-        const parsed = JSON.parse(cachedProducts);
-        const featured = parsed.slice(0, 8);
-        setProducts(featured);
-      }
-
       const data = await getProducts();
 
-      if (data && Array.isArray(data)) {
-        const featured = data.slice(0, 8);
+      if (data) {
+        const featured = data?.products.slice(0, 8);
         setProducts(featured);
 
         // Update cache for next time

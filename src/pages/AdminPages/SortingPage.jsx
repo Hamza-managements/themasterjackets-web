@@ -103,11 +103,11 @@ export default function ProductSort() {
 
     // ✅ 2. Fetch products WHEN category changes
     useEffect(() => {
-        if (selectedCategory) {
-            fetchProducts(selectedCategory);
-            setLastFetched(new Date());
-        }
-    }, [selectedCategory]);
+        if (!selectedCategory) return;
+
+        fetchProducts(selectedCategory);
+        setLastFetched(new Date());
+    }, [selectedCategory, fetchProducts]);
 
     // ✅ 3. Sync products → local reorder state
     useEffect(() => {

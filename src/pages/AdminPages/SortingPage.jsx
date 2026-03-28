@@ -18,7 +18,7 @@ import { useProducts } from "../../context/ProductContext";
 import { SortProducts } from "../../utils/ProductServices";
 import { fetchCategoriesAll } from "../../utils/CartUtils";
 import { Link, useNavigate } from "react-router-dom";
-import { RotateCw, Plus, ChevronLeft, Grid3x3, Layers, Package, DollarSign, TrendingUp, GripVertical } from "lucide-react";
+import { RotateCw, Plus, ChevronLeft, Grid3x3, Layers, Package, GripVertical } from "lucide-react";
 
 // 🔹 Sortable Item Component - Smaller & Compact
 function SortableItem({ product }) {
@@ -144,7 +144,7 @@ export default function ProductSort() {
                 }))
             };
 
-            const data = await SortProducts(payload);
+            await SortProducts(payload);
             alert("Order updated successfully!");
         } catch (err) {
             console.error(err);

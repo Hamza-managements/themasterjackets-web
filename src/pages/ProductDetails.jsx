@@ -49,7 +49,7 @@ const ProductDetails = () => {
       if (fetchedProduct) {
         setProduct(fetchedProduct);
         const res = await getProductBySubCategoryId(fetchedProduct.categoryId._id, fetchedProduct.subCategoryId)
-        setRelatedProducts(res?.data);
+        setRelatedProducts(res?.data?.products);
         setSelectedVariation(fetchedProduct.variations?.[0] || null);
         setSelectedColor(fetchedProduct.variations?.[0].attributes.color || null)
         setActiveImage(

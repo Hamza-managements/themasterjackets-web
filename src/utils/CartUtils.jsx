@@ -140,6 +140,8 @@ export async function deleteUser(userId) {
   }
 }
 
+///////////////////////////Categories////
+
 export async function fetchCategoriesAll() {
   try {
     api.interceptors.request.use((config) => {

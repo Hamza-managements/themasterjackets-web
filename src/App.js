@@ -36,6 +36,7 @@ import { CartProvider } from './context/CartContext';
 import { setFullFaviconSet } from './utils/setFullFaviconSet';
 import OrderPage from './pages/UserOrderDetail';
 import AdminOrderDetails from './pages/AdminPages/AdminOrderDetails';
+import ProductSort from './pages/AdminPages/SortingPage';
 // import AccountSettings from './components/AccountsSettings';
 
 function App() {
@@ -98,6 +99,7 @@ function App() {
                 <Route path="manage-single-product/:productId" element={<ProductManagementPage />} />
                 <Route path="api-testing" element={<APITestingPage />} />
                 <Route path="orders/:orderId" element={<AdminOrderDetails />} />
+                <Route path="product-sorting" element={<ProductSort />} />                
                 {/* <Route path="/account/settings" element={<PrivateRoute> <AccountSettings /> </PrivateRoute> } /> */}
               </Route>
 

@@ -33,6 +33,7 @@ export const ProductProvider = ({ children }) => {
       setLoading(true);
 
       const data = await getProducts(pageToLoad, LIMIT, categoryId);
+      console.log(data)
       const newProducts = data?.products || [];
 
       setProducts(prev =>

@@ -533,6 +533,14 @@ const AdminDashboard = () => {
                                             ➕ Add Product
                                         </Link>
                                     </div>
+                                    <div className="flex flex-wrap gap-3">
+                                        <Link to="/admin/product-sorting"
+                                            className="inline-flex text-decoration-none items-center gap-2 px-4 py-3 rounded-3xl bg-blue-600 text-white font-medium shadow-md hover:bg-blue-700 hover:shadow-lg active:scale-95 transition-all duration-200 ease-in-out"
+                                        >
+                                            <FiMenu size={20} className="text-lg" />
+                                            Sort Products
+                                        </Link>
+                                    </div>
                                     {user.userName.toLowerCase() === "hamza shahid" && (
                                         <div className="flex flex-wrap gap-3">
                                             {/* Manage Product Button */}

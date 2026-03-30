@@ -49,7 +49,7 @@ export const getProducts = async (page = 1, limit = 48, categoryId = "68ac23c014
     });
     const response = await api.get(`/api/product/fetch-all?categoryId=${categoryId}`, {
       params: { page, limit }
-    });    
+    });
     return response.data.data;
   } catch (error) {
     console.warn("Error fetching categories:", error);
@@ -198,6 +198,24 @@ export const SortProducts = async (payload) => {
     return response.data;
   } catch (error) {
     console.warn("❌ Error on Sorting Products:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+
+export const resetProductDisplayOrder = async () => {
+  try {
+    api.interceptors.request.use((config) => {
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    });
+    const response = await api.post('/api/product/reset-order');
+    return response.data;
+  } catch (error) {
+    console.warn("❌ Error on resetting Product Order:", error.response?.data || error.message);
     throw error;
   }
 };

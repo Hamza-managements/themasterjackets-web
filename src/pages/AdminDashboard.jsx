@@ -434,15 +434,15 @@ const AdminDashboard = () => {
 
                                     {/* Men's Collection */}
                                     <Link
-                                        to="/products/men/all"
+                                        to="/admin/product-sorting"
                                         className={`
       ${darkMode ? 'dark bg-gray-800 text-white border-2 border-gray-700' : 'bg-white text-gray-900 border-2 border-gray-400'}
       p-5 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer text-center flex flex-col items-center gap-2
     `}
                                     >
-                                        <h4 className="text-lg font-semibold">Men's Collection</h4>
+                                        <h4 className="text-lg font-semibold">Sort Products</h4>
                                         <p className={`${darkMode ? "text-gray-300" : "text-gray-500"} text-sm`}>
-                                            Browse all men's products
+                                            Organize and sort your products
                                         </p>
                                     </Link>
 

@@ -15,13 +15,12 @@ import {
 
 import { CSS } from "@dnd-kit/utilities";
 import { useProducts } from "../../context/ProductContext";
-import { SortProducts } from "../../utils/ProductServices";
+import { resetProductDisplayOrder, SortProducts } from "../../utils/ProductServices";
 import { fetchCategoriesAll } from "../../utils/CartUtils";
 import { Link, useNavigate } from "react-router-dom";
-import { RotateCw, Plus, ChevronLeft, Grid3x3, Layers, Package, GripVertical } from "lucide-react";
+import { ChevronLeft, Layers, GripVertical } from "lucide-react";
 
-// 🔹 Sortable Item Component - Smaller & Compact
-function SortableItem({ product }) {
+function SortableItem({ product, isHighlighted }) {
     const {
         attributes,
         listeners,
@@ -34,6 +33,7 @@ function SortableItem({ product }) {
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
+        border: isHighlighted ? "2px solid #22c55e" : undefined
     };
 
     return (
@@ -44,7 +44,7 @@ function SortableItem({ product }) {
             {...listeners}
             className={`
                 bg-gradient-to-r from-gray-900 to-gray-800 
-                border border-gray-700 rounded-lg p-3 mb-2 
+                rounded-lg p-3 mb-2 
                 flex items-center justify-between cursor-grab
                 hover:border-gray-600 transition-all duration-200
                 ${isDragging ? 'shadow-xl scale-[1.02] opacity-80' : 'shadow-md'}
@@ -58,38 +58,34 @@ function SortableItem({ product }) {
                 />
                 <div>
                     <h3 className="text-white text-sm font-medium line-clamp-1">{product.productName}</h3>
-                    {product.price && (
-                        <p className="text-gray-400 text-xs">${product.price}</p>
-                    )}
+                </div>
+                <div>
+                    <h3 className="text-white text-sm font-medium line-clamp-1">{product.parentStockKeepingUnit}</h3>
                 </div>
             </div>
-            <div className="text-gray-500">
-                <GripVertical className="w-4 h-4" />
-            </div>
+            <GripVertical className="w-4 h-4 text-gray-500" />
         </div>
     );
 }
 
 export default function ProductSort() {
-    const { products, loading, fetchProducts, hasMore, loadMore } = useProducts();
+    const { products, loading, fetchProducts, } = useProducts();
     const navigate = useNavigate();
-    const [lastFetched, setLastFetched] = useState(null);
-    const loaderRef = useRef(null);
 
     const sensors = useSensors(
-        useSensor(PointerSensor, {
-            activationConstraint: {
-                distance: 5,
-            },
-        })
+        useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
     );
 
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState("");
     const [orderedProducts, setOrderedProducts] = useState([]);
     const [saving, setSaving] = useState(false);
+    const [reseting, setReseting] = useState(false);
 
-    // ✅ 1. Fetch categories ONCE
+    // 🔹 Search state
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchResultIndex, setSearchResultIndex] = useState(null);
+
     useEffect(() => {
         const loadCategories = async () => {
             try {
@@ -102,73 +98,49 @@ export default function ProductSort() {
         loadCategories();
     }, []);
 
-    // ✅ 2. Fetch products WHEN category changes
     useEffect(() => {
         if (!selectedCategory) return;
-
         fetchProducts(selectedCategory, 200);
-        setLastFetched(new Date());
     }, [selectedCategory, fetchProducts]);
 
     useEffect(() => {
-        const node = loaderRef.current;
-        if (!node) return;
-
-        const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0].isIntersecting && hasMore && !loading) {
-                    loadMore();
-                }
-            },
-            {
-                root: null,
-                rootMargin: "300px",
-                threshold: 0
-            }
-        );
-
-        observer.observe(node);
-
-        return () => observer.unobserve(node);
-    }, [hasMore, loading, loadMore]);
-
-    // ✅ 3. Sync products → local reorder state
-    useEffect(() => {
-        if (products?.length) {
-            setOrderedProducts(products);
-        }
+        if (products?.length) setOrderedProducts(products);
     }, [products]);
+
+    // 🔹 Search logic
+    useEffect(() => {
+        if (!searchQuery) {
+            setSearchResultIndex(null);
+            return;
+        }
+        const idx = orderedProducts.findIndex(p =>
+            p.productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            p.parentStockKeepingUnit.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        setSearchResultIndex(idx !== -1 ? idx : null);
+    }, [searchQuery, orderedProducts]);
 
     // 🔹 Drag logic
     const handleDragEnd = (event) => {
         const { active, over } = event;
         if (!over || active.id === over.id) return;
 
-        setOrderedProducts((prev) => {
+        setOrderedProducts(prev => {
             const oldIndex = prev.findIndex(p => p._id === active.id);
             const newIndex = prev.findIndex(p => p._id === over.id);
             return arrayMove(prev, oldIndex, newIndex);
         });
     };
 
-    // 🔹 Save with categoryId
+    // 🔹 Save logic
     const handleSave = async () => {
-        if (!selectedCategory) {
-            alert("Please select a category first");
-            return;
-        }
-
+        if (!selectedCategory) return alert("Select a category first");
         setSaving(true);
         try {
             const payload = {
                 categoryId: selectedCategory,
-                products: orderedProducts.map((p) => ({
-                    productId: p._id
-                }))
+                products: orderedProducts.map(p => ({ productId: p._id }))
             };
-
-            console.log("Saving order with payload:", payload);
-
             await SortProducts(payload);
             alert("Order updated successfully!");
         } catch (err) {
@@ -179,163 +151,168 @@ export default function ProductSort() {
         }
     };
 
-    // 🔹 Refresh products
-    const refreshProducts = () => {
-        if (selectedCategory) {
-            fetchProducts(selectedCategory, 150);
-            setLastFetched(new Date());
+    const handleReset = async () => {
+        if (!selectedCategory) return alert("Please select a category first");
+
+        if (!window.confirm("Are you sure you want to reset the order for this category?")) return;
+
+        setReseting(true);
+
+        try {
+            // Call your backend API that resets the category order
+            await resetProductDisplayOrder();
+
+            alert("Order has been reset!");
+            // Re-fetch products to reflect the reset
+            fetchProducts(selectedCategory, 200);
+        } catch (err) {
+            console.error(err);
+            alert("Failed to reset order.");
         }
+        finally {
+            setReseting(false);
+        }
+    };
+
+    // 🔹 Move selected product to top/bottom
+    const pushToTop = () => {
+        if (searchResultIndex === null) return;
+        setOrderedProducts(prev => {
+            const item = prev.splice(searchResultIndex, 1)[0];
+            return [item, ...prev];
+        });
+        setSearchQuery(""); // Clear search after moving
+    };
+
+    const pushToBottom = () => {
+        if (searchResultIndex === null) return;
+        setOrderedProducts(prev => {
+            const item = prev.splice(searchResultIndex, 1)[0];
+            return [...prev, item];
+        });
+        setSearchQuery(""); // Clear search after moving
     };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 overflow-y-auto scroll-smooth">
-            {/* Modern Header - Compact */}
+            {/* Header */}
             <div className="sticky top-0 z-50 bg-gradient-to-r from-gray-900/95 to-gray-800/95 backdrop-blur-xl border-b border-gray-700/50">
-                <div className="max-w-7xl mx-auto px-4 py-3">
-                    {/* Top Bar - Compact */}
-                    <div className="flex justify-between items-center">
-                        <button
-                            onClick={() => navigate('/admin/dashboard')}
-                            className="flex items-center gap-1.5 text-gray-400 hover:text-white transition-colors text-sm"
-                        >
-                            <ChevronLeft size={16} />
-                            <span>Back</span>
-                        </button>
+                <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+                    <button
+                        onClick={() => navigate('/admin/dashboard')}
+                        className="flex items-center gap-1.5 text-gray-400 hover:text-white transition-colors text-sm"
+                    >
+                        <ChevronLeft size={16} />
+                        <span>Back</span>
+                    </button>
+                    <Link to="/" target="_blank" className="flex items-center gap-2 group">
+                        <img
+                            src="https://res.cloudinary.com/dekf5dyng/image/upload/v1761554899/TMJ_logo_dark_kyarf4.png"
+                            alt="TMJ Logo"
+                            className="h-8 w-auto object-contain transition-transform group-hover:scale-105 duration-300"
+                        />
+                    </Link>
+                    <div className="flex items-center gap-2">
+                        {selectedCategory && !loading && (
+                            <>
+                                <button
+                                    onClick={handleSave}
+                                    disabled={saving || !selectedCategory || orderedProducts.length === 0}
+                                    className={`${(saving) ? 'cursor-not-allowed text-white' : 'bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded'}`}
+                                >
+                                    {saving ? (
+                                        "Saving..."
+                                    ) : (
+                                        "Save"
+                                    )}
+                                </button>
 
-                        <Link to="/" target="_blank" className="flex items-center gap-2 group">
-                            <img
-                                src="https://res.cloudinary.com/dekf5dyng/image/upload/v1761554899/TMJ_logo_dark_kyarf4.png"
-                                alt="TheMasterJacketsLOGO"
-                                className="h-8 w-auto object-contain transition-transform group-hover:scale-105 duration-300"
-                            />
-                        </Link>
-
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={refreshProducts}
-                                disabled={!selectedCategory}
-                                className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg transition-all duration-200 border border-gray-700 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                <RotateCw size={14} />
-                                <span className="hidden sm:inline text-xs">Refresh</span>
-                            </button>
-                            <button
-                                onClick={() => navigate("/admin/add-product")}
-                                className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 shadow-md text-sm"
-                            >
-                                <Plus size={14} />
-                                <span className="hidden sm:inline">Add</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Title Section - Compact */}
-                    <div className="mt-3">
-                        <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                            Products Sorting
-                        </h1>
-                        <p className="text-gray-400 text-xs mt-1">
-                            Drag and drop to reorder your product catalog
-                        </p>
-                        <p className="text-xs text-gray-500 mt-0.5">
-                            Last updated: {lastFetched ? new Date(lastFetched).toLocaleString() : "Never"}
-                        </p>
+                                <button
+                                    onClick={handleReset}
+                                    disabled={reseting || !selectedCategory}
+                                    className={`${(reseting) ? 'cursor-not-allowed text-white' : 'bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded'}`}
+                                >
+                                    {reseting ? (
+                                        "Resetting..."
+                                    ) : (
+                                        "Reset Order"
+                                    )}
+                                </button>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
 
-            {/* Main Content - Compact */}
+            {/* Main Content */}
             <div className="max-w-4xl mx-auto px-4 py-6">
-                {/* Category Selector - Compact */}
-                <div className="bg-gradient-to-r from-gray-800/50 to-gray-900/50 rounded-xl p-4 mb-6 border border-gray-700/50 backdrop-blur-sm">
+                {/* Category */}
+                <div className="mb-4">
                     <label className="block text-gray-300 text-sm font-medium mb-2">Select Category</label>
                     <select
                         value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                        className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                        onChange={e => setSelectedCategory(e.target.value)}
+                        className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm"
                     >
-                        <option value="">Choose a category to reorder products</option>
-                        {categories.map((cat) => (
-                            <option key={cat._id} value={cat._id}>
-                                {cat.mainCategoryName}
-                            </option>
+                        <option value="">Choose a category</option>
+                        {categories.map(cat => (
+                            <option key={cat._id} value={cat._id}>{cat.mainCategoryName}</option>
                         ))}
                     </select>
                 </div>
 
-                {/* Drag and Drop List - Compact */}
+                {/* Search Bar + Buttons */}
                 {selectedCategory && (
-                    <div className="bg-gray-900/50 rounded-xl p-4 border border-gray-700/50 backdrop-blur-sm">
-                        <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-base font-semibold text-white">Reorder Products</h2>
-                            <div className="flex items-center gap-1.5 text-xs text-gray-400">
-                                <Grid3x3 className="w-3.5 h-3.5" />
-                                <span>Drag to reorder</span>
-                            </div>
-                        </div>
-
-                        {orderedProducts.length === 0 ? (
-                            <div className="text-center py-8">
-                                <Package className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                                <p className="text-gray-400 text-sm">No products found in this category</p>
-                            </div>
-                        ) : (
-                            <DndContext
-                                sensors={sensors}
-                                collisionDetection={closestCenter}
-                                onDragEnd={handleDragEnd}
-                            >
-                                <SortableContext
-                                    items={orderedProducts.map(p => p._id)}
-                                    strategy={verticalListSortingStrategy}
-                                >
-                                    <div className="space-y-2 max-h-[60vh] overflow-y-auto scroll-smooth pr-1">
-                                        {orderedProducts.map((product) => (
-                                            <SortableItem key={product._id} product={product} />
-                                        ))}
-                                    </div>
-                                </SortableContext>
-                            </DndContext>
-                        )}
-
-                        {/* Save Button - Compact */}
-                        {!loading && !hasMore &&
-                            <button
-                                onClick={handleSave}
-                                disabled={saving || !selectedCategory || orderedProducts.length === 0}
-                                className={`
-                                w-full mt-5 py-2.5 rounded-lg font-medium text-sm transition-all duration-200
-                                ${(saving || !selectedCategory || orderedProducts.length === 0)
-                                        ? 'bg-gray-700 cursor-not-allowed text-gray-400'
-                                        : 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-md'
-                                    }
-                            `}
-                            >
-                                {saving ? (
-                                    <div className="flex items-center justify-center gap-2">
-                                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                        Saving...
-                                    </div>
-                                ) : (
-                                    "Save Order"
-                                )}
-                            </button>
-                        }
-
+                    <div className="flex flex-col sm:flex-row gap-2 mb-4">
+                        <input
+                            type="text"
+                            placeholder="Search product..."
+                            value={searchQuery}
+                            onChange={e => setSearchQuery(e.target.value)}
+                            className="flex-1 px-3 py-2 rounded-lg bg-gray-800 text-white text-sm border border-gray-700"
+                        />
+                        <button onClick={pushToTop} disabled={searchResultIndex === null} className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm">
+                            Push to Top
+                        </button>
+                        <button onClick={pushToBottom} disabled={searchResultIndex === null} className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm">
+                            Push to Bottom
+                        </button>
                     </div>
                 )}
 
-                <div ref={loaderRef} style={{ height: "60px", textAlign: "center" }}>
-                    <div className="flex justify-center items-center my-4 text-white">
-                        {loading ? (
-                            <p>Loading More Products..</p>
-                        ) : (
-                            <p style={{ visibility: "hidden" }}>Placeholder</p>
-                        )}
-                    </div>
-                </div>
+                {/* Highlight info */}
+                {searchResultIndex !== null && (
+                    <p className="text-green-400 text-sm mb-2">
+                        "{orderedProducts[searchResultIndex].productName}" is at position #{searchResultIndex + 1}
+                    </p>
+                )}
 
-                {/* Empty State for No Category - Compact */}
+                {loading ? (
+                    <div className="text-center py-12">
+                        <p className="text-gray-400">Loading products...</p>
+                    </div>
+                ) : (
+                    selectedCategory && (
+                        <DndContext
+                            sensors={sensors}
+                            collisionDetection={closestCenter}
+                            onDragEnd={handleDragEnd}
+                        >
+                            <SortableContext items={orderedProducts.map(p => p._id)} strategy={verticalListSortingStrategy}>
+                                <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-1">
+                                    {orderedProducts.map((product, index) => (
+                                        <SortableItem
+                                            key={product._id}
+                                            product={product}
+                                            isHighlighted={index === searchResultIndex}
+                                        />
+                                    ))}
+                                </div>
+                            </SortableContext>
+                        </DndContext>
+                    )
+                )}
+
                 {!selectedCategory && (
                     <div className="text-center py-12">
                         <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-800 rounded-xl mb-4">
@@ -346,6 +323,6 @@ export default function ProductSort() {
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     );
 }

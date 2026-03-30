@@ -231,7 +231,7 @@ const SubCategoryProductPage = () => {
                     }
 
                 } else {
-                    fetchProducts("68ac23c0146f4993994f41b2",0, 1);
+                    fetchProducts("68ac23c0146f4993994f41b2", 0, 1);
                 }
 
                 const tags =
@@ -247,7 +247,7 @@ const SubCategoryProductPage = () => {
 
         fetchSubcategoryProducts();
 
-    }, [categorySlug, slug]);
+    }, [categorySlug, slug, fetchBySubCategory, fetchProducts]);
 
     useEffect(() => {
         const node = loaderRef.current;
@@ -346,7 +346,7 @@ const SubCategoryProductPage = () => {
         });
 
         setFilteredProducts(filtered);
-    }, [products, filters, sortOption]);
+    }, [products, filters, sortOption, matchedSubCategoryId, categorySlug, slug]);
 
     useEffect(() => { if (products.length) { applyFiltersAndSort(); console.log("aaaaaplying gilter") } }, [products, applyFiltersAndSort]);
 

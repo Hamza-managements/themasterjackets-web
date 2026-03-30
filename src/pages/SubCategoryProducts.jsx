@@ -346,7 +346,7 @@ const SubCategoryProductPage = () => {
         });
 
         setFilteredProducts(filtered);
-    }, [products, filters, sortOption, matchedSubCategoryId, categorySlug, slug]);
+    }, [products, filters, sortOption, categorySlug, slug]);
 
     useEffect(() => { if (products.length) { applyFiltersAndSort(); console.log("aaaaaplying gilter") } }, [products, applyFiltersAndSort]);
 

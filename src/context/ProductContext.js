@@ -34,8 +34,6 @@ export const ProductProvider = ({ children }) => {
       setLoading(true);
 
       let data;
-      console.log("Fetching products for category:", categoryId, "with limit:", sortLimit);
-
       if (sortLimit > 0) {
         data = await getProducts(pageToLoad, sortLimit, categoryId);
       } else {

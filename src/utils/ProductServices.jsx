@@ -185,7 +185,7 @@ export const deleteProductVariation = async (productId, variationId) => {
   }
 };
 
-export const SortProducts = async (payload) => {
+export const SortProducts = async (payload, adminId) => {
   try {
     api.interceptors.request.use((config) => {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -194,7 +194,7 @@ export const SortProducts = async (payload) => {
       }
       return config;
     });
-    const response = await api.post(`/api/product/update/order`, payload);
+    const response = await api.post(`/api/product/update/order/${adminId}`, payload);
     return response.data;
   } catch (error) {
     console.warn("❌ Error on Sorting Products:", error.response?.data || error.message);
@@ -203,7 +203,7 @@ export const SortProducts = async (payload) => {
 };
 
 
-export const resetProductDisplayOrder = async () => {
+export const resetProductDisplayOrder = async (payload, adminId) => {
   try {
     api.interceptors.request.use((config) => {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -212,7 +212,7 @@ export const resetProductDisplayOrder = async () => {
       }
       return config;
     });
-    const response = await api.post('/api/product/reset-order');
+    const response = await api.post(`/api/product/reset/order/${adminId}`, payload);
     return response.data;
   } catch (error) {
     console.warn("❌ Error on resetting Product Order:", error.response?.data || error.message);

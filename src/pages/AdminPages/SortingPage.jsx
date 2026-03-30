@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
     SortableContext,
     verticalListSortingStrategy,
@@ -19,6 +19,7 @@ import { resetProductDisplayOrder, SortProducts } from "../../utils/ProductServi
 import { fetchCategoriesAll } from "../../utils/CartUtils";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronLeft, Layers, GripVertical } from "lucide-react";
+import { AuthContext } from "../../context/AuthContext";
 
 function SortableItem({ product, isHighlighted }) {
     const {
@@ -70,6 +71,7 @@ function SortableItem({ product, isHighlighted }) {
 
 export default function ProductSort() {
     const { products, loading, fetchProducts, } = useProducts();
+    const { user } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const sensors = useSensors(
@@ -141,7 +143,7 @@ export default function ProductSort() {
                 categoryId: selectedCategory,
                 products: orderedProducts.map(p => ({ productId: p._id }))
             };
-            await SortProducts(payload);
+            await SortProducts(payload, user?.uid);
             alert("Order updated successfully!");
         } catch (err) {
             console.error(err);
@@ -160,7 +162,11 @@ export default function ProductSort() {
 
         try {
             // Call your backend API that resets the category order
-            await resetProductDisplayOrder();
+            let payload = {
+                categoryId: selectedCategory
+            };
+            
+            await resetProductDisplayOrder(payload, user?.uid);
 
             alert("Order has been reset!");
             // Re-fetch products to reflect the reset

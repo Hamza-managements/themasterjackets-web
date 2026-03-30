@@ -38,7 +38,7 @@ const api = axios.create({
   baseURL: "https://the-master-jackets-b881387dd0c5.herokuapp.com",
 });
 
-export const getProducts = async (page = 1, limit = 40, categoryId = "68ac23c0146f4993994f41b2") => {
+export const getProducts = async (page = 1, limit = 48, categoryId = "68ac23c0146f4993994f41b2") => {
   try {
     api.interceptors.request.use((config) => {
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');

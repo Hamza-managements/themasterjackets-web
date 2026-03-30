@@ -12,20 +12,6 @@ export default function FeaturedProducts({ title }) {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                // const cachedProducts = localStorage.getItem("allProducts");
-                // if (cachedProducts) {
-                //     const parsed = JSON.parse(cachedProducts);
-                //     const cachedBestSellers = parsed.filter(
-                //         (product) =>
-                //             product?.attributes?.badge?.toLowerCase() === "best seller" ||
-                //             product?.attributes?.badge?.toLowerCase() === "bestseller"
-                //     );
-                //     const featuredFromCache = cachedBestSellers.slice(0, 12);
-                //     setProducts(featuredFromCache);
-                //     setSortedProducts(featuredFromCache);
-                // }
-
-
                 const data = await getProducts();
                 // if (!data || !Array.isArray(data)) return;
                 // localStorage.setItem("allProducts", JSON.stringify(data));

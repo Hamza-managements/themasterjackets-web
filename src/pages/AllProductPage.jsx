@@ -12,6 +12,7 @@ import {
 import { useProducts } from "../context/ProductContext";
 import { FaStar } from 'react-icons/fa';
 import { AuthContext } from '../context/AuthContext';
+import ProductCardSkeleton from '../components/ProductCardSkeleton';
 
 const CATEGORY_TAG_MAP = {
     "biker-jackets": [
@@ -214,7 +215,7 @@ const AllProductPage = () => {
 
         if (!categoryId) return;
 
-        fetchProducts(categoryId, 1);
+        fetchProducts(categoryId, 0, 1);
 
     }, [slug, fetchProducts]);
 
@@ -641,7 +642,7 @@ const AllProductPage = () => {
                     </div>
 
                     <div className="products-grid">
-                        {filteredProducts?.length === 0 ? (
+                        {!loading && filteredProducts?.length === 0 ? (
                             <div className="no-products">
                                 <div className="no-products-content">
                                     <h3>No products found</h3>
@@ -723,6 +724,11 @@ const AllProductPage = () => {
                                 );
                             })
                         )}
+                        {hasMore && loading &&
+                            Array.from({ length: 4 }).map((_, index) => (
+                                <ProductCardSkeleton key={index} />
+                            ))
+                        }
                     </div>
                     <div ref={loaderRef} style={{ height: "60px", textAlign: "center" }}>
                         {loading && (
@@ -1488,6 +1494,110 @@ select:focus-visible,
 
 .product-filters::-webkit-scrollbar-thumb:hover {
     background: #a8a8a8;
+}
+
+
+// Skeleton Loader Styles
+.skeleton-card {
+    pointer-events: none;
+}
+
+.skeleton-card:hover {
+    transform: none !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+}
+
+/* Make card slightly grey so it's visible */
+.skeleton-card {
+    background: #707070 !important;
+}
+
+/* Image block */
+.skeleton-image-block {
+    width: 100%;
+    height: 42vh;
+    background: #707070;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Badge */
+.skeleton-badge {
+    width: 60px;
+    height: 18px;
+    background: #d1d5db !important;
+    border-radius: 4px;
+}
+
+/* Text blocks */
+.skeleton-title,
+.skeleton-price,
+.skeleton-rating {
+    background: #d1d5db;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.skeleton-title {
+    height: 16px;
+    width: 80%;
+    margin: 15px 0 10px;
+}
+
+.skeleton-price {
+    height: 14px;
+    width: 50%;
+    margin-bottom: 10px;
+}
+
+.skeleton-rating {
+    height: 14px;
+    width: 40%;
+    margin-bottom: 12px;
+}
+
+.skeleton-colors {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 15px;
+}
+
+.skeleton-colors span {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #d1d5db;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Shimmer effect */
+.skeleton-image-block::after,
+.skeleton-title::after,
+.skeleton-price::after,
+.skeleton-rating::after,
+.skeleton-badge::after,
+.skeleton-colors span::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150px;
+    height: 100%;
+    width: 150px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,0.7),
+        transparent
+    );
+    animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+    100% {
+        left: 100%;
+    }
 }`}
             </style>
         </div>

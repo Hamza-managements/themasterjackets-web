@@ -231,9 +231,7 @@ const SubCategoryProductPage = () => {
                     }
 
                 } else {
-                    console.log("fsfsfsfsfsf all")
-                    fetchProducts("68ac23c0146f4993994f41b2", 1);
-
+                    fetchProducts("68ac23c0146f4993994f41b2",0, 1);
                 }
 
                 const tags =
@@ -249,10 +247,9 @@ const SubCategoryProductPage = () => {
 
         fetchSubcategoryProducts();
 
-    }, [categorySlug, slug, fetchBySubCategory, fetchProducts]);
+    }, [categorySlug, slug]);
 
     useEffect(() => {
-
         const node = loaderRef.current;
         if (!node) return;
 
@@ -274,25 +271,25 @@ const SubCategoryProductPage = () => {
         return () => observer.unobserve(node);
     }, [hasMore, loading, loadMore]);
 
+
     // Apply filtering & sorting
     const applyFiltersAndSort = useCallback(() => {
         let filtered = [...products];
-        // if (slug !== "new-arrivals") {
-        //     filtered = filtered.filter(product =>
-        //         product.categoryId?.slug === categorySlug
-        //     );
-        // } 
-        if (slug === "new-arrivals") {
+        if (slug !== "new-arrivals") {
+            filtered = filtered.filter(product =>
+                product.categoryId?.slug === categorySlug
+            );
+        } else {
+            console.log("Applying new arrivals filter", filtered);
             filtered = filtered.filter(product =>
                 product.attributes?.badge === "New Arrival" || product.attributes?.badge === "new arrival" || product.attributes?.badge === "new-arrival"
             );
         }
-
-        if (matchedSubCategoryId) {
-            filtered = filtered.filter(product =>
-                product.subCategoryId === matchedSubCategoryId
-            );
-        }
+        // if (matchedSubCategoryId) {
+        //     filtered = filtered.filter(product =>
+        //         product.subCategoryId === matchedSubCategoryId
+        //     );
+        // }
 
         // Style
         if (filters.style !== "all") {
@@ -349,9 +346,9 @@ const SubCategoryProductPage = () => {
         });
 
         setFilteredProducts(filtered);
-    }, [products, filters, sortOption, matchedSubCategoryId, slug]);
+    }, [products, filters, sortOption]);
 
-    useEffect(() => { if (products.length) {applyFiltersAndSort(); console.log("aaaaaplying gilter")} }, [products, applyFiltersAndSort]);
+    useEffect(() => { if (products.length) { applyFiltersAndSort(); console.log("aaaaaplying gilter") } }, [products, applyFiltersAndSort]);
 
     // Handlers
     const handleFilterChange = (type, value) => setFilters(prev => ({ ...prev, [type]: value }));
@@ -613,7 +610,8 @@ const SubCategoryProductPage = () => {
                     </div>
 
                     <div className="products-grid">
-                        {filteredProducts?.length === 0 ? (
+                        {/* No Products State */}
+                        {!loading && filteredProducts?.length === 0 && (
                             <div className="no-products">
                                 <div className="no-products-content">
                                     <h3>No products found</h3>
@@ -623,41 +621,69 @@ const SubCategoryProductPage = () => {
                                     </button>
                                 </div>
                             </div>
-                        ) : (
-                            filteredProducts?.map(product => {
-                                const rating = Math?.max(...product?.variations.map(v => v?.ratings?.count || 0));
+                        )}
+
+                        {/* Product Cards */}
+                        {filteredProducts?.length > 0 &&
+                            filteredProducts.map((product) => {
+                                const variations = product?.variations || [];
+
+                                // ✅ Safe rating calculation
+                                const rating =
+                                    variations.length > 0
+                                        ? Math.max(
+                                            ...variations.map((v) => v?.ratings?.average || 0)
+                                        )
+                                        : 0;
+
+                                const ratingCount =
+                                    variations.length > 0
+                                        ? Math.max(
+                                            ...variations.map((v) => v?.ratings?.count || 0)
+                                        )
+                                        : 0;
+
+                                // ✅ Safe image fallback logic
+                                const mainImage =
+                                    product?.productImages?.[0] ||
+                                    variations?.[0]?.productImages?.[0] ||
+                                    "/placeholder.png";
+
+                                const hoverImage =
+                                    product?.productImages?.[1] ||
+                                    variations?.[0]?.productImages?.[1] ||
+                                    mainImage;
+
+                                const originalPrice =
+                                    variations?.[0]?.productPrice?.originalPrice || null;
+
                                 return (
-                                    <div key={product?._id} className="subcategory-product-card" >
+                                    <div key={product?._id} className="subcategory-product-card">
                                         <div
                                             className="subcategory-product-image"
                                             onClick={() => navigateToProductDetail(product?._id)}
                                         >
                                             <img
-                                                src={
-                                                    product?.productImages?.[0] ||
-                                                    product?.variations?.[0]?.productImages?.[0] ||
-                                                    "/placeholder.png"
-                                                }
+                                                src={mainImage}
                                                 alt={product?.productName || "Product image"}
                                                 className="main-image"
                                             />
+
                                             <img
-                                                src={
-                                                    product?.productImages?.[1] ||
-                                                    product?.variations?.[0]?.productImages?.[1] ||
-                                                    product?.productImages?.[0] ||
-                                                    "/placeholder.png"
-                                                }
+                                                src={hoverImage}
                                                 alt={`${product?.productName || "Product"} - hover`}
                                                 className="hover-image"
                                             />
-                                            <div className="product-badges">
-                                                <span className={`badge badge-sale`}>
-                                                    {/* <Truck size={12} /> */}
-                                                    {product?.attributes?.badge}
-                                                </span>
-                                            </div>
+
+                                            {product?.attributes?.badge && (
+                                                <div className="product-badges">
+                                                    <span className="badge badge-sale">
+                                                        {product.attributes.badge}
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
+
                                         <div className="product-details">
                                             <h3
                                                 className="product-title"
@@ -665,42 +691,54 @@ const SubCategoryProductPage = () => {
                                             >
                                                 {product?.productName}
                                             </h3>
+
                                             <div className="product-price">
                                                 {getProductPriceRange(product)}
-                                                <span className="product-page-original-price">
-                                                    ${product?.variations[0]?.productPrice?.originalPrice}
-                                                </span>
+
+                                                {originalPrice && (
+                                                    <span className="product-page-original-price">
+                                                        ${originalPrice}
+                                                    </span>
+                                                )}
                                             </div>
+
                                             <div className="product-rating">
                                                 <div className="stars">
                                                     {generateStarRating(rating)}
                                                 </div>
-                                                <span className="rating-count">({rating})</span>
+                                                <span className="rating-count">
+                                                    ({ratingCount})
+                                                </span>
                                             </div>
-                                            <div className="product-colors">
-                                                {getProductColors(product)?.map(color => (
-                                                    <span
-                                                        key={color}
-                                                        className="color-chip"
-                                                        style={{
-                                                            backgroundColor: color?.toLowerCase(),
-                                                            border: color?.toLowerCase() === 'white' ? '1px solid #e5e5e5' : 'none'
-                                                        }}
-                                                        title={color}
-                                                    />
-                                                ))}
-                                            </div>
+
+                                            {getProductColors(product)?.length > 0 && (
+                                                <div className="product-colors">
+                                                    {getProductColors(product).map((color) => (
+                                                        <span
+                                                            key={color}
+                                                            className="color-chip"
+                                                            style={{
+                                                                backgroundColor: color?.toLowerCase(),
+                                                                border:
+                                                                    color?.toLowerCase() === "white"
+                                                                        ? "1px solid #e5e5e5"
+                                                                        : "none",
+                                                            }}
+                                                            title={color}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 );
                             })
-                        )}
+                        }
                     </div>
-                    <div ref={loaderRef} style={{ height: "60px", textAlign: "center" }}>
+                    <div ref={loaderRef} className="min-h-[200px] flex items-center justify-center">
                         {loading && (
                             <div className="flex justify-center items-center my-4">
-                                {/* <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div> */}
-                                <p>Loading..</p>
+                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
                             </div>
                         )}
                         {/* {!hasMore && !loading && <p>No more products to load.</p>} */}
@@ -1103,6 +1141,65 @@ const SubCategoryProductPage = () => {
 }
 
 .subcategory-product-card:hover .subcategory-product-image img {
+    transform: scale(1.05);
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+    align-items: start;
+}
+
+/* CARD */
+.subcategory-product-card {
+    background: var(--white);
+    border: 1px solid #f0f0f0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.subcategory-product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+}
+
+/* IMAGE WRAPPER */
+.subcategory-product-image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3/4; /* 🔥 PERFECT ECOMMERCE RATIO */
+    background: var(--beige);
+    overflow: hidden;
+}
+
+/* IMAGES */
+.subcategory-product-image img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 🔥 IMPORTANT */
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* Default state */
+.subcategory-product-image .main-image {
+    opacity: 1;
+}
+
+.subcategory-product-image .hover-image {
+    opacity: 0;
+}
+
+/* Hover swap */
+.subcategory-product-card:hover .main-image {
+    opacity: 0;
+    transform: scale(1.05);
+}
+
+.subcategory-product-card:hover .hover-image {
+    opacity: 1;
     transform: scale(1.05);
 }
 

@@ -6,7 +6,7 @@ import {
 
 const ProductContext = createContext();
 
-const LIMIT = 40;
+const LIMIT = 48;
 
 export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
@@ -24,6 +24,7 @@ export const ProductProvider = ({ children }) => {
   // 🔹 FETCH PRODUCTS BY CATEGORY
   const fetchProducts = useCallback(async (
     categoryId,
+    sortLimit,
     pageToLoad = 1,
     append = false
   ) => {
@@ -32,7 +33,14 @@ export const ProductProvider = ({ children }) => {
 
       setLoading(true);
 
-      const data = await getProducts(pageToLoad, LIMIT, categoryId);
+      let data;
+      console.log("Fetching products for category:", categoryId, "with limit:", sortLimit);
+
+      if (sortLimit > 0) {
+        data = await getProducts(pageToLoad, sortLimit, categoryId);
+      } else {
+        data = await getProducts(pageToLoad, LIMIT, categoryId);
+      }
       console.log(data)
       const newProducts = data?.products || [];
 
@@ -46,7 +54,7 @@ export const ProductProvider = ({ children }) => {
       setCurrentCategory(categoryId);
       setCurrentSubCategory(null);
 
-      setHasMore(newProducts.length === LIMIT);
+      setHasMore(newProducts.length === LIMIT || newProducts.length === sortLimit);
       setMode("all");
 
     } catch (err) {
@@ -67,7 +75,6 @@ export const ProductProvider = ({ children }) => {
       if (!categoryId || !subCategoryId) return;
 
       setLoading(true);
-
       const res = await getProductBySubCategoryId(
         categoryId,
         subCategoryId,
@@ -115,6 +122,7 @@ export const ProductProvider = ({ children }) => {
     } else {
       await fetchProducts(
         currentCategory,
+        48,
         nextPage,
         true
       );
@@ -129,7 +137,7 @@ export const ProductProvider = ({ children }) => {
     setPage(1);
     setHasMore(true);
 
-    await fetchProducts(currentCategory, 1, false);
+    await fetchProducts(currentCategory, 0, 1, false);
   };
 
   // 🔹 RESET WHEN SWITCHING PAGE

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
     SortableContext,
     verticalListSortingStrategy,
@@ -6,11 +6,11 @@ import {
     arrayMove
 } from "@dnd-kit/sortable";
 import {
-  DndContext,
-  closestCenter,
-  PointerSensor,
-  useSensor,
-  useSensors
+    DndContext,
+    closestCenter,
+    PointerSensor,
+    useSensor,
+    useSensors
 } from "@dnd-kit/core";
 
 import { CSS } from "@dnd-kit/utilities";
@@ -71,9 +71,10 @@ function SortableItem({ product }) {
 }
 
 export default function ProductSort() {
-    const { products, loading, fetchProducts } = useProducts();
+    const { products, loading, fetchProducts, hasMore, loadMore } = useProducts();
     const navigate = useNavigate();
     const [lastFetched, setLastFetched] = useState(null);
+    const loaderRef = useRef(null);
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -105,9 +106,31 @@ export default function ProductSort() {
     useEffect(() => {
         if (!selectedCategory) return;
 
-        fetchProducts(selectedCategory);
+        fetchProducts(selectedCategory, 200);
         setLastFetched(new Date());
     }, [selectedCategory, fetchProducts]);
+
+    useEffect(() => {
+        const node = loaderRef.current;
+        if (!node) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && hasMore && !loading) {
+                    loadMore();
+                }
+            },
+            {
+                root: null,
+                rootMargin: "300px",
+                threshold: 0
+            }
+        );
+
+        observer.observe(node);
+
+        return () => observer.unobserve(node);
+    }, [hasMore, loading, loadMore]);
 
     // ✅ 3. Sync products → local reorder state
     useEffect(() => {
@@ -144,6 +167,8 @@ export default function ProductSort() {
                 }))
             };
 
+            console.log("Saving order with payload:", payload);
+
             await SortProducts(payload);
             alert("Order updated successfully!");
         } catch (err) {
@@ -157,7 +182,7 @@ export default function ProductSort() {
     // 🔹 Refresh products
     const refreshProducts = () => {
         if (selectedCategory) {
-            fetchProducts(selectedCategory);
+            fetchProducts(selectedCategory, 150);
             setLastFetched(new Date());
         }
     };
@@ -274,28 +299,41 @@ export default function ProductSort() {
                         )}
 
                         {/* Save Button - Compact */}
-                        <button
-                            onClick={handleSave}
-                            disabled={saving || loading || !selectedCategory || orderedProducts.length === 0}
-                            className={`
+                        {!loading && !hasMore &&
+                            <button
+                                onClick={handleSave}
+                                disabled={saving || !selectedCategory || orderedProducts.length === 0}
+                                className={`
                                 w-full mt-5 py-2.5 rounded-lg font-medium text-sm transition-all duration-200
-                                ${(saving || loading || !selectedCategory || orderedProducts.length === 0)
-                                    ? 'bg-gray-700 cursor-not-allowed text-gray-400'
-                                    : 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-md'
-                                }
+                                ${(saving || !selectedCategory || orderedProducts.length === 0)
+                                        ? 'bg-gray-700 cursor-not-allowed text-gray-400'
+                                        : 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-md'
+                                    }
                             `}
-                        >
-                            {saving ? (
-                                <div className="flex items-center justify-center gap-2">
-                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                    Saving...
-                                </div>
-                            ) : (
-                                "Save Order"
-                            )}
-                        </button>
+                            >
+                                {saving ? (
+                                    <div className="flex items-center justify-center gap-2">
+                                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                        Saving...
+                                    </div>
+                                ) : (
+                                    "Save Order"
+                                )}
+                            </button>
+                        }
+
                     </div>
                 )}
+
+                <div ref={loaderRef} style={{ height: "60px", textAlign: "center" }}>
+                    <div className="flex justify-center items-center my-4 text-white">
+                        {loading ? (
+                            <p>Loading More Products..</p>
+                        ) : (
+                            <p style={{ visibility: "hidden" }}>Placeholder</p>
+                        )}
+                    </div>
+                </div>
 
                 {/* Empty State for No Category - Compact */}
                 {!selectedCategory && (

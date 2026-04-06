@@ -21,7 +21,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ChevronLeft, Layers, GripVertical } from "lucide-react";
 import { AuthContext } from "../../context/AuthContext";
 
-function SortableItem({ product, isHighlighted }) {
+function SortableItem({ product, isHighlighted, index, pushToTop }) {
     const {
         attributes,
         listeners,
@@ -63,6 +63,12 @@ function SortableItem({ product, isHighlighted }) {
                 <div>
                     <h3 className="text-white text-sm font-medium line-clamp-1">{product.parentStockKeepingUnit}</h3>
                 </div>
+                <button
+                    onClick={() => pushToTop(index)}
+                    className="ml-2 px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                    Push
+                </button>
             </div>
             <GripVertical className="w-4 h-4 text-gray-500" />
         </div>
@@ -165,7 +171,7 @@ export default function ProductSort() {
             let payload = {
                 categoryId: selectedCategory
             };
-            
+
             await resetProductDisplayOrder(payload, user?.uid);
 
             alert("Order has been reset!");
@@ -181,13 +187,21 @@ export default function ProductSort() {
     };
 
     // 🔹 Move selected product to top/bottom
-    const pushToTop = () => {
-        if (searchResultIndex === null) return;
+    const pushToTop = (index = null) => {
+        const targetIndex = index !== null ? index : searchResultIndex;
+
+        if (targetIndex === null || targetIndex === undefined) return;
+
         setOrderedProducts(prev => {
-            const item = prev.splice(searchResultIndex, 1)[0];
-            return [item, ...prev];
+            const item = prev[targetIndex];
+            const newArr = prev.filter((_, i) => i !== targetIndex);
+            return [item, ...newArr];
         });
-        setSearchQuery(""); // Clear search after moving
+
+        // Only clear search if it came from search
+        if (index === null) {
+            setSearchQuery("");
+        }
     };
 
     const pushToBottom = () => {
@@ -311,6 +325,8 @@ export default function ProductSort() {
                                             key={product._id}
                                             product={product}
                                             isHighlighted={index === searchResultIndex}
+                                            index={index}
+                                            pushToTop={pushToTop}
                                         />
                                     ))}
                                 </div>

@@ -194,7 +194,7 @@ const SubCategoryProductPage = () => {
     const { products, loading, hasMore, loadMore, fetchProducts, fetchBySubCategory, totalProducts } = useProducts();
 
     const [filteredProducts, setFilteredProducts] = useState([]);
-    const [matchedSubCategoryId, setMatchedSubCategoryId] = useState(null);
+    const [, setMatchedSubCategoryId] = useState(null);
     const [filters, setFilters] = useState({ style: "all", price: "all", color: "all", delivery: "all" });
     const [sortOption, setSortOption] = useState("featured");
     const { user } = useContext(AuthContext);

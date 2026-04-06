@@ -110,7 +110,19 @@ export default function Header() {
                   </button>
                 </div>
                 <div className="fs-nav-item">
-                  <Link to="/products/new-in/new-arrivals" className={`${isMobileMenuOpen ? 'fs-main-link mobile-divider' : 'fs-main-link'}`} onClick={() => setIsMobileMenuOpen(false)}>New IN </Link>
+                  <Link to="/products/men/new-arrivals" className={`${isMobileMenuOpen ? 'fs-main-link mobile-divider' : 'fs-main-link'}`} onClick={() => setIsMobileMenuOpen(false)}>New IN<i className="fas fa-chevron-down" style={{ fontSize: 10, marginLeft: 5 }}></i> </Link>
+                  <div className="fs-mega-menu fs-dropdown-menu">
+                    <div className="fs-mega-menu-column">
+                      <h4 className="fs-dropdown-title">New Arrivals</h4>
+                      <Link to="/products/men/new-arrivals">New In Men</Link>
+                      <Link to="/products/women/new-arrivals">New In Women</Link>
+                    </div>
+                  </div>
+                  <div className={`fs-mobile-submenu ${activeSubmenu === 4 ? 'fs-active' : ''}`}>
+                    <div className="fs-dropdown-title">New Arrivals</div>
+                    <Link to="/products/men/new-arrivals">Men</Link>
+                    <Link to="/products/women/new-arrivals">Women</Link>
+                  </div>
                 </div>
                 {categories
                   ?.filter(category =>

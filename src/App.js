@@ -37,6 +37,8 @@ import { setFullFaviconSet } from './utils/setFullFaviconSet';
 import OrderPage from './pages/UserOrderDetail';
 import AdminOrderDetails from './pages/AdminPages/AdminOrderDetails';
 import ProductSort from './pages/AdminPages/SortingPage';
+import Success from './pages/Success';
+import Cancel from './pages/Cancel';
 // import AccountSettings from './components/AccountsSettings';
 
 function App() {
@@ -79,6 +81,8 @@ function App() {
               <Route path="/dashboard/orders/:orderId" element={<PrivateRoute><OrderPage /></PrivateRoute>} />
 
               <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/success" element={<Success />} />
+              <Route path="/cancel" element={<Cancel />} />
 
               {/* admin routes */}
               <Route
@@ -99,7 +103,7 @@ function App() {
                 <Route path="manage-single-product/:productId" element={<ProductManagementPage />} />
                 <Route path="api-testing" element={<APITestingPage />} />
                 <Route path="orders/:orderId" element={<AdminOrderDetails />} />
-                <Route path="product-sorting" element={<ProductSort />} />                
+                <Route path="product-sorting" element={<ProductSort />} />
                 {/* <Route path="/account/settings" element={<PrivateRoute> <AccountSettings /> </PrivateRoute> } /> */}
               </Route>
 

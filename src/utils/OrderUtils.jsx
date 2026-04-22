@@ -37,6 +37,24 @@ export async function orderPaymentConfirm(paymentId, intentId) {
     }
 }
 
+export const createCheckoutSession = async (data) => {
+  try {
+    const response = await api.post(
+      "/api/payment/create-checkout-session",
+      {
+        userDetails: data.userDetails,
+        items: data.items,
+        shippingAddress: data.shippingAddress,
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Stripe Session Error:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
 export async function getUserOrderById(uid) {
     try {
         const response = await api.get(`/api/order/get-orders-by?uid=${uid}`);

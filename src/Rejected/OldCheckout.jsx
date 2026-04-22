@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import './styles/OldCheckout.css';
 import zipToStateMap from '../data/fullZipData';
 
-
 const Checkout = ({ cartItems, totalPrice, onPlaceOrder }) => {
   const [focused, setFocused] = useState(false);
   const [inputValue, setInputValue] = useState('');

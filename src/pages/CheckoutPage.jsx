@@ -1,10 +1,7 @@
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements } from "@stripe/react-stripe-js";
 import Checkout from '../components/Checkout';
 import { useCart } from '../context/CartContext';
 import { createNewOrder } from '../utils/OrderUtils';
 
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 const CheckoutPage = () => {
   const { cartItems, refreshCart } = useCart();
 
@@ -23,7 +20,6 @@ const CheckoutPage = () => {
   };
 
   return (
-    <Elements stripe={stripePromise}>
       <div>
         <Checkout
           cartItems={cartItems?.items || []}
@@ -33,7 +29,6 @@ const CheckoutPage = () => {
           refreshCart={refreshCart}
         />
       </div>
-    </Elements>
   );
 };
 

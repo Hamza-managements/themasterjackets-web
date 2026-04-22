@@ -51,7 +51,7 @@ export const checkoutSchema = yup.object().shape({
 
     paymentMethod: yup
         .string()
-        .oneOf(["card", "PAYPAL"])
+        .oneOf(["card", "stripe", "PAYPAL"])
         .required("Payment method is required"),
 
     /* ---------------- CARD FIELDS ---------------- */

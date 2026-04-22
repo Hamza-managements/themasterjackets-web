@@ -162,10 +162,10 @@ export default function CartSidebar() {
                     >
                       <i className="fas fa-plus"></i>
                     </button>
-                    {updatingQuantity && 
-                    <div className="spinner-border spinner-border-sm text-secondary ms-3" role="status">
-                      <span className="visually-hidden">Loading...</span>
-                    </div>
+                    {updatingQuantity &&
+                      <div className="spinner-border spinner-border-sm text-secondary ms-3" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
                     }
                   </div>
                 </div>
@@ -227,12 +227,12 @@ export default function CartSidebar() {
                 borderRadius: 0,
               }}
             >
-              <i className="fa fa-credit-card me-2"></i> Pay with PayPal
+              <i className="fa fa-credit-card me-2"></i> Pay with Stripe
             </button>
 
             <div className="text-center d-flex justify-content-center mt-3">
               <img
-                src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png"
+                src="https://th.bing.com/th/id/R.882554502a910b08926783672406e254?rik=HcKdX2aH%2bJNPTw&pid=ImgRaw&r=0"
                 alt="Visa"
                 style={{ height: "20px", marginRight: "8px" }}
               />
@@ -242,8 +242,8 @@ export default function CartSidebar() {
                 style={{ height: "20px", marginRight: "8px" }}
               />
               <img
-                src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
-                alt="PayPal"
+                src="https://cdn.simpleicons.org/stripe"
+                alt="Stripe"
                 style={{ height: "20px" }}
               />
             </div>

@@ -726,7 +726,6 @@
 /* ────────── PayPal Info ────────── */
 .payment-info {
   display: flex;
-  align-items: center;
   gap: 12px;
   background: #f7f9fc;
   border: 1px solid #e4e7ec;
